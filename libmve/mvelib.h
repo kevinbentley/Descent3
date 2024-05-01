@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2002-2024 D2X Project
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef INCLUDED_MVELIB_H
 #define INCLUDED_MVELIB_H
 
@@ -15,13 +32,12 @@ extern mve_cb_SetPalette mve_setpalette;
 /*
  * structure for maintaining info on a MVEFILE stream
  */
-typedef struct MVEFILE
-{
-    void           *stream;
-    unsigned char  *cur_chunk;
-    int             buf_size;
-    int             cur_fill;
-    int             next_segment;
+typedef struct MVEFILE {
+  void *stream;
+  unsigned char *cur_chunk;
+  int buf_size;
+  int cur_fill;
+  int next_segment;
 } MVEFILE;
 
 /*
@@ -73,11 +89,10 @@ typedef int (*MVESEGMENTHANDLER)(unsigned char major, unsigned char minor, unsig
 /*
  * structure for maintaining an MVE stream
  */
-typedef struct MVESTREAM
-{
-    MVEFILE                    *movie;
-    void                       *context;
-    MVESEGMENTHANDLER           handlers[32];
+typedef struct MVESTREAM {
+  MVEFILE *movie;
+  void *context;
+  MVESEGMENTHANDLER handlers[32];
 } MVESTREAM;
 
 /*
