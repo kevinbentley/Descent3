@@ -5,11 +5,11 @@ set(CPPS
   platform.cpp
 
   # d2x implementation
-  decoder8.c
-  decoder16.c
-  mve_audio.c
-  mvelib.c
-  mveplay.c
+  decoder8.cpp
+  decoder16.cpp
+  mve_audio.cpp
+  mvelib.cpp
+  mveplay.cpp
 )
 
 add_library(libmve STATIC ${CPPS})

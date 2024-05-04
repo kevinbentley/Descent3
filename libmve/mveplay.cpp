@@ -493,7 +493,7 @@ static int display_video_handler(unsigned char major, unsigned char minor, unsig
   if (g_destY == -1) // center it
     g_destY = (g_screenHeight - g_height) >> 1;
 
-  mve_showframe(g_vBackBuf1, g_width, g_height, 0, 0, g_width, g_height, g_destX, g_destY);
+  mve_showframe((unsigned char *)g_vBackBuf1, g_width, g_height, 0, 0, g_width, g_height, g_destX, g_destY);
 
   g_frameUpdated = 1;
 
@@ -563,7 +563,7 @@ static int video_data_handler(unsigned char major, unsigned char minor, unsigned
   if (g_truecolor) {
     decodeFrame16((unsigned char *)g_vBackBuf1, g_pCurMap, g_nMapLength, data + 14, len - 14);
   } else {
-    decodeFrame8(g_vBackBuf1, g_pCurMap, g_nMapLength, data + 14, len - 14);
+    decodeFrame8((unsigned char *)g_vBackBuf1, g_pCurMap, g_nMapLength, data + 14, len - 14);
   }
 
   return 1;
