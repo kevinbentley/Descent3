@@ -15,17 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "conf.h"
-#endif
-
-#include <string.h> // for mem* functions
-#if !defined(_WIN32) && !defined(macintosh)
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#endif
+#include <cstring> // for mem* functions
 
 #include "mvelib.h"
 
@@ -462,7 +452,9 @@ static MVESTREAM *_mvestream_alloc(void) {
  */
 static void _mvestream_free(MVESTREAM *movie) {
   /* close MVEFILE */
-  if (movie->movie)
+  if (movie == nullptr)
+    return;
+  if (movie->movie != nullptr)
     mvefile_close(movie->movie);
   movie->movie = NULL;
 

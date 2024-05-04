@@ -18,8 +18,8 @@
 #ifndef INCLUDED_MVELIB_H
 #define INCLUDED_MVELIB_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include "libmve.h"
 

@@ -1,8 +1,8 @@
 set(CPPS
+#  mveasm.cpp
+#  mvelibl.cpp
+#  platform.cpp
   lnxdsound.cpp
-  mveasm.cpp
-  mvelibl.cpp
-  platform.cpp
 
   # d2x implementation
   decoder8.cpp

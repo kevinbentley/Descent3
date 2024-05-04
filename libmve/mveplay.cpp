@@ -15,31 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <conf.h>
-#endif
+// TODO
+//#define AUDIO
 
-#ifndef __MSDOS__
-#define AUDIO
-#endif
-// #define DEBUG
-
-#include <string.h>
+#include <cstring>
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include <errno.h>
-#include <time.h>
-#include <fcntl.h>
-#ifdef macintosh
-#include <types.h>
-#include <OSUtils.h>
-#else
+#include <ctime>
 #include <sys/time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#endif // macintosh
 #endif // _WIN32
 
 #if defined(AUDIO)
@@ -47,12 +31,11 @@
 #include "SDL_mixer.h"
 #endif
 
+#include "decoders.h"
+#include "libmve.h"
 #include "mvelib.h"
 #include "mve_audio.h"
-
-#include "decoders.h"
-
-#include "libmve.h"
+#include "SystemInterfaces.h"
 
 #define MVE_OPCODE_ENDOFSTREAM 0x00
 #define MVE_OPCODE_ENDOFCHUNK 0x01
@@ -80,6 +63,8 @@
 int g_spdFactorNum = 0;
 static int g_spdFactorDenom = 10;
 static int g_frameUpdated = 0;
+
+static ISoundDevice *snd_ds = NULL;
 
 static short get_short(unsigned char *data) {
   short value;
@@ -226,6 +211,8 @@ end:
 /*************************
  * audio handlers
  *************************/
+
+static int mve_audio_enabled = 0;
 #ifdef AUDIO
 #define TOTAL_AUDIO_BUFFERS 64
 
@@ -493,7 +480,7 @@ static int display_video_handler(unsigned char major, unsigned char minor, unsig
   if (g_destY == -1) // center it
     g_destY = (g_screenHeight - g_height) >> 1;
 
-  mve_showframe((unsigned char *)g_vBackBuf1, g_width, g_height, 0, 0, g_width, g_height, g_destX, g_destY);
+  mve_showframe((unsigned char *)g_vBackBuf1, g_width, g_height, 0, 0, g_width, g_height, g_destX, g_destY, g_truecolor);
 
   g_frameUpdated = 1;
 
@@ -586,6 +573,13 @@ void MVE_memCallbacks(mve_cb_Alloc mem_alloc, mve_cb_Free mem_free) {
 void MVE_sfCallbacks(mve_cb_ShowFrame showframe) { mve_showframe = showframe; }
 
 void MVE_palCallbacks(mve_cb_SetPalette setpalette) { mve_setpalette = setpalette; }
+
+void MVE_ReleaseMem() {
+  MVE_rmEndMovie();
+//  ioRelease();
+//  sndRelease();
+//  nfRelease();
+}
 
 int MVE_rmPrepMovie(void *src, int x, int y, int track) {
   int i;
@@ -704,6 +698,12 @@ void MVE_rmEndMovie() {
 }
 
 void MVE_rmHoldMovie() { timer_started = 0; }
+
+void MVE_sndInit(ISoundDevice *lpDS) {
+#ifdef AUDIO
+  snd_ds = lpDS;
+#endif
+}
 
 void MVE_sndInit(int x) {
 #ifdef AUDIO

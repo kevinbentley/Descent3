@@ -28,8 +28,7 @@
 #include "appdatabase.h"
 #include "bitmap.h"
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstring>
 
 #ifdef DEBUG
 static struct {
@@ -148,7 +147,7 @@ tCinematic *StartMovie(const char *moviename, bool looping) {
 
   SetMovieProperties(0, 0, Max_window_w, Max_window_h, Renderer_type);
 
-  int filehandle;
+  FILE *filehandle;
   intptr_t hMovie = mve_SequenceStart(filename, &filehandle, Descent, looping);
   if (hMovie == 0)
     return NULL;

@@ -17,8 +17,8 @@
 
 /* 8 bit decoding routines */
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include "decoders.h"
 

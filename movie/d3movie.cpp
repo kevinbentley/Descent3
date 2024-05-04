@@ -16,14 +16,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-
 #ifdef __LINUX__
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/uio.h>
-
-#define O_BINARY 0
+#include "lnxdsound.h"
 #endif
 
 
@@ -34,11 +29,11 @@
 #include "dsound.h"
 #endif
 
-#include <fcntl.h>
-#include <string.h>
+#include <cstring>
 
 #include "movie.h"
-#include "mvelibw.h"
+//#include "mvelibw.h"
+#include "libmve.h"
 #include "pserror.h"
 #include "renderer.h"
 #include "application.h"
@@ -239,7 +234,7 @@ public:
 
 static void *CallbackAlloc(uint32_t size);
 static void CallbackFree(void *p);
-static uint32_t CallbackFileRead(int hFile, void *pBuffer, uint32_t bufferCount);
+static uint32_t CallbackFileRead(void *stream, void *pBuffer, uint32_t bufferCount);
 static void InitializePalette();
 static void CallbackSetPalette(uint8_t *pBuffer, uint32_t start, uint32_t count);
 static void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx,
@@ -315,8 +310,8 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   strcpy(real_name, pMovieName);
 #endif
   // open movie file.
-  int hFile = open(real_name, O_RDONLY | O_BINARY);
-  if (hFile == -1) {
+  FILE *hFile = fopen(real_name, "rb");
+  if (hFile == nullptr) {
     mprintf(0, "MOVIE: Unable to open %s\n", real_name);
     return MVELIB_FILE_ERROR;
   }
@@ -326,11 +321,11 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   bool highColor = (pExtension != NULL && stricmp(pExtension, ".mv8") != 0);
 
   // setup
-  MVE_rmFastMode(MVE_RM_NORMAL);
+  // MVE_rmFastMode(MVE_RM_NORMAL);
   MVE_sfCallbacks(CallbackShowFrame);
   MVE_memCallbacks(CallbackAlloc, CallbackFree);
   MVE_ioCallbacks(CallbackFileRead);
-  MVE_sfSVGA(640, 480, 480, 0, NULL, 0, 0, NULL, highColor ? 1 : 0);
+  // MVE_sfSVGA(640, 480, 480, 0, NULL, 0, 0, NULL, highColor ? 1 : 0);
   MVE_palCallbacks(CallbackSetPalette);
   InitializePalette();
   Movie_bm_handle = -1;
@@ -338,14 +333,14 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   MovieSoundDevice soundDevice;
   if (!mve_InitSound(pApp, soundDevice)) {
     mprintf(0, "Failed to initialize sound\n");
-    close(hFile);
+    fclose(hFile);
     return MVELIB_INIT_ERROR;
   }
 
   int result = MVE_rmPrepMovie(hFile, -1, -1, 0);
   if (result != 0) {
     mprintf(0, "PrepMovie result = %d\n", result);
-    close(hFile);
+    fclose(hFile);
     mve_CloseSound(soundDevice);
     return MVELIB_INIT_ERROR;
   }
@@ -371,7 +366,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   }
 
   // close our file handle
-  close(hFile);
+  fclose(hFile);
 
   // determine the return code
   int err = MVELIB_NOERROR;
@@ -399,8 +394,8 @@ void *CallbackAlloc(uint32_t size) { return mem_malloc(size); }
 
 void CallbackFree(void *p) { mem_free(p); }
 
-uint32_t CallbackFileRead(int hFile, void *pBuffer, uint32_t bufferCount) {
-  uint32_t numRead = read(hFile, pBuffer, bufferCount);
+uint32_t CallbackFileRead(void *stream, void *pBuffer, uint32_t bufferCount) {
+  uint32_t numRead = fread(pBuffer, 1, bufferCount, (FILE *)stream);
   return (numRead == bufferCount) ? 1 : 0;
 }
 
@@ -440,7 +435,7 @@ int NextPow2(int n) {
 void BlitToMovieBitmap(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t hicolor,
                        bool usePow2Texture, int &texW, int &texH) {
   // get some sizes
-  int drawWidth = hicolor ? (bufw >> 1) : bufw;
+  int drawWidth = bufw;
   int drawHeight = bufh;
 
   if (usePow2Texture) {
@@ -466,10 +461,8 @@ void BlitToMovieBitmap(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t hico
     for (int y = 0; y < drawHeight; ++y) {
       for (int x = 0; x < drawWidth; ++x) {
         uint16_t col16 = *wBuf++;
-        uint32_t b = ((col16 >> 11) & 0x1F) << 3;
-        uint32_t g = ((col16 >> 5) & 0x3F) << 2;
-        uint32_t r = ((col16 >> 0) & 0x1F) << 3;
-        pPixelData[x] = OPAQUE_FLAG | GR_RGB16(r, g, b);
+        // Convert to RGB555
+        pPixelData[x] = col16 | OPAQUE_FLAG;
       }
 
       pPixelData += texW;
@@ -493,7 +486,7 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
   BlitToMovieBitmap(buf, bufw, bufh, hicolor, true, texW, texH);
 
   // calculate UVs from texture
-  int drawWidth = hicolor ? (bufw >> 1) : bufw;
+  int drawWidth = bufw;
   int drawHeight = bufh;
   float u = float(drawWidth - 1) / float(texW - 1);
   float v = float(drawHeight - 1) / float(texH - 1);
@@ -525,7 +518,7 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
 }
 #endif
 
-intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app, bool looping) {
+intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *app, bool looping) {
 #ifndef NO_MOVIES
 
   // first, find that movie..
@@ -533,22 +526,22 @@ intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app
 #ifdef __LINUX__
   if (!mve_FindMovieFileRealName(mvename, real_name)) {
     mprintf(0, "MOVIE: No such file %s\n", mvename);
-    *fhandle = -1;
+    fhandle = nullptr;
     return 0;
   }
 #else
   strcpy(real_name, mvename);
 #endif
-  int hfile = open(real_name, O_RDONLY | O_BINARY);
+  FILE *hfile = fopen(mvename, "rb");
 
-  if (hfile == -1) {
+  if (hfile == nullptr) {
     mprintf(1, "MOVIE: Unable to open %s\n", real_name);
-    *fhandle = -1;
+    fhandle = nullptr;
     return 0;
   }
 
   // setup
-  MVE_rmFastMode(MVE_RM_NORMAL);
+  //MVE_rmFastMode(MVE_RM_NORMAL);
   MVE_memCallbacks(CallbackAlloc, CallbackFree);
   MVE_ioCallbacks(CallbackFileRead);
   InitializePalette();
@@ -558,14 +551,15 @@ intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app
   // let the render know we will be copying bitmaps to framebuffer (or something)
   rend_SetFrameBufferCopyState(true);
 
-  *fhandle = hfile;
-  return (intptr_t)MVE_frOpen(CallbackFileRead, hfile, NULL);
+  fhandle = hfile;
+  // TODO return (intptr_t)MVE_frOpen(CallbackFileRead, hfile, NULL);
+  return 0;
 #else
   return 0;
 #endif
 }
 
-intptr_t mve_SequenceFrame(intptr_t handle, int fhandle, bool sequence, int *bm_handle) {
+intptr_t mve_SequenceFrame(intptr_t handle, void *fhandle, bool sequence, int *bm_handle) {
 #ifndef NO_MOVIES
   if (bm_handle) {
     *bm_handle = -1;
@@ -582,14 +576,14 @@ reread_frame:
 
   // get the next frame of data
   uint8_t *pBuffer = NULL;
-  err = MVE_frGet((MVE_frStream)handle, &pBuffer, &sw, &sh, &hicolor);
+  // TODO err = MVE_frGet((MVE_frStream)handle, &pBuffer, &sw, &sh, &hicolor);
 
   // refresh our palette
   {
     uint32_t palstart = 0;
     uint32_t palcount = 0;
     uint8_t *pal = NULL;
-    MVE_frPal((MVE_frStream)handle, &pal, &palstart, &palcount);
+    // TODO MVE_frPal((MVE_frStream)handle, &pal, &palstart, &palcount);
     CallbackSetPalette(pal, palstart, palcount);
   }
 
@@ -606,13 +600,9 @@ reread_frame:
   }
 
   if (Movie_looping && err == MVE_ERR_EOF) {
-    MVE_frClose((MVE_frStream)handle);
-#ifdef WIN32
-    _lseek(fhandle, 0, SEEK_SET);
-#else
-    lseek(fhandle, 0, SEEK_SET);
-#endif
-    handle = (intptr_t)MVE_frOpen(CallbackFileRead, fhandle, NULL);
+    // TODO MVE_frClose((MVE_frStream)handle);
+    fseek((FILE *)fhandle, 0, SEEK_SET);
+    // TODO handle = (intptr_t)MVE_frOpen(CallbackFileRead, (FILE *)fhandle, NULL);
     sequence = true;
     goto reread_frame;
   }
@@ -623,14 +613,14 @@ reread_frame:
 #endif
 }
 
-bool mve_SequenceClose(intptr_t hMovie, int hFile) {
+bool mve_SequenceClose(intptr_t hMovie, void *hFile) {
 #ifndef NO_MOVIES
   if (hMovie == -1)
     return false;
 
-  MVE_frClose((MVE_frStream)hMovie);
+  // TODO MVE_frClose((MVE_frStream)hMovie);
   MVE_ReleaseMem();
-  close(hFile);
+  fclose((FILE *)hFile);
 
   // free our bitmap
   if (Movie_bm_handle != -1) {
