@@ -33,7 +33,7 @@
 
 #include "movie.h"
 //#include "mvelibw.h"
-#include "libmve.h"
+#include "mvelib.h"
 #include "pserror.h"
 #include "renderer.h"
 #include "application.h"
@@ -378,7 +378,6 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
 
   // cleanup and shutdown
   MVE_rmEndMovie();
-  MVE_ReleaseMem();
 
   // reset sound
   mve_CloseSound(soundDevice);
@@ -619,7 +618,7 @@ bool mve_SequenceClose(intptr_t hMovie, void *hFile) {
     return false;
 
   // TODO MVE_frClose((MVE_frStream)hMovie);
-  MVE_ReleaseMem();
+  MVE_rmEndMovie();
   fclose((FILE *)hFile);
 
   // free our bitmap

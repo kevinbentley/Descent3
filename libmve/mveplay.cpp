@@ -32,7 +32,6 @@
 #endif
 
 #include "decoders.h"
-#include "libmve.h"
 #include "mvelib.h"
 #include "mve_audio.h"
 #include "SystemInterfaces.h"
@@ -480,7 +479,8 @@ static int display_video_handler(unsigned char major, unsigned char minor, unsig
   if (g_destY == -1) // center it
     g_destY = (g_screenHeight - g_height) >> 1;
 
-  mve_showframe((unsigned char *)g_vBackBuf1, g_width, g_height, 0, 0, g_width, g_height, g_destX, g_destY, g_truecolor);
+  mve_showframe((unsigned char *)g_vBackBuf1, g_width, g_height, 0, 0, g_width, g_height, g_destX, g_destY,
+                g_truecolor);
 
   g_frameUpdated = 1;
 
@@ -574,16 +574,7 @@ void MVE_sfCallbacks(mve_cb_ShowFrame showframe) { mve_showframe = showframe; }
 
 void MVE_palCallbacks(mve_cb_SetPalette setpalette) { mve_setpalette = setpalette; }
 
-void MVE_ReleaseMem() {
-  MVE_rmEndMovie();
-//  ioRelease();
-//  sndRelease();
-//  nfRelease();
-}
-
 int MVE_rmPrepMovie(void *src, int x, int y, int track) {
-  int i;
-
   if (mve) {
     mve_reset(mve);
     return 0;
@@ -597,7 +588,7 @@ int MVE_rmPrepMovie(void *src, int x, int y, int track) {
   g_destX = x;
   g_destY = y;
 
-  for (i = 0; i < 32; i++)
+  for (int i = 0; i < 32; i++)
     mve_set_handler(mve, i, default_seg_handler);
 
   mve_set_handler(mve, MVE_OPCODE_ENDOFSTREAM, end_movie_handler);
