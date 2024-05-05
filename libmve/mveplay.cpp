@@ -561,8 +561,6 @@ static int end_chunk_handler(unsigned char major, unsigned char minor, unsigned 
   return 1;
 }
 
-static MVESTREAM *mve = NULL;
-
 void MVE_ioCallbacks(mve_cb_Read io_read) { mve_read = io_read; }
 
 void MVE_memCallbacks(mve_cb_Alloc mem_alloc, mve_cb_Free mem_free) {
@@ -574,16 +572,12 @@ void MVE_sfCallbacks(mve_cb_ShowFrame showframe) { mve_showframe = showframe; }
 
 void MVE_palCallbacks(mve_cb_SetPalette setpalette) { mve_setpalette = setpalette; }
 
-int MVE_rmPrepMovie(void *src, int x, int y, int track) {
-  if (mve) {
-    mve_reset(mve);
-    return 0;
-  }
-
+MVESTREAM* MVE_rmPrepMovie(void *src, int x, int y, int track) {
+  MVESTREAM *mve;
   mve = mve_open(src);
 
   if (!mve)
-    return 1;
+    return nullptr;
 
   g_destX = x;
   g_destY = y;
@@ -614,7 +608,7 @@ int MVE_rmPrepMovie(void *src, int x, int y, int track) {
   if (mve_audio_enabled)
     mve_play_next_chunk(mve); /* audio initialization chunk */
 
-  return 0;
+  return mve;
 }
 
 void MVE_getVideoSpec(MVE_videoSpec *vSpec) {
@@ -625,7 +619,7 @@ void MVE_getVideoSpec(MVE_videoSpec *vSpec) {
   vSpec->truecolor = g_truecolor;
 }
 
-int MVE_rmStepMovie() {
+int MVE_rmStepMovie(MVESTREAM *mve) {
   static int init_timer = 0;
   int cont = 1;
 
@@ -649,11 +643,7 @@ int MVE_rmStepMovie() {
   return 0;
 }
 
-void MVE_rmEndMovie() {
-#ifdef AUDIO
-  int i;
-#endif
-
+void MVE_rmEndMovie(MVESTREAM *mve) {
   timer_stop();
   timer_created = 0;
 
@@ -663,7 +653,7 @@ void MVE_rmEndMovie() {
     Mix_CloseAudio();
     mve_audio_canplay = 0;
   }
-  for (i = 0; i < TOTAL_AUDIO_BUFFERS; i++)
+  for (int i = 0; i < TOTAL_AUDIO_BUFFERS; i++)
     if (mve_audio_buffers[i] != NULL)
       mve_free(mve_audio_buffers[i]);
   memset(mve_audio_buffers, 0, sizeof(mve_audio_buffers));
@@ -678,14 +668,14 @@ void MVE_rmEndMovie() {
 #endif
 
   mve_free(g_vBuffers);
-  g_vBuffers = NULL;
-  g_pCurMap = NULL;
+  g_vBuffers = nullptr;
+  g_pCurMap = nullptr;
   g_nMapLength = 0;
   videobuf_created = 0;
   video_initialized = 0;
 
   mve_close(mve);
-  mve = NULL;
+  mve = nullptr;
 }
 
 void MVE_rmHoldMovie() { timer_started = 0; }

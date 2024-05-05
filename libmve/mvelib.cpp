@@ -39,7 +39,7 @@ static unsigned short _mve_get_ushort(unsigned char *data);
 /*
  * private functions for mvefile
  */
-static MVEFILE *_mvefile_alloc(void);
+static MVEFILE *_mvefile_alloc();
 static void _mvefile_free(MVEFILE *movie);
 static int _mvefile_open(MVEFILE *movie, void *stream);
 static void _mvefile_reset(MVEFILE *movie);
@@ -50,7 +50,7 @@ static int _mvefile_fetch_next_chunk(MVEFILE *movie);
 /*
  * private functions for mvestream
  */
-static MVESTREAM *_mvestream_alloc(void);
+static MVESTREAM *_mvestream_alloc();
 static void _mvestream_free(MVESTREAM *movie);
 static int _mvestream_open(MVESTREAM *movie, void *stream);
 static void _mvestream_reset(MVESTREAM *movie);
@@ -69,7 +69,7 @@ MVEFILE *mvefile_open(void *stream) {
   file = _mvefile_alloc();
   if (!_mvefile_open(file, stream)) {
     _mvefile_free(file);
-    return NULL;
+    return nullptr;
   }
 
   /* initialize the file */
@@ -78,7 +78,7 @@ MVEFILE *mvefile_open(void *stream) {
   /* verify the file's header */
   if (!_mvefile_read_header(file)) {
     _mvefile_free(file);
-    return NULL;
+    return nullptr;
   }
 
   /* now, prefetch the next chunk */
@@ -116,7 +116,7 @@ void mvefile_reset(MVEFILE *file) {
  */
 int mvefile_get_next_segment_size(MVEFILE *movie) {
   /* if nothing is cached, fail */
-  if (movie->cur_chunk == NULL || movie->next_segment >= movie->cur_fill)
+  if (movie->cur_chunk == nullptr || movie->next_segment >= movie->cur_fill)
     return -1;
 
   /* if we don't have enough data to get a segment, fail */
@@ -132,7 +132,7 @@ int mvefile_get_next_segment_size(MVEFILE *movie) {
  */
 unsigned char mvefile_get_next_segment_major(MVEFILE *movie) {
   /* if nothing is cached, fail */
-  if (movie->cur_chunk == NULL || movie->next_segment >= movie->cur_fill)
+  if (movie->cur_chunk == nullptr || movie->next_segment >= movie->cur_fill)
     return 0xff;
 
   /* if we don't have enough data to get a segment, fail */
@@ -149,7 +149,7 @@ unsigned char mvefile_get_next_segment_major(MVEFILE *movie) {
  */
 unsigned char mvefile_get_next_segment_minor(MVEFILE *movie) {
   /* if nothing is cached, fail */
-  if (movie->cur_chunk == NULL || movie->next_segment >= movie->cur_fill)
+  if (movie->cur_chunk == nullptr || movie->next_segment >= movie->cur_fill)
     return 0xff;
 
   /* if we don't have enough data to get a segment, fail */
@@ -165,12 +165,12 @@ unsigned char mvefile_get_next_segment_minor(MVEFILE *movie) {
  */
 unsigned char *mvefile_get_next_segment(MVEFILE *movie) {
   /* if nothing is cached, fail */
-  if (movie->cur_chunk == NULL || movie->next_segment >= movie->cur_fill)
-    return NULL;
+  if (movie->cur_chunk == nullptr || movie->next_segment >= movie->cur_fill)
+    return nullptr;
 
   /* if we don't have enough data to get a segment, fail */
   if (movie->cur_fill - movie->next_segment < 4)
-    return NULL;
+    return nullptr;
 
   /* otherwise, get the data length */
   return movie->cur_chunk + movie->next_segment + 4;
@@ -181,7 +181,7 @@ unsigned char *mvefile_get_next_segment(MVEFILE *movie) {
  */
 void mvefile_advance_segment(MVEFILE *movie) {
   /* if nothing is cached, fail */
-  if (movie->cur_chunk == NULL || movie->next_segment >= movie->cur_fill)
+  if (movie->cur_chunk == nullptr || movie->next_segment >= movie->cur_fill)
     return;
 
   /* if we don't have enough data to get a segment, fail */
@@ -213,7 +213,7 @@ MVESTREAM *mve_open(void *stream) {
   /* open */
   if (!_mvestream_open(movie, stream)) {
     _mvestream_free(movie);
-    return NULL;
+    return nullptr;
   }
 
   return movie;
@@ -254,7 +254,7 @@ int mve_play_next_chunk(MVESTREAM *movie) {
   major = mvefile_get_next_segment_major(movie->movie);
   while (major != 0xff) {
     /* check whether to handle the segment */
-    if (major < 32 && movie->handlers[major] != NULL) {
+    if (major < 32 && movie->handlers[major] != nullptr) {
       minor = mvefile_get_next_segment_minor(movie->movie);
       len = mvefile_get_next_segment_size(movie->movie);
       data = mvefile_get_next_segment(movie->movie);
@@ -282,10 +282,10 @@ int mve_play_next_chunk(MVESTREAM *movie) {
 /*
  * allocate an MVEFILE
  */
-static MVEFILE *_mvefile_alloc(void) {
+static MVEFILE *_mvefile_alloc() {
   MVEFILE *file = (MVEFILE *)mve_alloc(sizeof(MVEFILE));
-  file->stream = NULL;
-  file->cur_chunk = NULL;
+  file->stream = nullptr;
+  file->cur_chunk = nullptr;
   file->buf_size = 0;
   file->cur_fill = 0;
   file->next_segment = 0;
@@ -298,12 +298,12 @@ static MVEFILE *_mvefile_alloc(void) {
  */
 static void _mvefile_free(MVEFILE *movie) {
   /* free the stream */
-  movie->stream = NULL;
+  movie->stream = nullptr;
 
   /* free the buffer */
   if (movie->cur_chunk)
     mve_free(movie->cur_chunk);
-  movie->cur_chunk = NULL;
+  movie->cur_chunk = nullptr;
 
   /* not strictly necessary */
   movie->buf_size = 0;
@@ -329,12 +329,11 @@ static int _mvefile_open(MVEFILE *file, void *stream) {
  * allocate an MVEFILE
  */
 static void _mvefile_reset(MVEFILE *file) {
-#if 0
-    file->cur_chunk = NULL;
-    file->buf_size = 0;
-    file->cur_fill = 0;
-    file->next_segment = 0;
-#endif
+  fseek((FILE *)file->stream, 0, SEEK_SET);
+  file->cur_chunk = nullptr;
+  file->buf_size = 0;
+  file->cur_fill = 0;
+  file->next_segment = 0;
 }
 
 /*
@@ -435,12 +434,12 @@ static unsigned short _mve_get_ushort(unsigned char *data) {
 /*
  * allocate an MVESTREAM
  */
-static MVESTREAM *_mvestream_alloc(void) {
+static MVESTREAM *_mvestream_alloc() {
   MVESTREAM *movie;
 
   /* allocate and zero-initialize everything */
   movie = (MVESTREAM *)mve_alloc(sizeof(MVESTREAM));
-  movie->movie = NULL;
+  movie->movie = nullptr;
   movie->context = 0;
   memset(movie->handlers, 0, sizeof(movie->handlers));
 
@@ -456,10 +455,10 @@ static void _mvestream_free(MVESTREAM *movie) {
     return;
   if (movie->movie != nullptr)
     mvefile_close(movie->movie);
-  movie->movie = NULL;
+  movie->movie = nullptr;
 
   /* clear context and handlers */
-  movie->context = NULL;
+  movie->context = nullptr;
   memset(movie->handlers, 0, sizeof(movie->handlers));
 
   /* free the struct */
@@ -472,7 +471,7 @@ static void _mvestream_free(MVESTREAM *movie) {
 static int _mvestream_open(MVESTREAM *movie, void *stream) {
   movie->movie = mvefile_open(stream);
 
-  return (movie->movie == NULL) ? 0 : 1;
+  return (movie->movie == nullptr) ? 0 : 1;
 }
 
 /*

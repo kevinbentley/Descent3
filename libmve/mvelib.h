@@ -70,10 +70,10 @@ typedef struct MVESTREAM {
   MVESEGMENTHANDLER handlers[32];
 } MVESTREAM;
 
-int MVE_rmPrepMovie(void *stream, int x, int y, int track);
-int MVE_rmStepMovie();
+MVESTREAM* MVE_rmPrepMovie(void *stream, int x, int y, int track);
+int MVE_rmStepMovie(MVESTREAM *mve);
 void MVE_rmHoldMovie();
-void MVE_rmEndMovie();
+void MVE_rmEndMovie(MVESTREAM *mve);
 
 void MVE_getVideoSpec(MVE_videoSpec *vSpec);
 

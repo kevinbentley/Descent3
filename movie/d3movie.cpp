@@ -46,7 +46,7 @@
 #include "game.h"
 
 namespace {
-MovieFrameCallback_fp Movie_callback = NULL;
+MovieFrameCallback_fp Movie_callback = nullptr;
 char MovieDir[512];
 char SoundCardName[512];
 uint16_t CurrentPalette[256];
@@ -337,9 +337,9 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
     return MVELIB_INIT_ERROR;
   }
 
-  int result = MVE_rmPrepMovie(hFile, -1, -1, 0);
-  if (result != 0) {
-    mprintf(0, "PrepMovie result = %d\n", result);
+  MVESTREAM *mve = MVE_rmPrepMovie(hFile, -1, -1, 0);
+  if (mve == nullptr) {
+    mprintf(0, "Failed to prepMovie %s\n", pMovieName);
     fclose(hFile);
     mve_CloseSound(soundDevice);
     return MVELIB_INIT_ERROR;
@@ -347,7 +347,8 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
 
   bool aborted = false;
   Movie_current_framenum = 0;
-  while ((result = MVE_rmStepMovie()) == 0) {
+  int result;
+  while ((result = MVE_rmStepMovie(mve)) == 0) {
     // let the OS do its thing
     pApp->defer();
 
@@ -377,7 +378,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   }
 
   // cleanup and shutdown
-  MVE_rmEndMovie();
+  MVE_rmEndMovie(mve);
 
   // reset sound
   mve_CloseSound(soundDevice);
@@ -485,8 +486,8 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
   BlitToMovieBitmap(buf, bufw, bufh, hicolor, true, texW, texH);
 
   // calculate UVs from texture
-  int drawWidth = bufw;
-  int drawHeight = bufh;
+  unsigned int drawWidth = bufw;
+  unsigned int drawHeight = bufh;
   float u = float(drawWidth - 1) / float(texW - 1);
   float v = float(drawHeight - 1) / float(texH - 1);
 
@@ -506,7 +507,7 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
   rend_SetZBufferState(1);
 
   // call our callback
-  if (Movie_callback != NULL) {
+  if (Movie_callback != nullptr) {
     Movie_callback(dstx, dsty, Movie_current_framenum);
   }
   ++Movie_current_framenum;
@@ -514,6 +515,43 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
   EndFrame();
 
   rend_Flip();
+}
+
+// This callback is same as CallbackShowFrame() but don't flip renderer at end, so there no flickering
+void CallbackShowFrameNoFlip(unsigned char *buf, unsigned int bufw, unsigned int bufh, unsigned int sx, unsigned int sy,
+                       unsigned int w, unsigned int h, unsigned int dstx, unsigned int dsty, unsigned int hicolor) {
+  // prepare our bitmap
+  int texW, texH;
+  BlitToMovieBitmap(buf, bufw, bufh, hicolor, true, texW, texH);
+
+  // calculate UVs from texture
+  unsigned int drawWidth = bufw;
+  unsigned int drawHeight = bufh;
+  float u = float(drawWidth - 1) / float(texW - 1);
+  float v = float(drawHeight - 1) / float(texH - 1);
+
+  StartFrame(0, 0, 640, 480, false);
+
+  rend_ClearScreen(GR_BLACK);
+  rend_SetAlphaType(AT_CONSTANT);
+  rend_SetAlphaValue(255);
+  rend_SetLighting(LS_NONE);
+  rend_SetColorModel(CM_MONO);
+  rend_SetOverlayType(OT_NONE);
+  rend_SetWrapType(WT_CLAMP);
+  rend_SetFiltering(0);
+  rend_SetZBufferState(0);
+  rend_DrawScaledBitmap(dstx, dsty, dstx + drawWidth, dsty + drawHeight, Movie_bm_handle, 0.0f, 0.0f, u, v);
+  rend_SetFiltering(1);
+  rend_SetZBufferState(1);
+
+  // call our callback
+  if (Movie_callback != nullptr) {
+    Movie_callback(dstx, dsty, Movie_current_framenum);
+  }
+  ++Movie_current_framenum;
+
+  EndFrame();
 }
 #endif
 
@@ -531,11 +569,10 @@ intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *ap
 #else
   strcpy(real_name, mvename);
 #endif
-  FILE *hfile = fopen(mvename, "rb");
+  fhandle = fopen(mvename, "rb");
 
-  if (hfile == nullptr) {
+  if (fhandle == nullptr) {
     mprintf(1, "MOVIE: Unable to open %s\n", real_name);
-    fhandle = nullptr;
     return 0;
   }
 
@@ -543,6 +580,7 @@ intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *ap
   //MVE_rmFastMode(MVE_RM_NORMAL);
   MVE_memCallbacks(CallbackAlloc, CallbackFree);
   MVE_ioCallbacks(CallbackFileRead);
+  MVE_sfCallbacks(CallbackShowFrameNoFlip);
   InitializePalette();
   Movie_bm_handle = -1;
   Movie_looping = looping;
@@ -550,11 +588,16 @@ intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *ap
   // let the render know we will be copying bitmaps to framebuffer (or something)
   rend_SetFrameBufferCopyState(true);
 
-  fhandle = hfile;
-  // TODO return (intptr_t)MVE_frOpen(CallbackFileRead, hfile, NULL);
-  return 0;
+  MVESTREAM *mve = MVE_rmPrepMovie(fhandle, -1, -1, 0);
+  if (mve == nullptr) {
+    mprintf((0, "Failed to PrepMovie %s\n", mvename));
+    fclose((FILE *)fhandle);
+    return MVELIB_INIT_ERROR;
+  }
+
+  return (intptr_t)mve;
 #else
-  return 0;
+  return nullptr;
 #endif
 }
 
@@ -574,17 +617,8 @@ intptr_t mve_SequenceFrame(intptr_t handle, void *fhandle, bool sequence, int *b
 reread_frame:
 
   // get the next frame of data
-  uint8_t *pBuffer = NULL;
-  // TODO err = MVE_frGet((MVE_frStream)handle, &pBuffer, &sw, &sh, &hicolor);
-
-  // refresh our palette
-  {
-    uint32_t palstart = 0;
-    uint32_t palcount = 0;
-    uint8_t *pal = NULL;
-    // TODO MVE_frPal((MVE_frStream)handle, &pal, &palstart, &palcount);
-    CallbackSetPalette(pal, palstart, palcount);
-  }
+  uint8_t *pBuffer = nullptr;
+  err = MVE_rmStepMovie((MVESTREAM *)handle);
 
   if (err == 0) {
     // blit to bitmap
@@ -599,9 +633,7 @@ reread_frame:
   }
 
   if (Movie_looping && err == MVE_ERR_EOF) {
-    // TODO MVE_frClose((MVE_frStream)handle);
-    fseek((FILE *)fhandle, 0, SEEK_SET);
-    // TODO handle = (intptr_t)MVE_frOpen(CallbackFileRead, (FILE *)fhandle, NULL);
+    mve_reset((MVESTREAM *)handle);
     sequence = true;
     goto reread_frame;
   }
@@ -617,9 +649,7 @@ bool mve_SequenceClose(intptr_t hMovie, void *hFile) {
   if (hMovie == -1)
     return false;
 
-  // TODO MVE_frClose((MVE_frStream)hMovie);
-  MVE_rmEndMovie();
-  fclose((FILE *)hFile);
+  MVE_rmEndMovie((MVESTREAM *)hMovie);
 
   // free our bitmap
   if (Movie_bm_handle != -1) {
