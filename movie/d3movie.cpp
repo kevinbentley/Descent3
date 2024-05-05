@@ -222,7 +222,7 @@ public:
       ISysSoundBuffer *p = (ISysSoundBuffer *)new MovieSoundBuffer(sb);
       *lsndb = p;
     } else {
-      lsndb = NULL;
+      lsndb = nullptr;
     }
     return ret;
   }
@@ -693,6 +693,7 @@ bool mve_InitSound(oeApplication *app, MovieSoundDevice &device) {
   device.SetDirectSound(snddev);
 
   MVE_sndInit(&device);
+  MVE_sndInit(1);
 
   return true;
 }

@@ -16,7 +16,7 @@
  */
 
 // TODO
-//#define AUDIO
+#define AUDIO
 
 #include <cstring>
 #ifdef _WIN32
@@ -28,7 +28,6 @@
 
 #if defined(AUDIO)
 #include <SDL.h>
-#include "SDL_mixer.h"
 #endif
 
 #include "decoders.h"
@@ -63,7 +62,7 @@ int g_spdFactorNum = 0;
 static int g_spdFactorDenom = 10;
 static int g_frameUpdated = 0;
 
-static ISoundDevice *snd_ds = NULL;
+static ISoundDevice *snd_ds = nullptr;
 
 static short get_short(unsigned char *data) {
   short value;
@@ -130,7 +129,7 @@ unsigned long int timer_getmicroseconds() {
   struct timeval tv;
   static time_t starttime = 0;
 
-  gettimeofday(&tv, NULL);
+  gettimeofday(&tv, nullptr);
 
   if (!starttime)
     starttime = tv.tv_sec;
@@ -149,7 +148,7 @@ void timer_sleepmicroseconds(unsigned long int usec) {
   struct timespec ts;
   ts.tv_sec = usec / 1000000;
   ts.tv_nsec = usec % 1000000 * 1000;
-  nanosleep(&ts, NULL);
+  nanosleep(&ts, nullptr);
 #endif
 }
 
@@ -177,18 +176,18 @@ static int create_timer_handler(unsigned char major, unsigned char minor, unsign
   return 1;
 }
 
-static void timer_stop(void) {
+static void timer_stop() {
   timer_expire = 0;
   timer_started = 0;
 }
 
-static void timer_start(void) {
+static void timer_start() {
   timer_expire = timer_getmicroseconds();
   timer_expire += micro_frame_delay;
   timer_started = 1;
 }
 
-static void do_timer_wait(void) {
+static void do_timer_wait() {
   unsigned long int ts;
   unsigned long int tv;
 
@@ -211,12 +210,10 @@ end:
  * audio handlers
  *************************/
 
-static int mve_audio_enabled = 0;
 #ifdef AUDIO
 #define TOTAL_AUDIO_BUFFERS 64
 
 static int audiobuf_created = 0;
-static void mve_audio_callback(void *userdata, unsigned char *stream, int len);
 static short *mve_audio_buffers[TOTAL_AUDIO_BUFFERS];
 static int mve_audio_buflens[TOTAL_AUDIO_BUFFERS];
 static int mve_audio_curbuf_curpos = 0;
@@ -295,7 +292,6 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 
   int stereo;
   int bitsize;
-  int compressed;
 
   int format;
 
@@ -314,16 +310,13 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
   stereo = (flags & MVE_AUDIO_FLAGS_STEREO) ? 1 : 0;
   bitsize = (flags & MVE_AUDIO_FLAGS_16BIT) ? 1 : 0;
 
-  if (minor > 0) {
-    compressed = flags & MVE_AUDIO_FLAGS_COMPRESSED ? 1 : 0;
-  } else {
-    compressed = 0;
+  mve_audio_compressed = 0;
+  if (minor > 0 && (flags & MVE_AUDIO_FLAGS_COMPRESSED)) {
+    mve_audio_compressed = 1;
   }
 
-  mve_audio_compressed = compressed;
-
   if (bitsize == 1) {
-#ifdef WORDS_BIGENDIAN
+#ifdef OUTRAGE_BIG_ENDIAN
     format = AUDIO_S16MSB;
 #else
     format = AUDIO_S16LSB;
@@ -334,17 +327,23 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 
   fprintf(stderr, "creating audio buffers:\n");
   fprintf(stderr, "sample rate = %d, stereo = %d, bitsize = %d, compressed = %d\n", sample_rate, stereo,
-          bitsize ? 16 : 8, compressed);
+          bitsize ? 16 : 8, mve_audio_compressed);
 
-  if (Mix_OpenAudio(sample_rate, format, stereo ? 2 : 1, 4096) == 0) {
+  SDL_AudioSpec spec {
+      .freq = sample_rate,
+      .format = (unsigned short)format,
+      .channels = (unsigned char)(stereo ? 2 : 1),
+      .size = (unsigned int)desired_buffer,
+      .callback = mve_audio_callback,
+  };
+  if (SDL_OpenAudio(&spec, nullptr) == 0) {
     fprintf(stderr, "   success\n");
     mve_audio_canplay = 1;
   } else {
-    fprintf(stderr, "   failure : %s\n", Mix_GetError());
+    fprintf(stderr, "   failure : %s\n", SDL_GetError());
     mve_audio_canplay = 0;
   }
 
-  Mix_SetPostMix(mve_audio_callback, NULL);
   mve_audio_canplay = 1;
 
   memset(mve_audio_buffers, 0, sizeof(mve_audio_buffers));
@@ -357,7 +356,7 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 static int play_audio_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
 #ifdef AUDIO
   if (mve_audio_canplay && !mve_audio_playing && mve_audio_bufhead != mve_audio_buftail) {
-    Mix_Resume(-1);
+    SDL_PauseAudio(0);
     mve_audio_playing = 1;
   }
 #endif
@@ -650,7 +649,7 @@ void MVE_rmEndMovie(MVESTREAM *mve) {
 #ifdef AUDIO
   if (mve_audio_canplay) {
     // only close audio if we opened it
-    Mix_CloseAudio();
+    SDL_CloseAudio();
     mve_audio_canplay = 0;
   }
   for (int i = 0; i < TOTAL_AUDIO_BUFFERS; i++)
