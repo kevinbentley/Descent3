@@ -30,6 +30,7 @@
 #include <SDL.h>
 #endif
 
+#include "byteswap.h"
 #include "decoders.h"
 #include "mvelib.h"
 #include "mve_audio.h"
@@ -64,22 +65,16 @@ static int g_frameUpdated = 0;
 
 static ISoundDevice *snd_ds = nullptr;
 
-static short get_short(unsigned char *data) {
-  short value;
-  value = data[0] | (data[1] << 8);
-  return value;
+static short get_short(const unsigned char *data) {
+  return D3::convert_le<int16_t>(data[0] | (data[1] << 8));
 }
 
-static unsigned short get_ushort(unsigned char *data) {
-  unsigned short value;
-  value = data[0] | (data[1] << 8);
-  return value;
+static unsigned short get_ushort(const unsigned char *data) {
+  return D3::convert_le<uint16_t>(data[0] | (data[1] << 8));
 }
 
-static int get_int(unsigned char *data) {
-  int value;
-  value = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
-  return value;
+static int get_int(const unsigned char *data) {
+  return D3::convert_le<int32_t>(data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24));
 }
 
 static unsigned int unhandled_chunks[32 * 256];
