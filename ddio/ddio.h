@@ -222,6 +222,9 @@ void ddio_InternalKeyResume();
 // returns if key is up or down
 bool ddio_InternalKeyState(uint8_t key);
 
+extern int ddio_KeyInKey();
+extern int ddio_KeyToAscii(int code);
+
 // returns internal key down time
 float ddio_InternalKeyDownTime(uint8_t key);
 

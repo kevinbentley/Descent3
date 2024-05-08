@@ -27,6 +27,7 @@
 static int Num_of_bumpmaps = 0;
 static uint16_t Free_bumpmap_list[MAX_BUMPMAPS];
 
+// MTS: only used in this file?
 bms_bumpmap GameBumpmaps[MAX_BUMPMAPS];
 static int Bumpmap_mem_used = 0;
 

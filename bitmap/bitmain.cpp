@@ -320,10 +320,10 @@
 #define BM_FILETYPE_TGA 1
 #define BM_FILETYPE_PCX 2
 #define BM_FILETYPE_IFF 3
-int Num_of_bitmaps = 0;
+static int Num_of_bitmaps = 0;
 bms_bitmap GameBitmaps[MAX_BITMAPS];
 uint32_t Bitmap_memory_used = 0;
-uint8_t Bitmaps_initted = 0;
+static uint8_t Bitmaps_initted = 0;
 /* modify these lines to establish data type */
 typedef bms_bitmap *bm_T;      /* type of item to be stored */
 typedef int bm_hashTableIndex; /* index into hash table */

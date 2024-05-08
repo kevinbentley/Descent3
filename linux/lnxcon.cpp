@@ -62,6 +62,14 @@
 
 #include "application.h"
 #include "AppConsole.h"
+#if 0
+#include "TaskSystem.h"
+#include "mono.h"
+#include "pstring.h"
+#include <unistd.h>
+#include <ctype.h>
+#include "lnxcon.hpp"
+#endif
 
 enum {
   Console_null,
@@ -118,7 +126,7 @@ Console_Commands commands[Console_total] = {
 
 //////////////////////////////////////////////////
 // Global Variables
-bool Con_init = false; // Console has been initialized
+static bool Con_init = false; // Console has been initialized
 
 #ifdef mem_malloc
 #undef mem_malloc
