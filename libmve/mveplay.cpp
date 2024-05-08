@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// TODO
 #define AUDIO
 
 #include <cstring>
@@ -64,6 +63,8 @@ static int g_spdFactorDenom = 10;
 static int g_frameUpdated = 0;
 
 static ISoundDevice *snd_ds = nullptr;
+
+static SDL_AudioDeviceID device = 0;
 
 static short get_short(const unsigned char *data) {
   return D3::convert_le<int16_t>(data[0] | (data[1] << 8));
@@ -328,10 +329,11 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
       .freq = sample_rate,
       .format = (unsigned short)format,
       .channels = (unsigned char)(stereo ? 2 : 1),
-      .size = (unsigned int)desired_buffer,
+      .size = 4096,
       .callback = mve_audio_callback,
   };
-  if (SDL_OpenAudio(&spec, nullptr) == 0) {
+  device = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE);
+  if (device != 0) {
     fprintf(stderr, "   success\n");
     mve_audio_canplay = 1;
   } else {
@@ -351,7 +353,7 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 static int play_audio_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
 #ifdef AUDIO
   if (mve_audio_canplay && !mve_audio_playing && mve_audio_bufhead != mve_audio_buftail) {
-    SDL_PauseAudio(0);
+    SDL_PauseAudioDevice(device, 0);
     mve_audio_playing = 1;
   }
 #endif
@@ -644,7 +646,7 @@ void MVE_rmEndMovie(MVESTREAM *mve) {
 #ifdef AUDIO
   if (mve_audio_canplay) {
     // only close audio if we opened it
-    SDL_CloseAudio();
+    SDL_CloseAudioDevice(device);
     mve_audio_canplay = 0;
   }
   for (int i = 0; i < TOTAL_AUDIO_BUFFERS; i++)
