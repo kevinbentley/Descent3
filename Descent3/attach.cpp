@@ -143,7 +143,19 @@ PI); rot_angle = acos(dot);
 // Finds the position of a attach point on an object
 // The uvec is optional as most attaching objects don't need at complete orientation set (only an fvec)
 static bool AttachPointPos(object *obj, char ap, bool f_compute_pos, vector *attach_pos, bool f_compute_fvec,
-                           vector *attach_fvec, bool *f_computed_uvec = NULL, vector *attach_uvec = NULL) {
+                           vector *attach_fvec, bool *f_computed_uvec = NULL, vector *attach_uvec = NULL);
+
+static void ConvertAxisAmountMatrix(vector *n, float w, matrix *rotmat);
+
+// Adds and subtracts from mass from connections and disconnections
+static void AttachPropagateMass(object *child, bool f_attach = true);
+
+static void ProprogateUltimateAttachParent(object *parent, int ultimate_handle);
+
+// Finds the position of a attach point on an object
+// The uvec is optional as most attaching objects don't need at complete orientation set (only an fvec)
+bool AttachPointPos(object *obj, char ap, bool f_compute_pos, vector *attach_pos, bool f_compute_fvec,
+                    vector *attach_fvec, bool *f_computed_uvec, vector *attach_uvec) {
   poly_model *pm;
   vector pnt;
   vector normal;
@@ -227,7 +239,7 @@ static bool AttachPointPos(object *obj, char ap, bool f_compute_pos, vector *att
   return true;
 }
 
-static void ConvertAxisAmountMatrix(vector *n, float w, matrix *rotmat) {
+void ConvertAxisAmountMatrix(vector *n, float w, matrix *rotmat) {
   float s;
   float c;
   float t;
@@ -399,7 +411,7 @@ bool AttachDoPosOrient(object *parent, char parent_ap, object *child, char child
 }
 
 // Adds and subtracts from mass from connections and disconnections
-static void AttachPropagateMass(object *child, bool f_attach = true) {
+void AttachPropagateMass(object *child, bool f_attach) {
   object *new_parent;
 
   if (!child)
@@ -447,7 +459,7 @@ static inline void ComputeUltimateAttachParent(object *child) {
   } while (cur_obj->flags & OF_ATTACHED);
 }
 
-static void ProprogateUltimateAttachParent(object *parent, int ultimate_handle) {
+void ProprogateUltimateAttachParent(object *parent, int ultimate_handle) {
   int i;
 
   ASSERT(parent);

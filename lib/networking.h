@@ -431,8 +431,6 @@ int nw_SendPilotTrackerPacket(void *packet);
 // Checks for an incoming pilot tracker packet.
 int nw_ReceivePilotTracker(void *packet);
 
-int nw_PingCompare(const void *arg1, const void *arg2);
-
 // initialize the buffering system
 void nw_psnet_buffer_init();
 

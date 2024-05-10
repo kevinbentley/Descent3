@@ -47,7 +47,7 @@
 
 bool Debug_break = false;
 
-static char *Debug_DumpInfo();
+static const char *Debug_DumpInfo();
 
 //	if we are running under a debugger, then pass true
 bool Debug_Init(bool debugger, bool mono_debug) {
@@ -67,7 +67,7 @@ bool Debug_Init(bool debugger, bool mono_debug) {
 // Return types are the same as the Windows return values
 int Debug_ErrorBox(int type, const char *topstring, const char *title, const char *bottomstring) {
   int answer = 0;
-  char *dumptext = Debug_DumpInfo();
+  const char *dumptext = Debug_DumpInfo();
 
   fprintf(stderr, "\r\n%s(%s)\r\n\n%s\r\n\n%s\r\n", title, topstring, dumptext, bottomstring);
 
@@ -84,7 +84,7 @@ int Debug_MessageBox(int type, const char *title, const char *str) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-char *Debug_DumpInfo() {
-  static char e[] = "System Error";
+const char *Debug_DumpInfo(void) {
+  static const char e[] = "System Error";
   return e;
 }

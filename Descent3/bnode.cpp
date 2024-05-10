@@ -109,7 +109,7 @@
 #include "BOA.h"
 #include "psrand.h"
 
-bn_list BNode_terrain_list[8];
+static bn_list BNode_terrain_list[8];
 bool BNode_allocated = false;
 bool BNode_verified = false;
 
@@ -172,14 +172,17 @@ public:
   }
 };
 
-static float BNode_QuickDist(vector *pos1, vector *pos2) {
+static float BNode_QuickDist(vector *pos1, vector *pos2);
+static void BNode_UpdatePathInfo(pq_item **node_list, int start, int end);
+
+float BNode_QuickDist(vector *pos1, vector *pos2) {
   return fabs(pos1->x - pos2->x) + fabs(pos1->y - pos2->y) + fabs(pos1->z - pos2->z);
 }
 
 int BNode_Path[MAX_BNODES_PER_ROOM];
 int BNode_PathNumNodes;
 
-static void BNode_UpdatePathInfo(pq_item **node_list, int start, int end) {
+void BNode_UpdatePathInfo(pq_item **node_list, int start, int end) {
   int cur_node = end;
   int i;
 

@@ -1555,6 +1555,7 @@
 #define MIN_TARGET_UPDATE_INTERVAL 2.0f
 #define MAX_TARGET_UPDATE_INTERVAL 4.5f
 
+// MTS: unused
 float AI_last_time_room_noise_alert_time[MAX_ROOMS + 8];
 int AI_unique_goal_id = 0;
 

@@ -50,9 +50,6 @@ extern weather Weather;
 // resets the weather so there is nothing happening
 void ResetWeather();
 
-// Makes droplets appear on the windshield, plus makes rain fall in the distance
-void DoRainEffect();
-
 // does all the weather stuff that is going to be done for this frame
 void DoWeatherForFrame();
 

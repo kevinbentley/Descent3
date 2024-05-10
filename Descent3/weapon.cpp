@@ -448,6 +448,7 @@ int Static_weapon_ckpt_names[][2] = {
     {TXI_WPNC_YELFLARE_1, TXI_WPNC_YELFLARE_2},
 };
 
+// MTS: unused?
 // Sets all weapons to unused
 void InitWeapons() {
   for (int i = 0; i < MAX_WEAPONS; i++) {
@@ -501,6 +502,7 @@ void FreeWeapon(int n) {
   Num_weapons--;
 }
 
+// MTS: unused?
 // Gets next weapon from n that has actually been alloced
 int GetNextWeapon(int n) {
   int i;
@@ -522,6 +524,7 @@ int GetNextWeapon(int n) {
   return n;
 }
 
+// MTS: unused?
 // Gets previous weapon from n that has actually been alloced
 int GetPrevWeapon(int n) {
   int i;
@@ -557,6 +560,7 @@ int FindWeaponName(const char *name) {
   return -1;
 }
 
+// MTS: unused?
 // Given a weapon handle, returns that weapons bitmap
 // If the weapon is animated, returns framenum mod num_of_frames in the animation
 // Also figures in gametime
@@ -577,6 +581,7 @@ int GetWeaponHudImage(int handle, int framenum) {
     return (Weapons[handle].hud_image_handle);
 }
 
+// MTS: unused?
 // Given a filename, loads either the bitmap or vclip found in that file.  If type
 // is not NULL, sets it to 1 if file is animation, otherwise sets it to zero
 int LoadWeaponHudImage(char *filename, int *type) {
@@ -623,6 +628,7 @@ int GetWeaponFireImage(int handle, int frame) {
     return (Weapons[handle].fire_image_handle);
 }
 
+// MTS: unused?
 // Given a filename, loads either the bitmap or model found in that file.  If type
 // is not NULL, sets it to 1 if file is model, otherwise sets it to zero
 int LoadWeaponFireImage(char *filename, int *type, int *anim, int pageable) {
@@ -654,6 +660,7 @@ int LoadWeaponFireImage(char *filename, int *type, int *anim, int pageable) {
   return bm_handle;
 }
 
+// MTS: only used in this file.
 // Given a weapon name, assigns that weapon to a specific index into
 // the Weapons array.  Returns -1 if the named weapon is not found, 0 if the weapon
 // is already in its place, or 1 if successfully moved
@@ -698,6 +705,7 @@ int MatchWeaponToIndex(char *name, int dest_index) {
   return new_index; // we made it!
 }
 
+// MTS: Used only in this file.
 // Moves a weapon from a given index into a new one (above MAX_STATIC_WEAPONS)
 // returns new index
 int MoveWeaponFromIndex(int index) {
@@ -770,6 +778,7 @@ void RemapWeapons() {
   }
 }
 
+// MTS: only used in this file.
 // goes thru every entity that could possible have a weapon index (ie objects, weapons, etc)
 // and changes the old index to the new index
 void RemapAllWeaponObjects(int old_index, int new_index) {
@@ -821,6 +830,7 @@ void RemapAllWeaponObjects(int old_index, int new_index) {
   }
 }
 
+// MTS: unused?
 bool IsWeaponSecondary(int index) {
   if (index < SECONDARY_INDEX)
     return false;
@@ -881,10 +891,10 @@ int AddWeaponToPlayer(int slot, int weap_index, int ammo) {
 //	select the higher class weapon in that slot when switching to that slot.
 static uint16_t Weapon_slot_mask = 0;
 
-void SelectPrimaryWeapon(int slot);
-void SelectSecondaryWeapon(int slot);
-void SetPrimaryWeapon(int index, int slot);
-void SetSecondaryWeapon(int index, int slot);
+static void SelectPrimaryWeapon(int slot);
+static void SelectSecondaryWeapon(int slot);
+static void SetPrimaryWeapon(int index, int slot);
+static void SetSecondaryWeapon(int index, int slot);
 
 static inline bool is_weapon_available(unsigned player_weapon_flags, int new_weapon, uint16_t ammo = 0xffff) {
   return ((player_weapon_flags & HAS_FLAG(new_weapon)) && ammo > 0) ? true : false;
@@ -893,8 +903,10 @@ static inline bool is_weapon_available(unsigned player_weapon_flags, int new_wea
 // used for sequencing
 void ResetWeaponSelectStates(uint16_t new_state) { Weapon_slot_mask = new_state; }
 
+// MTS: unused?
 void SaveWeaponSelectStates(CFILE *fp) { cf_WriteShort(fp, Weapon_slot_mask); }
 
+// MTS: unused?
 void LoadWeaponSelectStates(CFILE *fp) {
   uint16_t state = (uint16_t)cf_ReadShort(fp);
   ResetWeaponSelectStates(state);
@@ -1136,7 +1148,7 @@ void SetSecondaryWeapon(int index, int slot) {
 ///////////////////////////////////////////////////////////////////////////
 //	Weapon AUTO selection
 
-const uint16_t SELLIST_START = 0x7ffe, SELLIST_END = 0x7fff;
+static constexpr uint16_t SELLIST_START = 0x7ffe, SELLIST_END = 0x7fff;
 
 static uint16_t PrimaryWpnSelectList[] = {SELLIST_START, LASER_INDEX,  VAUSS_INDEX,       MICROWAVE_INDEX,
                                         PLASMA_INDEX,  FUSION_INDEX, SUPER_LASER_INDEX, MASSDRIVER_INDEX,
@@ -1184,7 +1196,7 @@ void SetAutoSelectSecondaryWpnIdx(int slot, uint16_t idx) {
   SecondaryWpnSelectList[slot + 1] = idx;
 }
 
-const uint16_t IWPNSEL_SKIP = (uint16_t) ((~WPNSEL_SKIP) & 0xFFFF);
+static constexpr uint16_t IWPNSEL_SKIP = (uint16_t) ((~WPNSEL_SKIP) & 0xFFFF);
 
 #define WPNINDEX(_index) (sel_list[(_index)] & IWPNSEL_SKIP)
 

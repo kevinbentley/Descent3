@@ -523,6 +523,11 @@ static reliable_socket reliable_sockets[MAXRELIABLESOCKETS];
 #include <fcntl.h>
 #endif
 
+static void CloseNetworking();
+static void nw_SetSocketOptions(SOCKET sock);
+static void nw_LoadThreadLibrary(void);
+static int nw_PingCompare(const void *arg1, const void *arg2);
+
 int make_nonblocking(SOCKET sock)
 {
 #ifdef WIN32
@@ -1748,7 +1753,6 @@ int nw_CheckReliableSocket(int socknum) {
   }
 }
 
-// MTS: only used in this file.
 int nw_PingCompare(const void *arg1, const void *arg2) {
   float *ping1 = (float *)arg1;
   float *ping2 = (float *)arg2;

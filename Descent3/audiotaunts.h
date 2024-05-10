@@ -45,8 +45,6 @@
 #ifndef __AUDIO_TAUNT_H_
 #define __AUDIO_TAUNT_H_
 
-extern bool Audio_taunts_enabled;
-
 // Error codes:
 #define TAUNTIMPERR_NOERROR 0
 #define TAUNTIMPERR_NOTFOUND 1

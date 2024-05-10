@@ -60,7 +60,6 @@
 bool InitVoices(void);
 void CloseVoices(void);
 void PlayVoice(char *filename, int flags);
-void StopVoice(void);
 void UpdateVoices(void);
 
 extern bool PlayPowerupVoice;

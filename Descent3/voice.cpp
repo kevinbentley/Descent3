@@ -101,7 +101,8 @@ private:
 tVoice CurrentVoiceHandle;
 VoiceQueue vq;
 
-void StartVoice(char *filename, int flags);
+static void StartVoice(char *filename, int flags);
+static void StopVoice(void);
 
 bool InitVoices(void) {
   mprintf(0, "Voice System: Init\n");
@@ -120,6 +121,7 @@ void CloseVoices(void) {
   StopVoice();
 }
 
+// MTS: unused
 void PlayVoice(char *filename, int flags) {
 #ifdef DEMO
   return;

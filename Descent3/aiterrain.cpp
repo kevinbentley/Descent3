@@ -67,6 +67,9 @@ static int ai_num_checks_since_init = 0;
 static float ai_rad;
 static ground_information *ai_ground_info_ptr;
 
+static void ait_terrain_clean();
+static void ai_check_terrain_node(int cur_node, int f_check_local_nodes);
+
 void ait_Init() {
   ai_num_segs_checked = 0;
   memset(ai_terrain_check_list, 0, ((TERRAIN_WIDTH * TERRAIN_DEPTH) >> 3) + 1);
@@ -76,7 +79,7 @@ void ait_Init() {
 #endif
 }
 
-static void ait_terrain_clean() {
+void ait_terrain_clean() {
   int i;
 
   assert(ai_num_segs_checked >= 0 && ai_num_segs_checked <= AI_MAX_SEGS_CHECKED);
@@ -96,7 +99,7 @@ static void ait_terrain_clean() {
   ai_num_segs_checked = 0;
 }
 
-static void ai_check_terrain_node(int cur_node, int f_check_local_nodes) {
+void ai_check_terrain_node(int cur_node, int f_check_local_nodes) {
   int check_x, check_y;
   int new_node;
   int xcounter, ycounter;
@@ -160,6 +163,7 @@ static void ai_check_terrain_node(int cur_node, int f_check_local_nodes) {
   return;
 }
 
+// MTS: unused?
 // Returns true if the new point is on the terrain and false if the path results in leaving the terrain
 bool ait_GetGroundInfo(ground_information *ground_info, vector *p0, vector *p1, float rad, angle fov) {
   int start_node, end_node;

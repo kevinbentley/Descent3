@@ -88,12 +88,15 @@
 asp Ambient_sound_patterns[MAX_AMBIENT_SOUND_PATTERNS];
 int Num_ambient_sound_patterns = 0;
 
+static void ProcessASP(asp *asp);
+static void FreeAmbientSoundData();
+
 // Computes a floating-point pseudo-random number.
 // Returns value in the range 0..1, with the precision 1/D3_RAND_MAX
 static float randf() { return ((float)ps_rand()) / ((float)D3_RAND_MAX); }
 
 // Process an Ambient Sound Pattern
-static void ProcessASP(asp *asp) {
+void ProcessASP(asp *asp) {
   // Check for empty ASP
   if (!asp->num_sounds)
     return;
@@ -161,7 +164,7 @@ void InitAmbientSounds() {
 #include "mem.h"
 
 // Close down ambient sound system and free data
-static void FreeAmbientSoundData() {
+void FreeAmbientSoundData() {
   for (int p = 0; p < Num_ambient_sound_patterns; p++)
     if (Ambient_sound_patterns[p].num_sounds)
       mem_free(Ambient_sound_patterns[p].sounds);
