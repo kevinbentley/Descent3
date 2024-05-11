@@ -28,15 +28,18 @@
 #include <sys/time.h>
 #endif // _WIN32
 
-#if defined(AUDIO)
-#include <SDL.h>
-#endif
-
 #include "byteswap.h"
 #include "decoders.h"
 #include "mvelib.h"
 #include "mve_audio.h"
-#include "SystemInterfaces.h"
+
+#ifdef AUDIO
+#ifdef _WIN32
+
+#else
+#include "lnx_sound.h"
+#endif
+#endif
 
 #define MVE_OPCODE_ENDOFSTREAM 0x00
 #define MVE_OPCODE_ENDOFCHUNK 0x01
@@ -65,10 +68,6 @@ int g_spdFactorNum = 0;
 static int g_spdFactorDenom = 10;
 static int g_frameUpdated = 0;
 
-static ISoundDevice *snd_ds = nullptr;
-
-static SDL_AudioDeviceID device = 0;
-
 static short get_short(const unsigned char *data) {
   return D3::convert_le<int16_t>(data[0] | (data[1] << 8));
 }
@@ -85,7 +84,6 @@ static unsigned int unhandled_chunks[32 * 256];
 
 static int default_seg_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
   unhandled_chunks[major << 8 | minor]++;
-  // fprintf(stderr, "unknown chunk type %02x/%02x\n", major, minor);
   return 1;
 }
 
@@ -210,84 +208,31 @@ end:
  *************************/
 
 #ifdef AUDIO
-
-static std::unique_ptr<std::deque<int16_t>> mve_sound_buffer;
-
-static int mve_audio_playing = 0;
-static int mve_audio_canplay = 0;
-static int mve_audio_compressed = 0;
+static std::unique_ptr<D3::MovieSoundDevice> snd_ds;
 static int mve_audio_enabled = 1;
-
-static void mve_audio_callback(void *userdata, unsigned char *stream, int len) {
-  for(int i = 0; i < len; i += 2) {
-    int16_t sample = mve_sound_buffer->front();
-    mve_sound_buffer->pop_front();
-    stream[i] = sample & 0xff;
-    stream[i + 1] = sample >> 8;
-  }
-}
+#else
+static int mve_audio_enabled = 0;
 #endif
 
 static int create_audiobuf_handler(unsigned char major, unsigned char minor, unsigned char *data, int len,
                                    void *context) {
 #ifdef AUDIO
-  int flags;
-  int sample_rate;
-  int desired_buffer;
-
-  int stereo;
-  int bitsize;
-
-  int format;
-
   if (!mve_audio_enabled)
     return 1;
 
-  flags = get_ushort(data + 2);
-  sample_rate = get_ushort(data + 4);
-  desired_buffer = get_int(data + 6);
+  int flags = get_ushort(data + 2);
+  int sample_rate = get_ushort(data + 4);
+  int desired_buffer = get_int(data + 6);
 
-  stereo = (flags & MVE_AUDIO_FLAGS_STEREO) ? 1 : 0;
-  bitsize = (flags & MVE_AUDIO_FLAGS_16BIT) ? 1 : 0;
+  int channels = (flags & MVE_AUDIO_FLAGS_STEREO) ? 2 : 1;
+  int sample_size = (flags & MVE_AUDIO_FLAGS_16BIT) ? 2 : 1;
 
-  mve_audio_compressed = 0;
+  bool is_compressed = false;
   if (minor > 0 && (flags & MVE_AUDIO_FLAGS_COMPRESSED)) {
-    mve_audio_compressed = 1;
+    is_compressed = true;
   }
 
-  if (bitsize == 1) {
-#ifdef OUTRAGE_BIG_ENDIAN
-    format = AUDIO_S16MSB;
-#else
-    format = AUDIO_S16LSB;
-#endif
-  } else {
-    format = AUDIO_U8;
-  }
-
-  fprintf(stderr, "creating audio buffers:\n");
-  fprintf(stderr, "sample rate = %d, stereo = %d, bitsize = %d, compressed = %d\n", sample_rate, stereo,
-          bitsize ? 16 : 8, mve_audio_compressed);
-
-  SDL_AudioSpec spec {
-      .freq = sample_rate,
-      .format = (unsigned short)format,
-      .channels = (unsigned char)(stereo ? 2 : 1),
-      .size = 4096,
-      .callback = mve_audio_callback,
-  };
-  device = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE);
-  if (device != 0) {
-    fprintf(stderr, "   success\n");
-    mve_audio_canplay = 1;
-  } else {
-    fprintf(stderr, "   failure : %s\n", SDL_GetError());
-    mve_audio_canplay = 0;
-  }
-
-  mve_audio_canplay = 1;
-
-  mve_sound_buffer = std::make_unique<std::deque<int16_t >>();
+  snd_ds = std::make_unique<D3::MovieSoundDevice>(sample_rate, sample_size, channels, 4096, is_compressed);
 #endif
 
   return 1;
@@ -295,9 +240,8 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 
 static int play_audio_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
 #ifdef AUDIO
-  if (mve_audio_canplay && !mve_audio_playing) {
-    SDL_PauseAudioDevice(device, 0);
-    mve_audio_playing = 1;
+  if (snd_ds && snd_ds->IsInitialized()) {
+    snd_ds->Play();
   }
 #endif
   return 1;
@@ -306,15 +250,19 @@ static int play_audio_handler(unsigned char major, unsigned char minor, unsigned
 static int audio_data_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
 #ifdef AUDIO
   static const int selected_chan = 1;
-  if (mve_audio_canplay) {
+  if (snd_ds->IsInitialized()) {
     int chan = get_ushort(data + 2);
     if (chan & selected_chan) {
       if (major == MVE_OPCODE_AUDIOFRAMEDATA) {
-        mveaudio_process(mve_sound_buffer, data, mve_audio_compressed);
+        snd_ds->Lock();
+        mveaudio_process(snd_ds->GetBuffer(), data, snd_ds->IsCompressed());
+        snd_ds->Unlock();
       } else {
         // SILENCE, MORTALS!
         int nsamp = get_ushort(data + 4);
-        mve_sound_buffer->insert(mve_sound_buffer->end(), nsamp, 0);
+        snd_ds->Lock();
+        snd_ds->GetBuffer()->insert(snd_ds->GetBuffer()->end(), nsamp, 0);
+        snd_ds->Unlock();
       }
     }
   }
@@ -559,14 +507,7 @@ void MVE_rmEndMovie(MVESTREAM *mve) {
   timer_created = 0;
 
 #ifdef AUDIO
-  if (mve_audio_canplay) {
-    // only close audio if we opened it
-    SDL_CloseAudioDevice(device);
-    mve_audio_canplay = 0;
-  }
-  mve_audio_playing = 0;
-  mve_audio_canplay = 0;
-  mve_audio_compressed = 0;
+  snd_ds.reset();
 #endif
 
   mve_free(g_vBuffers);
@@ -584,7 +525,7 @@ void MVE_rmHoldMovie() { timer_started = 0; }
 
 void MVE_sndInit(ISoundDevice *lpDS) {
 #ifdef AUDIO
-  snd_ds = lpDS;
+  // snd_ds = lpDS;
 #endif
 }
 

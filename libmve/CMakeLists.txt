@@ -3,6 +3,7 @@ set(CPPS
 #  mvelibl.cpp
 #  platform.cpp
   lnxdsound.cpp
+  lnx_sound.cpp
 
   # d2x implementation
   decoder8.cpp
