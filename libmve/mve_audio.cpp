@@ -15,7 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-static int audio_exp_table[256] = {
+#include <algorithm>
+#include <deque>
+#include <memory>
+
+#include "byteswap.h"
+
+static int16_t audio_exp_table[256] = {
     0,      1,      2,      3,      4,      5,      6,      7,      //  8
     8,      9,      10,     11,     12,     13,     14,     15,     //
     16,     17,     18,     19,     20,     21,     22,     23,     //
@@ -50,31 +56,32 @@ static int audio_exp_table[256] = {
     -8,     -7,     -6,     -5,     -4,     -3,     -2,     -1,     //  256
 };
 
-static int getWord(unsigned char **fin) {
-  int value = ((*fin)[1] << 8) | (*fin)[0];
+static int16_t getWord(unsigned char **fin) {
+  int16_t value = D3::convert_le<int16_t>(((*fin)[1] << 8) | (*fin)[0]);
   *fin += 2;
   return value;
 }
 
-static void sendWord(short **fout, int nOffset) { *(*fout)++ = nOffset; }
+void mveaudio_process(std::unique_ptr<std::deque<int16_t>> &buffer, unsigned char *data, bool is_compressed) {
+  if (is_compressed) {
+    int nCurOffsets[2];
 
-static void processSwath(short *fout, unsigned char *data, int swath, int *offsets) {
-  int i;
-  for (i = 0; i < swath; i++) {
-    offsets[i & 1] += audio_exp_table[data[i]];
-    sendWord(&fout, offsets[i & 1]);
+    data += 4;
+    int swath = getWord(&data) / 2;
+    nCurOffsets[0] = getWord(&data);
+    nCurOffsets[1] = getWord(&data);
+    buffer->push_back((int16_t)std::clamp(nCurOffsets[0], -32768, 32767));
+    buffer->push_back((int16_t)std::clamp(nCurOffsets[1], -32768, 32767));
+
+    for (int i = 0; i < swath; i++) {
+      nCurOffsets[i & 1] += audio_exp_table[data[i]];
+      buffer->push_back((int16_t)std::clamp(nCurOffsets[i & 1], -32768, 32767));
+    }
+  } else {
+    data += 2;
+    int samples = getWord(&data);
+    for (int i = 0; i < samples; i++) {
+      buffer->push_back(getWord(&data));
+    }
   }
-}
-
-void mveaudio_uncompress(short *buffer, unsigned char *data, int length) {
-  int nCurOffsets[2];
-  int swath;
-
-  data += 4;
-  swath = getWord(&data) / 2;
-  nCurOffsets[0] = getWord(&data);
-  nCurOffsets[1] = getWord(&data);
-  sendWord(&buffer, nCurOffsets[0]);
-  sendWord(&buffer, nCurOffsets[1]);
-  processSwath(buffer, data, swath, nCurOffsets);
 }

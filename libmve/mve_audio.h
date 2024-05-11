@@ -18,6 +18,12 @@
 #ifndef INCLUDED_MVE_AUDIO_H
 #define INCLUDED_MVE_AUDIO_H
 
-void mveaudio_uncompress(short *buffer, unsigned char *data, int length);
+/**
+ * Process input data and send parsed data into queue buffer
+ * @param buffer output queue buffer
+ * @param data input data
+ * @param is_compress true if input data is compressed
+ */
+void mveaudio_process(std::unique_ptr<std::deque<int16_t>> &buffer, unsigned char *data, bool is_compressed = true);
 
 #endif /* INCLUDED_MVE_AUDIO_H */

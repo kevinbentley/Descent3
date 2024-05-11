@@ -18,6 +18,9 @@
 #define AUDIO
 
 #include <cstring>
+#include <deque>
+#include <memory>
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -122,7 +125,7 @@ unsigned long int timer_getmicroseconds() {
 #else
 
 unsigned long int timer_getmicroseconds() {
-  struct timeval tv;
+  struct timeval tv{};
   static time_t starttime = 0;
 
   gettimeofday(&tv, nullptr);
@@ -141,7 +144,7 @@ void timer_sleepmicroseconds(unsigned long int usec) {
 #elif defined(macintosh)
   Delay(usec / 1000);
 #else
-  struct timespec ts;
+  struct timespec ts{};
   ts.tv_sec = usec / 1000000;
   ts.tv_nsec = usec % 1000000 * 1000;
   nanosleep(&ts, nullptr);
@@ -207,75 +210,21 @@ end:
  *************************/
 
 #ifdef AUDIO
-#define TOTAL_AUDIO_BUFFERS 64
 
-static int audiobuf_created = 0;
-static short *mve_audio_buffers[TOTAL_AUDIO_BUFFERS];
-static int mve_audio_buflens[TOTAL_AUDIO_BUFFERS];
-static int mve_audio_curbuf_curpos = 0;
-static int mve_audio_bufhead = 0;
-static int mve_audio_buftail = 0;
+static std::unique_ptr<std::deque<int16_t>> mve_sound_buffer;
+
 static int mve_audio_playing = 0;
 static int mve_audio_canplay = 0;
 static int mve_audio_compressed = 0;
 static int mve_audio_enabled = 1;
 
 static void mve_audio_callback(void *userdata, unsigned char *stream, int len) {
-  int total = 0;
-  int length;
-  if (mve_audio_bufhead == mve_audio_buftail)
-    return /* 0 */;
-
-  // fprintf(stderr, "+ <%d (%d), %d, %d>\n", mve_audio_bufhead, mve_audio_curbuf_curpos, mve_audio_buftail, len);
-
-  while (mve_audio_bufhead != mve_audio_buftail                                     /* while we have more buffers  */
-         && len > (mve_audio_buflens[mve_audio_bufhead] - mve_audio_curbuf_curpos)) /* and while we need more data */
-  {
-    length = mve_audio_buflens[mve_audio_bufhead] - mve_audio_curbuf_curpos;
-    memcpy(stream,                                                                            /* cur output position */
-           ((unsigned char *)mve_audio_buffers[mve_audio_bufhead]) + mve_audio_curbuf_curpos, /* cur input position  */
-           length);                                                                           /* cur input length    */
-
-    total += length;
-    stream += length;                               /* advance output */
-    len -= length;                                  /* decrement avail ospace */
-    mve_free(mve_audio_buffers[mve_audio_bufhead]); /* free the buffer */
-    mve_audio_buffers[mve_audio_bufhead] = NULL;    /* free the buffer */
-    mve_audio_buflens[mve_audio_bufhead] = 0;       /* free the buffer */
-
-    if (++mve_audio_bufhead == TOTAL_AUDIO_BUFFERS) /* next buffer */
-      mve_audio_bufhead = 0;
-    mve_audio_curbuf_curpos = 0;
+  for(int i = 0; i < len; i += 2) {
+    int16_t sample = mve_sound_buffer->front();
+    mve_sound_buffer->pop_front();
+    stream[i] = sample & 0xff;
+    stream[i + 1] = sample >> 8;
   }
-
-  // fprintf(stderr, "= <%d (%d), %d, %d>: %d\n", mve_audio_bufhead, mve_audio_curbuf_curpos, mve_audio_buftail, len,
-  // total);
-  /*    return total; */
-
-  if (len != 0                                   /* ospace remaining  */
-      && mve_audio_bufhead != mve_audio_buftail) /* buffers remaining */
-  {
-    memcpy(stream,                                                                            /* dest */
-           ((unsigned char *)mve_audio_buffers[mve_audio_bufhead]) + mve_audio_curbuf_curpos, /* src */
-           len);                                                                              /* length */
-
-    mve_audio_curbuf_curpos += len; /* advance input */
-    stream += len;                  /* advance output (unnecessary) */
-    len -= len;                     /* advance output (unnecessary) */
-
-    if (mve_audio_curbuf_curpos >= mve_audio_buflens[mve_audio_bufhead]) /* if this ends the current chunk */
-    {
-      mve_free(mve_audio_buffers[mve_audio_bufhead]); /* free buffer */
-      mve_audio_buffers[mve_audio_bufhead] = NULL;
-      mve_audio_buflens[mve_audio_bufhead] = 0;
-
-      if (++mve_audio_bufhead == TOTAL_AUDIO_BUFFERS) /* next buffer */
-        mve_audio_bufhead = 0;
-      mve_audio_curbuf_curpos = 0;
-    }
-  }
-
-  // fprintf(stderr, "- <%d (%d), %d, %d>\n", mve_audio_bufhead, mve_audio_curbuf_curpos, mve_audio_buftail, len);
 }
 #endif
 
@@ -293,11 +242,6 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 
   if (!mve_audio_enabled)
     return 1;
-
-  if (audiobuf_created)
-    return 1;
-  else
-    audiobuf_created = 1;
 
   flags = get_ushort(data + 2);
   sample_rate = get_ushort(data + 4);
@@ -343,8 +287,7 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 
   mve_audio_canplay = 1;
 
-  memset(mve_audio_buffers, 0, sizeof(mve_audio_buffers));
-  memset(mve_audio_buflens, 0, sizeof(mve_audio_buflens));
+  mve_sound_buffer = std::make_unique<std::deque<int16_t >>();
 #endif
 
   return 1;
@@ -352,7 +295,7 @@ static int create_audiobuf_handler(unsigned char major, unsigned char minor, uns
 
 static int play_audio_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
 #ifdef AUDIO
-  if (mve_audio_canplay && !mve_audio_playing && mve_audio_bufhead != mve_audio_buftail) {
+  if (mve_audio_canplay && !mve_audio_playing) {
     SDL_PauseAudioDevice(device, 0);
     mve_audio_playing = 1;
   }
@@ -363,40 +306,16 @@ static int play_audio_handler(unsigned char major, unsigned char minor, unsigned
 static int audio_data_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
 #ifdef AUDIO
   static const int selected_chan = 1;
-  int chan;
-  int nsamp;
   if (mve_audio_canplay) {
-    chan = get_ushort(data + 2);
-    nsamp = get_ushort(data + 4);
+    int chan = get_ushort(data + 2);
     if (chan & selected_chan) {
-      /* HACK: +4 mveaudio_uncompress adds 4 more bytes */
       if (major == MVE_OPCODE_AUDIOFRAMEDATA) {
-        if (mve_audio_compressed) {
-          nsamp += 4;
-
-          mve_audio_buflens[mve_audio_buftail] = nsamp;
-          mve_audio_buffers[mve_audio_buftail] = (short *)mve_alloc(nsamp);
-          mveaudio_uncompress(mve_audio_buffers[mve_audio_buftail], data, -1); /* XXX */
-        } else {
-          nsamp -= 8;
-          data += 8;
-
-          mve_audio_buflens[mve_audio_buftail] = nsamp;
-          mve_audio_buffers[mve_audio_buftail] = (short *)mve_alloc(nsamp);
-          memcpy(mve_audio_buffers[mve_audio_buftail], data, nsamp);
-        }
+        mveaudio_process(mve_sound_buffer, data, mve_audio_compressed);
       } else {
-        mve_audio_buflens[mve_audio_buftail] = nsamp;
-        mve_audio_buffers[mve_audio_buftail] = (short *)mve_alloc(nsamp);
-
-        memset(mve_audio_buffers[mve_audio_buftail], 0, nsamp); /* XXX */
+        // SILENCE, MORTALS!
+        int nsamp = get_ushort(data + 4);
+        mve_sound_buffer->insert(mve_sound_buffer->end(), nsamp, 0);
       }
-
-      if (++mve_audio_buftail == TOTAL_AUDIO_BUFFERS)
-        mve_audio_buftail = 0;
-
-      if (mve_audio_buftail == mve_audio_bufhead)
-        fprintf(stderr, "d'oh!  buffer ring overrun (%d)\n", mve_audio_bufhead);
     }
   }
 #endif
@@ -411,11 +330,11 @@ static int audio_data_handler(unsigned char major, unsigned char minor, unsigned
 static int videobuf_created = 0;
 static int video_initialized = 0;
 int g_width, g_height;
-void *g_vBuffers = NULL, *g_vBackBuf1, *g_vBackBuf2;
+void *g_vBuffers = nullptr, *g_vBackBuf1, *g_vBackBuf2;
 
 static int g_destX, g_destY;
 static int g_screenWidth, g_screenHeight;
-static unsigned char *g_pCurMap = NULL;
+static unsigned char *g_pCurMap = nullptr;
 static int g_nMapLength = 0;
 static int g_truecolor;
 
@@ -449,7 +368,7 @@ static int create_videobuf_handler(unsigned char major, unsigned char minor, uns
 
   /* TODO: * 4 causes crashes on some files */
   /* only malloc once */
-  if (g_vBuffers == NULL)
+  if (g_vBuffers == nullptr)
     g_vBackBuf1 = g_vBuffers = mve_alloc(g_width * g_height * 8);
   if (truecolor) {
     g_vBackBuf2 = (unsigned short *)g_vBackBuf1 + (g_width * g_height);
@@ -522,19 +441,15 @@ static int video_codemap_handler(unsigned char major, unsigned char minor, unsig
 }
 
 static int video_data_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
-  short nFrameHot, nFrameCold;
-  short nXoffset, nYoffset;
-  short nXsize, nYsize;
-  unsigned short nFlags;
   unsigned char *temp;
 
-  nFrameHot = get_short(data);
-  nFrameCold = get_short(data + 2);
-  nXoffset = get_short(data + 4);
-  nYoffset = get_short(data + 6);
-  nXsize = get_short(data + 8);
-  nYsize = get_short(data + 10);
-  nFlags = get_ushort(data + 12);
+  short nFrameHot = get_short(data);
+  short nFrameCold = get_short(data + 2);
+  short nXoffset = get_short(data + 4);
+  short nYoffset = get_short(data + 6);
+  short nXsize = get_short(data + 8);
+  short nYsize = get_short(data + 10);
+  unsigned short nFlags = get_ushort(data + 12);
 
   if (nFlags & 1) {
     temp = (unsigned char *)g_vBackBuf1;
@@ -553,7 +468,7 @@ static int video_data_handler(unsigned char major, unsigned char minor, unsigned
 }
 
 static int end_chunk_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
-  g_pCurMap = NULL;
+  g_pCurMap = nullptr;
   return 1;
 }
 
@@ -649,18 +564,9 @@ void MVE_rmEndMovie(MVESTREAM *mve) {
     SDL_CloseAudioDevice(device);
     mve_audio_canplay = 0;
   }
-  for (int i = 0; i < TOTAL_AUDIO_BUFFERS; i++)
-    if (mve_audio_buffers[i] != NULL)
-      mve_free(mve_audio_buffers[i]);
-  memset(mve_audio_buffers, 0, sizeof(mve_audio_buffers));
-  memset(mve_audio_buflens, 0, sizeof(mve_audio_buflens));
-  mve_audio_curbuf_curpos = 0;
-  mve_audio_bufhead = 0;
-  mve_audio_buftail = 0;
   mve_audio_playing = 0;
   mve_audio_canplay = 0;
   mve_audio_compressed = 0;
-  audiobuf_created = 0;
 #endif
 
   mve_free(g_vBuffers);
