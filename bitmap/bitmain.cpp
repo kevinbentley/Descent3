@@ -337,7 +337,7 @@ static void bm_deleteNode(bm_T data);
 static bm_Node *bm_insertNode(bm_T data);
 static bm_hashTableIndex bm_hash(bm_T data);
 static bm_Node **bm_hashTable = NULL;
-static const int bm_hashTableSize = (MAX_BITMAPS / 2);
+static constexpr int bm_hashTableSize = (MAX_BITMAPS / 2);
 static void bm_InitHashTable();
 static void bm_DeleteHashTable();
 static int bm_TestName(const char *src);

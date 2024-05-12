@@ -75,7 +75,7 @@
 typedef uint32_t ddgr_color;
 
 // Color constants
-static const ddgr_color GR_NULL = 0xffffffff, // don't do a thing with this.
+static constexpr ddgr_color GR_NULL = 0xffffffff, // don't do a thing with this.
     GR_BLACK = 0x00000000, GR_GREEN = 0x0000ff00, GR_RED = 0x00ff0000, GR_BLUE = 0x000000ff, GR_DARKGRAY = 0x00404040,
                         GR_LIGHTGRAY = 0x00c0c0c0, GR_WHITE = 0x00ffffff;
 
