@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -413,86 +428,86 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_035 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -842,7 +857,7 @@ struct tMyHandle {
   int handle;
 };
 
-tMyHandle MyObjects[] = {
+static tMyHandle MyObjects[] = {
     {"MatCen1Peg", -1},        {"MatCen2Peg", -1},    {"MatCen3Peg", -1},    {"MatCen4Peg", -1},
     {"MatCen5Peg", -1},        {"MatCenSwitchA", -1}, {"MatCenSwitchB", -1}, {"MatCenSwitchC", -1},
     {"MatCenSwitchD", -1},     {"MatCenSwitchE", -1}, {"MatCenSwitchF", -1}, {"MatCenSwitchG", -1},
@@ -850,20 +865,20 @@ tMyHandle MyObjects[] = {
     {"MatCen4Spewer", -1},     {"MatCen5Spewer", -1},
 };
 
-tMyHandle MyMatcens[] = {{"MatCen5", -1}, {"MatCen4", -1}, {"MatCen2", -1}, {"MatCen3", -1}, {"MatCen1", -1}};
+static tMyHandle MyMatcens[] = {{"MatCen5", -1}, {"MatCen4", -1}, {"MatCen2", -1}, {"MatCen3", -1}, {"MatCen1", -1}};
 
-tMyHandle MyRooms[] = {{"MagicMatCenArmory", -1}};
+static tMyHandle MyRooms[] = {{"MagicMatCenArmory", -1}};
 
 struct tMyMessage {
   const char *name;
   const char *mem;
 };
 
-tMyMessage MyMessages[] = {{"MagicMatCenSwitches", NULL}, {"MatCenSwitchDOn", NULL},  {"MatCenSwitchDOff", NULL},
-                           {"MatCenSwitchGOn", NULL},     {"MatCenSwitchGOff", NULL}, {"MatCenSwitchCOn", NULL},
-                           {"MatCenSwitchCOff", NULL},    {"MatCenSwitchEOn", NULL},  {"MatCenSwitchEOff", NULL},
-                           {"MatCenSwitchBOn", NULL},     {"MatCenSwitchBOff", NULL}, {"MatCenSwitchFOn", NULL},
-                           {"MatCenSwitchFOff", NULL},    {"MatCenSwitchAOn", NULL},  {"MatCenSwitchAOff", NULL}};
+static tMyMessage MyMessages[] = {
+    {"MagicMatCenSwitches", NULL}, {"MatCenSwitchDOn", NULL}, {"MatCenSwitchDOff", NULL}, {"MatCenSwitchGOn", NULL},
+    {"MatCenSwitchGOff", NULL},    {"MatCenSwitchCOn", NULL}, {"MatCenSwitchCOff", NULL}, {"MatCenSwitchEOn", NULL},
+    {"MatCenSwitchEOff", NULL},    {"MatCenSwitchBOn", NULL}, {"MatCenSwitchBOff", NULL}, {"MatCenSwitchFOn", NULL},
+    {"MatCenSwitchFOff", NULL},    {"MatCenSwitchAOn", NULL}, {"MatCenSwitchAOff", NULL}};
 
 int GetMyMatCen(int id) {
   if (MyMatcens[id].handle == -1)
@@ -1458,8 +1473,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1625,125 +1640,126 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 10
-const char *Door_names[NUM_DOOR_NAMES] = {
+static const char *const Door_names[NUM_DOOR_NAMES] = {
     "RightLowerGeoPitDo", "LeftLowerGeoPitDoo", "CenterLowerGeoPitD", "RightGeoTubeNookDo", "RightUpperGeoPitDo",
     "CenterGeoTubeNookD", "CenterUpperGeoPitD", "LeftGeoTubeNookDoo", "LeftUpperGeoPitDoo", "DravisDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 40
-const char *Object_names[NUM_OBJECT_NAMES] = {"InnerStrongholdPas", "Inner Door View Ca",
-                                        "LeftGeoPitLava",     "RightGeoPitLava",
-                                        "CenterGeoPitLava",   "LeftLavaCrank",
-                                        "CenterLavaCrank",    "RightLavaCrank",
-                                        "BackupReactorPower", "BackupReactorFuse",
-                                        "MatCenSwitchA",      "MatCenSwitchB",
-                                        "MatCenSwitchC",      "MatCenSwitchD",
-                                        "MatCenSwitchE",      "MatCenSwitchF",
-                                        "MatCenSwitchG",      "MatCenPuzzleRESET",
-                                        "RightGeoTubeSwitch", "RightGeoTubeLava",
-                                        "CenterGeoTubeSwitc", "CenterGeoTubeLava",
-                                        "LeftGeoTubeSwitch",  "LeftGeoTubeLava",
-                                        "Inner Door E",       "Inner Door D",
-                                        "Inner Door C",       "CenterTNTDispenser",
-                                        "RightTNTDispenserS", "LeftTNTDispenserSw",
-                                        "LeftTNTDispenserBr", "TNTRockWall",
-                                        "HellionFinalBoss",   "EndLevelCamera",
-                                        "MediumVolcanoPlane", "SmallestVolcanoPla",
-                                        "LargeVolcanoPlane",  "TheFan",
-                                        "RotatingLightA",     "RotatingLightB"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"InnerStrongholdPas", "Inner Door View Ca",
+                                                           "LeftGeoPitLava",     "RightGeoPitLava",
+                                                           "CenterGeoPitLava",   "LeftLavaCrank",
+                                                           "CenterLavaCrank",    "RightLavaCrank",
+                                                           "BackupReactorPower", "BackupReactorFuse",
+                                                           "MatCenSwitchA",      "MatCenSwitchB",
+                                                           "MatCenSwitchC",      "MatCenSwitchD",
+                                                           "MatCenSwitchE",      "MatCenSwitchF",
+                                                           "MatCenSwitchG",      "MatCenPuzzleRESET",
+                                                           "RightGeoTubeSwitch", "RightGeoTubeLava",
+                                                           "CenterGeoTubeSwitc", "CenterGeoTubeLava",
+                                                           "LeftGeoTubeSwitch",  "LeftGeoTubeLava",
+                                                           "Inner Door E",       "Inner Door D",
+                                                           "Inner Door C",       "CenterTNTDispenser",
+                                                           "RightTNTDispenserS", "LeftTNTDispenserSw",
+                                                           "LeftTNTDispenserBr", "TNTRockWall",
+                                                           "HellionFinalBoss",   "EndLevelCamera",
+                                                           "MediumVolcanoPlane", "SmallestVolcanoPla",
+                                                           "LargeVolcanoPlane",  "TheFan",
+                                                           "RotatingLightA",     "RotatingLightB"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 13
-const char *Room_names[NUM_ROOM_NAMES] = {
+static const char *const Room_names[NUM_ROOM_NAMES] = {
     "BackupReactorEnerg", "CShapedEnergyCente", "SecretDoorEnergyCe", "LeftGeoPitRoom",   "CenterGeoPitRoom",
     "RightGeoPitRoom",    "LeftGeoTubeRoom",    "CenterGeoTubeRoom",  "RightGeoTubeRoom", "PreBossChamberForc",
     "PreBossForcefieldR", "UpperFanRoom",       "TNT Puzzle Room"};
-int Room_indexes[NUM_ROOM_NAMES];
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 30
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"CshapedEnergyCenter",
-                                          "SecretEnergyCenterB",
-                                          "BackupEnergyCenterB",
-                                          "RightGeoNookExit",
-                                          "CenterGeoNookExit",
-                                          "LeftGeoNookExit",
-                                          "RightUpperGeoPitDoo",
-                                          "CenterUpperGeoPitDo",
-                                          "LeftUpperGeoPitDoor",
-                                          "BossEnergyForcefiel",
-                                          "EndLevelTrigger",
-                                          "MOutside-4",
-                                          "MOutside-3",
-                                          "MOutside-2",
-                                          "MOutside-1",
-                                          "MBoss-1",
-                                          "MCentral-6",
-                                          "MCentral-5",
-                                          "MCentral-4",
-                                          "MCentral-3",
-                                          "MCentral-2",
-                                          "MCentral-1",
-                                          "MEast-5",
-                                          "MEast-4",
-                                          "MEast-3",
-                                          "MEast-2",
-                                          "MEast-1",
-                                          "MWest-2",
-                                          "MWest-1",
-                                          "PreBossTrigger"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {"CshapedEnergyCenter",
+                                                             "SecretEnergyCenterB",
+                                                             "BackupEnergyCenterB",
+                                                             "RightGeoNookExit",
+                                                             "CenterGeoNookExit",
+                                                             "LeftGeoNookExit",
+                                                             "RightUpperGeoPitDoo",
+                                                             "CenterUpperGeoPitDo",
+                                                             "LeftUpperGeoPitDoor",
+                                                             "BossEnergyForcefiel",
+                                                             "EndLevelTrigger",
+                                                             "MOutside-4",
+                                                             "MOutside-3",
+                                                             "MOutside-2",
+                                                             "MOutside-1",
+                                                             "MBoss-1",
+                                                             "MCentral-6",
+                                                             "MCentral-5",
+                                                             "MCentral-4",
+                                                             "MCentral-3",
+                                                             "MCentral-2",
+                                                             "MCentral-1",
+                                                             "MEast-5",
+                                                             "MEast-4",
+                                                             "MEast-3",
+                                                             "MEast-2",
+                                                             "MEast-1",
+                                                             "MWest-2",
+                                                             "MWest-1",
+                                                             "PreBossTrigger"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 4
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbDroneReactor", "DebrisExplosion", "AmbExplosionFarB", "AmbExplosionFarG"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbDroneReactor", "DebrisExplosion", "AmbExplosionFarB",
+                                                         "AmbExplosionFarG"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 0
-const char **Texture_names = NULL;
-int *Texture_indexes = NULL;
+static const char **Texture_names = NULL;
+static int *Texture_indexes = NULL;
 
 #define NUM_PATH_NAMES 12
-const char *Path_names[NUM_PATH_NAMES] = {"LeftGeoPitLavaPath",     "RightGeoPitLavaPath",    "CenterGeoPitLavaPath",
-                                    "RightGeoTubeLavaPath",   "CenterGeoTubeLavaPath",  "LeftGeoTubeLavaPath",
-                                    "EndLevelPath",           "IntroCamPath",           "PlayerIntroPath",
-                                    "CameraBossEntrancePath", "PlayerBossEntrancePath", "BossIntroCameraPath"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {
+    "LeftGeoPitLavaPath",    "RightGeoPitLavaPath",    "CenterGeoPitLavaPath",   "RightGeoTubeLavaPath",
+    "CenterGeoTubeLavaPath", "LeftGeoTubeLavaPath",    "EndLevelPath",           "IntroCamPath",
+    "PlayerIntroPath",       "CameraBossEntrancePath", "PlayerBossEntrancePath", "BossIntroCameraPath"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 2
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Center TNT Dispense", "Right TNT Dispenser"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {"Center TNT Dispense", "Right TNT Dispenser"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 5
-const char *Goal_names[NUM_GOAL_NAMES] = {"Locate the Inner Stronghold Passkey", "Repair the Reactor",
-                                    "Locate the Back-up Reactor", "Find the reactor's replacement fuse",
-                                    "Locate Dravis' secret stronghold"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {
+    "Locate the Inner Stronghold Passkey", "Repair the Reactor", "Locate the Back-up Reactor",
+    "Find the reactor's replacement fuse", "Locate Dravis' secret stronghold"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 22
-const char *Message_names[NUM_MESSAGE_NAMES] = {"InnerDoorsUnlock",
-                                          "InnerStrongholdKey",
-                                          "LeftLavaCrank",
-                                          "CenterLavaCrank",
-                                          "RightLavaCrank",
-                                          "EnergyCentersOnline",
-                                          "PowerRestored",
-                                          "FuseFound",
-                                          "ReactorBroken",
-                                          "EnergyCenterBroken",
-                                          "InnerDoorsDenied",
-                                          "TNTDispenserCenter",
-                                          "TNTDispenserRight",
-                                          "TNTDispenserLeft",
-                                          "TNTDispenserLeftBroken",
-                                          "TNTRockwalldestroyed",
-                                          "TNTRockWall",
-                                          "DravisDoor",
-                                          "End",
-                                          "IntroCameraText",
-                                          "BLANK",
-                                          "HellionIntroduction"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"InnerDoorsUnlock",
+                                                             "InnerStrongholdKey",
+                                                             "LeftLavaCrank",
+                                                             "CenterLavaCrank",
+                                                             "RightLavaCrank",
+                                                             "EnergyCentersOnline",
+                                                             "PowerRestored",
+                                                             "FuseFound",
+                                                             "ReactorBroken",
+                                                             "EnergyCenterBroken",
+                                                             "InnerDoorsDenied",
+                                                             "TNTDispenserCenter",
+                                                             "TNTDispenserRight",
+                                                             "TNTDispenserLeft",
+                                                             "TNTDispenserLeftBroken",
+                                                             "TNTRockwalldestroyed",
+                                                             "TNTRockWall",
+                                                             "DravisDoor",
+                                                             "End",
+                                                             "IntroCameraText",
+                                                             "BLANK",
+                                                             "HellionIntroduction"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

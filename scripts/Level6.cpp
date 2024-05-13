@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -413,116 +428,116 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_010 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -897,15 +912,15 @@ struct tForceFieldInfo {
   int room, face;
 };
 
-bool PriestKeyInit = false;
-int PriestKeyRoomMap[5][5];
-int PriestKeySafeRoom;
-tPathNode PriestCorrectPath[17];
-int PriestSoundNodes[17];
-tForceFieldInfo ForceFields[10];
-int PriestClueSound = -1;
-int DummyObject = -1;
-int DummyDefaultPos = -1;
+static bool PriestKeyInit = false;
+static int PriestKeyRoomMap[5][5];
+static int PriestKeySafeRoom;
+static tPathNode PriestCorrectPath[17];
+static int PriestSoundNodes[17];
+static tForceFieldInfo ForceFields[10];
+static int PriestClueSound = -1;
+static int DummyObject = -1;
+static int DummyDefaultPos = -1;
 
 #define Var_ThereIsPlayerInPriestKeyPuzzle (*((int *)(&User_vars[7])))
 #define Var_PriestPlayerCurrentRoom (*((int *)(&User_vars[8])))
@@ -915,14 +930,14 @@ int DummyDefaultPos = -1;
 #define Var_PriestPuzzleGoofed User_vars[12]
 #define Var_SavedObject Saved_object_handles[1]
 
-void PriestResetPuzzle(void);
-void PriestPlayerScrewsUp(void);
-void PriestPlayerSolvesPuzzle(void);
-void PriestTurnForceFieldOn(bool enable);
-void PriestPlaySoundAtNode(int node);
-void PriestJustEnteredPuzzle(void);
-void PriestJustExitPuzzle(void);
-void PriestInit(void);
+static void PriestResetPuzzle(void);
+static void PriestPlayerScrewsUp(void);
+static void PriestPlayerSolvesPuzzle(void);
+static void PriestTurnForceFieldOn(bool enable);
+static void PriestPlaySoundAtNode(int node);
+static void PriestJustEnteredPuzzle(void);
+static void PriestJustExitPuzzle(void);
+static void PriestInit(void);
 
 void PriestMoveDummy(int pos) {
   if (pos == -1 || pos == -2) {
@@ -1349,8 +1364,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1516,172 +1531,172 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 5
-const char *Door_names[NUM_DOOR_NAMES] = {"BossDoor", "CollectorsDoor", "BuildersDoor", "PriestHallDoor",
-                                    "PriestGalleryDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"BossDoor", "CollectorsDoor", "BuildersDoor", "PriestHallDoor",
+                                                       "PriestGalleryDoor"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 39
-const char *Object_names[NUM_OBJECT_NAMES] = {"DummyFlag",
-                                        "BossMovieCollider",
-                                        "BossRock01",
-                                        "BossRock02",
-                                        "BossRock03",
-                                        "BossRock04",
-                                        "BossRock05",
-                                        "BuildersKey",
-                                        "ObjectMoveCamera",
-                                        "PriestKey",
-                                        "CollectorsKey",
-                                        "Camera4CollectorsK",
-                                        "Camera4BuildersKey",
-                                        "BuilderSign",
-                                        "CollectorSign",
-                                        "PriestSign",
-                                        "PriestHallDoor",
-                                        "PriestGalleryDoor",
-                                        "FallingPlatform",
-                                        "BuildersDoor",
-                                        "CollectorsDoor",
-                                        "PlatformClutch2",
-                                        "PlatformClutch1",
-                                        "PriestPedestalCame",
-                                        "Boss",
-                                        "BPuzzRespawn",
-                                        "SlagHeap",
-                                        "TugShip",
-                                        "CrashedShip",
-                                        "BuilderPuzzUFO1",
-                                        "BuilderPuzzUFO2",
-                                        "BuilderPuzzUFO3",
-                                        "CollectorNomad2",
-                                        "CollectorsNomad1",
-                                        "VolcanoSpew",
-                                        "VolcanoSpew2",
-                                        "VolcanoSpew3",
-                                        "VolcanoSpew4",
-                                        "BossDoor"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"DummyFlag",
+                                                           "BossMovieCollider",
+                                                           "BossRock01",
+                                                           "BossRock02",
+                                                           "BossRock03",
+                                                           "BossRock04",
+                                                           "BossRock05",
+                                                           "BuildersKey",
+                                                           "ObjectMoveCamera",
+                                                           "PriestKey",
+                                                           "CollectorsKey",
+                                                           "Camera4CollectorsK",
+                                                           "Camera4BuildersKey",
+                                                           "BuilderSign",
+                                                           "CollectorSign",
+                                                           "PriestSign",
+                                                           "PriestHallDoor",
+                                                           "PriestGalleryDoor",
+                                                           "FallingPlatform",
+                                                           "BuildersDoor",
+                                                           "CollectorsDoor",
+                                                           "PlatformClutch2",
+                                                           "PlatformClutch1",
+                                                           "PriestPedestalCame",
+                                                           "Boss",
+                                                           "BPuzzRespawn",
+                                                           "SlagHeap",
+                                                           "TugShip",
+                                                           "CrashedShip",
+                                                           "BuilderPuzzUFO1",
+                                                           "BuilderPuzzUFO2",
+                                                           "BuilderPuzzUFO3",
+                                                           "CollectorNomad2",
+                                                           "CollectorsNomad1",
+                                                           "VolcanoSpew",
+                                                           "VolcanoSpew2",
+                                                           "VolcanoSpew3",
+                                                           "VolcanoSpew4",
+                                                           "BossDoor"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 20
-const char *Room_names[NUM_ROOM_NAMES] = {"EndWindyRoom",     "PriestPedestal",  "CollectorsPedestal",
-                                    "BuildersPedestal", "PlatformHitRoom", "WindTunnel1",
-                                    "WindTunnel2",      "WindTunnel3",     "BPuzz1",
-                                    "BPuzz2",           "BPuzz3",          "BPuzz4",
-                                    "BPuzz5",           "BPuzz6",          "BPuzz7",
-                                    "BPuzzEnd",         "CrashedShipRoom", "EscapeTunnelStart",
-                                    "NomadCollector2",  "CavernEntrance"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"EndWindyRoom",     "PriestPedestal",  "CollectorsPedestal",
+                                                       "BuildersPedestal", "PlatformHitRoom", "WindTunnel1",
+                                                       "WindTunnel2",      "WindTunnel3",     "BPuzz1",
+                                                       "BPuzz2",           "BPuzz3",          "BPuzz4",
+                                                       "BPuzz5",           "BPuzz6",          "BPuzz7",
+                                                       "BPuzzEnd",         "CrashedShipRoom", "EscapeTunnelStart",
+                                                       "NomadCollector2",  "CavernEntrance"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 36
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"MusicCommon2Coll",
-                                          "MusicCommon2Build",
-                                          "WaypointInBuilders",
-                                          "BuildersHalfWay",
-                                          "MusicUseKeys2Priest",
-                                          "MusicOut2Common",
-                                          "BPuzz1in",
-                                          "BPuzz1out",
-                                          "BPuzz2in",
-                                          "BPuzz2out",
-                                          "BPuzz3in",
-                                          "BPuzz3out",
-                                          "BPuzz4in",
-                                          "BPuzz4out",
-                                          "BPuzz5in",
-                                          "BPuzz5out",
-                                          "BPuzz6in",
-                                          "BPuzz6out",
-                                          "BPuzz7in",
-                                          "BPuzz7out",
-                                          "BuildersPuzzleMessa",
-                                          "ExitPriestPuzzle",
-                                          "EnterPriestPuzzle",
-                                          "MusicPriest2Boss",
-                                          "MusicUseKeys2Build",
-                                          "MusicUseKeys2Coll",
-                                          "MusicPriest2UseKeys",
-                                          "MusicBuild2UseKeys",
-                                          "MusicColl2UseKeys",
-                                          "MusicColl2Common",
-                                          "MusicBuild2Common",
-                                          "MusicCommon2Out",
-                                          "TurnPriestNomadsOn",
-                                          "TurnOffPriestNomads",
-                                          "BuildersPuzzHint",
-                                          "BuildersPuzzHint2"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {"MusicCommon2Coll",
+                                                             "MusicCommon2Build",
+                                                             "WaypointInBuilders",
+                                                             "BuildersHalfWay",
+                                                             "MusicUseKeys2Priest",
+                                                             "MusicOut2Common",
+                                                             "BPuzz1in",
+                                                             "BPuzz1out",
+                                                             "BPuzz2in",
+                                                             "BPuzz2out",
+                                                             "BPuzz3in",
+                                                             "BPuzz3out",
+                                                             "BPuzz4in",
+                                                             "BPuzz4out",
+                                                             "BPuzz5in",
+                                                             "BPuzz5out",
+                                                             "BPuzz6in",
+                                                             "BPuzz6out",
+                                                             "BPuzz7in",
+                                                             "BPuzz7out",
+                                                             "BuildersPuzzleMessa",
+                                                             "ExitPriestPuzzle",
+                                                             "EnterPriestPuzzle",
+                                                             "MusicPriest2Boss",
+                                                             "MusicUseKeys2Build",
+                                                             "MusicUseKeys2Coll",
+                                                             "MusicPriest2UseKeys",
+                                                             "MusicBuild2UseKeys",
+                                                             "MusicColl2UseKeys",
+                                                             "MusicColl2Common",
+                                                             "MusicBuild2Common",
+                                                             "MusicCommon2Out",
+                                                             "TurnPriestNomadsOn",
+                                                             "TurnOffPriestNomads",
+                                                             "BuildersPuzzHint",
+                                                             "BuildersPuzzHint2"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 8
-const char *Sound_names[NUM_SOUND_NAMES] = {"Powerup pickup", "DoorIsLocked",           "expMissileTearing1",
-                                      "AmbBigUnlock",   "You don't have it BEEP", "Lev5Goal",
-                                      "Lev5GoalFail",   "DefaultBuildingExplode"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {
+    "Powerup pickup",         "DoorIsLocked", "expMissileTearing1", "AmbBigUnlock",
+    "You don't have it BEEP", "Lev5Goal",     "Lev5GoalFail",       "DefaultBuildingExplode"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 1
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect1"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect1"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 20
-const char *Path_names[NUM_PATH_NAMES] = {
+static const char *const Path_names[NUM_PATH_NAMES] = {
     "BossCinematicPath", "IntroCameraPath",    "IntroShip",           "TugPathIn",        "TugPathIn2",
     "TugEscapePath",     "TugEscapeCamera1",   "TugShipEscape2",      "TugEscapeCamera2", "PlayerEscapeCamera",
     "PlayerEscapePath",  "NomadPriestHall",    "NomadPriestHallRamp", "NomadMainRoom1",   "NomadMainRoom2",
     "BuildersPuzzPath",  "BuilderPuzzCorrect", "CollectorNomad2",     "CollectorNomad1",  "NomadPriestGallery"};
-int Path_indexes[NUM_PATH_NAMES];
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 5
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Boss Room Matcen 1", "Boss Room Matcen 2", "NomadMainRoom1", "NomadPriestHall",
-                                        "NomadPriestGallery"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {"Boss Room Matcen 1", "Boss Room Matcen 2", "NomadMainRoom1",
+                                                           "NomadPriestHall", "NomadPriestGallery"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 7
-const char *Goal_names[NUM_GOAL_NAMES] = {"Find the Builders' Icon", "Find the Priest's Icon", "Find the Collectors' Icon",
-                                    "Use the icons",           "Use the Priest's Icon",  "Find the crashed CED ship",
-                                    "Enter the Nomad Caverns"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {
+    "Find the Builders' Icon", "Find the Priest's Icon",    "Find the Collectors' Icon", "Use the icons",
+    "Use the Priest's Icon",   "Find the crashed CED ship", "Enter the Nomad Caverns"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 38
-const char *Message_names[NUM_MESSAGE_NAMES] = {"FirstPickupBuilder",
-                                          "FirstPickupPriest",
-                                          "FirstPickupCollector",
-                                          "InvGame",
-                                          "InvHUD",
-                                          "PlaceCollectorsKey",
-                                          "KeyAlreadyThere",
-                                          "YoucantUseKeyHere",
-                                          "PlaceBuildersKey",
-                                          "BuilderCollectorsCorrectlyPlaced",
-                                          "PriestHallDoorLocked",
-                                          "PriestGalleryDoorLocked",
-                                          "BuildersDoorMessage",
-                                          "ThisDoorDoesNotAnswer",
-                                          "CollectorsDoorMessage",
-                                          "PriestKeyCorrectlyPlaced",
-                                          "PlacePriestKey",
-                                          "BossIntroductionText",
-                                          "IntroLevelMessage",
-                                          "XsecsOntheClock",
-                                          "BuildersPuzzMessage",
-                                          "BuildersPuzzMessage2",
-                                          "Builders3secondsleft",
-                                          "BuildersTimerExpired",
-                                          "PriestPuzzleEnter",
-                                          "PriestPuzzleSolved",
-                                          "PriestPuzzleGoofed",
-                                          "TugMessage1",
-                                          "TugMessage2",
-                                          "TugMessageStart",
-                                          "TugStartMessage2",
-                                          "TugMessageShipPickUp",
-                                          "TugMessage5",
-                                          "TugMessage4",
-                                          "TugMessage6",
-                                          "BLANK",
-                                          "Test",
-                                          "BuildersPuzzhint"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"FirstPickupBuilder",
+                                                             "FirstPickupPriest",
+                                                             "FirstPickupCollector",
+                                                             "InvGame",
+                                                             "InvHUD",
+                                                             "PlaceCollectorsKey",
+                                                             "KeyAlreadyThere",
+                                                             "YoucantUseKeyHere",
+                                                             "PlaceBuildersKey",
+                                                             "BuilderCollectorsCorrectlyPlaced",
+                                                             "PriestHallDoorLocked",
+                                                             "PriestGalleryDoorLocked",
+                                                             "BuildersDoorMessage",
+                                                             "ThisDoorDoesNotAnswer",
+                                                             "CollectorsDoorMessage",
+                                                             "PriestKeyCorrectlyPlaced",
+                                                             "PlacePriestKey",
+                                                             "BossIntroductionText",
+                                                             "IntroLevelMessage",
+                                                             "XsecsOntheClock",
+                                                             "BuildersPuzzMessage",
+                                                             "BuildersPuzzMessage2",
+                                                             "Builders3secondsleft",
+                                                             "BuildersTimerExpired",
+                                                             "PriestPuzzleEnter",
+                                                             "PriestPuzzleSolved",
+                                                             "PriestPuzzleGoofed",
+                                                             "TugMessage1",
+                                                             "TugMessage2",
+                                                             "TugMessageStart",
+                                                             "TugStartMessage2",
+                                                             "TugMessageShipPickUp",
+                                                             "TugMessage5",
+                                                             "TugMessage4",
+                                                             "TugMessage6",
+                                                             "BLANK",
+                                                             "Test",
+                                                             "BuildersPuzzhint"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

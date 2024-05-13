@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -755,219 +770,219 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_209 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_136 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_132 = 0;
-int ScriptActionCtr_133 = 0;
-int ScriptActionCtr_134 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_142 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_211 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_146 = 0;
-int ScriptActionCtr_141 = 0;
-int ScriptActionCtr_212 = 0;
-int ScriptActionCtr_143 = 0;
-int ScriptActionCtr_144 = 0;
-int ScriptActionCtr_149 = 0;
-int ScriptActionCtr_147 = 0;
-int ScriptActionCtr_150 = 0;
-int ScriptActionCtr_151 = 0;
-int ScriptActionCtr_157 = 0;
-int ScriptActionCtr_145 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_210 = 0;
-int ScriptActionCtr_207 = 0;
-int ScriptActionCtr_208 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_181 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_175 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_140 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_125 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_203 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_204 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_153 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_205 = 0;
-int ScriptActionCtr_206 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_178 = 0;
-int ScriptActionCtr_177 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_179 = 0;
-int ScriptActionCtr_166 = 0;
-int ScriptActionCtr_182 = 0;
-int ScriptActionCtr_183 = 0;
-int ScriptActionCtr_184 = 0;
-int ScriptActionCtr_185 = 0;
-int ScriptActionCtr_186 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_174 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_188 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_180 = 0;
-int ScriptActionCtr_187 = 0;
-int ScriptActionCtr_202 = 0;
-int ScriptActionCtr_189 = 0;
-int ScriptActionCtr_190 = 0;
-int ScriptActionCtr_196 = 0;
-int ScriptActionCtr_191 = 0;
-int ScriptActionCtr_195 = 0;
-int ScriptActionCtr_194 = 0;
-int ScriptActionCtr_193 = 0;
-int ScriptActionCtr_192 = 0;
-int ScriptActionCtr_197 = 0;
-int ScriptActionCtr_201 = 0;
-int ScriptActionCtr_200 = 0;
-int ScriptActionCtr_199 = 0;
-int ScriptActionCtr_198 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_176 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_129 = 0;
-int ScriptActionCtr_135 = 0;
-int ScriptActionCtr_130 = 0;
-int ScriptActionCtr_131 = 0;
-int ScriptActionCtr_148 = 0;
-int ScriptActionCtr_137 = 0;
-int ScriptActionCtr_138 = 0;
-int ScriptActionCtr_154 = 0;
-int ScriptActionCtr_155 = 0;
-int ScriptActionCtr_163 = 0;
-int ScriptActionCtr_139 = 0;
-int ScriptActionCtr_152 = 0;
-int ScriptActionCtr_156 = 0;
-int ScriptActionCtr_160 = 0;
-int ScriptActionCtr_161 = 0;
-int ScriptActionCtr_158 = 0;
-int ScriptActionCtr_159 = 0;
-int ScriptActionCtr_164 = 0;
-int ScriptActionCtr_165 = 0;
-int ScriptActionCtr_167 = 0;
-int ScriptActionCtr_168 = 0;
-int ScriptActionCtr_170 = 0;
-int ScriptActionCtr_169 = 0;
-int ScriptActionCtr_171 = 0;
-int ScriptActionCtr_172 = 0;
-int ScriptActionCtr_173 = 0;
-int ScriptActionCtr_162 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_209 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_136 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_132 = 0;
+static int ScriptActionCtr_133 = 0;
+static int ScriptActionCtr_134 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_142 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_211 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_146 = 0;
+static int ScriptActionCtr_141 = 0;
+static int ScriptActionCtr_212 = 0;
+static int ScriptActionCtr_143 = 0;
+static int ScriptActionCtr_144 = 0;
+static int ScriptActionCtr_149 = 0;
+static int ScriptActionCtr_147 = 0;
+static int ScriptActionCtr_150 = 0;
+static int ScriptActionCtr_151 = 0;
+static int ScriptActionCtr_157 = 0;
+static int ScriptActionCtr_145 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_210 = 0;
+static int ScriptActionCtr_207 = 0;
+static int ScriptActionCtr_208 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_181 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_175 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_140 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_203 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_204 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_153 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_205 = 0;
+static int ScriptActionCtr_206 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_178 = 0;
+static int ScriptActionCtr_177 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_179 = 0;
+static int ScriptActionCtr_166 = 0;
+static int ScriptActionCtr_182 = 0;
+static int ScriptActionCtr_183 = 0;
+static int ScriptActionCtr_184 = 0;
+static int ScriptActionCtr_185 = 0;
+static int ScriptActionCtr_186 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_174 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_188 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_180 = 0;
+static int ScriptActionCtr_187 = 0;
+static int ScriptActionCtr_202 = 0;
+static int ScriptActionCtr_189 = 0;
+static int ScriptActionCtr_190 = 0;
+static int ScriptActionCtr_196 = 0;
+static int ScriptActionCtr_191 = 0;
+static int ScriptActionCtr_195 = 0;
+static int ScriptActionCtr_194 = 0;
+static int ScriptActionCtr_193 = 0;
+static int ScriptActionCtr_192 = 0;
+static int ScriptActionCtr_197 = 0;
+static int ScriptActionCtr_201 = 0;
+static int ScriptActionCtr_200 = 0;
+static int ScriptActionCtr_199 = 0;
+static int ScriptActionCtr_198 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_176 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_129 = 0;
+static int ScriptActionCtr_135 = 0;
+static int ScriptActionCtr_130 = 0;
+static int ScriptActionCtr_131 = 0;
+static int ScriptActionCtr_148 = 0;
+static int ScriptActionCtr_137 = 0;
+static int ScriptActionCtr_138 = 0;
+static int ScriptActionCtr_154 = 0;
+static int ScriptActionCtr_155 = 0;
+static int ScriptActionCtr_163 = 0;
+static int ScriptActionCtr_139 = 0;
+static int ScriptActionCtr_152 = 0;
+static int ScriptActionCtr_156 = 0;
+static int ScriptActionCtr_160 = 0;
+static int ScriptActionCtr_161 = 0;
+static int ScriptActionCtr_158 = 0;
+static int ScriptActionCtr_159 = 0;
+static int ScriptActionCtr_164 = 0;
+static int ScriptActionCtr_165 = 0;
+static int ScriptActionCtr_167 = 0;
+static int ScriptActionCtr_168 = 0;
+static int ScriptActionCtr_170 = 0;
+static int ScriptActionCtr_169 = 0;
+static int ScriptActionCtr_171 = 0;
+static int ScriptActionCtr_172 = 0;
+static int ScriptActionCtr_173 = 0;
+static int ScriptActionCtr_162 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1641,11 +1656,11 @@ struct t_animation_data {
   int16_t first, last;
 };
 
-const t_animation_data Gravity_state_xlates[3][3] = {
+static const t_animation_data Gravity_state_xlates[3][3] = {
     {{0, 0}, {10, 15}, {0, 5}}, {{21, 25}, {31, 35}, {26, 30}}, {{5, 10}, {16, 20}, {30, 30}}};
 
 //	this should be saved...
-int8_t Gravity_room_box_states[N_ROOMS][N_BOXES];
+static int8_t Gravity_room_box_states[N_ROOMS][N_BOXES];
 
 /*
 $$ENUM Region
@@ -2145,7 +2160,7 @@ void cEndSequenceInit() {
 ///////////////////////////////////////////////////////////////////////////////
 void do_endsequence_fx(char fx_type, int handle) {
   uint16_t id;
-  float time, size, speed, bloblife, blobint;
+  float time = 0, size = 0, speed = 0, bloblife = 0, blobint = 0;
   int killflags = 0x60; // fireballs and breaks apart on death
 
   //	do fx based on type
@@ -2336,8 +2351,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -2503,305 +2518,306 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 9
-const char *Door_names[NUM_DOOR_NAMES] = {"EscapeChuteDoor", "Hangar1AExit",     "Hangar2AExit", "J1Door",    "J2Door",
-                                    "J3Door",          "CaptainOuterDoor", "CaptainDoor",  "BridgeDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"EscapeChuteDoor",  "Hangar1AExit", "Hangar2AExit",
+                                                       "J1Door",           "J2Door",       "J3Door",
+                                                       "CaptainOuterDoor", "CaptainDoor",  "BridgeDoor"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 229
-const char *Object_names[NUM_OBJECT_NAMES] = {"BigFan1Engine2",
-                                        "BigFan1Engine3",
-                                        "J1Bomb",
-                                        "J2Bomb",
-                                        "J3Bomb",
-                                        "Hanger1AWarnLight",
-                                        "Hangar2AWarnLight",
-                                        "CaptainAndTrooper",
-                                        "J1CineGadget",
-                                        "J1CineGadget2",
-                                        "BigFanEngine0",
-                                        "BigFan1Engine",
-                                        "BST1",
-                                        "HazardActor1",
-                                        "HazardActor2",
-                                        "SharkGuard3",
-                                        "SharkGuard2",
-                                        "SharkGuard1",
-                                        "SharkGuard0",
-                                        "CaptainGadget",
-                                        "Datakey1",
-                                        "Datakey2",
-                                        "FirstMate",
-                                        "InventoryBomb",
-                                        "IntroPanbackCamPt",
-                                        "IntroSceneCut2",
-                                        "IntroSceneCam2",
-                                        "IntroSceneCamPt2",
-                                        "IntroSceneCam3",
-                                        "IntroSceneCamPt3",
-                                        "SwHangar1APrimary",
-                                        "SwHangar1ASecond",
-                                        "Hangar1ADoor",
-                                        "SwHangar1ASecond2",
-                                        "SwHangar2APrimary",
-                                        "SwHangar2ASecond",
-                                        "Hangar2ADoor",
-                                        "SwHangar2ASecond2",
-                                        "swHangar2ACrane",
-                                        "Hangar2ACrane",
-                                        "SwHangar2AFlamer",
-                                        "FlamePurgeSpew0",
-                                        "FlamePurgeSpew1",
-                                        "FlamePurgeSpew3",
-                                        "FlamePurgeSpew4",
-                                        "FlamePurgeSpew6",
-                                        "FlamePurgeSpew7",
-                                        "swHangar3APrimary",
-                                        "swHangar3ASecondar",
-                                        "Hangar3ADoor",
-                                        "swHangar3ASecond2",
-                                        "swHangar3AMagnet",
-                                        "Hangar3ABox1",
-                                        "Hangar3ABox2",
-                                        "BlastOutBox",
-                                        "J1BombLocation",
-                                        "J2BombLocation",
-                                        "J3BombLocation",
-                                        "J1SpewA",
-                                        "J1SpewB",
-                                        "J1SpewC",
-                                        "J1SpewD",
-                                        "J2SpewA",
-                                        "J2SpewB",
-                                        "J2SpewC",
-                                        "J2SpewD",
-                                        "J3SpewA",
-                                        "J3SpewB",
-                                        "J3SpewC",
-                                        "J3SpewD",
-                                        "J1TopCam",
-                                        "J1BottomCam",
-                                        "J2TopCam",
-                                        "J2BottomCam",
-                                        "J3TopCam",
-                                        "J3BottomCam",
-                                        "swJ1Maintenance",
-                                        "J1SummonDest",
-                                        "swJ2Maintenance",
-                                        "J2SummonDest",
-                                        "swJ3Ball",
-                                        "swJ3Maintenance",
-                                        "J3SummonDest",
-                                        "SwHazardGuardArea",
-                                        "HazardActor1Cam",
-                                        "HazardActor1Pt",
-                                        "HazardActor2Cam",
-                                        "HazardActor2Pt",
-                                        "SwDownGrav1",
-                                        "SwNeutralGrav1",
-                                        "SwUpGrav1",
-                                        "SwDownGrav2",
-                                        "FloatingBallOfDeth",
-                                        "SwNeutralGrav2",
-                                        "SwUpGrav2",
-                                        "GravityFan2-A",
-                                        "GravityFan2-B",
-                                        "SecR0Switch",
-                                        "SwSharkGuard1",
-                                        "SwSharkGuard2",
-                                        "SwSharkGuard3",
-                                        "Tesla-A-1-D",
-                                        "Tesla-A-2-D",
-                                        "Tesla-A-3-D",
-                                        "BigFan0",
-                                        "BigFan1",
-                                        "BigFan2",
-                                        "BigFan3",
-                                        "Tesla-A-1-S",
-                                        "Tesla-A-2-S",
-                                        "Tesla-A-3-S",
-                                        "Tesla-B-1-D",
-                                        "Tesla-B-2-D",
-                                        "Tesla-B-3-D",
-                                        "Tesla-B-1-S",
-                                        "Tesla-B-2-S",
-                                        "Tesla-B-3-S",
-                                        "Tesla-C-1-D",
-                                        "Tesla-C-2-D",
-                                        "Tesla-C-3-D",
-                                        "Tesla-C-1-S",
-                                        "Tesla-C-2-S",
-                                        "Tesla-C-3-S",
-                                        "Tesla-D-1-D",
-                                        "Tesla-D-2-D",
-                                        "Tesla-D-3-D",
-                                        "Tesla-D-1-S",
-                                        "Tesla-D-2-S",
-                                        "Tesla-D-3-S",
-                                        "Tesla-E-1-D",
-                                        "Tesla-E-2-D",
-                                        "Tesla-E-3-D",
-                                        "Tesla-E-1-S",
-                                        "Tesla-E-2-S",
-                                        "Tesla-E-3-S",
-                                        "Tesla-F-1-D",
-                                        "Tesla-F-2-D",
-                                        "Tesla-F-3-D",
-                                        "Tesla-F-1-S",
-                                        "Tesla-F-2-S",
-                                        "Tesla-F-3-S",
-                                        "Tesla-G-1-D",
-                                        "Tesla-G-2-D",
-                                        "Tesla-G-3-D",
-                                        "Tesla-G-1-S",
-                                        "Tesla-G-2-S",
-                                        "Tesla-G-3-S",
-                                        "Tesla-H-1-D",
-                                        "Tesla-H-2-D",
-                                        "Tesla-H-3-D",
-                                        "Tesla-H-1-S",
-                                        "Tesla-H-2-S",
-                                        "Tesla-H-3-S",
-                                        "CaptainCamPtIntro",
-                                        "CapTele1",
-                                        "CapTele2",
-                                        "CapTele3",
-                                        "CapTele4",
-                                        "CapTele5",
-                                        "CapTele6",
-                                        "CapTele7",
-                                        "CapTele8",
-                                        "CapTeleMain9",
-                                        "CaptainCamIntro1",
-                                        "CaptainCamPtIntro1",
-                                        "CaptainCamIntro2",
-                                        "CaptainCamPtIntro2",
-                                        "CaptainCamIntro3",
-                                        "CaptainCamIntroPt3",
-                                        "FMClone5",
-                                        "FMClone4",
-                                        "FMClone3",
-                                        "FMClone2",
-                                        "FMClone1",
-                                        "FMCam3",
-                                        "FMCam1",
-                                        "FMCam2",
-                                        "DatalinkKeyPort",
-                                        "PoleNorthDataArm",
-                                        "DatalinkKeyPortS",
-                                        "PoleNorthLCam1",
-                                        "PoleNorthLCam2",
-                                        "NPoleNegative",
-                                        "NPolePositive",
-                                        "PoleSouthDataArm",
-                                        "PoleSouthLCam1",
-                                        "PoleSouthLCam2",
-                                        "SPoleNegative",
-                                        "SPolePositive",
-                                        "ShoSpew17",
-                                        "ShoSpew18",
-                                        "ShoSpew3",
-                                        "ShoSpew4",
-                                        "ShoSpew5",
-                                        "ShoSpew6",
-                                        "ShoSpew9",
-                                        "ShoSpew10",
-                                        "ShoSpew19",
-                                        "ShoSpew20",
-                                        "ShoSpew23",
-                                        "ShoSpew24",
-                                        "ShoSpew25",
-                                        "ShoSpew26",
-                                        "BST6",
-                                        "BST7",
-                                        "CaptAndTroopCamPt0",
-                                        "CaptAndTroopCam",
-                                        "CaptAndTroopCamPt",
-                                        "CapAndTroopCamNew",
-                                        "CaptAndTroopCamPt2",
-                                        "EscapeChuteDoor",
-                                        "JunctionCineCamPt",
-                                        "J1CineCamSpewer",
-                                        "EndCinematicCam",
-                                        "ExitSpew0",
-                                        "ExitSpew1",
-                                        "GravityFan-1A",
-                                        "GravityFan-1B",
-                                        "Arobics1",
-                                        "Arobics2",
-                                        "Arobics3",
-                                        "Arobics4",
-                                        "Arobics5",
-                                        "Arobics6",
-                                        "Arobics7",
-                                        "Arobics8",
-                                        "Jogger1",
-                                        "Jogger2",
-                                        "Jogger3"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"BigFan1Engine2",
+                                                           "BigFan1Engine3",
+                                                           "J1Bomb",
+                                                           "J2Bomb",
+                                                           "J3Bomb",
+                                                           "Hanger1AWarnLight",
+                                                           "Hangar2AWarnLight",
+                                                           "CaptainAndTrooper",
+                                                           "J1CineGadget",
+                                                           "J1CineGadget2",
+                                                           "BigFanEngine0",
+                                                           "BigFan1Engine",
+                                                           "BST1",
+                                                           "HazardActor1",
+                                                           "HazardActor2",
+                                                           "SharkGuard3",
+                                                           "SharkGuard2",
+                                                           "SharkGuard1",
+                                                           "SharkGuard0",
+                                                           "CaptainGadget",
+                                                           "Datakey1",
+                                                           "Datakey2",
+                                                           "FirstMate",
+                                                           "InventoryBomb",
+                                                           "IntroPanbackCamPt",
+                                                           "IntroSceneCut2",
+                                                           "IntroSceneCam2",
+                                                           "IntroSceneCamPt2",
+                                                           "IntroSceneCam3",
+                                                           "IntroSceneCamPt3",
+                                                           "SwHangar1APrimary",
+                                                           "SwHangar1ASecond",
+                                                           "Hangar1ADoor",
+                                                           "SwHangar1ASecond2",
+                                                           "SwHangar2APrimary",
+                                                           "SwHangar2ASecond",
+                                                           "Hangar2ADoor",
+                                                           "SwHangar2ASecond2",
+                                                           "swHangar2ACrane",
+                                                           "Hangar2ACrane",
+                                                           "SwHangar2AFlamer",
+                                                           "FlamePurgeSpew0",
+                                                           "FlamePurgeSpew1",
+                                                           "FlamePurgeSpew3",
+                                                           "FlamePurgeSpew4",
+                                                           "FlamePurgeSpew6",
+                                                           "FlamePurgeSpew7",
+                                                           "swHangar3APrimary",
+                                                           "swHangar3ASecondar",
+                                                           "Hangar3ADoor",
+                                                           "swHangar3ASecond2",
+                                                           "swHangar3AMagnet",
+                                                           "Hangar3ABox1",
+                                                           "Hangar3ABox2",
+                                                           "BlastOutBox",
+                                                           "J1BombLocation",
+                                                           "J2BombLocation",
+                                                           "J3BombLocation",
+                                                           "J1SpewA",
+                                                           "J1SpewB",
+                                                           "J1SpewC",
+                                                           "J1SpewD",
+                                                           "J2SpewA",
+                                                           "J2SpewB",
+                                                           "J2SpewC",
+                                                           "J2SpewD",
+                                                           "J3SpewA",
+                                                           "J3SpewB",
+                                                           "J3SpewC",
+                                                           "J3SpewD",
+                                                           "J1TopCam",
+                                                           "J1BottomCam",
+                                                           "J2TopCam",
+                                                           "J2BottomCam",
+                                                           "J3TopCam",
+                                                           "J3BottomCam",
+                                                           "swJ1Maintenance",
+                                                           "J1SummonDest",
+                                                           "swJ2Maintenance",
+                                                           "J2SummonDest",
+                                                           "swJ3Ball",
+                                                           "swJ3Maintenance",
+                                                           "J3SummonDest",
+                                                           "SwHazardGuardArea",
+                                                           "HazardActor1Cam",
+                                                           "HazardActor1Pt",
+                                                           "HazardActor2Cam",
+                                                           "HazardActor2Pt",
+                                                           "SwDownGrav1",
+                                                           "SwNeutralGrav1",
+                                                           "SwUpGrav1",
+                                                           "SwDownGrav2",
+                                                           "FloatingBallOfDeth",
+                                                           "SwNeutralGrav2",
+                                                           "SwUpGrav2",
+                                                           "GravityFan2-A",
+                                                           "GravityFan2-B",
+                                                           "SecR0Switch",
+                                                           "SwSharkGuard1",
+                                                           "SwSharkGuard2",
+                                                           "SwSharkGuard3",
+                                                           "Tesla-A-1-D",
+                                                           "Tesla-A-2-D",
+                                                           "Tesla-A-3-D",
+                                                           "BigFan0",
+                                                           "BigFan1",
+                                                           "BigFan2",
+                                                           "BigFan3",
+                                                           "Tesla-A-1-S",
+                                                           "Tesla-A-2-S",
+                                                           "Tesla-A-3-S",
+                                                           "Tesla-B-1-D",
+                                                           "Tesla-B-2-D",
+                                                           "Tesla-B-3-D",
+                                                           "Tesla-B-1-S",
+                                                           "Tesla-B-2-S",
+                                                           "Tesla-B-3-S",
+                                                           "Tesla-C-1-D",
+                                                           "Tesla-C-2-D",
+                                                           "Tesla-C-3-D",
+                                                           "Tesla-C-1-S",
+                                                           "Tesla-C-2-S",
+                                                           "Tesla-C-3-S",
+                                                           "Tesla-D-1-D",
+                                                           "Tesla-D-2-D",
+                                                           "Tesla-D-3-D",
+                                                           "Tesla-D-1-S",
+                                                           "Tesla-D-2-S",
+                                                           "Tesla-D-3-S",
+                                                           "Tesla-E-1-D",
+                                                           "Tesla-E-2-D",
+                                                           "Tesla-E-3-D",
+                                                           "Tesla-E-1-S",
+                                                           "Tesla-E-2-S",
+                                                           "Tesla-E-3-S",
+                                                           "Tesla-F-1-D",
+                                                           "Tesla-F-2-D",
+                                                           "Tesla-F-3-D",
+                                                           "Tesla-F-1-S",
+                                                           "Tesla-F-2-S",
+                                                           "Tesla-F-3-S",
+                                                           "Tesla-G-1-D",
+                                                           "Tesla-G-2-D",
+                                                           "Tesla-G-3-D",
+                                                           "Tesla-G-1-S",
+                                                           "Tesla-G-2-S",
+                                                           "Tesla-G-3-S",
+                                                           "Tesla-H-1-D",
+                                                           "Tesla-H-2-D",
+                                                           "Tesla-H-3-D",
+                                                           "Tesla-H-1-S",
+                                                           "Tesla-H-2-S",
+                                                           "Tesla-H-3-S",
+                                                           "CaptainCamPtIntro",
+                                                           "CapTele1",
+                                                           "CapTele2",
+                                                           "CapTele3",
+                                                           "CapTele4",
+                                                           "CapTele5",
+                                                           "CapTele6",
+                                                           "CapTele7",
+                                                           "CapTele8",
+                                                           "CapTeleMain9",
+                                                           "CaptainCamIntro1",
+                                                           "CaptainCamPtIntro1",
+                                                           "CaptainCamIntro2",
+                                                           "CaptainCamPtIntro2",
+                                                           "CaptainCamIntro3",
+                                                           "CaptainCamIntroPt3",
+                                                           "FMClone5",
+                                                           "FMClone4",
+                                                           "FMClone3",
+                                                           "FMClone2",
+                                                           "FMClone1",
+                                                           "FMCam3",
+                                                           "FMCam1",
+                                                           "FMCam2",
+                                                           "DatalinkKeyPort",
+                                                           "PoleNorthDataArm",
+                                                           "DatalinkKeyPortS",
+                                                           "PoleNorthLCam1",
+                                                           "PoleNorthLCam2",
+                                                           "NPoleNegative",
+                                                           "NPolePositive",
+                                                           "PoleSouthDataArm",
+                                                           "PoleSouthLCam1",
+                                                           "PoleSouthLCam2",
+                                                           "SPoleNegative",
+                                                           "SPolePositive",
+                                                           "ShoSpew17",
+                                                           "ShoSpew18",
+                                                           "ShoSpew3",
+                                                           "ShoSpew4",
+                                                           "ShoSpew5",
+                                                           "ShoSpew6",
+                                                           "ShoSpew9",
+                                                           "ShoSpew10",
+                                                           "ShoSpew19",
+                                                           "ShoSpew20",
+                                                           "ShoSpew23",
+                                                           "ShoSpew24",
+                                                           "ShoSpew25",
+                                                           "ShoSpew26",
+                                                           "BST6",
+                                                           "BST7",
+                                                           "CaptAndTroopCamPt0",
+                                                           "CaptAndTroopCam",
+                                                           "CaptAndTroopCamPt",
+                                                           "CapAndTroopCamNew",
+                                                           "CaptAndTroopCamPt2",
+                                                           "EscapeChuteDoor",
+                                                           "JunctionCineCamPt",
+                                                           "J1CineCamSpewer",
+                                                           "EndCinematicCam",
+                                                           "ExitSpew0",
+                                                           "ExitSpew1",
+                                                           "GravityFan-1A",
+                                                           "GravityFan-1B",
+                                                           "Arobics1",
+                                                           "Arobics2",
+                                                           "Arobics3",
+                                                           "Arobics4",
+                                                           "Arobics5",
+                                                           "Arobics6",
+                                                           "Arobics7",
+                                                           "Arobics8",
+                                                           "Jogger1",
+                                                           "Jogger2",
+                                                           "Jogger3"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 58
-const char *Room_names[NUM_ROOM_NAMES] = {"BallShaft",
-                                    "OuterSpace",
-                                    "OuterSpace2",
-                                    "OuterSpace3",
-                                    "Hangar1ADoor",
-                                    "Hangar2ADoor",
-                                    "Hangar3ADoor",
-                                    "BigFanRoomA",
-                                    "BigFamRoomB",
-                                    "BigFanRoomC",
-                                    "BigFan1RoomA",
-                                    "BigFan1RoomB",
-                                    "BigFan1RoomC",
-                                    "BigFan2RoomA",
-                                    "BigFan2RoomB",
-                                    "BigFan3RoomA",
-                                    "BigFan3RoomB",
-                                    "FT1",
-                                    "BN2S2",
-                                    "BN2S3",
-                                    "BN2S4",
-                                    "SpaceHangar",
-                                    "SpaceInsideHangar",
-                                    "Hangar1A",
-                                    "Hangar2A",
-                                    "Hangar3A",
-                                    "Warehouse",
-                                    "J1Room",
-                                    "J2Room",
-                                    "J3Room",
-                                    "HazardGuardArea",
-                                    "GravityRoomOne",
-                                    "GravityRoomTwo",
-                                    "S0Security",
-                                    "S1Security",
-                                    "S2Security",
-                                    "S3Security",
-                                    "ChasmM0",
-                                    "ChasmM1",
-                                    "ChasmM2",
-                                    "ChasmM3",
-                                    "ChasmD0",
-                                    "ChasmD1",
-                                    "ChasmD2",
-                                    "ChasmD3",
-                                    "ChasmU0",
-                                    "ChasmU1",
-                                    "ChasmU2",
-                                    "ChasmU3",
-                                    "CaptainsQuarters",
-                                    "CaptainsBunker",
-                                    "PoleNorth",
-                                    "PoleSouth",
-                                    "CaptainsOffice",
-                                    "SouthBound1",
-                                    "SouthBound2",
-                                    "NorthBound1",
-                                    "Northbound2"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"BallShaft",
+                                                       "OuterSpace",
+                                                       "OuterSpace2",
+                                                       "OuterSpace3",
+                                                       "Hangar1ADoor",
+                                                       "Hangar2ADoor",
+                                                       "Hangar3ADoor",
+                                                       "BigFanRoomA",
+                                                       "BigFamRoomB",
+                                                       "BigFanRoomC",
+                                                       "BigFan1RoomA",
+                                                       "BigFan1RoomB",
+                                                       "BigFan1RoomC",
+                                                       "BigFan2RoomA",
+                                                       "BigFan2RoomB",
+                                                       "BigFan3RoomA",
+                                                       "BigFan3RoomB",
+                                                       "FT1",
+                                                       "BN2S2",
+                                                       "BN2S3",
+                                                       "BN2S4",
+                                                       "SpaceHangar",
+                                                       "SpaceInsideHangar",
+                                                       "Hangar1A",
+                                                       "Hangar2A",
+                                                       "Hangar3A",
+                                                       "Warehouse",
+                                                       "J1Room",
+                                                       "J2Room",
+                                                       "J3Room",
+                                                       "HazardGuardArea",
+                                                       "GravityRoomOne",
+                                                       "GravityRoomTwo",
+                                                       "S0Security",
+                                                       "S1Security",
+                                                       "S2Security",
+                                                       "S3Security",
+                                                       "ChasmM0",
+                                                       "ChasmM1",
+                                                       "ChasmM2",
+                                                       "ChasmM3",
+                                                       "ChasmD0",
+                                                       "ChasmD1",
+                                                       "ChasmD2",
+                                                       "ChasmD3",
+                                                       "ChasmU0",
+                                                       "ChasmU1",
+                                                       "ChasmU2",
+                                                       "ChasmU3",
+                                                       "CaptainsQuarters",
+                                                       "CaptainsBunker",
+                                                       "PoleNorth",
+                                                       "PoleSouth",
+                                                       "CaptainsOffice",
+                                                       "SouthBound1",
+                                                       "SouthBound2",
+                                                       "NorthBound1",
+                                                       "Northbound2"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 32
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "Hangar1ASuckout",     "LeftHangar1A",        "Hangar2Suckout",      "LeftHangar2A",        "BallPuzzleWin",
     "WarehouseTrigger",    "J3BallTrigger",       "HazardWasteMovie",    "BallFanPuzzleHint",   "GravityRoom1BotDie1",
     "GravityRoom1BotDie2", "GravityRoom1BotDie3", "GravityRoom1BotDie4", "EndFanRoom",          "EndSecurityPuzzle",
@@ -2809,164 +2825,164 @@ const char *Trigger_names[NUM_TRIGGER_NAMES] = {
     "EnterBunkerRoom",     "FirstMateWarmup",     "CaptainTroopCinemat", "EndSequenceStart",    "ExitTrigger",
     "Music Region: Puzzl", "Music Region: Hanga", "Music Region: Giant", "Music Region: Gian1", "Music Region: Barra",
     "Music Region: Poles", "Music Region: Bar1"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 18
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch31",    "Powerup pickup",
-                                      "Drop bomb",      "EnvSteamEmitC",
-                                      "RbtTubbsSeeB",   "Merc2AlertSiren",
-                                      "Extra life",     "Cloak off",
-                                      "Smartfire1",     "Drop weapon",
-                                      "Cloak on",       "RbtThiefLaugh",
-                                      "Wall fade ???",  "You don't have it BEEP",
-                                      "AmbSwitch11",    "DoorIsLocked",
-                                      "RbtGadgetAlert", "Napalmexplosion21"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch31",    "Powerup pickup",
+                                                         "Drop bomb",      "EnvSteamEmitC",
+                                                         "RbtTubbsSeeB",   "Merc2AlertSiren",
+                                                         "Extra life",     "Cloak off",
+                                                         "Smartfire1",     "Drop weapon",
+                                                         "Cloak on",       "RbtThiefLaugh",
+                                                         "Wall fade ???",  "You don't have it BEEP",
+                                                         "AmbSwitch11",    "DoorIsLocked",
+                                                         "RbtGadgetAlert", "Napalmexplosion21"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 10
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"Merc3MonLock",  "Merc3MonLogo",  "FunkyEffectGreen", "FunkyEffect2",
-                                          "FunkyEffect1",  "Merc3MonWaitS", "Merc3MonDownL",    "FunkyEffect3",
-                                          "Merc3MonWaitN", "Merc3MonNeed"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {
+    "Merc3MonLock",  "Merc3MonLogo",  "FunkyEffectGreen", "FunkyEffect2",  "FunkyEffect1",
+    "Merc3MonWaitS", "Merc3MonDownL", "FunkyEffect3",     "Merc3MonWaitN", "Merc3MonNeed"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 28
-const char *Path_names[NUM_PATH_NAMES] = {"HazardActorPath1",
-                                    "HazardActorPath2",
-                                    "IntroScene1Real",
-                                    "H2SqidSlap",
-                                    "H3BSTPath",
-                                    "H3BSTPath2",
-                                    "HenchmanCamPath",
-                                    "HenchmanPath",
-                                    "J1Gadget",
-                                    "J2Gadget",
-                                    "J3Gadget",
-                                    "HazardWasteCinePath1",
-                                    "SharkRoomGuard3",
-                                    "SharkRoomGuard2",
-                                    "SharkRoomGuard1",
-                                    "SharkGuardRoom0",
-                                    "CaptainCameraIntro",
-                                    "CaptainINTRO",
-                                    "CaptainIntroPath",
-                                    "CaptainEscapePath",
-                                    "CaptainMovePath2",
-                                    "FirstMateINTRO",
-                                    "CaptAndTroopCamPath",
-                                    "JunctionCinePath",
-                                    "JunctionCinePath2",
-                                    "JunctionCineCamPath",
-                                    "PlayerExitPath",
-                                    "JoggingPath"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"HazardActorPath1",
+                                                       "HazardActorPath2",
+                                                       "IntroScene1Real",
+                                                       "H2SqidSlap",
+                                                       "H3BSTPath",
+                                                       "H3BSTPath2",
+                                                       "HenchmanCamPath",
+                                                       "HenchmanPath",
+                                                       "J1Gadget",
+                                                       "J2Gadget",
+                                                       "J3Gadget",
+                                                       "HazardWasteCinePath1",
+                                                       "SharkRoomGuard3",
+                                                       "SharkRoomGuard2",
+                                                       "SharkRoomGuard1",
+                                                       "SharkGuardRoom0",
+                                                       "CaptainCameraIntro",
+                                                       "CaptainINTRO",
+                                                       "CaptainIntroPath",
+                                                       "CaptainEscapePath",
+                                                       "CaptainMovePath2",
+                                                       "FirstMateINTRO",
+                                                       "CaptAndTroopCamPath",
+                                                       "JunctionCinePath",
+                                                       "JunctionCinePath2",
+                                                       "JunctionCineCamPath",
+                                                       "PlayerExitPath",
+                                                       "JoggingPath"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 12
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"H3STMatcen", "Hangar2AMatcen", "Hangar3AMatcen", "BallPuzzleTreat",
-                                        "J1Gadget",   "J1BST",          "J2Gadget",       "J2BST",
-                                        "J3Ball",     "J3Cloak",        "J3Gadget",       "J3BST"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {
+    "H3STMatcen", "Hangar2AMatcen", "Hangar3AMatcen", "BallPuzzleTreat", "J1Gadget", "J1BST",
+    "J2Gadget",   "J2BST",          "J3Ball",         "J3Cloak",         "J3Gadget", "J3BST"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 26
-const char *Goal_names[NUM_GOAL_NAMES] = {"Unlock Hangar 1A Exit Door",
-                                    "Proceed to Hangar 2A",
-                                    "Unlock Hangar 2A Exit Door",
-                                    "Proceed to Hangar 3A",
-                                    "Exit Storage Crate",
-                                    "Enter Warehouse",
-                                    "Defeat Captain's Henchman",
-                                    "Plant Bomb at Cooling Junction Alpha",
-                                    "Gain Entry to Cooling Junction Alpha",
-                                    "Plant Bomb at Cooling Junction Beta",
-                                    "Gain Entry to Cooling Junction Beta",
-                                    "Plant Bomb at Cooling Junction Gamma",
-                                    "Gain Entry to Cooling Junction Gamma",
-                                    "Plant Bombs at Cooling Junctions",
-                                    "Disable Hazardous Storage Forcefield",
-                                    "Disable Secondary Cooling Fan",
-                                    "Disable Primary Cooling Fan",
-                                    "Disable Ventilation Shaft Fan",
-                                    "Obtain Captain's Data Key",
-                                    "Find and Destroy Captain",
-                                    "Obtain First Mate's Data Key",
-                                    "Find and Destroy First Mate",
-                                    "Place Pole North Data Key",
-                                    "Place Pole South Data Key",
-                                    "Download Station's Databanks",
-                                    "Escape from the station"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Unlock Hangar 1A Exit Door",
+                                                       "Proceed to Hangar 2A",
+                                                       "Unlock Hangar 2A Exit Door",
+                                                       "Proceed to Hangar 3A",
+                                                       "Exit Storage Crate",
+                                                       "Enter Warehouse",
+                                                       "Defeat Captain's Henchman",
+                                                       "Plant Bomb at Cooling Junction Alpha",
+                                                       "Gain Entry to Cooling Junction Alpha",
+                                                       "Plant Bomb at Cooling Junction Beta",
+                                                       "Gain Entry to Cooling Junction Beta",
+                                                       "Plant Bomb at Cooling Junction Gamma",
+                                                       "Gain Entry to Cooling Junction Gamma",
+                                                       "Plant Bombs at Cooling Junctions",
+                                                       "Disable Hazardous Storage Forcefield",
+                                                       "Disable Secondary Cooling Fan",
+                                                       "Disable Primary Cooling Fan",
+                                                       "Disable Ventilation Shaft Fan",
+                                                       "Obtain Captain's Data Key",
+                                                       "Find and Destroy Captain",
+                                                       "Obtain First Mate's Data Key",
+                                                       "Find and Destroy First Mate",
+                                                       "Place Pole North Data Key",
+                                                       "Place Pole South Data Key",
+                                                       "Download Station's Databanks",
+                                                       "Escape from the station"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 68
-const char *Message_names[NUM_MESSAGE_NAMES] = {"Bomb3",
-                                          "IntroCinematicMsg",
-                                          "EmptyMessage",
-                                          "HangarPrimaryLocked",
-                                          "Hangar1ADecompMsg",
-                                          "Hangar1ADecompCancelMsg",
-                                          "EnteredHangar2A",
-                                          "Hangar2ADecompMsg",
-                                          "Hangar2ADecompCancelMsg",
-                                          "Hangar2AFlamePurge",
-                                          "Hangar2AFlamePurgeStop",
-                                          "Hangar3ADecompMsg",
-                                          "Hangar3ADecompMsgCancel",
-                                          "EnteredHangar1A",
-                                          "HenchmanSays",
-                                          "HenchmanHint",
-                                          "ForcefieldDown",
-                                          "Bomb",
-                                          "Bomb2",
-                                          "BombAlreadyPlanted",
-                                          "BombPlanted",
-                                          "BombDontPlantHere",
-                                          "MaintenanceWarningLong",
-                                          "MaintenanceWarning",
-                                          "MBotSwitch",
-                                          "DoorUnlockedMaint",
-                                          "MBotDied",
-                                          "MBotSpottedUs",
-                                          "MBotSummon",
-                                          "BallMade",
-                                          "IncomingTransmit",
-                                          "HazardGadget1Line",
-                                          "HazardGadget2Line",
-                                          "HazardGadget1Line2",
-                                          "HazardousStorageHint",
-                                          "BallFanPuzzleHint",
-                                          "IntruderAlertR0",
-                                          "SecurityR0",
-                                          "IntruderAlertR1",
-                                          "SecurityR1",
-                                          "IntruderAlertR2",
-                                          "SecurityR2",
-                                          "IntruderAlertR3",
-                                          "SecuirtyR3",
-                                          "WindFanPuzzleHint",
-                                          "FanDisabled",
-                                          "DataKeyCaptain",
-                                          "GotDatalinkKey",
-                                          "CaptainText",
-                                          "EnteredBunker",
-                                          "DataKeyFirstMate",
-                                          "GotDatalinkKey2",
-                                          "FirstMateText",
-                                          "PoleDatalinkWarning",
-                                          "DataKeysVerified",
-                                          "DataKeyWrong2",
-                                          "DataKeyNoUse1",
-                                          "DataKeyWrong1",
-                                          "DataKeyNoUse2",
-                                          "PoleDatalinkLock",
-                                          "DataArmUsed",
-                                          "DataArmOff",
-                                          "GetOut",
-                                          "ExitLevelLong",
-                                          "ExitTheLevel",
-                                          "CaptainAndTrooper",
-                                          "CaptainAndTrooper2",
-                                          "EscapeDoorLocked"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"Bomb3",
+                                                             "IntroCinematicMsg",
+                                                             "EmptyMessage",
+                                                             "HangarPrimaryLocked",
+                                                             "Hangar1ADecompMsg",
+                                                             "Hangar1ADecompCancelMsg",
+                                                             "EnteredHangar2A",
+                                                             "Hangar2ADecompMsg",
+                                                             "Hangar2ADecompCancelMsg",
+                                                             "Hangar2AFlamePurge",
+                                                             "Hangar2AFlamePurgeStop",
+                                                             "Hangar3ADecompMsg",
+                                                             "Hangar3ADecompMsgCancel",
+                                                             "EnteredHangar1A",
+                                                             "HenchmanSays",
+                                                             "HenchmanHint",
+                                                             "ForcefieldDown",
+                                                             "Bomb",
+                                                             "Bomb2",
+                                                             "BombAlreadyPlanted",
+                                                             "BombPlanted",
+                                                             "BombDontPlantHere",
+                                                             "MaintenanceWarningLong",
+                                                             "MaintenanceWarning",
+                                                             "MBotSwitch",
+                                                             "DoorUnlockedMaint",
+                                                             "MBotDied",
+                                                             "MBotSpottedUs",
+                                                             "MBotSummon",
+                                                             "BallMade",
+                                                             "IncomingTransmit",
+                                                             "HazardGadget1Line",
+                                                             "HazardGadget2Line",
+                                                             "HazardGadget1Line2",
+                                                             "HazardousStorageHint",
+                                                             "BallFanPuzzleHint",
+                                                             "IntruderAlertR0",
+                                                             "SecurityR0",
+                                                             "IntruderAlertR1",
+                                                             "SecurityR1",
+                                                             "IntruderAlertR2",
+                                                             "SecurityR2",
+                                                             "IntruderAlertR3",
+                                                             "SecuirtyR3",
+                                                             "WindFanPuzzleHint",
+                                                             "FanDisabled",
+                                                             "DataKeyCaptain",
+                                                             "GotDatalinkKey",
+                                                             "CaptainText",
+                                                             "EnteredBunker",
+                                                             "DataKeyFirstMate",
+                                                             "GotDatalinkKey2",
+                                                             "FirstMateText",
+                                                             "PoleDatalinkWarning",
+                                                             "DataKeysVerified",
+                                                             "DataKeyWrong2",
+                                                             "DataKeyNoUse1",
+                                                             "DataKeyWrong1",
+                                                             "DataKeyNoUse2",
+                                                             "PoleDatalinkLock",
+                                                             "DataArmUsed",
+                                                             "DataArmOff",
+                                                             "GetOut",
+                                                             "ExitLevelLong",
+                                                             "ExitTheLevel",
+                                                             "CaptainAndTrooper",
+                                                             "CaptainAndTrooper2",
+                                                             "EscapeDoorLocked"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

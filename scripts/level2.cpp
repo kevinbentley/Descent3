@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -473,130 +488,130 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_112 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1031,8 +1046,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1198,104 +1213,104 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 2
-const char *Door_names[NUM_DOOR_NAMES] = {"DockingDoor", "MinimumLevelServic"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"DockingDoor", "MinimumLevelServic"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 90
-const char *Object_names[NUM_OBJECT_NAMES] = {"RescueShuttle",
-                                        "PerimeterTurretA",
-                                        "PerimeterTurretB",
-                                        "PerimeterTurretC",
-                                        "PerimeterTurretD",
-                                        "PerimeterTurretE",
-                                        "UpperTowerForcefie",
-                                        "InnerTowerForcefie",
-                                        "SweitzerActor",
-                                        "ShuttleFFStartPos",
-                                        "RescueShuttleDocki",
-                                        "SweitzerMIN",
-                                        "ShuttleFFTarget",
-                                        "ShuttleTunnelPos",
-                                        "ShuttleTunnelTarge",
-                                        "ShuttleCellPos",
-                                        "ShuttleCellTarget",
-                                        "ShuttleInCellTarge",
-                                        "ShuttleCellTarget2",
-                                        "EndShuttlePos",
-                                        "DockingDoor",
-                                        "X-1OldSecurityPass",
-                                        "R-1MaximumSecurity",
-                                        "G-1MinimumSecurity",
-                                        "Y-1MediumSecurityP",
-                                        "HangarRASAlarmGuy",
-                                        "CheckpointMinTubbs",
-                                        "CheckpointMedTubbs",
-                                        "CheckpointMaxTubbs",
-                                        "MaxCheckCamA",
-                                        "MaxCheckCamB",
-                                        "MedCheckCamA",
-                                        "MedCheckCamB",
-                                        "MinCheckCamA",
-                                        "MinCheckCamB",
-                                        "ChemicalBotStartSw",
-                                        "ChemicalBotKILLSwi",
-                                        "AcidVatSpewerA",
-                                        "AcidVatSpewerB",
-                                        "AcidVatSpewerC",
-                                        "ChemicalControlCam",
-                                        "AcidVatCamera",
-                                        "SirenCamA",
-                                        "SirenCamB",
-                                        "SirenCamC",
-                                        "SirenCamD",
-                                        "SirenCamE",
-                                        "SirenCamF",
-                                        "SirenCamG",
-                                        "SirenCamH",
-                                        "SirenCamI",
-                                        "SirenCamJ",
-                                        "MinMan1",
-                                        "MinMan2",
-                                        "MinMan3",
-                                        "MinMan4",
-                                        "MinMan5",
-                                        "MinMan6",
-                                        "MinMan7",
-                                        "MinMan8",
-                                        "SweitMaxLocator",
-                                        "SweitMinLocator",
-                                        "SweitzerMAX",
-                                        "MaxMan1",
-                                        "MaxMan2",
-                                        "MaxMan3",
-                                        "MaxMan4",
-                                        "MaxMan5",
-                                        "MaxMan6",
-                                        "MaxMan7",
-                                        "MaxMan8",
-                                        "RecordsNodeH",
-                                        "RecordsNodeG",
-                                        "RecordsNodeF",
-                                        "RecordsNodeE",
-                                        "RecordsNodeD",
-                                        "RecordsNodeC",
-                                        "RecordsNodeB",
-                                        "RecordsNodeA",
-                                        "RecordsNodeP",
-                                        "RecordsNodeO",
-                                        "RecordsNodeN",
-                                        "RecordsNodeM",
-                                        "RecordsNodeL",
-                                        "RecordsNodeK",
-                                        "RecordsNodeJ",
-                                        "RecordsNodeI",
-                                        "PrisonRecordsCompu",
-                                        "TubbsSentryA",
-                                        "TubbsSentryB"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"RescueShuttle",
+                                                           "PerimeterTurretA",
+                                                           "PerimeterTurretB",
+                                                           "PerimeterTurretC",
+                                                           "PerimeterTurretD",
+                                                           "PerimeterTurretE",
+                                                           "UpperTowerForcefie",
+                                                           "InnerTowerForcefie",
+                                                           "SweitzerActor",
+                                                           "ShuttleFFStartPos",
+                                                           "RescueShuttleDocki",
+                                                           "SweitzerMIN",
+                                                           "ShuttleFFTarget",
+                                                           "ShuttleTunnelPos",
+                                                           "ShuttleTunnelTarge",
+                                                           "ShuttleCellPos",
+                                                           "ShuttleCellTarget",
+                                                           "ShuttleInCellTarge",
+                                                           "ShuttleCellTarget2",
+                                                           "EndShuttlePos",
+                                                           "DockingDoor",
+                                                           "X-1OldSecurityPass",
+                                                           "R-1MaximumSecurity",
+                                                           "G-1MinimumSecurity",
+                                                           "Y-1MediumSecurityP",
+                                                           "HangarRASAlarmGuy",
+                                                           "CheckpointMinTubbs",
+                                                           "CheckpointMedTubbs",
+                                                           "CheckpointMaxTubbs",
+                                                           "MaxCheckCamA",
+                                                           "MaxCheckCamB",
+                                                           "MedCheckCamA",
+                                                           "MedCheckCamB",
+                                                           "MinCheckCamA",
+                                                           "MinCheckCamB",
+                                                           "ChemicalBotStartSw",
+                                                           "ChemicalBotKILLSwi",
+                                                           "AcidVatSpewerA",
+                                                           "AcidVatSpewerB",
+                                                           "AcidVatSpewerC",
+                                                           "ChemicalControlCam",
+                                                           "AcidVatCamera",
+                                                           "SirenCamA",
+                                                           "SirenCamB",
+                                                           "SirenCamC",
+                                                           "SirenCamD",
+                                                           "SirenCamE",
+                                                           "SirenCamF",
+                                                           "SirenCamG",
+                                                           "SirenCamH",
+                                                           "SirenCamI",
+                                                           "SirenCamJ",
+                                                           "MinMan1",
+                                                           "MinMan2",
+                                                           "MinMan3",
+                                                           "MinMan4",
+                                                           "MinMan5",
+                                                           "MinMan6",
+                                                           "MinMan7",
+                                                           "MinMan8",
+                                                           "SweitMaxLocator",
+                                                           "SweitMinLocator",
+                                                           "SweitzerMAX",
+                                                           "MaxMan1",
+                                                           "MaxMan2",
+                                                           "MaxMan3",
+                                                           "MaxMan4",
+                                                           "MaxMan5",
+                                                           "MaxMan6",
+                                                           "MaxMan7",
+                                                           "MaxMan8",
+                                                           "RecordsNodeH",
+                                                           "RecordsNodeG",
+                                                           "RecordsNodeF",
+                                                           "RecordsNodeE",
+                                                           "RecordsNodeD",
+                                                           "RecordsNodeC",
+                                                           "RecordsNodeB",
+                                                           "RecordsNodeA",
+                                                           "RecordsNodeP",
+                                                           "RecordsNodeO",
+                                                           "RecordsNodeN",
+                                                           "RecordsNodeM",
+                                                           "RecordsNodeL",
+                                                           "RecordsNodeK",
+                                                           "RecordsNodeJ",
+                                                           "RecordsNodeI",
+                                                           "PrisonRecordsCompu",
+                                                           "TubbsSentryA",
+                                                           "TubbsSentryB"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 59
-const char *Room_names[NUM_ROOM_NAMES] = {
+static const char *const Room_names[NUM_ROOM_NAMES] = {
     "SupplyHangarEntran", "InnerTowerForcefie", "PrisonerTransferHa", "R-1MaximumSecurity", "MaximumSecurityChe",
     "Y-1MediumSecurityP", "MediumSecurityChec", "G-1MinimumSecurity", "MinimumSecurityChe", "KILLroom",
     "AcidVatRoom",        "LowerInnerTowerMat", "ChemicalControlCen", "LowerInnerTowerSha", "LowerMainInnerRoom",
@@ -1308,104 +1323,105 @@ const char *Room_names[NUM_ROOM_NAMES] = {
     "LeftCellA",          "LeftCellB",          "SweitMaxLeftC",      "LeftCellD",          "RightCellA",
     "RightCellB",         "RightCellC",         "RightCellD",         "MaximumLevelMatCen", "SweitMinCell",
     "RecordsRoomA",       "RecordsRoomB",       "MaxComputerRoom",    "ChemicalBotStart"};
-int Room_indexes[NUM_ROOM_NAMES];
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 28
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "SupplyHangarAlertTr", "AcidVat",           "EndLevelTrigger",  "MCaveOne",         "MStartArea2", "MStartArea",
     "MTerrain2",           "MTerrain1",         "MAfterFF3",        "MAfterFF2",        "MAfterFF1",   "MAcidCaves3",
     "MAcidCaves2",         "MAcidCaves1",       "MOutOfCaves2",     "MOutOfCaves1",     "MMinimum3",   "MMinimum2",
     "MMinimum1",           "MMedium2",          "MMedium1",         "MFinal1",          "MMaximum4",   "MMaximum2",
     "MMaximum1",           "MaximumVOXtrigger", "MediumVOXtrigger", "MinimumVOXtrigger"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 4
-const char *Sound_names[NUM_SOUND_NAMES] = {"Powerup pickup", "AmbSirenBRedAcrop", "AmbSirenIntense", "AmbSwitch11"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"Powerup pickup", "AmbSirenBRedAcrop", "AmbSirenIntense",
+                                                         "AmbSwitch11"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 12
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"PhobMonUNLOCKED", "PhobMonInvWait",   "PhobMonInvalidAlert",
-                                          "PhobMonAccepted", "PhobMonCHEMSPIL",  "PhobEmerEvac",
-                                          "PhobBioWarn",     "Dirty glass",      "PhobMonEVACOMP",
-                                          "MeshGlass1",      "PhobMonInsertPas", "Staticscrolling"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {
+    "PhobMonUNLOCKED", "PhobMonInvWait", "PhobMonInvalidAlert", "PhobMonAccepted",
+    "PhobMonCHEMSPIL", "PhobEmerEvac",   "PhobBioWarn",         "Dirty glass",
+    "PhobMonEVACOMP",  "MeshGlass1",     "PhobMonInsertPas",    "Staticscrolling"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 19
-const char *Path_names[NUM_PATH_NAMES] = {
+static const char *const Path_names[NUM_PATH_NAMES] = {
     "RescueShuttleStartPath",   "ShuttleFFCamPath", "RescueShuttleEnterPath", "ShuttleTunnelCam",
     "ShuttleCellCam2",          "ShuttleInCellCam", "SweitzerDest",           "ShuttleInCellCam2",
     "ShuttleCellCam",           "EndShuttlePath",   "EndLevelCamPath",        "EndPlayerPath",
     "SupplyHangarAlertRASPath", "IntroCameraPath",  "TempPlayerIntroPath",    "RescueShuttleImpatientPath",
     "RescueShuttleEndPath",     "EndCameraPath",    "PlayerEndPath"};
-int Path_indexes[NUM_PATH_NAMES];
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 13
-const char *Matcen_names[NUM_MATCEN_NAMES] = {
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {
     "LowerInnerTowerMatC", "Supply Hangar Alert", "MaximumCheckpointMa", "MediumCheckpointMat", "MinimumCheckpointMa",
     "ChemicalBallMaker",   "ChemicalDroidMaker",  "MinimumLevelCenterM", "MinimumLevelLeftMat", "MinimumLevelRightMa",
     "MediumLevelRightMat", "MediumLevelLeftMatC", "MaximumLevelMatCen"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 18
-const char *Goal_names[NUM_GOAL_NAMES] = {"Gain entry to the Supply Hangar",
-                                    "Eliminate Perimeter Defenses",
-                                    "Deactivate the Main Tower Hangar Forcefield",
-                                    "Find the Rescue Shuttle",
-                                    "Enter the Medium Security Level",
-                                    "Get Security Pass X-1",
-                                    "Get Security Pass R-1",
-                                    "Enter the Minimum Security Level",
-                                    "Infiltrate the Main Prison Tower",
-                                    "Get Security Pass G-1",
-                                    "Get Security Pass Y-1",
-                                    "Enter the Maximum Security Level",
-                                    "Locate Dr. Sweitzer's Cell",
-                                    "Find Sweitzer's Minimum Security Cell",
-                                    "Get Sweitzer transferred to Minimum Security",
-                                    "Rescue Dr. Sweitzer",
-                                    "Exit the Prison",
-                                    "Destroy all Prison Records Databanks"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Gain entry to the Supply Hangar",
+                                                       "Eliminate Perimeter Defenses",
+                                                       "Deactivate the Main Tower Hangar Forcefield",
+                                                       "Find the Rescue Shuttle",
+                                                       "Enter the Medium Security Level",
+                                                       "Get Security Pass X-1",
+                                                       "Get Security Pass R-1",
+                                                       "Enter the Minimum Security Level",
+                                                       "Infiltrate the Main Prison Tower",
+                                                       "Get Security Pass G-1",
+                                                       "Get Security Pass Y-1",
+                                                       "Enter the Maximum Security Level",
+                                                       "Locate Dr. Sweitzer's Cell",
+                                                       "Find Sweitzer's Minimum Security Cell",
+                                                       "Get Sweitzer transferred to Minimum Security",
+                                                       "Rescue Dr. Sweitzer",
+                                                       "Exit the Prison",
+                                                       "Destroy all Prison Records Databanks"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 35
-const char *Message_names[NUM_MESSAGE_NAMES] = {"OneTurretDown",
-                                          "IncomingMessage",
-                                          "AnotherTurretGone",
-                                          "InnerTowerForcefields",
-                                          "Empty",
-                                          "EndLevel",
-                                          "X1OldSecurityPassD",
-                                          "R1MaxSecurityPassC",
-                                          "G1MinSecurityPassB",
-                                          "Y1MedSecurityPassA",
-                                          "SupplyAlarm",
-                                          "1stInvalidPassOffense",
-                                          "2ndInvalidPassOffense",
-                                          "SecurityPassNotUsableHere",
-                                          "MaximumSecurityClearance",
-                                          "MediumSecurityClearance",
-                                          "MinimumSecurityClearance",
-                                          "IntroMessage",
-                                          "DontShootMe",
-                                          "SPUDisBorn",
-                                          "ChemicalReactionSwitches",
-                                          "SPUDkilled",
-                                          "SPUDscores",
-                                          "SPUDhasTheBall",
-                                          "ChemicalReactionAlert",
-                                          "WhatTheHell",
-                                          "SweitzerMINLockedOut",
-                                          "SweitzerMAX",
-                                          "ShuttleUnderAttack",
-                                          "LoadingSweitzer",
-                                          "LoadedSweitzer",
-                                          "RecordsNodeDestroyed",
-                                          "ComputerDestroyed",
-                                          "ShuttleMoveToTower",
-                                          "EscortShuttle"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"OneTurretDown",
+                                                             "IncomingMessage",
+                                                             "AnotherTurretGone",
+                                                             "InnerTowerForcefields",
+                                                             "Empty",
+                                                             "EndLevel",
+                                                             "X1OldSecurityPassD",
+                                                             "R1MaxSecurityPassC",
+                                                             "G1MinSecurityPassB",
+                                                             "Y1MedSecurityPassA",
+                                                             "SupplyAlarm",
+                                                             "1stInvalidPassOffense",
+                                                             "2ndInvalidPassOffense",
+                                                             "SecurityPassNotUsableHere",
+                                                             "MaximumSecurityClearance",
+                                                             "MediumSecurityClearance",
+                                                             "MinimumSecurityClearance",
+                                                             "IntroMessage",
+                                                             "DontShootMe",
+                                                             "SPUDisBorn",
+                                                             "ChemicalReactionSwitches",
+                                                             "SPUDkilled",
+                                                             "SPUDscores",
+                                                             "SPUDhasTheBall",
+                                                             "ChemicalReactionAlert",
+                                                             "WhatTheHell",
+                                                             "SweitzerMINLockedOut",
+                                                             "SweitzerMAX",
+                                                             "ShuttleUnderAttack",
+                                                             "LoadingSweitzer",
+                                                             "LoadedSweitzer",
+                                                             "RecordsNodeDestroyed",
+                                                             "ComputerDestroyed",
+                                                             "ShuttleMoveToTower",
+                                                             "EscortShuttle"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

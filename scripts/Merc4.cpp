@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -299,77 +314,77 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_062 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -980,8 +995,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1147,181 +1162,183 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 3
-const char *Door_names[NUM_DOOR_NAMES] = {"AirlockInnerDoor", "AirlockOuterDoor", "DoorWon'tOpenFar"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"AirlockInnerDoor", "AirlockOuterDoor", "DoorWon'tOpenFar"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 79
-const char *Object_names[NUM_OBJECT_NAMES] = {"TeleporterA1",
-                                        "TeleporterA2",
-                                        "TeleporterB1",
-                                        "TeleporterC1",
-                                        "TeleporterC2",
-                                        "EscapeTrigger",
-                                        "Maw1",
-                                        "Maw2",
-                                        "Maw3",
-                                        "Maw4",
-                                        "Maw5",
-                                        "WallShuttle",
-                                        "DataArm1",
-                                        "DataArm2",
-                                        "BossMinion1",
-                                        "BossMinion2",
-                                        "Greenbot1",
-                                        "Greenbot2",
-                                        "SharkAmbush1",
-                                        "Greenbot3",
-                                        "Greenbot4",
-                                        "Greenbot5",
-                                        "Greenbot6",
-                                        "Greenbot7",
-                                        "Greenbot8",
-                                        "Greenbot9",
-                                        "Greenbot10",
-                                        "Greenbot11",
-                                        "Greenbot12",
-                                        "Greenbot13",
-                                        "Greenbot14",
-                                        "Greenbot15",
-                                        "Greenbot16",
-                                        "Greenbot17",
-                                        "Greenbot18",
-                                        "Greenbot19",
-                                        "BossDeathCamTarget",
-                                        "AlienBoss",
-                                        "AlienBossNest",
-                                        "AirlockDoorSwitch",
-                                        "AirlockOuterDoor",
-                                        "AirlockOuterCam1",
-                                        "AirlockOuterCam2",
-                                        "AirlockInnerDoor",
-                                        "AirlockInnerCam1",
-                                        "AirlockInnerCam2",
-                                        "AirlockSound",
-                                        "TeleporterA1Dest",
-                                        "TeleporterA1Cam2",
-                                        "TeleporterA2Cam2",
-                                        "TeleporterA2Dest",
-                                        "TeleporterC1Dest",
-                                        "TeleporterC2Dest",
-                                        "TeleporterA1Cam",
-                                        "TeleporterA2Cam",
-                                        "DoorWon'tOpenFar",
-                                        "BadDoorCam1",
-                                        "BadDoorCam2",
-                                        "CruiserFuse",
-                                        "FusePosition",
-                                        "FuseBeamB",
-                                        "FuseBeamA",
-                                        "ThrusterSwitch",
-                                        "ThrusterCam",
-                                        "Cocoon1Ambusher1",
-                                        "Ambush1HuntDest",
-                                        "Cocoon1Ambusher2",
-                                        "Cocoon1Ambusher3",
-                                        "Cocoon2Ambusher1",
-                                        "AlienAmbush1",
-                                        "AlienAmbush2A",
-                                        "AlienAmbush2B",
-                                        "AlienBossPosition",
-                                        "RoomASteamer1",
-                                        "RoomASteamer2",
-                                        "RoomBSteamer",
-                                        "RoomCSteamer",
-                                        "RoomDSteamer",
-                                        "RoomESteamer"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"TeleporterA1",
+                                                           "TeleporterA2",
+                                                           "TeleporterB1",
+                                                           "TeleporterC1",
+                                                           "TeleporterC2",
+                                                           "EscapeTrigger",
+                                                           "Maw1",
+                                                           "Maw2",
+                                                           "Maw3",
+                                                           "Maw4",
+                                                           "Maw5",
+                                                           "WallShuttle",
+                                                           "DataArm1",
+                                                           "DataArm2",
+                                                           "BossMinion1",
+                                                           "BossMinion2",
+                                                           "Greenbot1",
+                                                           "Greenbot2",
+                                                           "SharkAmbush1",
+                                                           "Greenbot3",
+                                                           "Greenbot4",
+                                                           "Greenbot5",
+                                                           "Greenbot6",
+                                                           "Greenbot7",
+                                                           "Greenbot8",
+                                                           "Greenbot9",
+                                                           "Greenbot10",
+                                                           "Greenbot11",
+                                                           "Greenbot12",
+                                                           "Greenbot13",
+                                                           "Greenbot14",
+                                                           "Greenbot15",
+                                                           "Greenbot16",
+                                                           "Greenbot17",
+                                                           "Greenbot18",
+                                                           "Greenbot19",
+                                                           "BossDeathCamTarget",
+                                                           "AlienBoss",
+                                                           "AlienBossNest",
+                                                           "AirlockDoorSwitch",
+                                                           "AirlockOuterDoor",
+                                                           "AirlockOuterCam1",
+                                                           "AirlockOuterCam2",
+                                                           "AirlockInnerDoor",
+                                                           "AirlockInnerCam1",
+                                                           "AirlockInnerCam2",
+                                                           "AirlockSound",
+                                                           "TeleporterA1Dest",
+                                                           "TeleporterA1Cam2",
+                                                           "TeleporterA2Cam2",
+                                                           "TeleporterA2Dest",
+                                                           "TeleporterC1Dest",
+                                                           "TeleporterC2Dest",
+                                                           "TeleporterA1Cam",
+                                                           "TeleporterA2Cam",
+                                                           "DoorWon'tOpenFar",
+                                                           "BadDoorCam1",
+                                                           "BadDoorCam2",
+                                                           "CruiserFuse",
+                                                           "FusePosition",
+                                                           "FuseBeamB",
+                                                           "FuseBeamA",
+                                                           "ThrusterSwitch",
+                                                           "ThrusterCam",
+                                                           "Cocoon1Ambusher1",
+                                                           "Ambush1HuntDest",
+                                                           "Cocoon1Ambusher2",
+                                                           "Cocoon1Ambusher3",
+                                                           "Cocoon2Ambusher1",
+                                                           "AlienAmbush1",
+                                                           "AlienAmbush2A",
+                                                           "AlienAmbush2B",
+                                                           "AlienBossPosition",
+                                                           "RoomASteamer1",
+                                                           "RoomASteamer2",
+                                                           "RoomBSteamer",
+                                                           "RoomCSteamer",
+                                                           "RoomDSteamer",
+                                                           "RoomESteamer"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 31
-const char *Room_names[NUM_ROOM_NAMES] = {
+static const char *const Room_names[NUM_ROOM_NAMES] = {
     "AirlockRoom",     "AirlockIDRoom", "AirlockODRoom",      "BossRoomA",        "BossRoomB",         "BossRoomC",
     "BossRoomD",       "BossRoomE",     "ThrusterSwitchRoom", "BossLeftHideRoom", "BossRightHideRoom", "TeleporterA2",
     "TeleporterA1",    "Maw1EntryRoom", "Maw1Room",           "Maw2EntryRoom",    "Maw2Room",          "Maw3EntryRoom",
     "Maw3Room",        "Maw4EntryRoom", "Maw4Room",           "Maw5EntryRoom",    "Maw5Room",          "ForcefieldRoom",
     "CocoonAmb1Cell1", "Coc1AmbCell2",  "CocAmb2Cell1",       "SharkAmbush1",     "AlienAmbush2",      "CaveinRoom",
     "CaveinRoom2"};
-int Room_indexes[NUM_ROOM_NAMES];
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 23
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "AirlockTrigger",      "LeftOuterShell",    "EnteredHiveArea1", "EnteredHive2",
     "EnteredHive3",        "LeftHiveArea1",     "LeftHive2",        "LeftHive3",
     "ForcefieldRoomTrigg", "LowerQuadTrigger",  "NestTrigger1",     "NestTrigger2",
     "ThrusterTrigger",     "Ambush1",           "Ambush2",          "SharkAmbush1",
     "AlienAmbush2",        "BossIntroTrigger",  "LeftBossArea",     "BossIntroTrigger2",
     "BossIntroTrigger3",   "BossIntroTrigger4", "BossIntroTrigger5"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 16
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch41",   "EnvSteamEmitG",  "DoorIsLocked",  "EnvSlowCreakD",
-                                      "EnvSlowCreakE", "Merc4Vortex",    "Wall fade ???", "AmbMatCenProduce",
-                                      "EnvElectricE",  "Powerup pickup", "EnvElectricA",  "AmbSwitch31",
-                                      "Merc4Thruster", "Merc4BossDeath", "Merc4Rumble",   "AmbSwitch11"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {
+    "AmbSwitch41",   "EnvSteamEmitG",    "DoorIsLocked", "EnvSlowCreakD",  "EnvSlowCreakE", "Merc4Vortex",
+    "Wall fade ???", "AmbMatCenProduce", "EnvElectricE", "Powerup pickup", "EnvElectricA",  "AmbSwitch31",
+    "Merc4Thruster", "Merc4BossDeath",   "Merc4Rumble",  "AmbSwitch11"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 4
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"CC_JetEngine", "Alien_Forcefield02", "FunkyEffect3", "CC_JetEngineLit"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"CC_JetEngine", "Alien_Forcefield02", "FunkyEffect3",
+                                                             "CC_JetEngineLit"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 7
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCamPath",   "IntroPlayerPath", "BossDeathCam", "BossDeathPath",
-                                    "Escape2CamPath", "EscapePath2",     "BossIntroCam2"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"IntroCamPath",  "IntroPlayerPath", "BossDeathCam",
+                                                       "BossDeathPath", "Escape2CamPath",  "EscapePath2",
+                                                       "BossIntroCam2"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 0
-const char **Matcen_names = NULL;
-int *Matcen_indexes = NULL;
+static const char **Matcen_names = NULL;
+static int *Matcen_indexes = NULL;
 
 #define NUM_GOAL_NAMES 13
-const char *Goal_names[NUM_GOAL_NAMES] = {"Engage Airlock Power",
-                                    "Enter Outer Shell through Airlock",
-                                    "Teleport into Planetoid's Core",
-                                    "Disable Alien Forcefield Generators",
-                                    "Enter Sealed Quadrant of Alien Hive",
-                                    "Activate Main Thruster",
-                                    "Acquire Spare Fuse",
-                                    "Restore Power to Derelict Ship",
-                                    "Force Alien Queen to Nest",
-                                    "Manually Ignite Thruster Burn",
-                                    "Destroy Alien Planetoid",
-                                    "Escape",
-                                    "Investigate and Destroy Alien Planetoid"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Engage Airlock Power",
+                                                       "Enter Outer Shell through Airlock",
+                                                       "Teleport into Planetoid's Core",
+                                                       "Disable Alien Forcefield Generators",
+                                                       "Enter Sealed Quadrant of Alien Hive",
+                                                       "Activate Main Thruster",
+                                                       "Acquire Spare Fuse",
+                                                       "Restore Power to Derelict Ship",
+                                                       "Force Alien Queen to Nest",
+                                                       "Manually Ignite Thruster Burn",
+                                                       "Destroy Alien Planetoid",
+                                                       "Escape",
+                                                       "Investigate and Destroy Alien Planetoid"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 30
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
-                                          "AirlockPowerOn",
-                                          "AirlockDecompStarted",
-                                          "AirlockActive",
-                                          "AirlockPowerNotOn",
-                                          "AirlockCompStarted",
-                                          "AirlockMalfunction",
-                                          "BadDoorBumped",
-                                          "FFMessage",
-                                          "UseThruster",
-                                          "CruiserFuseAcquired",
-                                          "CruiserFusePlaced",
-                                          "CruiserFuseNoUse",
-                                          "QueenLeft",
-                                          "NoBurnIgnited",
-                                          "NoPowerAvail",
-                                          "IgniterFailed1",
-                                          "IgniterFailed2",
-                                          "BurnIgnited",
-                                          "ThrusterBurnFailed",
-                                          "RechargeThruster1",
-                                          "RechargeThruster2",
-                                          "Empty",
-                                          "GetOuttaHere",
-                                          "FuseRoom",
-                                          "BossIntro",
-                                          "DA1Game",
-                                          "DA1Hud",
-                                          "DA2Game",
-                                          "DA2Hud"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
+                                                             "AirlockPowerOn",
+                                                             "AirlockDecompStarted",
+                                                             "AirlockActive",
+                                                             "AirlockPowerNotOn",
+                                                             "AirlockCompStarted",
+                                                             "AirlockMalfunction",
+                                                             "BadDoorBumped",
+                                                             "FFMessage",
+                                                             "UseThruster",
+                                                             "CruiserFuseAcquired",
+                                                             "CruiserFusePlaced",
+                                                             "CruiserFuseNoUse",
+                                                             "QueenLeft",
+                                                             "NoBurnIgnited",
+                                                             "NoPowerAvail",
+                                                             "IgniterFailed1",
+                                                             "IgniterFailed2",
+                                                             "BurnIgnited",
+                                                             "ThrusterBurnFailed",
+                                                             "RechargeThruster1",
+                                                             "RechargeThruster2",
+                                                             "Empty",
+                                                             "GetOuttaHere",
+                                                             "FuseRoom",
+                                                             "BossIntro",
+                                                             "DA1Game",
+                                                             "DA1Hud",
+                                                             "DA2Game",
+                                                             "DA2Hud"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

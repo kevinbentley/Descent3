@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -100,12 +115,12 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_002 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -172,8 +187,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -339,46 +354,46 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 0
-const char **Door_names = NULL;
-int *Door_handles = NULL;
+static const char **Door_names = NULL;
+static int *Door_handles = NULL;
 
 #define NUM_OBJECT_NAMES 6
-const char *Object_names[NUM_OBJECT_NAMES] = {"SmokeA", "SmokeB", "JawsD", "JawsC", "JawsB", "JawsA"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"SmokeA", "SmokeB", "JawsD", "JawsC", "JawsB", "JawsA"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 0
-const char **Room_names = NULL;
-int *Room_indexes = NULL;
+static const char **Room_names = NULL;
+static int *Room_indexes = NULL;
 
 #define NUM_TRIGGER_NAMES 0
-const char **Trigger_names = NULL;
-int *Trigger_indexes = NULL;
-int *Trigger_faces = NULL;
-int *Trigger_rooms = NULL;
+static const char **Trigger_names = NULL;
+static int *Trigger_indexes = NULL;
+static int *Trigger_faces = NULL;
+static int *Trigger_rooms = NULL;
 
 #define NUM_SOUND_NAMES 0
-const char **Sound_names = NULL;
-int *Sound_indexes = NULL;
+static const char **Sound_names = NULL;
+static int *Sound_indexes = NULL;
 
 #define NUM_TEXTURE_NAMES 0
-const char **Texture_names = NULL;
-int *Texture_indexes = NULL;
+static const char **Texture_names = NULL;
+static int *Texture_indexes = NULL;
 
 #define NUM_PATH_NAMES 0
-const char **Path_names = NULL;
-int *Path_indexes = NULL;
+static const char **Path_names = NULL;
+static int *Path_indexes = NULL;
 
 #define NUM_MATCEN_NAMES 0
-const char **Matcen_names = NULL;
-int *Matcen_indexes = NULL;
+static const char **Matcen_names = NULL;
+static int *Matcen_indexes = NULL;
 
 #define NUM_GOAL_NAMES 0
-const char **Goal_names = NULL;
-int *Goal_indexes = NULL;
+static const char **Goal_names = NULL;
+static int *Goal_indexes = NULL;
 
 #define NUM_MESSAGE_NAMES 0
-const char **Message_names = NULL;
-const char **Message_strings = NULL;
+static const char **Message_names = NULL;
+static const char **Message_strings = NULL;
 
 // ===============
 // InitializeDLL()

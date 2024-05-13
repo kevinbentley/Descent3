@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -755,179 +770,179 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_149 = 0;
-int ScriptActionCtr_148 = 0;
-int ScriptActionCtr_147 = 0;
-int ScriptActionCtr_146 = 0;
-int ScriptActionCtr_150 = 0;
-int ScriptActionCtr_151 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_152 = 0;
-int ScriptActionCtr_153 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_170 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_173 = 0;
-int ScriptActionCtr_172 = 0;
-int ScriptActionCtr_171 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_133 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_142 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_132 = 0;
-int ScriptActionCtr_131 = 0;
-int ScriptActionCtr_130 = 0;
-int ScriptActionCtr_129 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_125 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_154 = 0;
-int ScriptActionCtr_167 = 0;
-int ScriptActionCtr_166 = 0;
-int ScriptActionCtr_165 = 0;
-int ScriptActionCtr_143 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_164 = 0;
-int ScriptActionCtr_163 = 0;
-int ScriptActionCtr_162 = 0;
-int ScriptActionCtr_161 = 0;
-int ScriptActionCtr_160 = 0;
-int ScriptActionCtr_145 = 0;
-int ScriptActionCtr_144 = 0;
-int ScriptActionCtr_159 = 0;
-int ScriptActionCtr_158 = 0;
-int ScriptActionCtr_157 = 0;
-int ScriptActionCtr_156 = 0;
-int ScriptActionCtr_155 = 0;
-int ScriptActionCtr_141 = 0;
-int ScriptActionCtr_140 = 0;
-int ScriptActionCtr_139 = 0;
-int ScriptActionCtr_138 = 0;
-int ScriptActionCtr_137 = 0;
-int ScriptActionCtr_136 = 0;
-int ScriptActionCtr_135 = 0;
-int ScriptActionCtr_134 = 0;
-int ScriptActionCtr_168 = 0;
-int ScriptActionCtr_169 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_149 = 0;
+static int ScriptActionCtr_148 = 0;
+static int ScriptActionCtr_147 = 0;
+static int ScriptActionCtr_146 = 0;
+static int ScriptActionCtr_150 = 0;
+static int ScriptActionCtr_151 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_152 = 0;
+static int ScriptActionCtr_153 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_170 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_173 = 0;
+static int ScriptActionCtr_172 = 0;
+static int ScriptActionCtr_171 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_133 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_142 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_132 = 0;
+static int ScriptActionCtr_131 = 0;
+static int ScriptActionCtr_130 = 0;
+static int ScriptActionCtr_129 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_154 = 0;
+static int ScriptActionCtr_167 = 0;
+static int ScriptActionCtr_166 = 0;
+static int ScriptActionCtr_165 = 0;
+static int ScriptActionCtr_143 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_164 = 0;
+static int ScriptActionCtr_163 = 0;
+static int ScriptActionCtr_162 = 0;
+static int ScriptActionCtr_161 = 0;
+static int ScriptActionCtr_160 = 0;
+static int ScriptActionCtr_145 = 0;
+static int ScriptActionCtr_144 = 0;
+static int ScriptActionCtr_159 = 0;
+static int ScriptActionCtr_158 = 0;
+static int ScriptActionCtr_157 = 0;
+static int ScriptActionCtr_156 = 0;
+static int ScriptActionCtr_155 = 0;
+static int ScriptActionCtr_141 = 0;
+static int ScriptActionCtr_140 = 0;
+static int ScriptActionCtr_139 = 0;
+static int ScriptActionCtr_138 = 0;
+static int ScriptActionCtr_137 = 0;
+static int ScriptActionCtr_136 = 0;
+static int ScriptActionCtr_135 = 0;
+static int ScriptActionCtr_134 = 0;
+static int ScriptActionCtr_168 = 0;
+static int ScriptActionCtr_169 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_010 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1508,8 +1523,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1675,298 +1690,300 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 14
-const char *Door_names[NUM_DOOR_NAMES] = {"Security Door",     "ArenaEntrance-3",   "ArenaEntrance-2", "ArenaEntrance-1",
-                                    "Arena 42 Entrance", "Arena 41 Entrance", "ProducerDoor",    "ArenaExit-3",
-                                    "ArenaExit-2",       "ArenaExit-1",       "FinalExit-1",     "FinalExit-2",
-                                    "FinalExit-3",       "FinalExit-4"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {
+    "Security Door",     "ArenaEntrance-3", "ArenaEntrance-2", "ArenaEntrance-1", "Arena 42 Entrance",
+    "Arena 41 Entrance", "ProducerDoor",    "ArenaExit-3",     "ArenaExit-2",     "ArenaExit-1",
+    "FinalExit-1",       "FinalExit-2",     "FinalExit-3",     "FinalExit-4"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 181
-const char *Object_names[NUM_OBJECT_NAMES] = {"AMWaiter-4",
-                                        "AMWaiter-3",
-                                        "AMWaiter-2",
-                                        "AMWaiter-1",
-                                        "ArenaBot4-2",
-                                        "ArenaBot4-1",
-                                        "ArenaBot-3",
-                                        "ArenaBot-2",
-                                        "ArenaBot 1",
-                                        "StartInvis",
-                                        "TrapPower-2",
-                                        "TrapPower-1",
-                                        "Flamer1",
-                                        "Flamer2",
-                                        "Flamer3",
-                                        "Flamer4",
-                                        "FlamerMain",
-                                        "BeginFFSpew1",
-                                        "BeginFFSpew2",
-                                        "SRCollide-2",
-                                        "MCSwitch 1",
-                                        "Level1Orbot1",
-                                        "MCSwitch 6",
-                                        "MCSwitch 5",
-                                        "MCSwitch 4",
-                                        "MCSwitch 3",
-                                        "MCSwitch 2",
-                                        "EndBoss",
-                                        "SmokeSpew-8",
-                                        "SmokeSpew-7",
-                                        "SmokeSpew-6",
-                                        "SmokeSpew-5",
-                                        "SmokeSpew-4",
-                                        "SmokeSpew-3",
-                                        "SmokeSpew-1",
-                                        "SmokeSpew-2",
-                                        "ForceFieldSwitch 1",
-                                        "Compactor-2",
-                                        "CompactedBot-2",
-                                        "Compactor-1",
-                                        "CompactedBot-1",
-                                        "Flick-Control-2",
-                                        "Flick-Control-12",
-                                        "Flick-Control-11",
-                                        "Bell42",
-                                        "Bell41",
-                                        "Bell3",
-                                        "Bell2",
-                                        "Bell1",
-                                        "RandomSwitch-3",
-                                        "RandomSpew-2",
-                                        "SingleSpew-1",
-                                        "SingleSpew-2",
-                                        "SingleSpew-3",
-                                        "SingleSpew-4",
-                                        "SingleSpew-5",
-                                        "RedSpewer",
-                                        "RandomSpew-1",
-                                        "ArenaSpew-1",
-                                        "ArenaSpew-4",
-                                        "ArenaSpew-3",
-                                        "ArenaSpew-2",
-                                        "Repair 1",
-                                        "RCollide-1",
-                                        "RCollide-2",
-                                        "RCollide-3",
-                                        "RCollide-4",
-                                        "Repair 4",
-                                        "Repair 3",
-                                        "Repair 2",
-                                        "RBot-1",
-                                        "RBot-2",
-                                        "RBot-3",
-                                        "RBot-4",
-                                        "ToggleRepair-2",
-                                        "ToggleRepair-1",
-                                        "CowFF-2",
-                                        "CowFF-1",
-                                        "CowPipe-1",
-                                        "FlameCleanser-4",
-                                        "FlameCleanser-3",
-                                        "FlameCleanser-2",
-                                        "FlameCleanser-1",
-                                        "CowPipe-4",
-                                        "CowPipe-3",
-                                        "CowPipe-2",
-                                        "CowH-4",
-                                        "CowH-5",
-                                        "CowT-4",
-                                        "CowT-5",
-                                        "CowT-3",
-                                        "CowB-4",
-                                        "CowB-1",
-                                        "CowB-3",
-                                        "CowB-2",
-                                        "CowH-1",
-                                        "CowH-3",
-                                        "CowH-2",
-                                        "CowT-2",
-                                        "CowT-1",
-                                        "CowS-1",
-                                        "CowS-2",
-                                        "CowS-3",
-                                        "CowS-4",
-                                        "A3Gasser",
-                                        "RedSwitch-1",
-                                        "RedDummy-1",
-                                        "RedDummy-2",
-                                        "RedDummy-3",
-                                        "SRSwitch-1",
-                                        "SRepair-1",
-                                        "SRepair-2",
-                                        "SRCollide-1",
-                                        "SRSwitch-2",
-                                        "Level4Thresher1",
-                                        "Level3Tailbot1",
-                                        "Level2Squid1",
-                                        "Level1Sparky4",
-                                        "Level1Sparky3",
-                                        "Level1Sparky2",
-                                        "Level1Sparky1",
-                                        "Level1Orbot4",
-                                        "Level1Orbot3",
-                                        "Level1Orbot2",
-                                        "Level2Squid41",
-                                        "Level2Squid12",
-                                        "Level2Squid11",
-                                        "Level2Sixgun41",
-                                        "Level2Sixgun32",
-                                        "Level2Sixgun31",
-                                        "Level2Sixgun4",
-                                        "Level2Sixgun3",
-                                        "Level2Sixgun2",
-                                        "Level2Sixgun1",
-                                        "Level2Squid4",
-                                        "Level2Squid3",
-                                        "Level2Squid2",
-                                        "L2Migrate4",
-                                        "L2Migrate3",
-                                        "L2Migrate2",
-                                        "L2Migrate1",
-                                        "L2Surprise1",
-                                        "L2Surprise2",
-                                        "L2Surprise3",
-                                        "Level3Tailbot2",
-                                        "Level3Tailbot3",
-                                        "Level3Tailbot4",
-                                        "Level3Tubbs1",
-                                        "Level3Tubbs2",
-                                        "Level4Thresher3",
-                                        "Level4Thresher2",
-                                        "BellMain",
-                                        "A1Waiter1",
-                                        "A4Waiter-6",
-                                        "A4Waiter-5",
-                                        "A4Waiter-4",
-                                        "A4Waiter3",
-                                        "A4Waiter2",
-                                        "A4Waiter1",
-                                        "A3Waiter4",
-                                        "A3Waiter3",
-                                        "A3Waiter2",
-                                        "A3Waiter1",
-                                        "A2Waiter4",
-                                        "A2Waiter3",
-                                        "A2Waiter2",
-                                        "A2Waiter1",
-                                        "A1Waiter2",
-                                        "A1Waiter4",
-                                        "A1Waiter3",
-                                        "A1Waiter5",
-                                        "Secret Data",
-                                        "Level4Key",
-                                        "Level3Key",
-                                        "Level2Key",
-                                        "Level1Key",
-                                        "Arena 42 Entrance",
-                                        "Arena 41 Entrance",
-                                        "ArenaEntrance-3",
-                                        "ArenaEntrance-2",
-                                        "ArenaEntrance-1"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"AMWaiter-4",
+                                                           "AMWaiter-3",
+                                                           "AMWaiter-2",
+                                                           "AMWaiter-1",
+                                                           "ArenaBot4-2",
+                                                           "ArenaBot4-1",
+                                                           "ArenaBot-3",
+                                                           "ArenaBot-2",
+                                                           "ArenaBot 1",
+                                                           "StartInvis",
+                                                           "TrapPower-2",
+                                                           "TrapPower-1",
+                                                           "Flamer1",
+                                                           "Flamer2",
+                                                           "Flamer3",
+                                                           "Flamer4",
+                                                           "FlamerMain",
+                                                           "BeginFFSpew1",
+                                                           "BeginFFSpew2",
+                                                           "SRCollide-2",
+                                                           "MCSwitch 1",
+                                                           "Level1Orbot1",
+                                                           "MCSwitch 6",
+                                                           "MCSwitch 5",
+                                                           "MCSwitch 4",
+                                                           "MCSwitch 3",
+                                                           "MCSwitch 2",
+                                                           "EndBoss",
+                                                           "SmokeSpew-8",
+                                                           "SmokeSpew-7",
+                                                           "SmokeSpew-6",
+                                                           "SmokeSpew-5",
+                                                           "SmokeSpew-4",
+                                                           "SmokeSpew-3",
+                                                           "SmokeSpew-1",
+                                                           "SmokeSpew-2",
+                                                           "ForceFieldSwitch 1",
+                                                           "Compactor-2",
+                                                           "CompactedBot-2",
+                                                           "Compactor-1",
+                                                           "CompactedBot-1",
+                                                           "Flick-Control-2",
+                                                           "Flick-Control-12",
+                                                           "Flick-Control-11",
+                                                           "Bell42",
+                                                           "Bell41",
+                                                           "Bell3",
+                                                           "Bell2",
+                                                           "Bell1",
+                                                           "RandomSwitch-3",
+                                                           "RandomSpew-2",
+                                                           "SingleSpew-1",
+                                                           "SingleSpew-2",
+                                                           "SingleSpew-3",
+                                                           "SingleSpew-4",
+                                                           "SingleSpew-5",
+                                                           "RedSpewer",
+                                                           "RandomSpew-1",
+                                                           "ArenaSpew-1",
+                                                           "ArenaSpew-4",
+                                                           "ArenaSpew-3",
+                                                           "ArenaSpew-2",
+                                                           "Repair 1",
+                                                           "RCollide-1",
+                                                           "RCollide-2",
+                                                           "RCollide-3",
+                                                           "RCollide-4",
+                                                           "Repair 4",
+                                                           "Repair 3",
+                                                           "Repair 2",
+                                                           "RBot-1",
+                                                           "RBot-2",
+                                                           "RBot-3",
+                                                           "RBot-4",
+                                                           "ToggleRepair-2",
+                                                           "ToggleRepair-1",
+                                                           "CowFF-2",
+                                                           "CowFF-1",
+                                                           "CowPipe-1",
+                                                           "FlameCleanser-4",
+                                                           "FlameCleanser-3",
+                                                           "FlameCleanser-2",
+                                                           "FlameCleanser-1",
+                                                           "CowPipe-4",
+                                                           "CowPipe-3",
+                                                           "CowPipe-2",
+                                                           "CowH-4",
+                                                           "CowH-5",
+                                                           "CowT-4",
+                                                           "CowT-5",
+                                                           "CowT-3",
+                                                           "CowB-4",
+                                                           "CowB-1",
+                                                           "CowB-3",
+                                                           "CowB-2",
+                                                           "CowH-1",
+                                                           "CowH-3",
+                                                           "CowH-2",
+                                                           "CowT-2",
+                                                           "CowT-1",
+                                                           "CowS-1",
+                                                           "CowS-2",
+                                                           "CowS-3",
+                                                           "CowS-4",
+                                                           "A3Gasser",
+                                                           "RedSwitch-1",
+                                                           "RedDummy-1",
+                                                           "RedDummy-2",
+                                                           "RedDummy-3",
+                                                           "SRSwitch-1",
+                                                           "SRepair-1",
+                                                           "SRepair-2",
+                                                           "SRCollide-1",
+                                                           "SRSwitch-2",
+                                                           "Level4Thresher1",
+                                                           "Level3Tailbot1",
+                                                           "Level2Squid1",
+                                                           "Level1Sparky4",
+                                                           "Level1Sparky3",
+                                                           "Level1Sparky2",
+                                                           "Level1Sparky1",
+                                                           "Level1Orbot4",
+                                                           "Level1Orbot3",
+                                                           "Level1Orbot2",
+                                                           "Level2Squid41",
+                                                           "Level2Squid12",
+                                                           "Level2Squid11",
+                                                           "Level2Sixgun41",
+                                                           "Level2Sixgun32",
+                                                           "Level2Sixgun31",
+                                                           "Level2Sixgun4",
+                                                           "Level2Sixgun3",
+                                                           "Level2Sixgun2",
+                                                           "Level2Sixgun1",
+                                                           "Level2Squid4",
+                                                           "Level2Squid3",
+                                                           "Level2Squid2",
+                                                           "L2Migrate4",
+                                                           "L2Migrate3",
+                                                           "L2Migrate2",
+                                                           "L2Migrate1",
+                                                           "L2Surprise1",
+                                                           "L2Surprise2",
+                                                           "L2Surprise3",
+                                                           "Level3Tailbot2",
+                                                           "Level3Tailbot3",
+                                                           "Level3Tailbot4",
+                                                           "Level3Tubbs1",
+                                                           "Level3Tubbs2",
+                                                           "Level4Thresher3",
+                                                           "Level4Thresher2",
+                                                           "BellMain",
+                                                           "A1Waiter1",
+                                                           "A4Waiter-6",
+                                                           "A4Waiter-5",
+                                                           "A4Waiter-4",
+                                                           "A4Waiter3",
+                                                           "A4Waiter2",
+                                                           "A4Waiter1",
+                                                           "A3Waiter4",
+                                                           "A3Waiter3",
+                                                           "A3Waiter2",
+                                                           "A3Waiter1",
+                                                           "A2Waiter4",
+                                                           "A2Waiter3",
+                                                           "A2Waiter2",
+                                                           "A2Waiter1",
+                                                           "A1Waiter2",
+                                                           "A1Waiter4",
+                                                           "A1Waiter3",
+                                                           "A1Waiter5",
+                                                           "Secret Data",
+                                                           "Level4Key",
+                                                           "Level3Key",
+                                                           "Level2Key",
+                                                           "Level1Key",
+                                                           "Arena 42 Entrance",
+                                                           "Arena 41 Entrance",
+                                                           "ArenaEntrance-3",
+                                                           "ArenaEntrance-2",
+                                                           "ArenaEntrance-1"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 12
-const char *Room_names[NUM_ROOM_NAMES] = {"FireRoom",    "EntryForceField", "Flicker-2-1", "Flicker-1-3",
-                                    "Flicker-1-1", "Cow-1",           "Cow-2",       "EscapeCow",
-                                    "Arena3",      "Arena4-2",        "Arena4-1",    "MainEntrance"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"FireRoom",    "EntryForceField", "Flicker-2-1", "Flicker-1-3",
+                                                       "Flicker-1-1", "Cow-1",           "Cow-2",       "EscapeCow",
+                                                       "Arena3",      "Arena4-2",        "Arena4-1",    "MainEntrance"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 28
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"EscapingBegin",    "EscapingEnd",        "Arena4Entrance",
-                                          "Arena3Entrance",   "Arena2Entrance",     "Arena1Entrance",
-                                          "Arena42Entrance",  "Arena41Entrance",    "ExitSequenceStart",
-                                          "L2Migrate2",       "L2Migrate1",         "L2Surprise1",
-                                          "SmashIt!",         "ChampCompetitors-2", "ChampCompetitors-1",
-                                          "EndArenaManualFF", "MRepair-3",          "MRepair-2",
-                                          "RepairEnter",      "MLevel4-3",          "MLevel4-2",
-                                          "MLevel3",          "MLevel2-2",          "MLevel2",
-                                          "MArena-2",         "MArena-1",           "Arena42Enter",
-                                          "Arena41Enter"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
+    "EscapingBegin",    "EscapingEnd",        "Arena4Entrance",
+    "Arena3Entrance",   "Arena2Entrance",     "Arena1Entrance",
+    "Arena42Entrance",  "Arena41Entrance",    "ExitSequenceStart",
+    "L2Migrate2",       "L2Migrate1",         "L2Surprise1",
+    "SmashIt!",         "ChampCompetitors-2", "ChampCompetitors-1",
+    "EndArenaManualFF", "MRepair-3",          "MRepair-2",
+    "RepairEnter",      "MLevel4-3",          "MLevel4-2",
+    "MLevel3",          "MLevel2-2",          "MLevel2",
+    "MArena-2",         "MArena-1",           "Arena42Enter",
+    "Arena41Enter"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 9
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch11", "AmbSwitch31", "AmbFurn11",       "JugFootHit", "AmbPlasma21",
-                                      "Bell",        "AmbSwitch21", "AmbSirenIntense", "PupC1"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch11", "AmbSwitch31",     "AmbFurn11",
+                                                         "JugFootHit",  "AmbPlasma21",     "Bell",
+                                                         "AmbSwitch21", "AmbSirenIntense", "PupC1"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 1
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect5"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect5"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 31
-const char *Path_names[NUM_PATH_NAMES] = {
+static const char *const Path_names[NUM_PATH_NAMES] = {
     "IntroCam",    "IntroShip",     "Arena42",        "Arena41",        "Arena3",      "Arena2",      "Arena1",
     "ExitCam",     "ExitSequence2", "Repair4",        "Repair3",        "Repair2",     "Repair1",     "SRepair1",
     "SRepair2",    "Level1Path1",   "Level1Path4",    "Level1Path3",    "Level1Path2", "Level2Path4", "Level2Path3",
     "Level2Path2", "Level2Path1",   "Level2Migrate1", "Level2Surprise", "Level3Path3", "Level3Path1", "Level3Path2",
     "Level4Path1", "Level4Path2",   "EndBoss"};
-int Path_indexes[NUM_PATH_NAMES];
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 9
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Matcen 8", "Matcen 9", "Matcen 6", "Matcen 5", "Matcen 4",
-                                        "Matcen 3", "Matcen 2", "Matcen 1", "Matcen 7"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {"Matcen 8", "Matcen 9", "Matcen 6", "Matcen 5", "Matcen 4",
+                                                           "Matcen 3", "Matcen 2", "Matcen 1", "Matcen 7"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 9
-const char *Goal_names[NUM_GOAL_NAMES] = {"Escape from the firetrap",
-                                    "Disable the security forcefield",
-                                    "Escape from the Proving Grounds",
-                                    "Defeat Level 4 Arena",
-                                    "Defeat Level 3 Arena",
-                                    "Defeat Level 2 Arena",
-                                    "Defeat Level 1 Arena",
-                                    "Defeat the Proving Grounds Champion",
-                                    "Eliminate Championship Competitors"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Escape from the firetrap",
+                                                       "Disable the security forcefield",
+                                                       "Escape from the Proving Grounds",
+                                                       "Defeat Level 4 Arena",
+                                                       "Defeat Level 3 Arena",
+                                                       "Defeat Level 2 Arena",
+                                                       "Defeat Level 1 Arena",
+                                                       "Defeat the Proving Grounds Champion",
+                                                       "Eliminate Championship Competitors"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 44
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroMessage",
-                                          "EscapedTorture",
-                                          "EscapeTorture2",
-                                          "EscapedDestroyed2",
-                                          "EscapedDestroyed",
-                                          "LevelStarted",
-                                          "ActivatedMatcen",
-                                          "EmergencyOverride",
-                                          "Arena4Enter",
-                                          "Arena4Enter2",
-                                          "Arena3Enter",
-                                          "Arena2Enter",
-                                          "Arena1Enter",
-                                          "EndLevel",
-                                          "DoorUnlocked",
-                                          "RepairActivated",
-                                          "RepairDeactivated",
-                                          "RepairingShip",
-                                          "CowFFDisable",
-                                          "GonnaClean",
-                                          "RedUnitsArmed",
-                                          "SRepairInit",
-                                          "Arena4Defeated2",
-                                          "Arena4Defeated",
-                                          "Arena3Defeated",
-                                          "Arena2Defeated",
-                                          "Arena1Defeated",
-                                          "ArenaChamp",
-                                          "MainGuards",
-                                          "MainFFDeactivated",
-                                          "EndBossBegin",
-                                          "Guards1",
-                                          "Guards2",
-                                          "Guards3",
-                                          "SecretData",
-                                          "RecoveredSecret",
-                                          "Level4Key",
-                                          "Level3Key",
-                                          "Level2Key",
-                                          "Level1Key",
-                                          "L4Door",
-                                          "L3Door",
-                                          "L2Door",
-                                          "L1Door"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"IntroMessage",
+                                                             "EscapedTorture",
+                                                             "EscapeTorture2",
+                                                             "EscapedDestroyed2",
+                                                             "EscapedDestroyed",
+                                                             "LevelStarted",
+                                                             "ActivatedMatcen",
+                                                             "EmergencyOverride",
+                                                             "Arena4Enter",
+                                                             "Arena4Enter2",
+                                                             "Arena3Enter",
+                                                             "Arena2Enter",
+                                                             "Arena1Enter",
+                                                             "EndLevel",
+                                                             "DoorUnlocked",
+                                                             "RepairActivated",
+                                                             "RepairDeactivated",
+                                                             "RepairingShip",
+                                                             "CowFFDisable",
+                                                             "GonnaClean",
+                                                             "RedUnitsArmed",
+                                                             "SRepairInit",
+                                                             "Arena4Defeated2",
+                                                             "Arena4Defeated",
+                                                             "Arena3Defeated",
+                                                             "Arena2Defeated",
+                                                             "Arena1Defeated",
+                                                             "ArenaChamp",
+                                                             "MainGuards",
+                                                             "MainFFDeactivated",
+                                                             "EndBossBegin",
+                                                             "Guards1",
+                                                             "Guards2",
+                                                             "Guards3",
+                                                             "SecretData",
+                                                             "RecoveredSecret",
+                                                             "Level4Key",
+                                                             "Level3Key",
+                                                             "Level2Key",
+                                                             "Level1Key",
+                                                             "L4Door",
+                                                             "L3Door",
+                                                             "L2Door",
+                                                             "L1Door"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

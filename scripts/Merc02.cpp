@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -449,135 +464,135 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_125 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1186,8 +1201,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1353,325 +1368,326 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 7
-const char *Door_names[NUM_DOOR_NAMES] = {"MainGateDoor", "GenHangarDoor", "ResEntDoor", "GeneralDoor",
-                                    "CompDoor",     "LastDoor",      "ArmoryDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"MainGateDoor", "GenHangarDoor", "ResEntDoor", "GeneralDoor",
+                                                       "CompDoor",     "LastDoor",      "ArmoryDoor"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 136
-const char *Object_names[NUM_OBJECT_NAMES] = {"LR1Sound",
-                                        "LR2Sound",
-                                        "RepairRoomWelder",
-                                        "WorkerScrewup",
-                                        "Welder2",
-                                        "Welder3",
-                                        "LR1Light",
-                                        "LR2Light",
-                                        "ResHallALight",
-                                        "ResHallALight2",
-                                        "ArmoryLight",
-                                        "HallCSLight",
-                                        "HallCLight1",
-                                        "HallCLight2",
-                                        "CompEscapeFan",
-                                        "MainGateGuard1",
-                                        "MainGateGuard2",
-                                        "TowerScanner",
-                                        "WeaponCheckPoint",
-                                        "Beam1Source",
-                                        "Beam2Source",
-                                        "BeamSource3",
-                                        "BeamSource4",
-                                        "BeamSource5",
-                                        "BeamSource6",
-                                        "BeamSource7",
-                                        "BeamSource8",
-                                        "BeamSource10",
-                                        "BeamSource11",
-                                        "BeamSource12",
-                                        "BeamSource13",
-                                        "LRSBeam01a",
-                                        "LRSBeam01b",
-                                        "LRSBeam03a",
-                                        "LRSBeam03b",
-                                        "LRSBeam04a",
-                                        "LRSBeam04b",
-                                        "LRSBeam06a",
-                                        "LRSBeam06b",
-                                        "EndBeamA1",
-                                        "EndBeamA2",
-                                        "EndBeamB1",
-                                        "EndBeamB2",
-                                        "EndBeamC1",
-                                        "EndBeamC2",
-                                        "HTrooper01",
-                                        "EndHTrooper01",
-                                        "EndHTrooper02",
-                                        "LaserPickup",
-                                        "GenGuardHeavyT01",
-                                        "GenGuardTrooper01",
-                                        "GenGuardTrooper02",
-                                        "GenGuardTrooper03",
-                                        "GenGuardSwatter01",
-                                        "GenGuardSwatter02",
-                                        "ResHallATurret01",
-                                        "ResHallATurret2",
-                                        "ArmoryTurret",
-                                        "ResHallCTurret",
-                                        "HallCTurret01",
-                                        "HallCTurret02",
-                                        "LR1PipeCam1",
-                                        "CrateStackFloor",
-                                        "BasementCeiling",
-                                        "WorkerScrewupMachi",
-                                        "GeneralsShip",
-                                        "TurretControl",
-                                        "GenLandingPad",
-                                        "HTrooper01Wall",
-                                        "EndTrooper01wall",
-                                        "EndTrooper02wall",
-                                        "GeneralBarrels",
-                                        "GeneralStack",
-                                        "WorkerScrewup2",
-                                        "WorkerScrewup3",
-                                        "Lifter (Hangar)",
-                                        "Welder (cargoship)",
-                                        "FlybyShip",
-                                        "Tracker01",
-                                        "Tracker02",
-                                        "StFactory02Constru",
-                                        "InfectedDataCartri",
-                                        "LR1Pipe",
-                                        "LR1PipeCam2",
-                                        "LaserRoom02Pipe01",
-                                        "L02Pipe1Cam",
-                                        "LaserRoom02Pipe02",
-                                        "L02Pipe2Cam",
-                                        "TowerFT1Cam",
-                                        "TowerFB1Cam",
-                                        "TowerFT2Cam",
-                                        "TowerFB2Cam",
-                                        "TowerFB3Cam",
-                                        "TowerFT3Cam",
-                                        "TowerBT1Cam",
-                                        "TowerBB1Cam",
-                                        "TowerBT2Cam",
-                                        "TowerBB2Cam",
-                                        "TowerBB3Cam",
-                                        "TowerBT3Cam",
-                                        "CrateStack",
-                                        "WorkerScrewupCam",
-                                        "WorkerScrewupCam2",
-                                        "DataCartridge",
-                                        "DataPosition",
-                                        "EndSpew1",
-                                        "EndSpew2",
-                                        "EndSpew3",
-                                        "EndSpew4",
-                                        "EndBeamA1Pos",
-                                        "EndBeamA2Pos",
-                                        "EndBeamB1Pos",
-                                        "EndBeamB2Pos",
-                                        "EndBeamC1Pos",
-                                        "EndBeamC2Pos",
-                                        "HallCTrooper1",
-                                        "HallCTrooper2",
-                                        "RHBPatTroop01",
-                                        "RHBPatTroop02",
-                                        "ArmoryDoorSwitch",
-                                        "CentralFFSwitch",
-                                        "HallCSTrooper",
-                                        "DataCam1",
-                                        "DataCam2",
-                                        "DataCam3",
-                                        "ResEntSecCam01",
-                                        "ResHallASecCam01",
-                                        "ResHallASecCam02",
-                                        "ArmorySecCam",
-                                        "ResHallCSCam",
-                                        "HallCsecCam01",
-                                        "HallCsecCam02",
-                                        "ResEntDoor",
-                                        "SuperDuperLaser",
-                                        "ResHallATrooper",
-                                        "ResHallATrooper2"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"LR1Sound",
+                                                           "LR2Sound",
+                                                           "RepairRoomWelder",
+                                                           "WorkerScrewup",
+                                                           "Welder2",
+                                                           "Welder3",
+                                                           "LR1Light",
+                                                           "LR2Light",
+                                                           "ResHallALight",
+                                                           "ResHallALight2",
+                                                           "ArmoryLight",
+                                                           "HallCSLight",
+                                                           "HallCLight1",
+                                                           "HallCLight2",
+                                                           "CompEscapeFan",
+                                                           "MainGateGuard1",
+                                                           "MainGateGuard2",
+                                                           "TowerScanner",
+                                                           "WeaponCheckPoint",
+                                                           "Beam1Source",
+                                                           "Beam2Source",
+                                                           "BeamSource3",
+                                                           "BeamSource4",
+                                                           "BeamSource5",
+                                                           "BeamSource6",
+                                                           "BeamSource7",
+                                                           "BeamSource8",
+                                                           "BeamSource10",
+                                                           "BeamSource11",
+                                                           "BeamSource12",
+                                                           "BeamSource13",
+                                                           "LRSBeam01a",
+                                                           "LRSBeam01b",
+                                                           "LRSBeam03a",
+                                                           "LRSBeam03b",
+                                                           "LRSBeam04a",
+                                                           "LRSBeam04b",
+                                                           "LRSBeam06a",
+                                                           "LRSBeam06b",
+                                                           "EndBeamA1",
+                                                           "EndBeamA2",
+                                                           "EndBeamB1",
+                                                           "EndBeamB2",
+                                                           "EndBeamC1",
+                                                           "EndBeamC2",
+                                                           "HTrooper01",
+                                                           "EndHTrooper01",
+                                                           "EndHTrooper02",
+                                                           "LaserPickup",
+                                                           "GenGuardHeavyT01",
+                                                           "GenGuardTrooper01",
+                                                           "GenGuardTrooper02",
+                                                           "GenGuardTrooper03",
+                                                           "GenGuardSwatter01",
+                                                           "GenGuardSwatter02",
+                                                           "ResHallATurret01",
+                                                           "ResHallATurret2",
+                                                           "ArmoryTurret",
+                                                           "ResHallCTurret",
+                                                           "HallCTurret01",
+                                                           "HallCTurret02",
+                                                           "LR1PipeCam1",
+                                                           "CrateStackFloor",
+                                                           "BasementCeiling",
+                                                           "WorkerScrewupMachi",
+                                                           "GeneralsShip",
+                                                           "TurretControl",
+                                                           "GenLandingPad",
+                                                           "HTrooper01Wall",
+                                                           "EndTrooper01wall",
+                                                           "EndTrooper02wall",
+                                                           "GeneralBarrels",
+                                                           "GeneralStack",
+                                                           "WorkerScrewup2",
+                                                           "WorkerScrewup3",
+                                                           "Lifter (Hangar)",
+                                                           "Welder (cargoship)",
+                                                           "FlybyShip",
+                                                           "Tracker01",
+                                                           "Tracker02",
+                                                           "StFactory02Constru",
+                                                           "InfectedDataCartri",
+                                                           "LR1Pipe",
+                                                           "LR1PipeCam2",
+                                                           "LaserRoom02Pipe01",
+                                                           "L02Pipe1Cam",
+                                                           "LaserRoom02Pipe02",
+                                                           "L02Pipe2Cam",
+                                                           "TowerFT1Cam",
+                                                           "TowerFB1Cam",
+                                                           "TowerFT2Cam",
+                                                           "TowerFB2Cam",
+                                                           "TowerFB3Cam",
+                                                           "TowerFT3Cam",
+                                                           "TowerBT1Cam",
+                                                           "TowerBB1Cam",
+                                                           "TowerBT2Cam",
+                                                           "TowerBB2Cam",
+                                                           "TowerBB3Cam",
+                                                           "TowerBT3Cam",
+                                                           "CrateStack",
+                                                           "WorkerScrewupCam",
+                                                           "WorkerScrewupCam2",
+                                                           "DataCartridge",
+                                                           "DataPosition",
+                                                           "EndSpew1",
+                                                           "EndSpew2",
+                                                           "EndSpew3",
+                                                           "EndSpew4",
+                                                           "EndBeamA1Pos",
+                                                           "EndBeamA2Pos",
+                                                           "EndBeamB1Pos",
+                                                           "EndBeamB2Pos",
+                                                           "EndBeamC1Pos",
+                                                           "EndBeamC2Pos",
+                                                           "HallCTrooper1",
+                                                           "HallCTrooper2",
+                                                           "RHBPatTroop01",
+                                                           "RHBPatTroop02",
+                                                           "ArmoryDoorSwitch",
+                                                           "CentralFFSwitch",
+                                                           "HallCSTrooper",
+                                                           "DataCam1",
+                                                           "DataCam2",
+                                                           "DataCam3",
+                                                           "ResEntSecCam01",
+                                                           "ResHallASecCam01",
+                                                           "ResHallASecCam02",
+                                                           "ArmorySecCam",
+                                                           "ResHallCSCam",
+                                                           "HallCsecCam01",
+                                                           "HallCsecCam02",
+                                                           "ResEntDoor",
+                                                           "SuperDuperLaser",
+                                                           "ResHallATrooper",
+                                                           "ResHallATrooper2"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 23
-const char *Room_names[NUM_ROOM_NAMES] = {"Weapon Check",
-                                    "LaserRoom01",
-                                    "LaserRoom01b",
-                                    "LaserRoom02",
-                                    "LaserRoom02b",
-                                    "EscapePipe1",
-                                    "EscapePipe2",
-                                    "ExitFanRoom",
-                                    "Comp01Wind",
-                                    "Comp02Wind",
-                                    "Comp03Wind",
-                                    "Comp04Wind",
-                                    "LaserRoom01BotSpaw",
-                                    "LaserRoom02Spawn01",
-                                    "LaserRoom02Spawn02",
-                                    "ScanTower",
-                                    "MineEntrance",
-                                    "CompHub",
-                                    "Comp01",
-                                    "Comp02",
-                                    "Comp03",
-                                    "Comp04",
-                                    "CentralFFRoom"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"Weapon Check",
+                                                       "LaserRoom01",
+                                                       "LaserRoom01b",
+                                                       "LaserRoom02",
+                                                       "LaserRoom02b",
+                                                       "EscapePipe1",
+                                                       "EscapePipe2",
+                                                       "ExitFanRoom",
+                                                       "Comp01Wind",
+                                                       "Comp02Wind",
+                                                       "Comp03Wind",
+                                                       "Comp04Wind",
+                                                       "LaserRoom01BotSpaw",
+                                                       "LaserRoom02Spawn01",
+                                                       "LaserRoom02Spawn02",
+                                                       "ScanTower",
+                                                       "MineEntrance",
+                                                       "CompHub",
+                                                       "Comp01",
+                                                       "Comp02",
+                                                       "Comp03",
+                                                       "Comp04",
+                                                       "CentralFFRoom"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 17
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "LR1MonitorHit",     "LR2Monitor1Hit",     "LR2Monitor2Hit",     "GateMonitor1",       "GateMonitor2",
     "EnteredMainGate",   "WeaponCheckEntered", "WorkerScrewup",      "GeneralShipLanding", "LeftHangarArea",
     "HTrooper01Trigger", "EndTrooperTrigger",  "ArmoryGuardTrigger", "EscapeTrigger",      "CrateRoomEntered",
     "ResAreaTrigger",    "LeftResArea"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 7
-const char *Sound_names[NUM_SOUND_NAMES] = {"Merc2LaserBeam",        "Merc2AlertSiren", "Merc2IGSqueel", "Powerup pickup",
-                                      "Merc2ShortingComputer", "AmbSwitch31",     "AmbSwitch41"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"Merc2LaserBeam", "Merc2AlertSiren",       "Merc2IGSqueel",
+                                                         "Powerup pickup", "Merc2ShortingComputer", "AmbSwitch31",
+                                                         "AmbSwitch41"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 12
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"M02MonitorScreen", "Stlaser",      "Stlaser25alpha",    "Stlaser50alpha",
-                                          "Stlaser75alpha",   "M02_Scanning", "M02_Cleared",       "Lightning4",
-                                          "M02_Aborted",      "M02_Ready",    "M02_BreachedNoDes", "FunkyEffect2"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {
+    "M02MonitorScreen", "Stlaser",    "Stlaser25alpha", "Stlaser50alpha", "Stlaser75alpha",    "M02_Scanning",
+    "M02_Cleared",      "Lightning4", "M02_Aborted",    "M02_Ready",      "M02_BreachedNoDes", "FunkyEffect2"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 66
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCamPath",
-                                    "IntroPlayerPath",
-                                    "LifterPath",
-                                    "WelderPathA",
-                                    "FlybyPath",
-                                    "Tracker01Path",
-                                    "Tracker02Path",
-                                    "BeamPath1",
-                                    "BeamPath2",
-                                    "BeamPath3",
-                                    "BeamPath4",
-                                    "BeamPath5",
-                                    "BeamPath6",
-                                    "BeamPath7",
-                                    "BeamPath8",
-                                    "BeamPath10",
-                                    "BeamPath11",
-                                    "BeamPath12",
-                                    "BeamPath13",
-                                    "HTClawAmbientPath",
-                                    "BeamPath1R",
-                                    "BeamPath2R",
-                                    "BeamPath3R",
-                                    "BeamPath4R",
-                                    "BeamPath5R",
-                                    "BeamPath6R",
-                                    "BeamPath7R",
-                                    "BeamPath8R",
-                                    "BeamPath10R",
-                                    "BeamPath11R",
-                                    "BeamPath12R",
-                                    "BeamPath13R",
-                                    "WpnCheckEntryPath",
-                                    "WpnCheckExitPath",
-                                    "WorkerScrewupPath",
-                                    "WorkerScrewup3Path",
-                                    "GeneralCamPath",
-                                    "GeneralLandingPath",
-                                    "GeneralLandingPath2",
-                                    "EndBeamA1Path",
-                                    "EndBeamA2Path",
-                                    "EndBeamB1Path",
-                                    "EndBeamB2Path",
-                                    "EndBeamC1Path",
-                                    "EndBeamC2Path",
-                                    "HTrooper01Path",
-                                    "HallCTrooper1Path",
-                                    "HallCTrooper2Path",
-                                    "EndTrooper2Path",
-                                    "EndTrooper1Path",
-                                    "ArmoryTrooper1Path",
-                                    "ArmoryTrooper2Path",
-                                    "ArmoryGuardPath",
-                                    "ArmoryGuardPath2",
-                                    "ArmoryGuardPath3",
-                                    "HallCSTrooperPath",
-                                    "StormtrooperClawPath",
-                                    "HeavyTrooperClawPath",
-                                    "EndCamPath",
-                                    "PlayerEndPath",
-                                    "ResHallATrooperPath",
-                                    "ResHallATrooper2Path",
-                                    "LR1MatcenPath",
-                                    "LR2Matcen1Path",
-                                    "LR2Matcen2Path",
-                                    "WelderPathB"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"IntroCamPath",
+                                                       "IntroPlayerPath",
+                                                       "LifterPath",
+                                                       "WelderPathA",
+                                                       "FlybyPath",
+                                                       "Tracker01Path",
+                                                       "Tracker02Path",
+                                                       "BeamPath1",
+                                                       "BeamPath2",
+                                                       "BeamPath3",
+                                                       "BeamPath4",
+                                                       "BeamPath5",
+                                                       "BeamPath6",
+                                                       "BeamPath7",
+                                                       "BeamPath8",
+                                                       "BeamPath10",
+                                                       "BeamPath11",
+                                                       "BeamPath12",
+                                                       "BeamPath13",
+                                                       "HTClawAmbientPath",
+                                                       "BeamPath1R",
+                                                       "BeamPath2R",
+                                                       "BeamPath3R",
+                                                       "BeamPath4R",
+                                                       "BeamPath5R",
+                                                       "BeamPath6R",
+                                                       "BeamPath7R",
+                                                       "BeamPath8R",
+                                                       "BeamPath10R",
+                                                       "BeamPath11R",
+                                                       "BeamPath12R",
+                                                       "BeamPath13R",
+                                                       "WpnCheckEntryPath",
+                                                       "WpnCheckExitPath",
+                                                       "WorkerScrewupPath",
+                                                       "WorkerScrewup3Path",
+                                                       "GeneralCamPath",
+                                                       "GeneralLandingPath",
+                                                       "GeneralLandingPath2",
+                                                       "EndBeamA1Path",
+                                                       "EndBeamA2Path",
+                                                       "EndBeamB1Path",
+                                                       "EndBeamB2Path",
+                                                       "EndBeamC1Path",
+                                                       "EndBeamC2Path",
+                                                       "HTrooper01Path",
+                                                       "HallCTrooper1Path",
+                                                       "HallCTrooper2Path",
+                                                       "EndTrooper2Path",
+                                                       "EndTrooper1Path",
+                                                       "ArmoryTrooper1Path",
+                                                       "ArmoryTrooper2Path",
+                                                       "ArmoryGuardPath",
+                                                       "ArmoryGuardPath2",
+                                                       "ArmoryGuardPath3",
+                                                       "HallCSTrooperPath",
+                                                       "StormtrooperClawPath",
+                                                       "HeavyTrooperClawPath",
+                                                       "EndCamPath",
+                                                       "PlayerEndPath",
+                                                       "ResHallATrooperPath",
+                                                       "ResHallATrooper2Path",
+                                                       "LR1MatcenPath",
+                                                       "LR2Matcen1Path",
+                                                       "LR2Matcen2Path",
+                                                       "WelderPathB"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 7
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"WpnGuard1Matcen",   "LaserRoom1Matcen",   "LaserRoom2Matcen1",
-                                        "LaserRoom2Matcen2", "STrooperClawMatcen", "HTrooperClawMatcen",
-                                        "ArmoryGadgetMatcen"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {
+    "WpnGuard1Matcen",    "LaserRoom1Matcen",   "LaserRoom2Matcen1", "LaserRoom2Matcen2",
+    "STrooperClawMatcen", "HTrooperClawMatcen", "ArmoryGadgetMatcen"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 18
-const char *Goal_names[NUM_GOAL_NAMES] = {"Disable Forcefields in Laser Room A",
-                                    "Disable Forcefields in Laser Room B",
-                                    "Get Cleared at Scanning Tower",
-                                    "Enter Base",
-                                    "Override Main Gate System",
-                                    "Pass Through Weapon Checkpoint",
-                                    "Bypass Restricted Area Checkpoint",
-                                    "Acquire a Weapon",
-                                    "Enter Restricted Area",
-                                    "Get Inside Restricted Area",
-                                    "Create a Diversion",
-                                    "Assassinate General Morgan",
-                                    "Obtain Failsafe Data",
-                                    "Place Infected Cartridge",
-                                    "Destroy Mainframe Computer",
-                                    "Escape",
-                                    "Destroy Exit Tunnel Guards",
-                                    "Deactivate Central Forcefield"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Disable Forcefields in Laser Room A",
+                                                       "Disable Forcefields in Laser Room B",
+                                                       "Get Cleared at Scanning Tower",
+                                                       "Enter Base",
+                                                       "Override Main Gate System",
+                                                       "Pass Through Weapon Checkpoint",
+                                                       "Bypass Restricted Area Checkpoint",
+                                                       "Acquire a Weapon",
+                                                       "Enter Restricted Area",
+                                                       "Get Inside Restricted Area",
+                                                       "Create a Diversion",
+                                                       "Assassinate General Morgan",
+                                                       "Obtain Failsafe Data",
+                                                       "Place Infected Cartridge",
+                                                       "Destroy Mainframe Computer",
+                                                       "Escape",
+                                                       "Destroy Exit Tunnel Guards",
+                                                       "Deactivate Central Forcefield"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 31
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
-                                          "InfectedDataCartridgeName",
-                                          "LaserBeamTriggered",
-                                          "ScanTowerEntered",
-                                          "MainGateOpening",
-                                          "ScanStarted",
-                                          "GateSecurityAlerted",
-                                          "WpnCheckEntered",
-                                          "WeaponCheckAborted",
-                                          "WpnCheckStarted",
-                                          "WeaponsRemoved",
-                                          "WeaponsChecked",
-                                          "WeaponGuardHit",
-                                          "FoundBackDoor",
-                                          "TurretControlDown",
-                                          "WorkerMessage",
-                                          "Empty",
-                                          "GeneralDead",
-                                          "DataCartridgeName",
-                                          "DataCartridgeUsed",
-                                          "InfectedDataPlaced",
-                                          "DataCartridgeStillThere",
-                                          "TooFarFromDataPosition",
-                                          "EscapeTime",
-                                          "EndGuards",
-                                          "ExitDoor",
-                                          "ArmoryDoorUnlocked",
-                                          "CentralFFDown",
-                                          "SecCamSpottedUs",
-                                          "ResAreaEntrance",
-                                          "NeedAWeapon"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
+                                                             "InfectedDataCartridgeName",
+                                                             "LaserBeamTriggered",
+                                                             "ScanTowerEntered",
+                                                             "MainGateOpening",
+                                                             "ScanStarted",
+                                                             "GateSecurityAlerted",
+                                                             "WpnCheckEntered",
+                                                             "WeaponCheckAborted",
+                                                             "WpnCheckStarted",
+                                                             "WeaponsRemoved",
+                                                             "WeaponsChecked",
+                                                             "WeaponGuardHit",
+                                                             "FoundBackDoor",
+                                                             "TurretControlDown",
+                                                             "WorkerMessage",
+                                                             "Empty",
+                                                             "GeneralDead",
+                                                             "DataCartridgeName",
+                                                             "DataCartridgeUsed",
+                                                             "InfectedDataPlaced",
+                                                             "DataCartridgeStillThere",
+                                                             "TooFarFromDataPosition",
+                                                             "EscapeTime",
+                                                             "EndGuards",
+                                                             "ExitDoor",
+                                                             "ArmoryDoorUnlocked",
+                                                             "CentralFFDown",
+                                                             "SecCamSpottedUs",
+                                                             "ResAreaEntrance",
+                                                             "NeedAWeapon"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

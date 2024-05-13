@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -467,87 +482,87 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_008 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -852,8 +867,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1019,121 +1034,122 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 3
-const char *Door_names[NUM_DOOR_NAMES] = {"MagnetControlDoor", "MagnetTubeDoor", "VirusDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"MagnetControlDoor", "MagnetTubeDoor", "VirusDoor"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 60
-const char *Object_names[NUM_OBJECT_NAMES] = {"TurretControlSwitch",
-                                        "Repeater-6",
-                                        "Repeater-2",
-                                        "Repeater-5",
-                                        "Repeater-3",
-                                        "Repeater-4",
-                                        "Repeater-1",
-                                        "MiniTurret-1",
-                                        "MiniTurret-2",
-                                        "MiniTurret-3",
-                                        "MiniTurret-4",
-                                        "CoolSpewer-2",
-                                        "CoolSpewer-1",
-                                        "MagnetSpewer-2",
-                                        "MagnetSpewer-1",
-                                        "VirusSpewer",
-                                        "CoolerMain",
-                                        "CoolingView",
-                                        "VirusView",
-                                        "CoolControl-1",
-                                        "CoolControl-2",
-                                        "CoolControl-3",
-                                        "CoolControl-4",
-                                        "MagnetSwitch-2",
-                                        "MagnetSwitch-1",
-                                        "MagnetController",
-                                        "MTubeSpewer-1",
-                                        "MTubeSpewer-2",
-                                        "MTubeView",
-                                        "FFKey",
-                                        "FFSwitch-1",
-                                        "FFSwitch-2",
-                                        "LowerSwitch-1",
-                                        "FireSpewer-1",
-                                        "FireSpewer-2",
-                                        "LowerSwitch-2",
-                                        "LowerSwitch-3",
-                                        "Virus-2",
-                                        "Virus-1",
-                                        "MidSpewer-4",
-                                        "MidSpewer-1",
-                                        "MidSpewer-2",
-                                        "MidSpewer-3",
-                                        "SteamSwitch",
-                                        "SteamSpewer",
-                                        "BlastPipe-1",
-                                        "BlastPipe-2",
-                                        "SwitchCamera-Cooler",
-                                        "CameraCooler",
-                                        "SwitchCamera-Magnet",
-                                        "Camera-Magnet",
-                                        "CSwitch-Virus",
-                                        "Camera-Virus",
-                                        "EndCam",
-                                        "Controller-4",
-                                        "Controller-3",
-                                        "Controller-2",
-                                        "Controller-1",
-                                        "BoxBottom1",
-                                        "BoxPhysics"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"TurretControlSwitch",
+                                                           "Repeater-6",
+                                                           "Repeater-2",
+                                                           "Repeater-5",
+                                                           "Repeater-3",
+                                                           "Repeater-4",
+                                                           "Repeater-1",
+                                                           "MiniTurret-1",
+                                                           "MiniTurret-2",
+                                                           "MiniTurret-3",
+                                                           "MiniTurret-4",
+                                                           "CoolSpewer-2",
+                                                           "CoolSpewer-1",
+                                                           "MagnetSpewer-2",
+                                                           "MagnetSpewer-1",
+                                                           "VirusSpewer",
+                                                           "CoolerMain",
+                                                           "CoolingView",
+                                                           "VirusView",
+                                                           "CoolControl-1",
+                                                           "CoolControl-2",
+                                                           "CoolControl-3",
+                                                           "CoolControl-4",
+                                                           "MagnetSwitch-2",
+                                                           "MagnetSwitch-1",
+                                                           "MagnetController",
+                                                           "MTubeSpewer-1",
+                                                           "MTubeSpewer-2",
+                                                           "MTubeView",
+                                                           "FFKey",
+                                                           "FFSwitch-1",
+                                                           "FFSwitch-2",
+                                                           "LowerSwitch-1",
+                                                           "FireSpewer-1",
+                                                           "FireSpewer-2",
+                                                           "LowerSwitch-2",
+                                                           "LowerSwitch-3",
+                                                           "Virus-2",
+                                                           "Virus-1",
+                                                           "MidSpewer-4",
+                                                           "MidSpewer-1",
+                                                           "MidSpewer-2",
+                                                           "MidSpewer-3",
+                                                           "SteamSwitch",
+                                                           "SteamSpewer",
+                                                           "BlastPipe-1",
+                                                           "BlastPipe-2",
+                                                           "SwitchCamera-Cooler",
+                                                           "CameraCooler",
+                                                           "SwitchCamera-Magnet",
+                                                           "Camera-Magnet",
+                                                           "CSwitch-Virus",
+                                                           "Camera-Virus",
+                                                           "EndCam",
+                                                           "Controller-4",
+                                                           "Controller-3",
+                                                           "Controller-2",
+                                                           "Controller-1",
+                                                           "BoxBottom1",
+                                                           "BoxPhysics"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 20
-const char *Room_names[NUM_ROOM_NAMES] = {"Entrance-4", "Entrance-1", "Entrance-2", "Entrance-3",   "CoolerRoom",
-                                    "MagnetRoom", "FireRoom-1", "FireRoom-2", "SteamingRoom", "UpTube-1",
-                                    "UpTube-2",   "UpTube-3",   "UpTube-4",   "UpTube-5",     "UpTube-6",
-                                    "UpTube-7",   "UpTube-8",   "DownTube-4", "DownTube-3",   "DownTube-2"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {
+    "Entrance-4", "Entrance-1",   "Entrance-2", "Entrance-3", "CoolerRoom", "MagnetRoom", "FireRoom-1",
+    "FireRoom-2", "SteamingRoom", "UpTube-1",   "UpTube-2",   "UpTube-3",   "UpTube-4",   "UpTube-5",
+    "UpTube-6",   "UpTube-7",     "UpTube-8",   "DownTube-4", "DownTube-3", "DownTube-2"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 23
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "EndLevelStart",  "EnteringBottom", "VirusEnter2",    "VirusEnter1",       "Music-Green8", "Music-Green7",
     "Music-Green5",   "Music-Green2",   "Music-Green1",   "Music-Red4",        "Music-Red3",   "Music-Red2",
     "Music-Red1",     "Music-Tech5",    "Music-Tech3",    "Music-Bunker",      "Music-Escape", "Music-Defense4",
     "Music-Defense3", "Music-Defense2", "Music-Defense1", "DownTube-WayPoint", "MagnetStart-1"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 8
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch41", "AmbSwitch31", "AmbSwitch21",        "Powerup pickup",
-                                      "AmbSwitch11", "PupC1",       "LevSecAccelRelease", "LevSecAccelStart"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch41",        "AmbSwitch31",     "AmbSwitch21",
+                                                         "Powerup pickup",     "AmbSwitch11",     "PupC1",
+                                                         "LevSecAccelRelease", "LevSecAccelStart"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 0
-const char **Texture_names = NULL;
-int *Texture_indexes = NULL;
+static const char **Texture_names = NULL;
+static int *Texture_indexes = NULL;
 
 #define NUM_PATH_NAMES 3
-const char *Path_names[NUM_PATH_NAMES] = {"EndLevel", "IntroCam", "IntroShip"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"EndLevel", "IntroCam", "IntroShip"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 0
-const char **Matcen_names = NULL;
-int *Matcen_indexes = NULL;
+static const char **Matcen_names = NULL;
+static int *Matcen_indexes = NULL;
 
 #define NUM_GOAL_NAMES 5
-const char *Goal_names[NUM_GOAL_NAMES] = {"Enable descending accelerator", "Disable containment forcefields",
-                                    "Activate the Ascending Elevator", "Steal the Virus Samples",
-                                    "Get both virus samples"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {
+    "Enable descending accelerator", "Disable containment forcefields", "Activate the Ascending Elevator",
+    "Steal the Virus Samples", "Get both virus samples"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 22
-const char *Message_names[NUM_MESSAGE_NAMES] = {
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {
     "ControlVulnerable",   "TurretsDeactivated", "CoolersAllGone",    "MagnetTubeDoorUnlock",
     "ManualActivation",    "MagnetActivated",    "FFKeyPickup",       "FFDisabled",
     "FFDisable1",          "NeedFFKey",          "UpperTubeActivate", "ContainmentDoorUnlocked",
     "SuperHeaterShutdown", "Virus2Collected",    "Virus1Collected",   "SteamRelease",
     "CameraActivation",    "Finished",           "IntroMessage",      "VirusDescription",
     "Controller",          "TurretsInvuln"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

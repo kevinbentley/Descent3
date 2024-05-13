@@ -48,6 +48,25 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+static void aCustomReactorDisplayInit();
+static void aCustomReactorDisplayUpdate();
+static void dsCustomSave(void *fileptr);
+static void dsCustomRestore(void *fileptr);
+
 // =================
 // Script ID Numbers
 // =================
@@ -269,83 +288,83 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_030 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -613,13 +632,13 @@ $$END
 
 #define NUM_REACTORS 5
 
-const char *Reactor_names[NUM_REACTORS] = {"Reactor1", "Reactor2", "Reactor3", "Reactor4", "Reactor5"};
-int Reactor_handles[NUM_REACTORS];
-float Reactor_initial_shields[NUM_REACTORS];
-int Reactor_shields_percent[NUM_REACTORS];
-const char *Reactor_text;
+static const char *const Reactor_names[NUM_REACTORS] = {"Reactor1", "Reactor2", "Reactor3", "Reactor4", "Reactor5"};
+static int Reactor_handles[NUM_REACTORS];
+static float Reactor_initial_shields[NUM_REACTORS];
+static int Reactor_shields_percent[NUM_REACTORS];
+static const char *Reactor_text;
 
-const char *GetMessage(const char *name);
+static const char *GetMessage(const char *name);
 
 /*
 $$ACTION
@@ -731,8 +750,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -898,92 +917,92 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 1
-const char *Door_names[NUM_DOOR_NAMES] = {"ExitDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"ExitDoor"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 15
-const char *Object_names[NUM_OBJECT_NAMES] = {"Reactor1",  "Reactor2", "Reactor3", "Reactor4", "Reactor5",
-                                        "StartDoor", "Flame01",  "Flame03",  "Flame04",  "Flame05",
-                                        "Flame06",   "Flame07",  "Flame08",  "Flame09",  "ExitDoor"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"Reactor1",  "Reactor2", "Reactor3", "Reactor4", "Reactor5",
+                                                           "StartDoor", "Flame01",  "Flame03",  "Flame04",  "Flame05",
+                                                           "Flame06",   "Flame07",  "Flame08",  "Flame09",  "ExitDoor"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 10
-const char *Room_names[NUM_ROOM_NAMES] = {"Reactor5Screen", "Reactor4Screen", "Reactor3Screen", "Reactor2Screen",
-                                    "Reactor1Screen", "Reactor5Room",   "Reactor4Room",   "Reactor3Room",
-                                    "Reactor2Room",   "Reactor1Room"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {
+    "Reactor5Screen", "Reactor4Screen", "Reactor3Screen", "Reactor2Screen", "Reactor1Screen",
+    "Reactor5Room",   "Reactor4Room",   "Reactor3Room",   "Reactor2Room",   "Reactor1Room"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 25
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"ExitSequenceTrigger",
-                                          "IntoTunnel1",
-                                          "MainHub1",
-                                          "MainHub2",
-                                          "MainHub3",
-                                          "MainHub4",
-                                          "MainHub5",
-                                          "IntoTunnel2",
-                                          "IntoTunnel3",
-                                          "IntoTunnel4",
-                                          "IntoTunnel5",
-                                          "OutReactor1",
-                                          "OutReactor2",
-                                          "OutReactor3",
-                                          "OutReactor4",
-                                          "OutReactor5",
-                                          "IntoReactor1",
-                                          "IntoReactor2",
-                                          "IntoReactor3",
-                                          "IntoReactor4",
-                                          "IntoReactor5",
-                                          "IntoReactor4Mainten",
-                                          "IntoReactor3Mainten",
-                                          "OutReactor3Maintena",
-                                          "OutReactor4Maintena"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {"ExitSequenceTrigger",
+                                                             "IntoTunnel1",
+                                                             "MainHub1",
+                                                             "MainHub2",
+                                                             "MainHub3",
+                                                             "MainHub4",
+                                                             "MainHub5",
+                                                             "IntoTunnel2",
+                                                             "IntoTunnel3",
+                                                             "IntoTunnel4",
+                                                             "IntoTunnel5",
+                                                             "OutReactor1",
+                                                             "OutReactor2",
+                                                             "OutReactor3",
+                                                             "OutReactor4",
+                                                             "OutReactor5",
+                                                             "IntoReactor1",
+                                                             "IntoReactor2",
+                                                             "IntoReactor3",
+                                                             "IntoReactor4",
+                                                             "IntoReactor5",
+                                                             "IntoReactor4Mainten",
+                                                             "IntoReactor3Mainten",
+                                                             "OutReactor3Maintena",
+                                                             "OutReactor4Maintena"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 10
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbDroneReactor",  "DoorIsLocked",     "ExpMissileLarge1", "ExpMissileMed1",
-                                      "Lightning",        "AmbExplosionFarA", "AmbExplosionFarG", "AmbExplosionFarI",
-                                      "AmbExplosionFarD", "AmbExplosionFarE"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {
+    "AmbDroneReactor",  "DoorIsLocked",     "ExpMissileLarge1", "ExpMissileMed1",   "Lightning",
+    "AmbExplosionFarA", "AmbExplosionFarG", "AmbExplosionFarI", "AmbExplosionFarD", "AmbExplosionFarE"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 4
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"RedAMon75", "RedAMon50", "RedAMon25", "Staticscrolling"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"RedAMon75", "RedAMon50", "RedAMon25", "Staticscrolling"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 14
-const char *Path_names[NUM_PATH_NAMES] = {"Matcen12To1",      "Matcen12To2",     "Matcen12To3", "Matcen34To3",
-                                    "Matcen34To4",      "Mat5To5",         "Matcen5To4",  "Matcen5To2",
-                                    "IntroCamera",      "IntroPlayerPath", "ExitCamera2", "PlayerExit3",
-                                    "ExitCameraTunnel", "PlayerExit1Alt"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {
+    "Matcen12To1", "Matcen12To2", "Matcen12To3",      "Matcen34To3",   "Matcen34To4",
+    "Mat5To5",     "Matcen5To4",  "Matcen5To2",       "IntroCamera",   "IntroPlayerPath",
+    "ExitCamera2", "PlayerExit3", "ExitCameraTunnel", "PlayerExit1Alt"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 3
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Matcen34", "Matcen5", "Matcen12"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {"Matcen34", "Matcen5", "Matcen12"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 8
-const char *Goal_names[NUM_GOAL_NAMES] = {"Keep Reactor 5 Alive",      "Keep Reactor 4 Alive",
-                                    "Keep Reactor 3 Alive",      "Keep Reactor 2 Alive",
-                                    "Keep Reactor 1 Alive",      "Defend Red Acropolis and Escape",
-                                    "Escape from Red Acropolis", "Keep 3 of the 5 reactors alive"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Keep Reactor 5 Alive",      "Keep Reactor 4 Alive",
+                                                       "Keep Reactor 3 Alive",      "Keep Reactor 2 Alive",
+                                                       "Keep Reactor 1 Alive",      "Defend Red Acropolis and Escape",
+                                                       "Escape from Red Acropolis", "Keep 3 of the 5 reactors alive"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 21
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroMessage",    "DefendThoseReactors2",
-                                          "IncomingMessage", "DefendReactorsShort",
-                                          "Reactor5Status",  "Health75",
-                                          "Reactor4Status",  "Reactor3Status",
-                                          "Reactor2Status",  "Reactor1Status",
-                                          "Health50",        "Health25",
-                                          "Destroyed",       "HITPOINTS",
-                                          "BLANK",           "OOPS",
-                                          "WereGettinOut",   "SelfDestruct",
-                                          "ExitOnly",        "EntranceDoorMessage",
-                                          "30SecondsLeft"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"IntroMessage",    "DefendThoseReactors2",
+                                                             "IncomingMessage", "DefendReactorsShort",
+                                                             "Reactor5Status",  "Health75",
+                                                             "Reactor4Status",  "Reactor3Status",
+                                                             "Reactor2Status",  "Reactor1Status",
+                                                             "Health50",        "Health25",
+                                                             "Destroyed",       "HITPOINTS",
+                                                             "BLANK",           "OOPS",
+                                                             "WereGettinOut",   "SelfDestruct",
+                                                             "ExitOnly",        "EntranceDoorMessage",
+                                                             "30SecondsLeft"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

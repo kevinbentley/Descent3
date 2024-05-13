@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -575,138 +590,138 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_131 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_130 = 0;
-int ScriptActionCtr_129 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_125 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_131 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_130 = 0;
+static int ScriptActionCtr_129 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_021 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1169,7 +1184,7 @@ void aEmitSparks(float num_sparks, int objhandle) {
 #define SPECIAL_TIMER_MAX 256
 #define SPECIAL_TIMER_ID_LIMIT (SPECIAL_TIMER_ID_BASE + SPECIAL_TIMER_MAX * SPECIAL_TIMER_CLASSES - 1)
 
-inline int LEVEL_TIMER_UID(uint8_t timer_class, uint8_t index) {
+static inline int LEVEL_TIMER_UID(uint8_t timer_class, uint8_t index) {
   return (SPECIAL_TIMER_ID_BASE + (timer_class % SPECIAL_TIMER_CLASSES) * SPECIAL_TIMER_MAX + index);
 }
 
@@ -1312,7 +1327,7 @@ void cExecTimerEvent(int timerid) {
 #define GOAL_PRIORITY_HIGH 3
 #define GOAL_PRIORITY_LOW 0
 
-inline int LEVEL_GOAL_UID(uint8_t goal_class, uint8_t index) {
+static inline int LEVEL_GOAL_UID(uint8_t goal_class, uint8_t index) {
   return (SPECIAL_TIMER_ID_BASE + (goal_class % SPECIAL_GOAL_CLASSES) * SPECIAL_GOAL_MAX + index);
 }
 
@@ -1335,7 +1350,7 @@ static float DC_Time_Since_Last_Create = 0.0f;
 static float DC_Last_Game_Time = 0.0f;
 
 #define DC_N_VALID_EXITS 4
-const char *DC_Valid_Exits[DC_N_VALID_EXITS] = {"DCExit-1", "DCExit-2", "DCExit-3", "DCExit-2"};
+static const char *DC_Valid_Exits[DC_N_VALID_EXITS] = {"DCExit-1", "DCExit-2", "DCExit-3", "DCExit-2"};
 static int DC_Valid_Exit_Handles[DC_N_VALID_EXITS];
 static int DC_Valid_Exit_RoomHandles[DC_N_VALID_EXITS];
 
@@ -1358,7 +1373,7 @@ static int DC_EQR = -5; // droid equilibrium register.
                         // if < 0, that's how many droids we're int16_t
                         // if > 0, this means we must tell some droids to leave!
 
-void DCDetermineObjFate(int objhandle, bool new_droid);
+static void DCDetermineObjFate(int objhandle, bool new_droid);
 
 // this function will return a random free index in a max (bit must be 0)
 // if there are none, then return a random index??
@@ -2014,8 +2029,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -2181,238 +2196,238 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 2
-const char *Door_names[NUM_DOOR_NAMES] = {"BossDoor", "DroidDoor2"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"BossDoor", "DroidDoor2"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 152
-const char *Object_names[NUM_OBJECT_NAMES] = {"ParkSpew1",
-                                        "ParkSpew2",
-                                        "ParkSpew3",
-                                        "ParkSpew4",
-                                        "TargetIntro2",
-                                        "TargetIntro1",
-                                        "IntroSpew1",
-                                        "IntroSpew2",
-                                        "TheBomb",
-                                        "BST-1",
-                                        "BST-2",
-                                        "BST-3",
-                                        "BST-C6",
-                                        "BST-C5",
-                                        "BST-C4",
-                                        "BST-C3",
-                                        "BST-C2",
-                                        "BST-C1",
-                                        "BST-A-A",
-                                        "BST-A-B",
-                                        "BST-A-C",
-                                        "BST-B-A",
-                                        "BST-B-B",
-                                        "IG3C",
-                                        "IG3B",
-                                        "IG3A",
-                                        "IG2D",
-                                        "IG2C",
-                                        "IG2B",
-                                        "IG2A",
-                                        "IG1B",
-                                        "IG1A",
-                                        "TPower10",
-                                        "TGun10",
-                                        "TPower9",
-                                        "TGun9",
-                                        "TPower8",
-                                        "TGun8",
-                                        "TPower7",
-                                        "TGun7",
-                                        "TPower6",
-                                        "TGun6",
-                                        "TPower5",
-                                        "TGun5",
-                                        "TPower4",
-                                        "TGun4",
-                                        "TPower3",
-                                        "TGun3",
-                                        "TPower2",
-                                        "TGun2",
-                                        "TPower1",
-                                        "TGun1",
-                                        "MntLifterMatcenA",
-                                        "LoEnter1",
-                                        "LoEnter2",
-                                        "LoExit1",
-                                        "LoExit2",
-                                        "HiUpEntry1",
-                                        "HiUpEntry2",
-                                        "HiUpExit1",
-                                        "HiUpExit2",
-                                        "TopLifterMatcen",
-                                        "HiDnEntry1",
-                                        "HiDnEntry2",
-                                        "HiDnExit1",
-                                        "HiDnExit2",
-                                        "FireMan1",
-                                        "FireMan2",
-                                        "FireLight",
-                                        "BoxFire2B",
-                                        "BoxFire2A",
-                                        "BoxFire1B",
-                                        "BoxFire1A",
-                                        "NFire2B",
-                                        "NFire2A",
-                                        "NFire1B",
-                                        "NFire1A",
-                                        "Napalm2B",
-                                        "Napalm2A",
-                                        "Napalm1B",
-                                        "Napalm1A",
-                                        "FireSpew1",
-                                        "FireSpew2",
-                                        "FireHandle2",
-                                        "FireHandle1",
-                                        "HalonSpewer1",
-                                        "HalonSpewer-2",
-                                        "HalonSpewer3",
-                                        "HalonSpewer4",
-                                        "DroidDoor2",
-                                        "DroidFireDoor1",
-                                        "MGuard6",
-                                        "MGuard5",
-                                        "MGuard-4",
-                                        "MGuard-3",
-                                        "MGuard-2",
-                                        "MGuard-1",
-                                        "TPowerX",
-                                        "TGunX4",
-                                        "TGunX3",
-                                        "TGunX2",
-                                        "TGunX1",
-                                        "TGunX",
-                                        "EBarPlace",
-                                        "DaBomb",
-                                        "EndBoss",
-                                        "Julian",
-                                        "ShowBomb",
-                                        "PBomb",
-                                        "RedFlashBar",
-                                        "PNode3",
-                                        "PBar3",
-                                        "PNode2",
-                                        "PBar2",
-                                        "PNode1",
-                                        "PBar1",
-                                        "Suzuki",
-                                        "SZTarget1",
-                                        "SZTarget3",
-                                        "SZTarget2",
-                                        "SZSpot1",
-                                        "SZSpot2",
-                                        "PNode4",
-                                        "SZTarget4",
-                                        "PX1",
-                                        "PX2",
-                                        "PX3",
-                                        "PX4",
-                                        "PExplode1",
-                                        "PExplode2",
-                                        "PExplode3",
-                                        "SZ5Fire4",
-                                        "SZ5Fire3",
-                                        "SZ5Fire2",
-                                        "SZ5Fire1",
-                                        "SZTarget5",
-                                        "SZ5Fire2A",
-                                        "SZF1",
-                                        "SZF2",
-                                        "SZF3",
-                                        "SZF4",
-                                        "SZF5",
-                                        "SZF6",
-                                        "SZF7",
-                                        "SZF8",
-                                        "SZF9",
-                                        "SZF10",
-                                        "SZTarget6",
-                                        "SZF15",
-                                        "SZF13",
-                                        "SZF14",
-                                        "Start End Boss Cin"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"ParkSpew1",
+                                                           "ParkSpew2",
+                                                           "ParkSpew3",
+                                                           "ParkSpew4",
+                                                           "TargetIntro2",
+                                                           "TargetIntro1",
+                                                           "IntroSpew1",
+                                                           "IntroSpew2",
+                                                           "TheBomb",
+                                                           "BST-1",
+                                                           "BST-2",
+                                                           "BST-3",
+                                                           "BST-C6",
+                                                           "BST-C5",
+                                                           "BST-C4",
+                                                           "BST-C3",
+                                                           "BST-C2",
+                                                           "BST-C1",
+                                                           "BST-A-A",
+                                                           "BST-A-B",
+                                                           "BST-A-C",
+                                                           "BST-B-A",
+                                                           "BST-B-B",
+                                                           "IG3C",
+                                                           "IG3B",
+                                                           "IG3A",
+                                                           "IG2D",
+                                                           "IG2C",
+                                                           "IG2B",
+                                                           "IG2A",
+                                                           "IG1B",
+                                                           "IG1A",
+                                                           "TPower10",
+                                                           "TGun10",
+                                                           "TPower9",
+                                                           "TGun9",
+                                                           "TPower8",
+                                                           "TGun8",
+                                                           "TPower7",
+                                                           "TGun7",
+                                                           "TPower6",
+                                                           "TGun6",
+                                                           "TPower5",
+                                                           "TGun5",
+                                                           "TPower4",
+                                                           "TGun4",
+                                                           "TPower3",
+                                                           "TGun3",
+                                                           "TPower2",
+                                                           "TGun2",
+                                                           "TPower1",
+                                                           "TGun1",
+                                                           "MntLifterMatcenA",
+                                                           "LoEnter1",
+                                                           "LoEnter2",
+                                                           "LoExit1",
+                                                           "LoExit2",
+                                                           "HiUpEntry1",
+                                                           "HiUpEntry2",
+                                                           "HiUpExit1",
+                                                           "HiUpExit2",
+                                                           "TopLifterMatcen",
+                                                           "HiDnEntry1",
+                                                           "HiDnEntry2",
+                                                           "HiDnExit1",
+                                                           "HiDnExit2",
+                                                           "FireMan1",
+                                                           "FireMan2",
+                                                           "FireLight",
+                                                           "BoxFire2B",
+                                                           "BoxFire2A",
+                                                           "BoxFire1B",
+                                                           "BoxFire1A",
+                                                           "NFire2B",
+                                                           "NFire2A",
+                                                           "NFire1B",
+                                                           "NFire1A",
+                                                           "Napalm2B",
+                                                           "Napalm2A",
+                                                           "Napalm1B",
+                                                           "Napalm1A",
+                                                           "FireSpew1",
+                                                           "FireSpew2",
+                                                           "FireHandle2",
+                                                           "FireHandle1",
+                                                           "HalonSpewer1",
+                                                           "HalonSpewer-2",
+                                                           "HalonSpewer3",
+                                                           "HalonSpewer4",
+                                                           "DroidDoor2",
+                                                           "DroidFireDoor1",
+                                                           "MGuard6",
+                                                           "MGuard5",
+                                                           "MGuard-4",
+                                                           "MGuard-3",
+                                                           "MGuard-2",
+                                                           "MGuard-1",
+                                                           "TPowerX",
+                                                           "TGunX4",
+                                                           "TGunX3",
+                                                           "TGunX2",
+                                                           "TGunX1",
+                                                           "TGunX",
+                                                           "EBarPlace",
+                                                           "DaBomb",
+                                                           "EndBoss",
+                                                           "Julian",
+                                                           "ShowBomb",
+                                                           "PBomb",
+                                                           "RedFlashBar",
+                                                           "PNode3",
+                                                           "PBar3",
+                                                           "PNode2",
+                                                           "PBar2",
+                                                           "PNode1",
+                                                           "PBar1",
+                                                           "Suzuki",
+                                                           "SZTarget1",
+                                                           "SZTarget3",
+                                                           "SZTarget2",
+                                                           "SZSpot1",
+                                                           "SZSpot2",
+                                                           "PNode4",
+                                                           "SZTarget4",
+                                                           "PX1",
+                                                           "PX2",
+                                                           "PX3",
+                                                           "PX4",
+                                                           "PExplode1",
+                                                           "PExplode2",
+                                                           "PExplode3",
+                                                           "SZ5Fire4",
+                                                           "SZ5Fire3",
+                                                           "SZ5Fire2",
+                                                           "SZ5Fire1",
+                                                           "SZTarget5",
+                                                           "SZ5Fire2A",
+                                                           "SZF1",
+                                                           "SZF2",
+                                                           "SZF3",
+                                                           "SZF4",
+                                                           "SZF5",
+                                                           "SZF6",
+                                                           "SZF7",
+                                                           "SZF8",
+                                                           "SZF9",
+                                                           "SZF10",
+                                                           "SZTarget6",
+                                                           "SZF15",
+                                                           "SZF13",
+                                                           "SZF14",
+                                                           "Start End Boss Cin"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 18
-const char *Room_names[NUM_ROOM_NAMES] = {"BossRoom",     "HiDnShaft",    "HiUpShaft",    "LoShaft",       "LoEntrance",
-                                    "LoExit",       "HiUpEntrance", "HiUpExit",     "HiDnEntrance",  "HiDnExit",
-                                    "FireRoom",     "PreBoss",      "SuzukiOffice", "DroidExplode1", "DroidExplosion",
-                                    "DroidCommand", "ElevatorRoom", "PreFireRoom"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {
+    "BossRoom",     "HiDnShaft",     "HiUpShaft",      "LoShaft",      "LoEntrance",   "LoExit",
+    "HiUpEntrance", "HiUpExit",      "HiDnEntrance",   "HiDnExit",     "FireRoom",     "PreBoss",
+    "SuzukiOffice", "DroidExplode1", "DroidExplosion", "DroidCommand", "ElevatorRoom", "PreFireRoom"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 16
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"EnterMaintenence", "MntLifterInit", "StartUpperLifters", "BossRoomEntrance",
-                                          "RoboDestroy",      "DestroyMe",     "MusicBoss",         "MusicSuzuki2",
-                                          "MusicSuzuki1",     "MusicMid4",     "MusicMid3",         "MusicMid2",
-                                          "MusicMid1",        "MusicMaint2",   "MusicMaint1",       "MusicSewer1"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
+    "EnterMaintenence", "MntLifterInit", "StartUpperLifters", "BossRoomEntrance", "RoboDestroy", "DestroyMe",
+    "MusicBoss",        "MusicSuzuki2",  "MusicSuzuki1",      "MusicMid4",        "MusicMid3",   "MusicMid2",
+    "MusicMid1",        "MusicMaint2",   "MusicMaint1",       "MusicSewer1"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 2
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbSirenIntense", "AmbSwitch31"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbSirenIntense", "AmbSwitch31"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 3
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"MeshGlass1", "FunkyEffectGreen", "FunkyEffect3"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"MeshGlass1", "FunkyEffectGreen", "FunkyEffect3"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 57
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCam-2",    "IntroCam-1",
-                                    "IntroCam-Ship", "IntroPlayerPath",
-                                    "BST-1",         "BST-2",
-                                    "BST-3",         "BST-C6",
-                                    "BST-C5",        "BST-C4",
-                                    "BST-C3",        "BST-C2",
-                                    "BST-C1",        "BST-A-1",
-                                    "BST-A-2",       "BST-A-3",
-                                    "BST-B-1",       "BST-B-2",
-                                    "IG-3",          "IG-2",
-                                    "IG-1",          "LoLeft1",
-                                    "LoRight1",      "LoEntry",
-                                    "LoExit",        "HiUp1",
-                                    "HiUpEntry",     "HiUpExit",
-                                    "HiRight1",      "HiLeft1",
-                                    "DnEntry",       "DnExit",
-                                    "FirePathIn",    "Fire2",
-                                    "Fire1",         "FirePathOut",
-                                    "Guards",        "BombPickup2",
-                                    "BombPickup1",   "BombTake",
-                                    "BossCam",       "SZCam1",
-                                    "SZCam2",        "BombDelivery",
-                                    "SZCam3",        "BombAfterDevlier",
-                                    "SZCam4",        "SuzukiFinalPath",
-                                    "SZCam6",        "DBorn1",
-                                    "DBorn2",        "DBorn3",
-                                    "DBorn4",        "DDie1",
-                                    "DDie2",         "DDie3",
-                                    "DDie4"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"IntroCam-2",    "IntroCam-1",
+                                                       "IntroCam-Ship", "IntroPlayerPath",
+                                                       "BST-1",         "BST-2",
+                                                       "BST-3",         "BST-C6",
+                                                       "BST-C5",        "BST-C4",
+                                                       "BST-C3",        "BST-C2",
+                                                       "BST-C1",        "BST-A-1",
+                                                       "BST-A-2",       "BST-A-3",
+                                                       "BST-B-1",       "BST-B-2",
+                                                       "IG-3",          "IG-2",
+                                                       "IG-1",          "LoLeft1",
+                                                       "LoRight1",      "LoEntry",
+                                                       "LoExit",        "HiUp1",
+                                                       "HiUpEntry",     "HiUpExit",
+                                                       "HiRight1",      "HiLeft1",
+                                                       "DnEntry",       "DnExit",
+                                                       "FirePathIn",    "Fire2",
+                                                       "Fire1",         "FirePathOut",
+                                                       "Guards",        "BombPickup2",
+                                                       "BombPickup1",   "BombTake",
+                                                       "BossCam",       "SZCam1",
+                                                       "SZCam2",        "BombDelivery",
+                                                       "SZCam3",        "BombAfterDevlier",
+                                                       "SZCam4",        "SuzukiFinalPath",
+                                                       "SZCam6",        "DBorn1",
+                                                       "DBorn2",        "DBorn3",
+                                                       "DBorn4",        "DDie1",
+                                                       "DDie2",         "DDie3",
+                                                       "DDie4"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 10
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"MntMatcenA",     "MntMatcenB",     "TopLifterMatcen", "BombMatcen",
-                                        "BomberMatcen-2", "BomberMatcen-1", "DCMatcen-1",      "DCMatcen-2",
-                                        "DCMatcen-3",     "DCMatcen-4"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {
+    "MntMatcenA",     "MntMatcenB", "TopLifterMatcen", "BombMatcen", "BomberMatcen-2",
+    "BomberMatcen-1", "DCMatcen-1", "DCMatcen-2",      "DCMatcen-3", "DCMatcen-4"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 6
-const char *Goal_names[NUM_GOAL_NAMES] = {
+static const char *const Goal_names[NUM_GOAL_NAMES] = {
     "Destroy the PTMC Assault Bot", "Create a Disturbance to Summon Droids", "Wait for Droids to Open Central Command",
     "Place Bomb on Delivery Pad",   "Get a Safe Distance from Bomb",         "Assasinate President Suzuki of PTMC"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 14
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroMessage",    "EmptyMessage",  "BombInventory", "FiremenSummoning",
-                                          "FiremenDone",     "DroidOnlyDoor", "DeliveryReady", "BombPadFull",
-                                          "BombDropSuccess", "BombDropFail",  "BossName",      "SafeFromBomb",
-                                          "ActivateBomb",    "SuzukiDead"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {
+    "IntroMessage",  "EmptyMessage",  "BombInventory", "FiremenSummoning", "FiremenDone",
+    "DroidOnlyDoor", "DeliveryReady", "BombPadFull",   "BombDropSuccess",  "BombDropFail",
+    "BossName",      "SafeFromBomb",  "ActivateBomb",  "SuzukiDead"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

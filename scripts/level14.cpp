@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -353,75 +368,75 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_066 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -672,9 +687,9 @@ struct tTextureInfo {
 
 #define NUM_MONITORS 11
 
-bool TextureInfoInitialized = false;
+static bool TextureInfoInitialized = false;
 
-tTextureInfo texture_info[NUM_MONITORS] = {
+static tTextureInfo texture_info[NUM_MONITORS] = {
     {"Beam Emitter Rm", 0, 1775}, {"EmitterRm DataTerm", 0, 50}, {"Room 51", 0, 2},
     {"SubObs DataTerm", 0, 50},   {"SubObs Console2", 0, 50},    {"Emitter Generator", 0, 286},
     {"Dock Console", 0, 50},      {"West Dock Console", 0, 50},  {"Room 69", 0, 125},
@@ -687,13 +702,13 @@ struct tMatcenInfo {
 
 #define NUM_MATCENS 14
 
-bool MatcenInfoInitialized = false;
+static bool MatcenInfoInitialized = false;
 
-tMatcenInfo matcen_info[NUM_MATCENS] = {{"StartingDock Matcen", 0}, {"West Dock", 0},      {"Parts Room", 0},
-                                        {"Con Room Matcen1", 0},    {"Powerup Rm1", 0},    {"Powerup Rm2", 0},
-                                        {"Powerup Rm3", 0},         {"Powerup Rm4", 0},    {"Powerup Rm5", 0},
-                                        {"SubObs Matcen1", 0},      {"SubObs Matcen2", 0}, {"SubObs Matcen3", 0},
-                                        {"Emitter Room Matcen", 0}, {"Radio Rm", 0}};
+static tMatcenInfo matcen_info[NUM_MATCENS] = {{"StartingDock Matcen", 0}, {"West Dock", 0},      {"Parts Room", 0},
+                                               {"Con Room Matcen1", 0},    {"Powerup Rm1", 0},    {"Powerup Rm2", 0},
+                                               {"Powerup Rm3", 0},         {"Powerup Rm4", 0},    {"Powerup Rm5", 0},
+                                               {"SubObs Matcen1", 0},      {"SubObs Matcen2", 0}, {"SubObs Matcen3", 0},
+                                               {"Emitter Room Matcen", 0}, {"Radio Rm", 0}};
 
 /*
 $$CATEGORIES
@@ -850,8 +865,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1017,193 +1032,194 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 1
-const char *Door_names[NUM_DOOR_NAMES] = {"EquipRm Door"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"EquipRm Door"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 63
-const char *Object_names[NUM_OBJECT_NAMES] = {"Power Conduit1",
-                                        "Power Conduit2",
-                                        "Power Conduit3",
-                                        "AntiVirus Program",
-                                        "Power SW1",
-                                        "Power SW2",
-                                        "Power SW3",
-                                        "Bypass Conn1",
-                                        "Bypass Conn2",
-                                        "Bypass Conn3",
-                                        "Equip Door Key",
-                                        "Emitter Rm Link",
-                                        "West Dock Link",
-                                        "Control Rm Link",
-                                        "Emitter Output Dia",
-                                        "Override Switch",
-                                        "Shield Tog1",
-                                        "Shield Tog2",
-                                        "Shield Tog3",
-                                        "Shield Tog4",
-                                        "Shielding Bump SW",
-                                        "Node1",
-                                        "Node2",
-                                        "Node3",
-                                        "Node4",
-                                        "Node5",
-                                        "Node6",
-                                        "Escape Shuttle",
-                                        "ShuttleSwitch",
-                                        "ShuttleReleaseClaw",
-                                        "Emitter Igniter",
-                                        "Destroyable Lens",
-                                        "Spare Emitter Lens",
-                                        "Lens Position",
-                                        "EmitterBeamDest",
-                                        "Beam Journal",
-                                        "Shield Journal",
-                                        "Virus Journal",
-                                        "Power Journal",
-                                        "Robot Journal",
-                                        "Dial Journal",
-                                        "Spew1",
-                                        "Spewer2",
-                                        "Spewer3",
-                                        "Spewer4",
-                                        "Spewer6",
-                                        "Spewer7",
-                                        "Spewer8",
-                                        "Spew9",
-                                        "Spew11",
-                                        "Spew12",
-                                        "Spew13",
-                                        "Spew14",
-                                        "Spew15",
-                                        "Spew16",
-                                        "Spew19",
-                                        "Spew20",
-                                        "Spew22",
-                                        "Spew23",
-                                        "Spew24",
-                                        "Spew25",
-                                        "Spew26",
-                                        "Spew27"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"Power Conduit1",
+                                                           "Power Conduit2",
+                                                           "Power Conduit3",
+                                                           "AntiVirus Program",
+                                                           "Power SW1",
+                                                           "Power SW2",
+                                                           "Power SW3",
+                                                           "Bypass Conn1",
+                                                           "Bypass Conn2",
+                                                           "Bypass Conn3",
+                                                           "Equip Door Key",
+                                                           "Emitter Rm Link",
+                                                           "West Dock Link",
+                                                           "Control Rm Link",
+                                                           "Emitter Output Dia",
+                                                           "Override Switch",
+                                                           "Shield Tog1",
+                                                           "Shield Tog2",
+                                                           "Shield Tog3",
+                                                           "Shield Tog4",
+                                                           "Shielding Bump SW",
+                                                           "Node1",
+                                                           "Node2",
+                                                           "Node3",
+                                                           "Node4",
+                                                           "Node5",
+                                                           "Node6",
+                                                           "Escape Shuttle",
+                                                           "ShuttleSwitch",
+                                                           "ShuttleReleaseClaw",
+                                                           "Emitter Igniter",
+                                                           "Destroyable Lens",
+                                                           "Spare Emitter Lens",
+                                                           "Lens Position",
+                                                           "EmitterBeamDest",
+                                                           "Beam Journal",
+                                                           "Shield Journal",
+                                                           "Virus Journal",
+                                                           "Power Journal",
+                                                           "Robot Journal",
+                                                           "Dial Journal",
+                                                           "Spew1",
+                                                           "Spewer2",
+                                                           "Spewer3",
+                                                           "Spewer4",
+                                                           "Spewer6",
+                                                           "Spewer7",
+                                                           "Spewer8",
+                                                           "Spew9",
+                                                           "Spew11",
+                                                           "Spew12",
+                                                           "Spew13",
+                                                           "Spew14",
+                                                           "Spew15",
+                                                           "Spew16",
+                                                           "Spew19",
+                                                           "Spew20",
+                                                           "Spew22",
+                                                           "Spew23",
+                                                           "Spew24",
+                                                           "Spew25",
+                                                           "Spew26",
+                                                           "Spew27"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 3
-const char *Room_names[NUM_ROOM_NAMES] = {"Terrarium Room", "Beam Emitter Rm", "Shuttle Bay"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"Terrarium Room", "Beam Emitter Rm", "Shuttle Bay"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 9
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"AudioStream3", "MWing-1",   "MTop-1",    "MBottom-2", "MBottom-1",
-                                          "MMiddle-4",    "MMiddle-3", "MMiddle-2", "MMiddle-1"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
+    "AudioStream3", "MWing-1", "MTop-1", "MBottom-2", "MBottom-1", "MMiddle-4", "MMiddle-3", "MMiddle-2", "MMiddle-1"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 5
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch31", "Powerup pickup", "AmbSwitch11", "AmbSwitch21",
-                                      "AmbExplosionFarC"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbSwitch31", "Powerup pickup", "AmbSwitch11", "AmbSwitch21",
+                                                         "AmbExplosionFarC"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 16
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"DataLogon",
-                                          "DataScroll",
-                                          "CEDSignSilverLogo",
-                                          "CEDUploadAnti",
-                                          "NanoStat",
-                                          "Nano1",
-                                          "Nano2",
-                                          "Nano3",
-                                          "Nano4",
-                                          "CEDUpSucOn",
-                                          "C-SS Omnicron",
-                                          "Ed",
-                                          "Korea_Matcen_Shield",
-                                          "CED-Forcefield",
-                                          "Lightning3",
-                                          "ThickLineLightning"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"DataLogon",
+                                                             "DataScroll",
+                                                             "CEDSignSilverLogo",
+                                                             "CEDUploadAnti",
+                                                             "NanoStat",
+                                                             "Nano1",
+                                                             "Nano2",
+                                                             "Nano3",
+                                                             "Nano4",
+                                                             "CEDUpSucOn",
+                                                             "C-SS Omnicron",
+                                                             "Ed",
+                                                             "Korea_Matcen_Shield",
+                                                             "CED-Forcefield",
+                                                             "Lightning3",
+                                                             "ThickLineLightning"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 7
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCamPath",  "IntroPlayerPath", "EscapeShuttlePathA", "EscapeShuttlePathB",
-                                    "LensRobotPath", "EndCamPath",      "EndPlayerPath"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"IntroCamPath",       "IntroPlayerPath", "EscapeShuttlePathA",
+                                                       "EscapeShuttlePathB", "LensRobotPath",   "EndCamPath",
+                                                       "EndPlayerPath"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 1
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Emitter Rm Matcen2"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {"Emitter Rm Matcen2"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 14
-const char *Goal_names[NUM_GOAL_NAMES] = {"Find Three Bypass Connectors",
-                                    "Find Equipment Room Key",
-                                    "Start Transmitter Control System",
-                                    "Upload Anti-Virus Program",
-                                    "Enable Defense Network Output",
-                                    "Deactivate Beam Emitter Shield",
-                                    "Align Mirror Nodes",
-                                    "Free Escape Shuttle",
-                                    "Ignite Beam Emitter",
-                                    "Supply Power to Beam Igniter",
-                                    "Find Spare Emitter Lens",
-                                    "Replace Emitter Lens",
-                                    "Ensure Success of Transmission",
-                                    "Broadcast the Anti-Virus Program"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Find Three Bypass Connectors",
+                                                       "Find Equipment Room Key",
+                                                       "Start Transmitter Control System",
+                                                       "Upload Anti-Virus Program",
+                                                       "Enable Defense Network Output",
+                                                       "Deactivate Beam Emitter Shield",
+                                                       "Align Mirror Nodes",
+                                                       "Free Escape Shuttle",
+                                                       "Ignite Beam Emitter",
+                                                       "Supply Power to Beam Igniter",
+                                                       "Find Spare Emitter Lens",
+                                                       "Replace Emitter Lens",
+                                                       "Ensure Success of Transmission",
+                                                       "Broadcast the Anti-Virus Program"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 55
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
-                                          "Empty",
-                                          "BypassConnDisplay",
-                                          "PowerOffline",
-                                          "PowerOnline",
-                                          "FoundAllBypassConns",
-                                          "FoundBypassConn",
-                                          "FoundEquipRmKey",
-                                          "DataLinkAlreadyActive",
-                                          "DataLinkFixed",
-                                          "SystemStarting",
-                                          "DataLinkError",
-                                          "GotCoreMaterial",
-                                          "UploadStarted",
-                                          "UploadError",
-                                          "UseCoreMaterialFailed",
-                                          "SystemStarted",
-                                          "OmnicronDisplayed",
-                                          "BumpDialError",
-                                          "DialCodeEntered",
-                                          "DialCodeIncorrect",
-                                          "DialSwitchError",
-                                          "ShieldCodeSeqStart",
-                                          "ShieldCodeSeqReset",
-                                          "ShieldDeactivated",
-                                          "ShieldCodeIncorrect",
-                                          "ShuttleFreed",
-                                          "BeamIgnited",
-                                          "BeamIgniteError6",
-                                          "BeamIgniteError5",
-                                          "BeamIgniteError4",
-                                          "BeamIgniteError3",
-                                          "BeamIgniteError2",
-                                          "BeamIgniteError1",
-                                          "LensRobotWarning",
-                                          "LensDestroyed",
-                                          "GotSpareLens",
-                                          "UseLensCompleted",
-                                          "UseLensFailed2",
-                                          "UseLensFailed1",
-                                          "MirrorNodesUnaligned",
-                                          "PowerInsufficient",
-                                          "TransmissionComplete",
-                                          "JournalBeamGame",
-                                          "JournalBeamHUD",
-                                          "JournalShieldGame",
-                                          "JournalShieldHUD",
-                                          "JournalVirusGame",
-                                          "JournalVirusHUD",
-                                          "JournalPowerGame",
-                                          "JournalPowerHUD",
-                                          "JournalRobotGame",
-                                          "JournalRobotHUD",
-                                          "JournalDialGame",
-                                          "JournalDialHUD"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
+                                                             "Empty",
+                                                             "BypassConnDisplay",
+                                                             "PowerOffline",
+                                                             "PowerOnline",
+                                                             "FoundAllBypassConns",
+                                                             "FoundBypassConn",
+                                                             "FoundEquipRmKey",
+                                                             "DataLinkAlreadyActive",
+                                                             "DataLinkFixed",
+                                                             "SystemStarting",
+                                                             "DataLinkError",
+                                                             "GotCoreMaterial",
+                                                             "UploadStarted",
+                                                             "UploadError",
+                                                             "UseCoreMaterialFailed",
+                                                             "SystemStarted",
+                                                             "OmnicronDisplayed",
+                                                             "BumpDialError",
+                                                             "DialCodeEntered",
+                                                             "DialCodeIncorrect",
+                                                             "DialSwitchError",
+                                                             "ShieldCodeSeqStart",
+                                                             "ShieldCodeSeqReset",
+                                                             "ShieldDeactivated",
+                                                             "ShieldCodeIncorrect",
+                                                             "ShuttleFreed",
+                                                             "BeamIgnited",
+                                                             "BeamIgniteError6",
+                                                             "BeamIgniteError5",
+                                                             "BeamIgniteError4",
+                                                             "BeamIgniteError3",
+                                                             "BeamIgniteError2",
+                                                             "BeamIgniteError1",
+                                                             "LensRobotWarning",
+                                                             "LensDestroyed",
+                                                             "GotSpareLens",
+                                                             "UseLensCompleted",
+                                                             "UseLensFailed2",
+                                                             "UseLensFailed1",
+                                                             "MirrorNodesUnaligned",
+                                                             "PowerInsufficient",
+                                                             "TransmissionComplete",
+                                                             "JournalBeamGame",
+                                                             "JournalBeamHUD",
+                                                             "JournalShieldGame",
+                                                             "JournalShieldHUD",
+                                                             "JournalVirusGame",
+                                                             "JournalVirusHUD",
+                                                             "JournalPowerGame",
+                                                             "JournalPowerHUD",
+                                                             "JournalRobotGame",
+                                                             "JournalRobotHUD",
+                                                             "JournalDialGame",
+                                                             "JournalDialHUD"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -161,63 +176,63 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -448,8 +463,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -615,58 +630,60 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 1
-const char *Door_names[NUM_DOOR_NAMES] = {"PlazaEntrance"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"PlazaEntrance"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 38
-const char *Object_names[NUM_OBJECT_NAMES] = {
+static const char *const Object_names[NUM_OBJECT_NAMES] = {
     "DataCartridge", "Train1",        "Train2",        "Train3",        "Train4",    "ElectricDown1", "ElectricDown2",
     "ElectricDown3", "ElectricDown4", "ElectricDown5", "ElectricDown6", "Electric1", "Electric2",     "Electric3",
     "Electric4",     "UploadMiddle",  "DataHolder",    "Upload4",       "Upload3",   "Upload2",       "Upload1",
     "TorchA",        "TorchB",        "TorchC",        "TorchD",        "SteamA",    "SteamB",        "SteamC",
     "SteamD",        "SteamE",        "CloakMerc",     "MercTarget",    "BPMain",    "BPSideKick",    "CarGoal2",
     "CarGoal-1",     "GardenSpew-2",  "GardenSpew-1"};
-int Object_handles[NUM_OBJECT_NAMES];
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 0
-const char **Room_names = NULL;
-int *Room_indexes = NULL;
+static const char **Room_names = NULL;
+static int *Room_indexes = NULL;
 
 #define NUM_TRIGGER_NAMES 10
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"EnterUpload",   "ExitUpload",    "MTrain",   "MCityFirst-2", "MCityFirst",
-                                          "MCitySecond-2", "MCitySecond-1", "MSewer-2", "MSewer-1",     "MSuzukiTower"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
+    "EnterUpload",   "ExitUpload",    "MTrain",   "MCityFirst-2", "MCityFirst",
+    "MCitySecond-2", "MCitySecond-1", "MSewer-2", "MSewer-1",     "MSuzukiTower"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 2
-const char *Sound_names[NUM_SOUND_NAMES] = {"Lev4TrainTest", "PupC1"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"Lev4TrainTest", "PupC1"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 1
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffectAntiV"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffectAntiV"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 13
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCam",   "IntroShip",   "Train1",     "Train2",     "Train3",
-                                    "Train4",     "UploadWatch", "Merc1Intro", "Merc2Intro", "MercWatch",
-                                    "CloakMerc1", "EndCam",      "EndShip"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {
+    "IntroCam",   "IntroShip",  "Train1",    "Train2",     "Train3", "Train4", "UploadWatch",
+    "Merc1Intro", "Merc2Intro", "MercWatch", "CloakMerc1", "EndCam", "EndShip"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 6
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Cars-1", "Cars-2", "TrainCen1", "TrainCen2", "TrainCen3", "TrainCen4"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *Matcen_names[NUM_MATCEN_NAMES] = {"Cars-1",    "Cars-2",    "TrainCen1",
+                                                     "TrainCen2", "TrainCen3", "TrainCen4"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 3
-const char *Goal_names[NUM_GOAL_NAMES] = {"Upload the data to Suzuki", "Defeat the PTMC Mercenaries",
-                                    "Give the Data to Suzuki and Return Safely"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Upload the data to Suzuki", "Defeat the PTMC Mercenaries",
+                                                       "Give the Data to Suzuki and Return Safely"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 8
-const char *Message_names[NUM_MESSAGE_NAMES] = {"CinematicIntroCam", "PutTheCartridge", "CinematicDataCart",
-                                          "CartridgeError",    "GetOut",          "CinematicAmbush",
-                                          "BPDefeated",        "CinematicEndCam"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {
+    "CinematicIntroCam", "PutTheCartridge", "CinematicDataCart", "CartridgeError", "GetOut",
+    "CinematicAmbush",   "BPDefeated",      "CinematicEndCam"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

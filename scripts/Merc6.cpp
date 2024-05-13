@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -365,95 +380,95 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_051 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -970,8 +985,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1137,172 +1152,173 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 3
-const char *Door_names[NUM_DOOR_NAMES] = {"PTMCminedoor", "MainBaseDoor", "ReactorDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"PTMCminedoor", "MainBaseDoor", "ReactorDoor"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 58
-const char *Object_names[NUM_OBJECT_NAMES] = {"Ambusher1A",
-                                        "Ambusher1B",
-                                        "Ambusher2A",
-                                        "Ambusher2B",
-                                        "Ambusher2C",
-                                        "Ambusher4A",
-                                        "Ambusher4B",
-                                        "Ambusher4C",
-                                        "HoodAmbusher",
-                                        "MiniBoss1",
-                                        "MiniBoss2",
-                                        "MiniBoss3",
-                                        "Data 01",
-                                        "Data 02",
-                                        "Data 03",
-                                        "Data 04",
-                                        "Backup1",
-                                        "Backup2",
-                                        "Ambusher5",
-                                        "Boss Crate 01",
-                                        "Boss Crate 02",
-                                        "Boss Crate 03",
-                                        "Welder 01",
-                                        "Welder 02",
-                                        "Welder 03",
-                                        "Welder 04",
-                                        "CED Reactor",
-                                        "EndBlastCam",
-                                        "Gadget 01",
-                                        "Gadget 02",
-                                        "Gadget03",
-                                        "Dravis Door",
-                                        "PTMChangarcontrol",
-                                        "HangarMatcenContro",
-                                        "Barge 01",
-                                        "Barge 02",
-                                        "Barge 03",
-                                        "HangarFFControl",
-                                        "Ambush1Trigger",
-                                        "Ambush2Trigger",
-                                        "Ambush4Trigger",
-                                        "Ambush5Trigger",
-                                        "FailsafeTerminal",
-                                        "GreenOrb",
-                                        "CEDfoyer",
-                                        "TTLoadSwitch",
-                                        "Big Wheel",
-                                        "TTTurnSwitch",
-                                        "TTUnloadSwitch",
-                                        "ReactorDoorSwitch",
-                                        "TopCam",
-                                        "BottomCam",
-                                        "SideCam1",
-                                        "SideCam2",
-                                        "SideCam3",
-                                        "ReactorDeathCamA",
-                                        "ReactorDeathCamB",
-                                        "MonitorSpew"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"Ambusher1A",
+                                                           "Ambusher1B",
+                                                           "Ambusher2A",
+                                                           "Ambusher2B",
+                                                           "Ambusher2C",
+                                                           "Ambusher4A",
+                                                           "Ambusher4B",
+                                                           "Ambusher4C",
+                                                           "HoodAmbusher",
+                                                           "MiniBoss1",
+                                                           "MiniBoss2",
+                                                           "MiniBoss3",
+                                                           "Data 01",
+                                                           "Data 02",
+                                                           "Data 03",
+                                                           "Data 04",
+                                                           "Backup1",
+                                                           "Backup2",
+                                                           "Ambusher5",
+                                                           "Boss Crate 01",
+                                                           "Boss Crate 02",
+                                                           "Boss Crate 03",
+                                                           "Welder 01",
+                                                           "Welder 02",
+                                                           "Welder 03",
+                                                           "Welder 04",
+                                                           "CED Reactor",
+                                                           "EndBlastCam",
+                                                           "Gadget 01",
+                                                           "Gadget 02",
+                                                           "Gadget03",
+                                                           "Dravis Door",
+                                                           "PTMChangarcontrol",
+                                                           "HangarMatcenContro",
+                                                           "Barge 01",
+                                                           "Barge 02",
+                                                           "Barge 03",
+                                                           "HangarFFControl",
+                                                           "Ambush1Trigger",
+                                                           "Ambush2Trigger",
+                                                           "Ambush4Trigger",
+                                                           "Ambush5Trigger",
+                                                           "FailsafeTerminal",
+                                                           "GreenOrb",
+                                                           "CEDfoyer",
+                                                           "TTLoadSwitch",
+                                                           "Big Wheel",
+                                                           "TTTurnSwitch",
+                                                           "TTUnloadSwitch",
+                                                           "ReactorDoorSwitch",
+                                                           "TopCam",
+                                                           "BottomCam",
+                                                           "SideCam1",
+                                                           "SideCam2",
+                                                           "SideCam3",
+                                                           "ReactorDeathCamA",
+                                                           "ReactorDeathCamB",
+                                                           "MonitorSpew"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 13
-const char *Room_names[NUM_ROOM_NAMES] = {
+static const char *const Room_names[NUM_ROOM_NAMES] = {
     "PTMC control room",  "PTMC Loading Force", "TTLoadFFRoom",      "CEDBaseEntrance", "Wheel Control Room",
     "TTUnloadFFRoom",     "CED reactor room",   "FlashRoom1",        "Failsafe Room",   "CED fight room mai",
     "CED fight room lef", "CED fight room rig", "CED fight room top"};
-int Room_indexes[NUM_ROOM_NAMES];
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 25
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "EnteredLoadingArea", "PTMCminemusic",      "PTMChangarmusic",    "PTMC2terrain01",     "PTMC2terrain02",
     "PTMC2terrain03",     "PTMC2terrain04",     "PTMC2terrain05",     "PTMC2terrain06",     "terrain to PTMC 01",
     "terrain to PTMC 02", "terrain to PTMC 03", "terrain to PTMC 04", "terrain to PTMC 05", "terrain to PTMC 06",
     "CEDbase 01",         "CEDbase 02",         "CEDbase03",          "CEDbase 04",         "CED to terrain 05",
     "CED to terrain 06",  "CED to terrain 01",  "CED to terrain 02",  "CED to terrain 03",  "CED to terrain 04"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 7
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbDroneReactor",  "Powerup pickup",  "AmbMonitorProcessing", "AmbSwitch31",
-                                      "AmbInVolcanoLava", "AmbDroneHallway", "Merc4Rumble"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbDroneReactor", "Powerup pickup",   "AmbMonitorProcessing",
+                                                         "AmbSwitch31",     "AmbInVolcanoLava", "AmbDroneHallway",
+                                                         "Merc4Rumble"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 5
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"PTMClogoON", "M06_ForcefieldDisabled", "PTMClogooff", "FunkyEffect7",
-                                          "FunkyEffect4"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"PTMClogoON", "M06_ForcefieldDisabled", "PTMClogooff",
+                                                             "FunkyEffect7", "FunkyEffect4"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 27
-const char *Path_names[NUM_PATH_NAMES] = {
+static const char *const Path_names[NUM_PATH_NAMES] = {
     "IntroCamPath",   "IntroPlayerPath", "LifterToBox1",   "LifterToBarge1", "LifterToBox2Dest", "LifterToBox3Dest",
     "LifterToBox2",   "LifterToBox3",    "LifterFinished", "PTMCbargepath",  "CEDbargepath",     "Ambusher1Path",
     "Ambusher1BPath", "Ambusher2Path",   "Ambusher2B",     "Ambusher2C",     "Ambusher4Path",    "Ambusher4BPath",
     "Ambusher4CPath", "HoodAmbushPath",  "MiniBoss1Path",  "MiniBoss3Path",  "MiniBoss2Path",    "Backup1Path",
     "Backup2Path",    "EndCamPath",      "EndPlayerPath"};
-int Path_indexes[NUM_PATH_NAMES];
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 10
-const char *Matcen_names[NUM_MATCEN_NAMES] = {
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {
     "CED fight left 01",  "CED fight left 02",   "CED fight left 03", "CED fight right 01", "CED fight right 02",
     "CED fight top left", "CED fight top right", "Matcen 2",          "CED fight right 03", "Matcen 3"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 14
-const char *Goal_names[NUM_GOAL_NAMES] = {"Destroy Welder Bots",
-                                    "Obtain Maintenance Access Cards",
-                                    "Enter PTMC Loading Area",
-                                    "Load Cargo onto Barges",
-                                    "Disable Cargo Hold Forcefield",
-                                    "Load Cargo onto Turn Table",
-                                    "Protect Cargo Enroute to Base",
-                                    "Destroy Tower Operators",
-                                    "Unload Cargo from Turn Table",
-                                    "Align Turn Table with Base",
-                                    "Force Open Outer Reactor Door",
-                                    "Engage Reactor Diagnostics",
-                                    "Destroy Reactor",
-                                    "Escape"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Destroy Welder Bots",
+                                                       "Obtain Maintenance Access Cards",
+                                                       "Enter PTMC Loading Area",
+                                                       "Load Cargo onto Barges",
+                                                       "Disable Cargo Hold Forcefield",
+                                                       "Load Cargo onto Turn Table",
+                                                       "Protect Cargo Enroute to Base",
+                                                       "Destroy Tower Operators",
+                                                       "Unload Cargo from Turn Table",
+                                                       "Align Turn Table with Base",
+                                                       "Force Open Outer Reactor Door",
+                                                       "Engage Reactor Diagnostics",
+                                                       "Destroy Reactor",
+                                                       "Escape"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 40
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
-                                          "Killwelders",
-                                          "DravisDoor",
-                                          "PTMCminedoor",
-                                          "Maintenance",
-                                          "HangarMatcen",
-                                          "CargoLoaded",
-                                          "PTMCforcefiledDown",
-                                          "CargoNotLoaded",
-                                          "ProtectCargo",
-                                          "CargoAtTT",
-                                          "CargoOnTT",
-                                          "CargoAtBase",
-                                          "ProtectCargo2",
-                                          "ProtectCargo3",
-                                          "CargoDestroyed",
-                                          "CargoDestroyed2",
-                                          "CargoDestroyed3",
-                                          "Ambush2",
-                                          "Ambush1",
-                                          "CEDBaseFFDown",
-                                          "ControlFFDown",
-                                          "Ambush3",
-                                          "TTLoading",
-                                          "NoTTCargo",
-                                          "SwitchHitFromOutside",
-                                          "NoCargoOnTT",
-                                          "OutOfAlign",
-                                          "TTUnloading",
-                                          "WrongWheelPos",
-                                          "LetsRock",
-                                          "BackupDeployed",
-                                          "Backup1",
-                                          "Backup2",
-                                          "Backup3",
-                                          "Backup4",
-                                          "ReactorSwitchHit",
-                                          "ReactorDoorOpening",
-                                          "ReactorBlownMessage",
-                                          "Empty"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"IntroText",
+                                                             "Killwelders",
+                                                             "DravisDoor",
+                                                             "PTMCminedoor",
+                                                             "Maintenance",
+                                                             "HangarMatcen",
+                                                             "CargoLoaded",
+                                                             "PTMCforcefiledDown",
+                                                             "CargoNotLoaded",
+                                                             "ProtectCargo",
+                                                             "CargoAtTT",
+                                                             "CargoOnTT",
+                                                             "CargoAtBase",
+                                                             "ProtectCargo2",
+                                                             "ProtectCargo3",
+                                                             "CargoDestroyed",
+                                                             "CargoDestroyed2",
+                                                             "CargoDestroyed3",
+                                                             "Ambush2",
+                                                             "Ambush1",
+                                                             "CEDBaseFFDown",
+                                                             "ControlFFDown",
+                                                             "Ambush3",
+                                                             "TTLoading",
+                                                             "NoTTCargo",
+                                                             "SwitchHitFromOutside",
+                                                             "NoCargoOnTT",
+                                                             "OutOfAlign",
+                                                             "TTUnloading",
+                                                             "WrongWheelPos",
+                                                             "LetsRock",
+                                                             "BackupDeployed",
+                                                             "Backup1",
+                                                             "Backup2",
+                                                             "Backup3",
+                                                             "Backup4",
+                                                             "ReactorSwitchHit",
+                                                             "ReactorDoorOpening",
+                                                             "ReactorBlownMessage",
+                                                             "Empty"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()
