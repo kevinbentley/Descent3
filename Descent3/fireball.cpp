@@ -2025,13 +2025,13 @@ int CreateBlastRing(vector *pos, int index, float lifetime, float max_size, int 
 
   return objnum;
 }
-// TODO: MTS: only used in this file.
+// FIXME: MTS: only used in this file.
 // Creates a standard blast ring for an object
 int CreateObjectBlastRing(object *objp) {
   float ring_size = OBJECT_OUTSIDE(objp) ? (objp->size * 3) : objp->size;
   return CreateBlastRing(&objp->pos, BLAST_RING_INDEX, DAMAGE_RING_TIME, ring_size, objp->roomnum);
 }
-// TODO: MTS: Not used?
+// FIXME: MTS: Not used?
 // Creates a smolding smoke to be drawn
 int CreateSmolderingObject(vector *pos, int index, float lifetime, float max_size, int roomnum) {
   int objnum;

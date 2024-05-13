@@ -927,12 +927,12 @@ int nw_Send(network_address *who_to, void *data, int len, int flags) {
   return nw_SendWithID(NWT_UNRELIABLE, (uint8_t *)data, len, who_to);
 }
 
-// MTS: only used in this file?
+// FIXME: MTS: only used in this file?
 void nw_HandleUnreliableData(uint8_t *data, int len, network_address *from_addr) {
   nw_psnet_buffer_packet((uint8_t *)data, len, from_addr);
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 // routine to "free" a packet buffer
 void nw_FreePacket(int id) {
   Packet_buffers[id].sequence_number = -1;
@@ -1221,12 +1221,12 @@ int nw_SendReliable(uint32_t socketid, uint8_t *data, int length, bool urgent) {
   return 0;
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 int nw_InitReliableSocket() {
   nw_RegisterCallback((NetworkReceiveCallback)nw_WorkReliable, NWT_RELIABLE);
   return 1;
 }
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 void nw_SendReliableAck(SOCKADDR *raddr, uint32_t sig, network_protocol link_type, float time_sent) {
   int ret;
   reliable_header ack_header;
@@ -1525,7 +1525,7 @@ void nw_WorkReliable(uint8_t *data, int len, network_address *naddr) {
   } while (0); // while((IPX_has_data>0) || (UDP_has_data>0));
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 void nw_HandleConnectResponse(uint8_t *data, int len, network_address *server_addr) {
 
   int i;
@@ -1767,7 +1767,7 @@ int nw_PingCompare(const void *arg1, const void *arg2) {
   return 0;
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 // Warning, experimental compression below, if you want to use it, talk to Kevin. Doesn't do much currently, only
 // reduces 0's
 #define COMPRESS_KEY 0xfd
@@ -1806,7 +1806,7 @@ int nw_Compress(void *srcdata, void *destdata, int count) {
   return currp - (uint8_t *)destdata;
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 int nw_Uncompress(void *compdata, void *uncompdata, int count) {
   int i;
   int destlen = 0;
@@ -1836,7 +1836,7 @@ int nw_Uncompress(void *compdata, void *uncompdata, int count) {
   return destlen;
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 // initialize the buffering system
 void nw_psnet_buffer_init() {
   int idx;
@@ -1855,7 +1855,7 @@ void nw_psnet_buffer_init() {
   Psnet_highest_id = -1;
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 // buffer a packet (maintain order!)
 void nw_psnet_buffer_packet(uint8_t *data, int length, network_address *from) {
   int idx;
@@ -1889,7 +1889,7 @@ void nw_psnet_buffer_packet(uint8_t *data, int length, network_address *from) {
   }
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 // get the index of the next packet in order!
 int nw_psnet_buffer_get_next_by_packet_id(uint8_t *data, int *length, uint32_t packet_id) {
   int idx;
@@ -1927,7 +1927,7 @@ int nw_psnet_buffer_get_next_by_packet_id(uint8_t *data, int *length, uint32_t p
   return 1;
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 // get the index of the next packet in order!
 int nw_psnet_buffer_get_next(uint8_t *data, int *length, network_address *from) {
   int idx;
@@ -1965,7 +1965,7 @@ int nw_psnet_buffer_get_next(uint8_t *data, int *length, network_address *from) 
 }
 
 #ifdef WIN32
-// MTS: only used in this file
+// FIXME: MTS: only used in this file?
 // functions to get the status of a RAS connection
 uint32_t psnet_ras_status() {
   int rval;
@@ -2529,7 +2529,7 @@ int nw_DoReceiveCallbacks(void) {
   return 0;
 }
 
-// MTS: only used in this file?
+// FIXME: MTS: only used in this file?
 // Resend any unack'd packets and send any buffered packets, heartbeats, etc.
 void nw_ReliableResend(void) {
   int i, j;

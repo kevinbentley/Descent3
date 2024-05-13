@@ -690,7 +690,7 @@ int MainMultiplayerMenu() {
   return ret;
 }
 
-// MTS: only used in this file
+// FIXME: MTS: only used in this file.
 void AutoLoginAndJoinGame(void) {
   uint16_t port;
   uint32_t iaddr;

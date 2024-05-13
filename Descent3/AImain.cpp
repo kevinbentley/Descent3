@@ -1555,7 +1555,7 @@
 #define MIN_TARGET_UPDATE_INTERVAL 2.0f
 #define MAX_TARGET_UPDATE_INTERVAL 4.5f
 
-// MTS: unused
+// TODO: MTS: unused?
 float AI_last_time_room_noise_alert_time[MAX_ROOMS + 8];
 int AI_unique_goal_id = 0;
 
@@ -2255,7 +2255,7 @@ bool AITurnTowardsMatrix(object *obj, float turn_rate, matrix *g_orient) {
   return false;
 }
 
-// MTS: Unused?
+// TODO: MTS: unused?
 void AITurnTowardsPosition(object *obj, /*velocity *new_vel,*/ vector *pos /*, bool remain_level*/) {
   vector goal_dir = *pos - obj->pos;
   ai_frame *ai_info = obj->ai_info;
@@ -3498,7 +3498,7 @@ done:
 
 #define FRR_MAX_TRIES 15
 
-// MTS: Unused?
+// TODO: MTS: unused?
 int AIGoalGotoRandomRoom() { return -1; }
 
 int AIFindRandomRoom(object *obj, ai_frame *ai_info, goal *goal_ptr, int avoid_room, int min_depth, int max_depth,
@@ -4105,10 +4105,10 @@ bool AIStatusCircleFrame(object *obj, object *g_obj, float dist, float c_dist, i
   }
 }
 
-// MTS: Unused?
+// TODO: MTS: unused?
 bool ai_target_need_path(object *obj) { return true; }
 
-// MTS: Unused?
+// TODO: MTS: unused?
 bool ai_move_need_path(object *obj, vector *pos, int roomnum) {
   if (obj->roomnum == roomnum) {
     return false;
@@ -4212,7 +4212,7 @@ static inline bool IsTargetLocal(object *obj, object *target) {
 #define COHESION_OPTI2_DIST 90.0f
 #define COHESION_FALL_OFF 110.0f
 
-// MTS: commented out/returns a bool instead of a float
+// FIXME: MTS: commented out/returns a bool instead of a float
 float AIGoalIsEnabledForDist(goal *goal, float dist) {
   return true; // chrishack -- test code -- temp
 }
@@ -4364,7 +4364,7 @@ void AIDoTrackFrame(object *obj) {
   }
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 float AIDetermineGoalInfluence(object *obj, goal *goal) {
   float influence = goal->influence;
   int g_index = goal - obj->ai_info->goals;

@@ -163,7 +163,7 @@ void ai_check_terrain_node(int cur_node, int f_check_local_nodes) {
   return;
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 // Returns true if the new point is on the terrain and false if the path results in leaving the terrain
 bool ait_GetGroundInfo(ground_information *ground_info, vector *p0, vector *p1, float rad, angle fov) {
   int start_node, end_node;

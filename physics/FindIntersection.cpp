@@ -3226,7 +3226,7 @@ vector PointSpeed(object *obj, vector *pos, matrix *orient, vector *rotvel, vect
   return *velocity + w1;
 }
 
-// MTS: only used in this file.
+// FIXME: MTS: only used in this file?
 // Hacked for some initial testing
 bool BBoxPlaneIntersection(bool fast_exit, vector *collision_point, vector *collision_normal, object *obj,
                            vector *new_pos, int nv, vector **vertex_ptr_list, vector *face_normal, matrix *orient,

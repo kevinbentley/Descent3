@@ -264,7 +264,7 @@ int cf_SetSearchPath(const char *path, ...) {
   return 1;
 }
 
-// MTS: not used
+// TODO: MTS: unused?
 /**
  * Removes all search paths that have been added by cf_SetSearchPath
  */

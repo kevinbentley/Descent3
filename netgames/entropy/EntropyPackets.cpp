@@ -158,7 +158,7 @@ void ReceivePickupVirus(uint8_t *data) {
 #define RT_BLUREP 4
 #define RT_BLUENG 5
 
-// MTS: only used in this file.
+// FIXME: MTS: only used in this file.
 void SendRoomInfo(int pnum) {
   char *room_info = NULL;
   int flags, r, i;

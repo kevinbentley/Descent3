@@ -367,7 +367,7 @@
 weapon Weapons[MAX_WEAPONS];
 int Num_weapons = 0;
 
-const char *Static_weapon_names[] = {
+const char *const Static_weapon_names[] = {
     //	Primary weapons
     "Laser",
     "Vauss",
@@ -394,7 +394,7 @@ const char *Static_weapon_names[] = {
     "Yellow Flare",
 };
 
-int Static_weapon_names_msg[] = {
+const int Static_weapon_names_msg[] = {
     //	Primary weapons
     TXI_WPN_LASER,
     TXI_WPN_VAUSS,
@@ -421,7 +421,7 @@ int Static_weapon_names_msg[] = {
     TXI_WPN_YELL_FLARE,
 };
 
-int Static_weapon_ckpt_names[][2] = {
+const int Static_weapon_ckpt_names[][2] = {
     //	Primary weapons
     {TXI_WPNC_LASER_1, TXI_WPNC_LASER_2},
     {TXI_WPNC_VAUSS_1, TXI_WPNC_VAUSS_2},
@@ -448,7 +448,7 @@ int Static_weapon_ckpt_names[][2] = {
     {TXI_WPNC_YELFLARE_1, TXI_WPNC_YELFLARE_2},
 };
 
-// MTS: unused?
+// TODO: MTS: unused?
 // Sets all weapons to unused
 void InitWeapons() {
   for (int i = 0; i < MAX_WEAPONS; i++) {
@@ -502,7 +502,7 @@ void FreeWeapon(int n) {
   Num_weapons--;
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 // Gets next weapon from n that has actually been alloced
 int GetNextWeapon(int n) {
   int i;
@@ -524,7 +524,7 @@ int GetNextWeapon(int n) {
   return n;
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 // Gets previous weapon from n that has actually been alloced
 int GetPrevWeapon(int n) {
   int i;
@@ -560,7 +560,7 @@ int FindWeaponName(const char *name) {
   return -1;
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 // Given a weapon handle, returns that weapons bitmap
 // If the weapon is animated, returns framenum mod num_of_frames in the animation
 // Also figures in gametime
@@ -581,7 +581,7 @@ int GetWeaponHudImage(int handle, int framenum) {
     return (Weapons[handle].hud_image_handle);
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 // Given a filename, loads either the bitmap or vclip found in that file.  If type
 // is not NULL, sets it to 1 if file is animation, otherwise sets it to zero
 int LoadWeaponHudImage(char *filename, int *type) {
@@ -660,7 +660,7 @@ int LoadWeaponFireImage(char *filename, int *type, int *anim, int pageable) {
   return bm_handle;
 }
 
-// MTS: only used in this file.
+// FIXME: MTS: only used in this file.
 // Given a weapon name, assigns that weapon to a specific index into
 // the Weapons array.  Returns -1 if the named weapon is not found, 0 if the weapon
 // is already in its place, or 1 if successfully moved
@@ -705,7 +705,7 @@ int MatchWeaponToIndex(char *name, int dest_index) {
   return new_index; // we made it!
 }
 
-// MTS: Used only in this file.
+// FIXME: MTS: only used in this file.
 // Moves a weapon from a given index into a new one (above MAX_STATIC_WEAPONS)
 // returns new index
 int MoveWeaponFromIndex(int index) {
@@ -778,7 +778,7 @@ void RemapWeapons() {
   }
 }
 
-// MTS: only used in this file.
+// FIXME: MTS: only used in this file.
 // goes thru every entity that could possible have a weapon index (ie objects, weapons, etc)
 // and changes the old index to the new index
 void RemapAllWeaponObjects(int old_index, int new_index) {
@@ -830,7 +830,7 @@ void RemapAllWeaponObjects(int old_index, int new_index) {
   }
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 bool IsWeaponSecondary(int index) {
   if (index < SECONDARY_INDEX)
     return false;
@@ -903,10 +903,10 @@ static inline bool is_weapon_available(unsigned player_weapon_flags, int new_wea
 // used for sequencing
 void ResetWeaponSelectStates(uint16_t new_state) { Weapon_slot_mask = new_state; }
 
-// MTS: unused?
+// TODO: MTS: unused?
 void SaveWeaponSelectStates(CFILE *fp) { cf_WriteShort(fp, Weapon_slot_mask); }
 
-// MTS: unused?
+// TODO: MTS: unused?
 void LoadWeaponSelectStates(CFILE *fp) {
   uint16_t state = (uint16_t)cf_ReadShort(fp);
   ResetWeaponSelectStates(state);
