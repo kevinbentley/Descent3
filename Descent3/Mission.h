@@ -181,20 +181,22 @@
 void LoadLevelProgress(int step, float percent, const char *chunk = NULL);
 
 //	array constants
-const int MSN_FILENAMELEN = _MAX_PATH, MSN_URLLEN = 256;
+static constexpr int MSN_FILENAMELEN = PSPATHNAME_LEN, MSN_URLLEN = 256;
 
 #define MAX_KEYWORDLEN 300
 
 //	increase this value if you are going to add more levels to a mission than the max.
-const int MAX_LEVELS_PER_MISSION = 30;
+constexpr int MAX_LEVELS_PER_MISSION = 30;
 
-//	mission flags.
-const unsigned LVLFLAG_STARTMOVIE = 1, LVLFLAG_ENDMOVIE = 2, LVLFLAG_BRIEFING = 4, LVLFLAG_SHIPSELECT = 8,
-               LVLFLAG_SPAWNSECRET = 16, LVLFLAG_SPECIALHOG = 32, LVLFLAG_BRANCH = 64, LVLFLAG_UNUSED = 128,
-               LVLFLAG_SCORE = 256, LVLFLAG_FINAL = 512;
+//	mission flags. TODO: move into an enum?
+static constexpr unsigned LVLFLAG_STARTMOVIE = 1, LVLFLAG_ENDMOVIE = 2, LVLFLAG_BRIEFING = 4, LVLFLAG_SHIPSELECT = 8,
+                          LVLFLAG_SPAWNSECRET = 16, LVLFLAG_SPECIALHOG = 32, LVLFLAG_BRANCH = 64, LVLFLAG_UNUSED = 128,
+                          LVLFLAG_SCORE = 256, LVLFLAG_FINAL = 512;
 
-const int LVLOBJ_NUM = 4;
-const uint16_t LVLOBJF_SECONDARY1 = 1, LVLOBJF_SECONDARY2 = 2, LVLOBJF_SECONDARY3 = 4, LVLOBJF_SECONDARY4 = 8;
+static constexpr int LVLOBJ_NUM = 4;
+static constexpr uint16_t LVLOBJF_SECONDARY1 = 1, LVLOBJF_SECONDARY2 = 2, LVLOBJF_SECONDARY3 = 4, LVLOBJF_SECONDARY4 = 8;
+
+extern bool Skip_next_movie;
 
 // Struct for info about the current level
 struct level_info {
@@ -325,6 +327,12 @@ bool GetMissionInfo(const char *msnfile, tMissionInfo *msn);
 // -1	Bad match -- this level and this mod shouldn't be played together!
 // MAX_NET_PLAYERS	-- This is playable with any number of teams the mod wants
 int MissionGetKeywords(const char *mission, char *keywords);
+
+//  MN3 based mission functions.
+/// Loads the msn file from the mn3 file specified, specifies the hog and table file.
+extern bool mn3_Open(const char *mn3file);
+/// Closes the current mn3 file.
+extern void mn3_Close();
 
 #ifdef EDITOR
 //	Used by editor to load all necessary elements for level playing for systems

@@ -147,13 +147,24 @@
 
 #define WEAPONS_LOAD_UPDATE_INTERVAL 2.0
 
-float Last_weapons_load_update_time = 0;
+static float Last_weapons_load_update_time = 0;
 
 // Setup saved moves
 saved_move SavedMoves[MAX_SAVED_MOVES];
 int Current_saved_move = 0;
 
-extern int Use_file_xfer;
+/// Tell the server about my info, such as name, ship type, etc.
+static void MultiSendMyInfo();
+/// Ask the server to tell me about the players.
+static void MultiSendRequestForPlayers();
+/// Ask the server to tell me about the buildings.
+static void MultiSendRequestForBuildings();
+/// Ask the server to tell me about the world.
+static void MultiSendRequestForWorldStates();
+/// Ask the server to tell me about the objects.
+static void MultiSendRequestForObjects();
+/// Returns 1 if the server is gone!
+static int ServerTimedOut();
 
 // Tell the server about my info, such as name, ship type, etc
 void MultiSendMyInfo() {
@@ -308,8 +319,8 @@ int ServerTimedOut() {
 }
 #define NET_CLIENT_GAMETIME_REQ_TIMEOUT 10
 #define NET_CLIENT_GAMETIME_REQ_RETRY 1
-float First_gametime_req = 0;
-float Last_gametime_req = 0;
+static float First_gametime_req = 0;
+static float Last_gametime_req = 0;
 
 // Do client stuff for this frame
 void MultiDoClientFrame() {

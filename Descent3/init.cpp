@@ -1029,7 +1029,6 @@ char Base_directory[_MAX_PATH];
 extern int Min_allowed_frametime;
 
 extern bool Render_powerup_sparkles;
-extern int Use_file_xfer;
 
 static constexpr float kDefaultMouselookSensitivity = 9.102f;
 static constexpr float kAnglesPerDegree = 65536.0f / 360.0f;

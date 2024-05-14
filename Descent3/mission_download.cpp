@@ -140,13 +140,20 @@
 #include "unzip.h"
 
 int Got_url;
-msn_urls msn_URL = {"", {"", "", "", "", ""}};
+static msn_urls msn_URL = {"", {"", "", "", "", ""}};
 msn_urls Net_msn_URLs;
 
 extern char Proxy_server[200];
 extern int16_t Proxy_port;
 
-int msn_ExtractZipFile(char *zipfilename, char *mn3name);
+static int msn_ExtractZipFile(char *zipfilename, char *mn3name);
+/// Request a URL structure from a server containing a list of download locations
+/// for the current mission being played.
+static msn_urls *msn_GetURL(network_address *net_addr);
+/// Get the list of URLs in the msn file
+static msn_urls *msn_GetURL(char *msnfile);
+
+static void _get_zipfilename(char *output, char *directory, char *zipfilename);
 
 // Request a URL structure from a server containing a list of download locations
 // For the current mission being played
@@ -195,6 +202,7 @@ msn_urls *msn_GetURL(char *msnfile) {
 #define MSN_DWNLD_CHOICE_H 256
 #define MSN_DWNLD_CHOICE_W 512
 
+// TODO: MTS: Only used in this file
 // Present the user with a list of URLs to download from. Return the 0 based selection, or -1 if cancel is hit.
 int msn_ShowDownloadChoices(msn_urls *urls) {
   UITextItem title_text(TXT_DOWNLOADPROMPT, UICOL_WINDOW_TITLE);
@@ -627,6 +635,7 @@ int msn_CheckGetMission(network_address *net_addr, char *filename) {
 #endif
 }
 
+// TODO: MTS: only used in this file
 void msn_ClipURLToWidth(int width, char *string) {
   if (!string)
     return;
@@ -648,6 +657,7 @@ void msn_ClipURLToWidth(int width, char *string) {
   }
 }
 
+// TODO: MTS: only used in this file
 char *msn_SecondsToString(int time_sec) {
   static char fmttime[100];
   char fmttemp[100] = "";
@@ -885,6 +895,7 @@ int CheckGetD3M(char *d3m) {
 #endif
 }
 
+// TODO: MTS: only used in this file
 // Start downloading the file at the url specifies, showing a status screen
 // Return codes:
 // 0 Failed or cancelled

@@ -769,7 +769,6 @@ extern float Multi_reliable_last_send_time[MAX_NET_PLAYERS];
 extern uint8_t Multi_reliable_sent_position[MAX_NET_PLAYERS];
 extern uint32_t Multi_visible_players[];
 
-extern int Got_level_info;
 extern int Got_new_game_time;
 // For keeping track of buildings that have changed
 extern uint8_t Multi_building_states[];
@@ -782,6 +781,8 @@ extern int Num_network_games_known;
 
 // Is this a master tracker game?
 extern int Game_is_master_tracker_game;
+
+extern int Use_file_xfer;
 
 #define TRACKER_ID_LEN 10 // Don't change this!
 extern char Tracker_id[TRACKER_ID_LEN];
@@ -824,6 +825,8 @@ struct vmt_descent3_struct {
 #pragma pack()
 #endif
 
+class MD5;
+
 extern vmt_descent3_struct MTPilotinfo[MAX_NET_PLAYERS];
 
 // Display a menu based on what the server just told us about
@@ -845,9 +848,6 @@ int TryToJoinServer(network_address *addr);
 
 // The server says we can join!
 void MultiDoConnectionAccepted(uint8_t *data);
-
-// Polls for a connection message so we can finally join this game
-void MultiPollForConnectionAccepted();
 
 // Gets a new connection set up
 void MultiSendConnectionAccepted(int slotnum, SOCKET sock, network_address *addr);
@@ -970,17 +970,9 @@ int MultiPollForLevelInfo();
 // Server is telling us about the level
 void MultiDoLevelInfo(uint8_t *data);
 
-// Server is telling the client about the level currently playing
-// Server only
-void MultiSendLevelInfo(int slot);
-
 // Clients says he's ready for level info
 // so send it to him
 void MultiDoReadyForLevel(uint8_t *data);
-
-// Client is telling the server that he is ready for a level
-// Client only
-void MultiSendReadyForLevel();
 
 // Tells all the clients to end the level
 void MultiSendLevelEnded(int success, int next_level);
@@ -1226,5 +1218,15 @@ inline void MultiAddTypeID(int type, int id, uint8_t *data, int *count) {
 }
 
 int MultiGetShipChecksum(int ship_index);
+
+/// Returns a unique value for this ship.
+void MultiProcessShipChecksum(MD5 *md5, int ship_index);
+
+extern int SearchForLocalGamesTCP(unsigned int ask, ushort port);
+extern int SearchForGamesPXO(unsigned int ask, ushort port);
+extern void UpdateAndPackGameList(void);
+/// Checks if the selected mission and script are compatible
+/// - Returns: -1: Not compatible!  >=0: Number of teams supported for this mod & level
+extern int CheckMissionForScript(char *mission, char *script, int dedicated_server_num_teams);
 
 #endif

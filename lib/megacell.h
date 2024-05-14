@@ -61,6 +61,6 @@ int GetPrevMegacell(int n);
 
 // Searches thru all MEGACELLs for a specific name, returns -1 if not found
 // or index of MEGACELL with name
-int FindMegacellName(char *name);
+int FindMegacellName(const char *name);
 
 #endif

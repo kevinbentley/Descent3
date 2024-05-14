@@ -1097,8 +1097,6 @@ tGameState Game_state = GAMESTATE_IDLE;      // current game state.
 tGameState Last_game_state = GAMESTATE_IDLE; // previous frame game state.
 int Game_interface_mode = GAME_INTERFACE;    // game interface mode (options menu?)
 
-extern bool FirstGame;
-
 static bool Level_started = false;
 static int Level_warp_next = 0;
 
@@ -1108,9 +1106,6 @@ extern bool E3_enforce_level_restart;
 #endif
 
 extern float Multi_Game_time_start;
-
-extern bool Demo_looping;
-extern bool IsRestoredGame;
 
 //	internal functions
 bool StartNewGame();        //	We start a game by using the current mission in memory.
@@ -1143,9 +1138,6 @@ extern vector editor_player_pos;
 extern matrix editor_player_orient;
 extern int editor_player_roomnum;
 #endif
-
-extern bool mn3_Open(const char *mn3file);
-extern void mn3_Close();
 
 extern bool Game_gauge_do_time_test;
 extern char Game_gauge_usefile[_MAX_PATH];

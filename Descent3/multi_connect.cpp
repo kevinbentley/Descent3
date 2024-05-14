@@ -276,10 +276,21 @@
 #include "directplay.h"
 #endif
 
-SOCKET ReliableSocket;
 int Ok_to_join = -1;
 
-int Got_level_info = 0;
+static int Got_level_info = 0;
+
+/// Returns true if the server says we can join
+static int AskToJoin(network_address *addr);
+/// Polls for a connection message so we can finally join this game.
+/// Client only.
+static void MultiPollForConnectionAccepted();
+/// Server is telling the client about the level currently playing.
+/// Server only.
+static void MultiSendLevelInfo(int slot);
+/// Client is telling the server that he is ready for a level.
+/// Client only.
+static void MultiSendReadyForLevel();
 
 // Whether or not the server will answer
 bool Multi_accept_state = true;
@@ -594,7 +605,6 @@ void MultiSendConnectionAccepted(int slotnum, SOCKET sock, network_address *addr
 // Polls for a connection message so we can finally join this game
 // Returns true if we got the level info
 // Client only
-
 int MultiPollForLevelInfo() {
   float start_time, ask_time, initial_start_time;
   int connected = 0;
@@ -975,6 +985,7 @@ void UpdateAndPackGameList(void) {
   }
 }
 
+// TODO: MTS: unused
 // Sets whether or not the server answsers to a connection request
 void MultiSetAcceptState(bool state) {
   mprintf(0, "Setting multi_accept_state to %s.\n", state ? "true" : "false");

@@ -319,13 +319,8 @@
 
 void *callback = NULL;
 module MultiDLLHandle = {NULL};
-int SearchForLocalGamesTCP(uint32_t ask, uint16_t port);
-int SearchForGamesPXO(uint32_t ask, uint16_t port);
 extern uint8_t NewUIWindow_alpha;
-extern void DoScreenshot();
-extern void UpdateAndPackGameList(void);
 extern bool Multi_Gamelist_changed;
-int CheckMissionForScript(char *mission, char *script, int dedicated_server_num_teams);
 void ShowNetgameInfo(network_game *game);
 // The exported DLL function call prototypes
 #if defined(__LINUX__)

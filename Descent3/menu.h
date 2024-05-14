@@ -98,6 +98,9 @@ struct menu {
   uint8_t used;
 };
 
+extern bool IsRestoredGame;
+extern bool FirstGame;
+
 //	returns whether we decided to quit the game or not
 //	this displays the main menu options and runs the menu system
 int MainMenu();

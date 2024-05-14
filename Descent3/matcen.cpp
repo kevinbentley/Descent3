@@ -1959,6 +1959,7 @@ void DoMatcensRenderFrame() {
 
 #endif // NEWEDITOR
 
+// FIXME: MTS: Unused? Might be used in the editor?
 void DestroyMatcen(int id, bool f_resort = false) {
 #if (!defined(EDITOR) && !defined(NEWEDITOR))
   f_resort = false;
@@ -1979,4 +1980,5 @@ void DestroyMatcen(int id, bool f_resort = false) {
   }
 }
 
+// TODO: Only used in current file.
 bool MatcenValid(int id) { return (id >= 0 && id < Num_matcens && Matcen[id]); }

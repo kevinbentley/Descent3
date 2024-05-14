@@ -216,6 +216,7 @@
 #include "weather.h"
 #include "cockpit.h"
 #include "hud.h"
+#include "menu.h"
 #include "PHYSICS.H"
 
 #include <algorithm>
@@ -259,7 +260,6 @@ void IncreaseRestoreCount(const char *file) {
   }
 }
 
-extern bool IsRestoredGame;
 ///////////////////////////////////////////////////////////////////////////////
 //	loads a game from a given slot.
 int LoadGameState(const char *pathname) {
