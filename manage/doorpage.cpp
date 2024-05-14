@@ -174,8 +174,6 @@
 
 #define DOORPAGE_VERSION 3
 
-extern char *TablefileNameOverride;
-
 // Given an open file pointer and a door_page struct, writes that door page out
 void mng_WriteDoorPage(CFILE *outfile, mngs_door_page *doorpage) {
   int i;

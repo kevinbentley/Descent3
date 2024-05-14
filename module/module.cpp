@@ -111,9 +111,21 @@ static bool mod_FindRealFileNameCaseInsenstive(const char *directory, const char
 #if defined(__LINUX__)
 #include "linux_fix.h"
 #endif
+
+/// Split a pathname into its component parts.
+static void dd_SplitPath(const char *srcPath, char *path, char *filename, char *ext);
+/// Constructs a path in the local file system's syntax.
+/// - parameter newPath: Stores the constructed path.
+/// - parameter absolutePathHeader: Absolute path on which the sub directories will be appended
+/// (specified in local file system syntax).
+///
+/// Takes a variable number of subdirectories which will be concatenated on to the path.
+/// The last argument in the list of sub dirs *MUST* be \c NULL to terminate the list.
+static void dd_MakePath(char *newPath, const char *absolutePathHeader, const char *subDir, ...);
+
 #if defined(WIN32) // INSTEAD OF MAKING MODULE HAVE DEPENDENCIES, PUT THE 2 DDIO FUNCTIONS I NEED HERE
 // Split a pathname into its component parts
-static void dd_SplitPath(const char *srcPath, char *path, char *filename, char *ext) {
+void dd_SplitPath(const char *srcPath, char *path, char *filename, char *ext) {
   char drivename[_MAX_DRIVE], dirname[_MAX_DIR];
   _splitpath(srcPath, drivename, dirname, filename, ext);
   if (path)
@@ -125,7 +137,7 @@ static void dd_SplitPath(const char *srcPath, char *path, char *filename, char *
 //						(specified in local file system syntax)
 //  takes a variable number of subdirectories which will be concatenated on to the path
 //		the last argument in the list of sub dirs *MUST* be NULL to terminate the list
-static void dd_MakePath(char *newPath, const char *absolutePathHeader, const char *subDir, ...) {
+void dd_MakePath(char *newPath, const char *absolutePathHeader, const char *subDir, ...) {
   const char delimiter = '\\';
   va_list args;
   char *currentDir = NULL;
@@ -160,7 +172,7 @@ static void dd_MakePath(char *newPath, const char *absolutePathHeader, const cha
 }
 #elif defined(__LINUX__)
 // Split a pathname into its component parts
-static void dd_SplitPath(const char *srcPath, char *path, char *filename, char *ext) {
+void dd_SplitPath(const char *srcPath, char *path, char *filename, char *ext) {
   int pathStart = -1;
   int pathEnd = -1;
   int fileStart = -1;
@@ -237,7 +249,7 @@ static void dd_SplitPath(const char *srcPath, char *path, char *filename, char *
 //						(specified in local file system syntax)
 //  takes a variable number of subdirectories which will be concatenated on to the path
 //		the last argument in the list of sub dirs *MUST* be NULL to terminate the list
-static void dd_MakePath(char *newPath, const char *absolutePathHeader, const char *subDir, ...) {
+void dd_MakePath(char *newPath, const char *absolutePathHeader, const char *subDir, ...) {
   const char delimiter = '/';
   va_list args;
   char *currentDir = NULL;
@@ -271,7 +283,7 @@ static void dd_MakePath(char *newPath, const char *absolutePathHeader, const cha
   va_end(args);
 }
 #endif
-int ModLastError = MODERR_NOERROR;
+static int ModLastError = MODERR_NOERROR;
 //	Returns the real name of the module.  If a given file has an extension, it will
 //	just return that filename.  If the given file has no given extension, the
 //	system specific extension is concatted and returned.
@@ -497,11 +509,11 @@ int mod_GetLastError(void) {
 #include <errno.h>
 #include <ctype.h>
 
-void dd_GetWorkingDir(char *path, int len);
-bool dd_SetWorkingDir(const char *path);
-bool dd_FindFileStart(const char *wildcard, char *namebuf);
-bool dd_FindNextFile(char *namebuf);
-void dd_FindFileClose();
+static void dd_GetWorkingDir(char *path, int len);
+static bool dd_SetWorkingDir(const char *path);
+static bool dd_FindFileStart(const char *wildcard, char *namebuf);
+static bool dd_FindNextFile(char *namebuf);
+static void dd_FindFileClose();
 
 //	retrieve the current working folder where file operation will occur.
 void dd_GetWorkingDir(char *path, int len) { getcwd(path, len); }

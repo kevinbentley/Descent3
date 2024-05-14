@@ -192,7 +192,6 @@
 #endif
 
 #define CURRENT_TABLE_VERSION 22
-extern const char *PageNames[];
 
 void mng_InitPagelocks() {
   // If there is not a pagelock file, create one with a dummy header.
@@ -407,7 +406,7 @@ int mng_CheckIfPageOwned(mngs_Pagelock *pl, char *owner) {
 
   CFILE *infile;
   mngs_Pagelock testlock;
-  int r, done = 0;
+  int r = 0, done = 0;
 
   infile = (CFILE *)cfopen(TableLockFilename, "rb");
   if (infile == NULL) {

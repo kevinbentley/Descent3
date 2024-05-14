@@ -253,8 +253,6 @@
 
 #define SHIPPAGE_VERSION 6
 
-extern char *TablefileNameOverride;
-
 // Given an open file pointer and a ship_page struct, writes that ship page out
 void mng_WriteShipPage(CFILE *outfile, mngs_ship_page *shippage) {
   int i;

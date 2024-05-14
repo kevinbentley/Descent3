@@ -51,13 +51,13 @@
 #include "game.h"
 
 namespace {
-MovieFrameCallback_fp Movie_callback = NULL;
-char MovieDir[512];
-char SoundCardName[512];
-uint16_t CurrentPalette[256];
-int Movie_bm_handle = -1;
-uint32_t Movie_current_framenum = 0;
-bool Movie_looping = false;
+static MovieFrameCallback_fp Movie_callback = NULL;
+static char MovieDir[512];
+static char SoundCardName[512];
+static uint16_t CurrentPalette[256];
+static int Movie_bm_handle = -1;
+static uint32_t Movie_current_framenum = 0;
+static bool Movie_looping = false;
 
 #ifndef NO_MOVIES
 
@@ -440,10 +440,13 @@ static void CallbackSetPalette(uint8_t *pBuffer, uint32_t start, uint32_t count)
 static void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx,
                               uint32_t sy, uint32_t w, uint32_t h, uint32_t dstx, uint32_t dsty,
                               uint32_t hicolor);
+static int NextPow2(int n);
 
 #ifndef NO_MOVIES
 static bool mve_InitSound(oeApplication *app, MovieSoundDevice &device);
 static void mve_CloseSound(MovieSoundDevice &device);
+static void BlitToMovieBitmap(unsigned char *buf, unsigned int bufw, unsigned int bufh, unsigned int hicolor,
+                              bool usePow2Texture, int &texW, int &texH);
 #endif
 
 // sets the directory where movies are stored
@@ -469,7 +472,7 @@ void mve_SetRenderProperties(int16_t x, int16_t y, int16_t w, int16_t h, rendere
 
 #ifdef __LINUX__
 // locates the case-sensitive movie file name
-bool mve_FindMovieFileRealName(const char *movie, char *real_name) {
+static bool mve_FindMovieFileRealName(const char *movie, char *real_name) {
   // split into directory and file...
   char t_dir[_MAX_PATH];
   char t_file[_MAX_PATH];

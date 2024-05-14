@@ -36,8 +36,6 @@
 
 #define GAMEFILE_VERSION 2
 
-extern char *TablefileNameOverride;
-
 // Given an open file pointer and a gamefile_page struct, writes that gamefile page out
 void mng_WriteGamefilePage(CFILE *outfile, mngs_gamefile_page *gamefilepage) {
   ASSERT(outfile != NULL);
