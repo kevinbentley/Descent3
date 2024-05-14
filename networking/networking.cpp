@@ -545,9 +545,6 @@ static void nw_SendReliableAck(SOCKADDR *raddr, unsigned int sig, network_protoc
 /// Initialize the buffering system.
 static void nw_psnet_buffer_init();
 
-/// Buffer a packet (maintain order!).
-static void nw_psnet_buffer_packet(ubyte *data, int length, network_address *from);
-
 static void nw_HandleConnectResponse(ubyte *data, int len, network_address *server_addr);
 
 int make_nonblocking(SOCKET sock)

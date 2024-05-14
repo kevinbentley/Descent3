@@ -90,8 +90,8 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-static static int ScriptActionCtr_002 = 0;
-static static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_001 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
