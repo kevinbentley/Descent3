@@ -360,9 +360,6 @@ void nw_CloseSocket(SOCKET *sockp);
 // Inits the sockets layer to activity
 void nw_InitNetworking(int iReadBufSizeOverride = -1);
 
-// called by psnet_init to initialize the listen socket used by a host/server
-int nw_InitReliableSocket();
-
 // function which checks the Listen_socket for possibly incoming requests to be connected.
 // returns 0 on error or nothing waiting.  1 if we should try to accept
 int nw_CheckListenSocket(network_address *from_addr);
@@ -431,18 +428,6 @@ int nw_SendPilotTrackerPacket(void *packet);
 // Checks for an incoming pilot tracker packet.
 int nw_ReceivePilotTracker(void *packet);
 
-// initialize the buffering system
-void nw_psnet_buffer_init();
-
-// buffer a packet (maintain order!)
-void nw_psnet_buffer_packet(uint8_t *data, int length, network_address *from);
-
-// get the index of the next packet in order!
-int nw_psnet_buffer_get_next(uint8_t *data, int *length, network_address *from);
-
-// get the index of the next packet in order!
-int nw_psnet_buffer_get_next_by_packet_id(uint8_t *data, int *length, uint32_t packet_id);
-
 // This is all the reliable UDP stuff...
 #define MAXNETBUFFERS                                                                                                  \
   150                    // Maximum network buffers (For between network and upper level functions, which is
@@ -471,7 +456,6 @@ int nw_psnet_buffer_get_next_by_packet_id(uint8_t *data, int *length, uint32_t p
 #define RNF_CONNECTING 4   // We received the connecting message, but haven't told the game yet.
 #define RNF_LIMBO 5        // between connecting and connected
 
-void nw_SendReliableAck(SOCKADDR *raddr, uint32_t sig, network_protocol link_type, float time_sent);
 void nw_WorkReliable(uint8_t *data, int len, network_address *naddr);
 int nw_Compress(void *srcdata, void *destdata, int count);
 int nw_Uncompress(void *compdata, void *uncompdata, int count);
@@ -514,10 +498,7 @@ int nw_RegisterCallback(NetworkReceiveCallback nfp, uint8_t id);
 NetworkReceiveCallback nw_UnRegisterCallback(uint8_t id);
 int nw_SendWithID(uint8_t id, uint8_t *data, int len, network_address *who_to);
 int nw_DoReceiveCallbacks(void);
-void nw_HandleConnectResponse(uint8_t *data, int len, network_address *server_addr);
 int nw_RegisterCallback(NetworkReceiveCallback nfp, uint8_t id);
-void nw_HandleUnreliableData(uint8_t *data, int len, network_address *from_addr);
-void nw_ReliableResend(void);
 int nw_CheckReliableSocket(int socknum);
 
 struct tNetworkStatus {

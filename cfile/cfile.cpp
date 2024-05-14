@@ -107,7 +107,6 @@ void ThrowCFileError(int type, CFILE *file, const char *msg) {
   throw &cfe;
 }
 
-
 // Opens a HOG file.  Future calls to cfopen(), etc. will look in this HOG.
 // Parameters:  libname - the path & filename of the HOG file
 // NOTE:	libname must be valid for the entire execution of the program.  Therefore, it should either

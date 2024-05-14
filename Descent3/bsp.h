@@ -127,6 +127,5 @@ int BSPGetMineChecksum();
 extern bsptree MineBSP;
 extern int BSPChecksum;
 extern uint8_t BSP_initted;
-extern uint8_t UseBSP;
 
 #endif

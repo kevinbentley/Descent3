@@ -346,7 +346,7 @@ bool Use_DirectPlay = false;
 #define MAX_RECEIVE_BUFSIZE 32768
 //(1<<16)			// 16 K, eh?
 
-int iMaxReceiveBufsize = MAX_RECEIVE_BUFSIZE;
+static int iMaxReceiveBufsize = MAX_RECEIVE_BUFSIZE;
 
 #ifdef WIN32
 DWORD(DLLFUNCCALL *pRasEnumConnections)(LPRASCONN lprasconn, LPDWORD lpcb, LPDWORD lpcConnections) = NULL;
@@ -355,22 +355,22 @@ DWORD(DLLFUNCCALL *pRasGetProjectionInfo)
 (HRASCONN hrasconn, RASPROJECTION rasprojection, LPVOID lpprojection, LPDWORD lpcb) = NULL;
 #endif
 
-int Dialup_connection = 0;
+static int Dialup_connection = 0;
 
-int nw_ServerSocket = -1;
-int nw_ClientSocket = -1;
+static int nw_ServerSocket = -1;
+static int nw_ClientSocket = -1;
 
-network_protocol NetworkProtocol = NP_NONE;
+static network_protocol NetworkProtocol = NP_NONE;
 
-int Sockets_initted = 0;
-int Network_initted = 0;
+static int Sockets_initted = 0;
+static int Network_initted = 0;
 
-uint32_t Net_fixed_ip = INADDR_NONE;
+static uint32_t Net_fixed_ip = INADDR_NONE;
 // sockets for IPX and TCP
 
-SOCKET TCP_socket;
-SOCKET TCP_reliable_socket;
-SOCKET TCP_listen_socket;
+static SOCKET TCP_socket;
+static SOCKET TCP_reliable_socket;
+static SOCKET TCP_listen_socket;
 
 // the sockets that the game will use when selecting network type
 static SOCKET *Unreliable_socket;
@@ -386,7 +386,7 @@ BOOL DP_active = FALSE; // Direct Play active
 // BOOL TCP_MT_active = FALSE;
 
 // This structure contains the local computer info
-network_address My_addr;
+static network_address My_addr;
 
 struct network_checksum_packet {
   int sequence_number;
@@ -420,8 +420,8 @@ static int Largest_packet_index = 0;
 static int Uncompressed_outgoing_data_len = 0;
 static int Compressed_outgoing_data_len = 0;
 
-int Next_packet_id;
-int Last_packet_id;
+static int Next_packet_id;
+static int Last_packet_id;
 
 static CFILE *NetDebugFile = NULL;
 
@@ -527,6 +527,28 @@ static void CloseNetworking();
 static void nw_SetSocketOptions(SOCKET sock);
 static void nw_LoadThreadLibrary(void);
 static int nw_PingCompare(const void *arg1, const void *arg2);
+static void nw_ReliableResend(void);
+
+/// Get the index of the next packet in order!
+static int nw_psnet_buffer_get_next(ubyte *data, int *length, network_address *from);
+
+/// Get the index of the next packet in order!
+static int nw_psnet_buffer_get_next_by_dpid(ubyte *data, int *length, unsigned long dpid);
+
+static void nw_HandleUnreliableData(ubyte *data, int len, network_address *from_addr);
+
+/// Called by \c psnet_init to initialize the listen socket used by a host/server.
+static int nw_InitReliableSocket();
+
+static void nw_SendReliableAck(SOCKADDR *raddr, unsigned int sig, network_protocol link_type, float time_sent);
+
+/// Initialize the buffering system.
+static void nw_psnet_buffer_init();
+
+/// Buffer a packet (maintain order!).
+static void nw_psnet_buffer_packet(ubyte *data, int length, network_address *from);
+
+static void nw_HandleConnectResponse(ubyte *data, int len, network_address *server_addr);
 
 int make_nonblocking(SOCKET sock)
 {
@@ -927,7 +949,6 @@ int nw_Send(network_address *who_to, void *data, int len, int flags) {
   return nw_SendWithID(NWT_UNRELIABLE, (uint8_t *)data, len, who_to);
 }
 
-// FIXME: MTS: only used in this file?
 void nw_HandleUnreliableData(uint8_t *data, int len, network_address *from_addr) {
   nw_psnet_buffer_packet((uint8_t *)data, len, from_addr);
 }
@@ -1221,7 +1242,6 @@ int nw_SendReliable(uint32_t socketid, uint8_t *data, int length, bool urgent) {
   return 0;
 }
 
-// FIXME: MTS: only used in this file?
 int nw_InitReliableSocket() {
   nw_RegisterCallback((NetworkReceiveCallback)nw_WorkReliable, NWT_RELIABLE);
   return 1;
@@ -1525,7 +1545,6 @@ void nw_WorkReliable(uint8_t *data, int len, network_address *naddr) {
   } while (0); // while((IPX_has_data>0) || (UDP_has_data>0));
 }
 
-// FIXME: MTS: only used in this file?
 void nw_HandleConnectResponse(uint8_t *data, int len, network_address *server_addr) {
 
   int i;
@@ -1836,7 +1855,6 @@ int nw_Uncompress(void *compdata, void *uncompdata, int count) {
   return destlen;
 }
 
-// FIXME: MTS: only used in this file?
 // initialize the buffering system
 void nw_psnet_buffer_init() {
   int idx;
@@ -1855,7 +1873,6 @@ void nw_psnet_buffer_init() {
   Psnet_highest_id = -1;
 }
 
-// FIXME: MTS: only used in this file?
 // buffer a packet (maintain order!)
 void nw_psnet_buffer_packet(uint8_t *data, int length, network_address *from) {
   int idx;
@@ -1889,7 +1906,6 @@ void nw_psnet_buffer_packet(uint8_t *data, int length, network_address *from) {
   }
 }
 
-// FIXME: MTS: only used in this file?
 // get the index of the next packet in order!
 int nw_psnet_buffer_get_next_by_packet_id(uint8_t *data, int *length, uint32_t packet_id) {
   int idx;
@@ -1927,7 +1943,6 @@ int nw_psnet_buffer_get_next_by_packet_id(uint8_t *data, int *length, uint32_t p
   return 1;
 }
 
-// FIXME: MTS: only used in this file?
 // get the index of the next packet in order!
 int nw_psnet_buffer_get_next(uint8_t *data, int *length, network_address *from) {
   int idx;
@@ -2529,7 +2544,6 @@ int nw_DoReceiveCallbacks(void) {
   return 0;
 }
 
-// FIXME: MTS: only used in this file?
 // Resend any unack'd packets and send any buffered packets, heartbeats, etc.
 void nw_ReliableResend(void) {
   int i, j;

@@ -621,6 +621,21 @@ static int GetRandomExplosion(float size);
 static void CreateBlueBlastRing(vector *pos, int index, float lifetime, float max_size, int roomnum, int objnum,
                                 int force_up);
 
+/// Creates a standard blast ring for an object.
+static int CreateObjectBlastRing(object *objp);
+
+/// Draws a blast ring.
+static void DrawBlastRingObject(object *obj);
+
+/// Creates an explosion.
+static void DoExplosionEvent(int eventnum, void *data);
+
+/// Returns a random medium sized explosion
+static int GetRandomMediumExplosion();
+
+/// Returns a random small explosion
+static int GetRandomBillowingExplosion();
+
 // If an objects size is bigger than this, we create size/threshold extra explosions
 #define EXTRA_EXPLOSION_THRESHOLD 15
 fireball Fireballs[NUM_FIREBALLS] = {
@@ -2025,7 +2040,7 @@ int CreateBlastRing(vector *pos, int index, float lifetime, float max_size, int 
 
   return objnum;
 }
-// FIXME: MTS: only used in this file.
+
 // Creates a standard blast ring for an object
 int CreateObjectBlastRing(object *objp) {
   float ring_size = OBJECT_OUTSIDE(objp) ? (objp->size * 3) : objp->size;
@@ -2231,7 +2246,7 @@ void DrawSphere(vector *pos, float r, float g, float b, float alpha, float size,
   rend_SetZBufferWriteMask(1);
 }
 #define BLAST_RING_ALPHA 1.0f
-// TODO: MTS: only used in this file.
+
 //  Draws a blast ring
 void DrawBlastRingObject(object *obj) {
   vector inner_vecs[30], outer_vecs[30];
@@ -2352,7 +2367,7 @@ void DoBlastRingEvent(int eventnum, void *data) {
   object *obj = (object *)data;
   CreateObjectBlastRing(obj);
 }
-// TODO: MTS: only used in this file.
+
 //  Creates an explosion
 void DoExplosionEvent(int eventnum, void *data) {
   float *vals = (float *)data;
@@ -2406,7 +2421,7 @@ int GetRandomExplosion(float size) {
   else
     return GetRandomMediumExplosion();
 }
-// TODO: MTS: only found in this file.
+
 // Returns a random medium sized explosion
 int GetRandomMediumExplosion() {
   int choices[] = {MED_EXPLOSION_INDEX, MED_EXPLOSION_INDEX2, MED_EXPLOSION_INDEX3};
@@ -2418,7 +2433,7 @@ int GetRandomSmallExplosion() {
   int pick = ps_rand() % 2;
   return (choices[pick]);
 }
-// TODO: MTS: only found in this file.
+
 int GetRandomBillowingExplosion() {
   int choices[] = {BILLOWING_INDEX, MED_EXPLOSION_INDEX2};
   int pick = ps_rand() % 2;

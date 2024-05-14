@@ -140,8 +140,8 @@ PI); rot_angle = acos(dot);
         }
 */
 
-// Finds the position of a attach point on an object
-// The uvec is optional as most attaching objects don't need at complete orientation set (only an fvec)
+/// Finds the position of a attach point on an object.
+/// The uvec is optional as most attaching objects don't need at complete orientation set (only an fvec).
 static bool AttachPointPos(object *obj, char ap, bool f_compute_pos, vector *attach_pos, bool f_compute_fvec,
                            vector *attach_fvec, bool *f_computed_uvec = NULL, vector *attach_uvec = NULL);
 

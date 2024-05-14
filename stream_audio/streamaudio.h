@@ -148,6 +148,7 @@ int ADecodeFileRead(void *data, void *buf, uint32_t qty);
 int StreamPlay(const char *filename, float volume, int flags);
 void StreamStop(int handle);
 int StreamGetSoundHandle(int handle);
+void StreamVolume(float master_volume);
 
 //////////////////////////////////////////////////////////////////////////////
 class llsSystem;

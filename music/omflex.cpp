@@ -86,7 +86,7 @@
 #define OMFFILEERR_GOTO (INFFILE_CUSTOM + 3)        // no goto label exists
 #define OMFFILEERR_SYNTAX (INFFILE_CUSTOM + 4)      // syntax error.
 
-static const char *OMFCommands[OMFCMD_NUM] = {
+static const char *const OMFCommands[OMFCMD_NUM] = {
     "stream", "section", "play",      "endsection", "label", "compare", "lcmp", "llpt", "lplc", "inci", "seti",
     "ifi",    "region",  "endregion", "q2",         "blt",   "bgt",     "beq",  "bnif", "goto", "wait"};
 static int OMFLex(const char *command);
@@ -122,7 +122,7 @@ int OMFLex(const char *command) {
 
 // takes a filename containing oms data.
 bool OutrageMusicSeq::LoadTheme(const char *file) {
-  const int MAX_FILE_LABELS = 256;
+  constexpr int MAX_FILE_LABELS = 256;
 
   InfFile inf;
   char operand[INFFILE_LINELEN]; // operand

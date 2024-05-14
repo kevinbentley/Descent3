@@ -1385,7 +1385,6 @@ void hlsSystem::GetMidiVolume() {
 }
 // Sets the master volume
 void hlsSystem::SetMasterVolume(float volume) {
-  extern void StreamVolume(float master_volume);
   ASSERT(volume >= 0.0 && volume <= 1.0);
 
   if (volume == 0) {

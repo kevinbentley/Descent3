@@ -239,14 +239,8 @@ void CreateSplintersFromBody(object *obj, float explosion_mag, float lifetime);
 // Creates a blast ring to be drawn
 int CreateBlastRing(vector *pos, int index, float lifetime, float max_size, int roomnum, int force_blue = 0);
 
-// Creates a standard blast ring for an object
-int CreateObjectBlastRing(object *objp);
-
 // Creates a smolding smoke to be drawn
 int CreateSmolderingObject(vector *pos, int index, float lifetime, float max_size, int roomnum);
-
-// Draws a blast ring
-void DrawBlastRingObject(object *obj);
 
 // Draws a colored alpha disk...useful for cool lighting effects
 void DrawColoredDisk(vector *pos, float r, float g, float b, float inner_alpha, float outer_alpha, float size,
@@ -262,21 +256,12 @@ void DoBlastRingEvent(int eventnum, void *data);
 // Makes a fireball have a custom vclip
 int CreateCustomFireballObject(vector *pos, int fireball_num, int tex_handle, int roomnum);
 
-// Creates an explosion
-void DoExplosionEvent(int eventnum, void *data);
-
 // An event handler that simply draws an alpha blended poly on top of the screen
 // Takes a 4 element array of floats int r,g,b,a format
 void DrawAlphaEvent(int eventnum, void *data);
 
-// Returns a random medium sized explosion
-int GetRandomMediumExplosion();
-
 // Returns a random small explosion
 int GetRandomSmallExplosion();
-
-// Returns a random small explosion
-int GetRandomBillowingExplosion();
 
 // Draws a sphere with the appropriate texture.  If texture=-1, then uses rgb as colors
 void DrawSphere(vector *pos, float r, float g, float b, float alpha, float size, int texture, uint8_t saturate = 1);

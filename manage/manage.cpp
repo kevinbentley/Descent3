@@ -521,7 +521,7 @@ struct old_file {
 int Num_old_files = 0;
 old_file *OldFiles;
 const char *const PageNames[] = {"Unknown",     "Texture", "Weapon",   "Robot", "Powerup",        "Door",
-                     "Player ship", "Sound",   "Megacell", "Files", "Generic objects"};
+                                 "Player ship", "Sound",   "Megacell", "Files", "Generic objects"};
 #ifndef RELEASE
 int Network_up = 1;
 int Stand_alone = 0;

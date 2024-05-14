@@ -216,6 +216,7 @@
 #include "weather.h"
 #include "cockpit.h"
 #include "hud.h"
+#include "PHYSICS.H"
 
 #include <algorithm>
 
@@ -813,9 +814,6 @@ int LGSPlayers(CFILE *fp) {
 
   return LGS_OK;
 }
-
-extern int Physics_NumLinked;
-extern int PhysicsLinkList[MAX_OBJECTS];
 
 int inreadobj = 0;
 

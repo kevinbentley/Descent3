@@ -34,6 +34,9 @@
 #include "psrand.h"
 weather Weather = {0};
 
+/// Makes droplets appear on the windshield, plus makes rain fall in the distance.
+static void DoRainEffect();
+
 int ThunderA_sound_handle = -1;
 int ThunderB_sound_handle = -1;
 
