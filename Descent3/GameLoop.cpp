@@ -2232,7 +2232,7 @@ void ProcessTestKeys(int key) {
   } break;
 
   case KEY_F10:
-    int ObjInitTypeSpecific(object * objp, bool reinitializing);
+    extern int ObjInitTypeSpecific(object * objp, bool reinitializing);
     FreeCockpit();
     CloseShipHUD();
     Players[0].ship_index = GetNextShip(Players[0].ship_index);

@@ -317,11 +317,11 @@
 #include "directplay.h"
 #endif
 
-void *callback = NULL;
-module MultiDLLHandle = {NULL};
+static void *callback = NULL;
+static module MultiDLLHandle = {NULL};
 extern uint8_t NewUIWindow_alpha;
 extern bool Multi_Gamelist_changed;
-void ShowNetgameInfo(network_game *game);
+extern void ShowNetgameInfo(network_game *game);
 // The exported DLL function call prototypes
 #if defined(__LINUX__)
 typedef void DLLFUNCCALL (*DLLMultiCall_fp)(int eventnum);
@@ -334,10 +334,10 @@ typedef void(DLLFUNCCALL *DLLMultiScoreCall_fp)(int eventnum, void *data);
 typedef void(DLLFUNCCALL *DLLMultiInit_fp)(int *api_fp);
 typedef void(DLLFUNCCALL *DLLMultiClose_fp)();
 #endif
-DLLMultiScoreCall_fp DLLMultiScoreCall = NULL;
-DLLMultiCall_fp DLLMultiCall = NULL;
-DLLMultiInit_fp DLLMultiInit = NULL;
-DLLMultiClose_fp DLLMultiClose = NULL;
+static DLLMultiScoreCall_fp DLLMultiScoreCall = NULL;
+static DLLMultiCall_fp DLLMultiCall = NULL;
+static DLLMultiInit_fp DLLMultiInit = NULL;
+static DLLMultiClose_fp DLLMultiClose = NULL;
 // dllmultiiInfo DLLMultiInfo;
 // The DLL needs these too.
 #define MAXTEXTITEMS 100
@@ -350,15 +350,15 @@ DLLMultiClose_fp DLLMultiClose = NULL;
 #define MAXHOTSPOTS 20
 #define MAXCONSOLES 5
 #define MAXPARENTS 5
-NewUIMessageBox messageb;
+static NewUIMessageBox messageb;
 // Stuff for the splash
-UITextItem ti_msg("", UICOL_TEXT_NORMAL);
-UITextItem ti_tmp("", UICOL_TEXT_NORMAL);
-UITextItem ti_cancel_on("", UICOL_HOTSPOT_HI);
-UITextItem ti_cancel_off("", UICOL_HOTSPOT_LO);
-UIHotspot uih;
-UIHotspot uihcancel;
-UIText ti;
+static UITextItem ti_msg("", UICOL_TEXT_NORMAL);
+static UITextItem ti_tmp("", UICOL_TEXT_NORMAL);
+static UITextItem ti_cancel_on("", UICOL_HOTSPOT_HI);
+static UITextItem ti_cancel_off("", UICOL_HOTSPOT_LO);
+static UIHotspot uih;
+static UIHotspot uihcancel;
+static UIText ti;
 extern char HelpText1[];
 extern char HelpText2[];
 extern char HelpText3[];
