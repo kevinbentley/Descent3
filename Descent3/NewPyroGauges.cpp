@@ -84,7 +84,7 @@ static struct {
 
 //////////////////////////////////////////////////////////////////////////////
 
-void GetCenterPoint(int *x, int *y, vector *wpos);
+static void GetCenterPoint(int *x, int *y, vector *wpos);
 
 void NewPyroInitGauges() {
   int texhandle;
