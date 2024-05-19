@@ -53,10 +53,7 @@ bool InitCinematics() {
     return true;
   }
 
-  char path[_MAX_PATH];
-  ddio_MakePath(path, Base_directory, "movies", NULL);
-
-  if (mve_Init(path, Sound_card_name) != MVELIB_NOERROR)
+  if (mve_Init(Sound_card_name) != MVELIB_NOERROR)
     return false;
 
   mve_SetCallback(CinematicCallback);

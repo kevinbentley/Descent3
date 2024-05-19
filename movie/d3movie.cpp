@@ -52,7 +52,6 @@
 
 namespace {
 MovieFrameCallback_fp Movie_callback = NULL;
-char MovieDir[512];
 char SoundCardName[512];
 uint16_t CurrentPalette[256];
 int Movie_bm_handle = -1;
@@ -251,10 +250,9 @@ static bool mve_InitSound(oeApplication *app, MovieSoundDevice &device);
 static void mve_CloseSound(MovieSoundDevice &device);
 #endif
 
-// sets the directory where movies are stored
-int mve_Init(const char *dir, const char *sndcard) {
+// sets the name of the sound card that movies will use
+int mve_Init(const char *sndcard) {
 #ifndef NO_MOVIES
-  strcpy(MovieDir, dir);
   strcpy(SoundCardName, sndcard);
   return MVELIB_NOERROR;
 #else

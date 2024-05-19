@@ -33,7 +33,7 @@
 
 class oeApplication;
 
-int mve_Init(const char *dir, const char *sndcard);
+int mve_Init(const char *sndcard);
 
 // simply plays a movie.
 int mve_PlayMovie(const char *mvename, oeApplication *app);
