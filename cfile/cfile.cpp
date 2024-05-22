@@ -99,11 +99,11 @@ static void cf_Close();
 static CFILE *open_file_in_lib(const char *filename);
 
 // Opens a HOG file.  Future calls to cfopen(), etc. will look in this HOG.
-// Parameters:  libname - the path & filename of the HOG file
-// NOTE:	libname must be valid for the entire execution of the program.  Therefore, it should either
-//			be a fully-specified path name, or the current directory must not change.
+// Parameters:  libname - path to the HOG file, relative to Base_directory.
+// NOTE:	libname must be valid for the entire execution of the program.  Therefore, Base_directory
+// 			must not change.
 // Returns: 0 if error, else library handle that can be used to close the library
-int cf_OpenLibrary(const char *libname) {
+int cf_OpenLibrary(std::filesystem::path libname) {
   FILE *fp;
   int i;
   uint32_t offset;
@@ -113,31 +113,8 @@ int cf_OpenLibrary(const char *libname) {
 
   // allocation library structure
   std::shared_ptr<library> lib = std::make_shared<library>();
-#ifdef __LINUX__
-  // resolve library name
-  char t_dir[_MAX_PATH];
-  char t_file[_MAX_PATH];
-  char t_ext[256];
-  ddio_SplitPath(libname, t_dir, t_file, t_ext);
-  const char *resolve_dir = nullptr;
-  const char *resolve_name = libname;
-  if (strlen(t_dir) > 0) {
-    strcat(t_file, t_ext);
-    resolve_dir = t_dir;
-    resolve_name = t_file;
-  }
-  char t_out[_MAX_PATH];
-  if (!cf_FindRealFileNameCaseInsenstive(resolve_dir, resolve_name, t_out)) {
-    return 0; // CF_NO_FILE
-  }
-  // re-assemble
-  if (resolve_dir != nullptr)
-    ddio_MakePath(lib->name, resolve_dir, t_out, nullptr);
-  else
-    strcpy(lib->name, t_out);
-#else
-  strcpy(lib->name, libname);
-#endif
+  std::filesystem::path libpath = ddio_FindRealPath(libname);
+  strcpy(lib->name, libpath.string().c_str());
   fp = fopen(lib->name, "rb");
   if (fp == nullptr) {
     return 0; // CF_NO_FILE;
@@ -462,162 +439,6 @@ void CFindFiles::Close() {
   globindex = -1;
   globfree(&ffres);
 }
-
-static FILE *open_file_in_directory_case_sensitive(const char *directory, const char *filename, const char *mode,
-                                                   char *new_filename);
-
-bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname, char *new_filename) {
-  bool use_dir = false;
-  char dir_to_use[_MAX_PATH];
-  char file_to_use[_MAX_PATH];
-
-  char *real_dir, *real_file;
-
-  if (directory) {
-    // there is a directory for this path
-    use_dir = true;
-    real_dir = (char *)directory;
-    real_file = (char *)fname;
-  } else {
-    // there may be a directory in the path (*sigh*)
-    char t_ext[256];
-    char t_dir[_MAX_PATH];
-    char t_filename[_MAX_PATH];
-
-    ddio_SplitPath(fname, t_dir, t_filename, t_ext);
-    if (strlen(t_dir) > 0) {
-      use_dir = true;
-      strcpy(dir_to_use, t_dir);
-      real_dir = (char *)dir_to_use;
-      strcpy(file_to_use, t_filename);
-      strcat(file_to_use, t_ext);
-      real_file = (char *)file_to_use;
-
-      mprintf(1, "CFILE: Found directory \"%s\" in filename, new filename is \"%s\"\n", real_dir, real_file);
-    } else {
-      use_dir = false;
-      real_dir = nullptr;
-      real_file = (char *)fname;
-    }
-  }
-
-  // build up a list of filenames in the current directory that begin with the lowercase and
-  // upper case first letter of the filename
-
-  // do the case of the first letter to start
-  int case_val;
-  char wildcard_pattern[_MAX_PATH];
-  int iterations = 1;
-  bool found_match = false;
-
-  if ((real_file[0] >= 'a' && real_file[0] <= 'z') || (real_file[0] >= 'A' && real_file[0] <= 'Z')) {
-    // alpha first letter...we need to do 2 iterations
-    iterations = 2;
-  }
-
-  for (case_val = 0; case_val < iterations; case_val++) {
-    if (case_val) {
-      // do the opposite case of the first letter
-      char first_letter;
-      first_letter = real_file[0];
-      if (first_letter >= 'a' && first_letter <= 'z') {
-        // we need to uppercase the letter
-        first_letter = toupper(first_letter);
-      } else {
-        // we need to lowercase the letter
-        first_letter = tolower(first_letter);
-      }
-
-      // create a wildcard patter full of ? replacing letters (except the first one)
-      char *wptr = wildcard_pattern;
-      char *fptr = &real_file[1];
-      *wptr = first_letter;
-      wptr++;
-      while (*fptr) {
-        if (isalpha(*fptr)) {
-          *wptr = '?';
-        } else {
-          *wptr = *fptr;
-        }
-
-        fptr++;
-        wptr++;
-      }
-      *wptr = '\0';
-    } else {
-      // use the case of the first letter
-      // create a wildcard patter full of ? replacing letters (except the first one)
-      char *wptr = wildcard_pattern;
-      char *fptr = &real_file[1];
-      *wptr = real_file[0];
-      wptr++;
-      while (*fptr) {
-        if (isalpha(*fptr)) {
-          *wptr = '?';
-        } else {
-          *wptr = *fptr;
-        }
-
-        fptr++;
-        wptr++;
-      }
-      *wptr = '\0';
-    }
-
-    // now tack on a directory if we are to use a directory
-    char *wpattern;
-    char fullpath[_MAX_PATH];
-    if (use_dir) {
-      ddio_MakePath(fullpath, real_dir, wildcard_pattern, NULL);
-      wpattern = fullpath;
-    } else {
-      wpattern = wildcard_pattern;
-    }
-
-    // ok, we have our wildcard pattern, get all the files that match it
-    // and search them looking for a match (case insensitive)
-    char namebuffer[_MAX_PATH];
-    bool gotfile;
-    CFindFiles ff;
-    for (gotfile = ff.Start(wpattern, namebuffer); gotfile; gotfile = ff.Next(namebuffer)) {
-      if (!stricmp(namebuffer, real_file)) {
-        // we found a match!
-        found_match = true;
-        break;
-      }
-    }
-    ff.Close();
-
-    if (found_match) {
-      strcpy(new_filename, namebuffer);
-      mprintf(1, "CFILE: Using \"%s\" instead of \"%s\"\n", new_filename, real_file);
-      break;
-    }
-  }
-
-  return found_match;
-}
-
-FILE *open_file_in_directory_case_sensitive(const char *directory, const char *filename, const char *mode,
-                                            char *new_filename) {
-  char t_dir[_MAX_PATH];
-  ddio_SplitPath(filename, t_dir, nullptr, nullptr);
-  if (cf_FindRealFileNameCaseInsenstive(directory, filename, new_filename)) {
-    // we have a file, open it open and use it
-    char full_path[_MAX_PATH * 2];
-    // if we had a directory as part of the file name, put it back in
-    if (strlen(t_dir) > 0)
-      directory = t_dir;
-    if (directory != nullptr) {
-      ddio_MakePath(full_path, directory, new_filename, NULL);
-    } else {
-      strcpy(full_path, new_filename);
-    }
-
-    return fopen(full_path, mode);
-  }
-  return nullptr;
-}
 #endif
 
 // look for the file in the specified directory
@@ -627,66 +448,20 @@ static CFILE *open_file_in_directory(const char *filename, const char *mode, con
 CFILE *open_file_in_directory(const char *filename, const char *mode, const char *directory) {
   FILE *fp;
   CFILE *cfile;
-  char path[_MAX_PATH * 2];
+  std::filesystem::path path;
   char tmode[3] = "rb";
   if (directory != nullptr) {
     // Make a full path
-    ddio_MakePath(path, directory, filename, NULL);
+    path = ddio_FindRealPath(filename, directory);
   } else // no directory specified, so just use filename passed
-    strcpy(path, filename);
+    path = filename;
   // set read or write mode
   tmode[0] = mode[0];
   // if mode is "w", then open in text or binary as requested.  If "r", alsway open in "rb"
   tmode[1] = (mode[0] == 'w') ? mode[1] : 'b';
   // try to open file
-  fp = fopen(path, tmode);
+  fp = fopen(path.string().c_str(), tmode);
 
-#ifdef __LINUX__
-  // for Filesystems with case sensitive files we'll check for different versions of the filename
-  // with different case's.
-  if (fp) {
-    // found the file, open it
-    cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-    if (!cfile)
-      Error("Out of memory in open_file_in_directory()");
-    cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(filename) + 1));
-    if (!cfile->name)
-      Error("Out of memory in open_file_in_directory()");
-    strcpy(cfile->name, filename);
-    cfile->file = fp;
-    cfile->lib_handle = -1;
-    cfile->size = ddio_GetFileLength(fp);
-    cfile->lib_offset = 0; // 0 means on disk, not in HOG
-    cfile->position = 0;
-    cfile->flags = 0;
-    return cfile;
-  } else {
-    // try different cases of the filename
-    char using_filename[_MAX_PATH];
-    fp = open_file_in_directory_case_sensitive(directory, filename, tmode, using_filename);
-    if (!fp) {
-      // no dice
-      return nullptr;
-    } else {
-      // found a version of the file!
-      mprintf(0, "CFILE: Unable to find %s, but using %s instead\n", filename, using_filename);
-      cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-      if (!cfile)
-        Error("Out of memory in open_file_in_directory()");
-      cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(using_filename) + 1));
-      if (!cfile->name)
-        Error("Out of memory in open_file_in_directory()");
-      strcpy(cfile->name, using_filename);
-      cfile->file = fp;
-      cfile->lib_handle = -1;
-      cfile->size = ddio_GetFileLength(fp);
-      cfile->lib_offset = 0; // 0 means on disk, not in HOG
-      cfile->position = 0;
-      cfile->flags = 0;
-      return cfile;
-    }
-  }
-#else
   if (!fp) // didn't get file
     return NULL;
   else { // got file
@@ -705,7 +480,6 @@ CFILE *open_file_in_directory(const char *filename, const char *mode, const char
     cfile->flags = 0;
     return cfile;
   }
-#endif
 }
 // Opens a file for reading or writing
 // If a path is specified, will try to open the file only in that path.

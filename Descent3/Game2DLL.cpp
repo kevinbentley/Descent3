@@ -581,7 +581,7 @@ bool InitGameModule(const char *name, module *mod) {
   char dll_name[_MAX_PATH * 2];
   char tmp_dll_name[_MAX_PATH * 2];
   // Make the hog filename
-  ddio_MakePath(lib_name, Base_directory, "netgames", name, NULL);
+  ddio_MakePath(lib_name, "netgames", name, NULL);
   strcat(lib_name, ".d3m");
 // Make the dll filename
 #if defined(WIN32)

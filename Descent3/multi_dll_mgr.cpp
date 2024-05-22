@@ -600,7 +600,7 @@ int LoadMultiDLL(const char *name) {
   ddio_MakePath(dll_path_name, Base_directory, "online", "*.tmp", NULL);
   ddio_DeleteFile(dll_path_name);
   // Make the hog filename
-  ddio_MakePath(lib_name, Base_directory, "online", name, NULL);
+  ddio_MakePath(lib_name, "online", name, NULL);
   strcat(lib_name, ".d3c");
 // Make the dll filename
 #if defined(WIN32)

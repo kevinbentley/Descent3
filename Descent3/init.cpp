@@ -1480,42 +1480,36 @@ void InitIOSystems(bool editor) {
   // Init hogfiles
   INIT_MESSAGE(("Checking for HOG files."));
   int d3_hid = -1, extra_hid = -1, sys_hid = -1, extra13_hid = -1;
-  char fullname[_MAX_PATH];
+  std::filesystem::path hog_name;
 
 #ifdef DEMO
   // DAJ	d3_hid = cf_OpenLibrary("d3demo.hog");
-  ddio_MakePath(fullname, LocalD3Dir, "d3demo.hog", NULL);
+  hog_name = "d3demo.hog";
 #else
-  ddio_MakePath(fullname, LocalD3Dir, "d3.hog", NULL);
+  hog_name = "d3.hog";
 #endif
-  d3_hid = cf_OpenLibrary(fullname);
+  d3_hid = cf_OpenLibrary(hog_name);
 
   // JC: Steam release uses extra1.hog instead of extra.hog, so try loading it first
   // Open this file if it's present for stuff we might add later
-  ddio_MakePath(fullname, LocalD3Dir, "extra1.hog", NULL);
-  extra_hid = cf_OpenLibrary(fullname);
+  extra_hid = cf_OpenLibrary("extra1.hog");
   if (extra_hid == 0) {
-    ddio_MakePath(fullname, LocalD3Dir, "extra.hog", NULL);
-    extra_hid = cf_OpenLibrary(fullname);
+    extra_hid = cf_OpenLibrary("extra.hog");
   }
 
   // JC: Steam release uses extra.hog instead of merc.hog, so try loading it last (so we don't conflict with the above)
   // Open mercenary hog if it exists
-  ddio_MakePath(fullname, LocalD3Dir, "merc.hog", NULL);
-  merc_hid = cf_OpenLibrary(fullname);
+  merc_hid = cf_OpenLibrary("merc.hog");
   if (merc_hid == 0) {
-    ddio_MakePath(fullname, LocalD3Dir, "extra.hog", NULL);
-    merc_hid = cf_OpenLibrary(fullname);
+    merc_hid = cf_OpenLibrary("extra.hog");
   }
 
   // Open this for extra 1.3 code (Black Pyro, etc)
-  ddio_MakePath(fullname, LocalD3Dir, "extra13.hog", NULL);
-  extra13_hid = cf_OpenLibrary(fullname);
+  extra13_hid = cf_OpenLibrary("extra13.hog");
 
   // last library opened is the first to be searched for dynamic libs, so put
   // this one at the end to find our newly build script libraries first
-  ddio_MakePath(fullname, LocalD3Dir, PRIMARY_HOG, NULL);
-  sys_hid = cf_OpenLibrary(fullname);
+  sys_hid = cf_OpenLibrary(PRIMARY_HOG);
 
   // Check to see if there is a -mission command line option
   // if there is, attempt to open that hog/mn3 so it can override such

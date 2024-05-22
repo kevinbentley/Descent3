@@ -1317,10 +1317,10 @@ void CheckHogfile() {
   if (new_mn3) {
     // close the mission hog file and open the new one
     mn3_Close();
-    char hogpath[_MAX_PATH * 2];
-    ddio_MakePath(hogpath, D3MissionsDir, new_mn3, nullptr);
-    if (cfexist(hogpath)) {
-      mn3_Open(hogpath);
+    auto relative_path = (std::filesystem::path)"missions" / new_mn3;
+    auto absolute_path = ddio_FindRealPath(relative_path);
+    if (std::filesystem::exists(absolute_path)) {
+      mn3_Open(relative_path.string().c_str());
       mem_free(Current_mission.filename);
       Current_mission.filename = mem_strdup(new_mn3);
     } else {
