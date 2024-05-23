@@ -492,9 +492,7 @@ void Descent3() {
 
         for (auto const &intro : intros) {
           ddio_MakePath(intropath, Base_directory, "movies", intro, nullptr);
-          if (cfexist(intropath)) {
-            PlayMovie(intropath);
-          }
+          PlayMovie(intropath);
         }
       }
 
