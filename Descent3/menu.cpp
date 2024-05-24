@@ -1070,29 +1070,32 @@ static inline int count_missions(const char *pathname, const char *wildcard) {
   char filename[_MAX_PATH];
   tMissionInfo msninfo;
   filename[0] = 0;
-  ddio_MakePath(fullpath, pathname, wildcard, NULL);
 
-  if (ddio_FindFileStart(fullpath, filename)) {
-    do {
-      const char *name;
-      ddio_MakePath(fullpath, pathname, filename, NULL);
+  for (auto base_directory : Base_directories) {
+    ddio_MakePath(fullpath, base_directory.string().c_str(), pathname, wildcard, NULL);
 
-      if (stricmp("d3_2.mn3", filename) == 0)
-        continue;
-      mprintf(0, "Mission path:%s\n", fullpath);
-      name = GetMissionName(filename);
-      GetMissionInfo(filename, &msninfo);
-      if (name && name[0] && msninfo.single) {
-        mprintf(0, "Name:%s\n", name);
-        c++;
-        if (!(c % 2))
-          DoWaitMessage(true);
-      } else {
-        mprintf(0, "Illegal mission:%s\n", fullpath);
-      }
-      filename[0] = 0;
-    } while (ddio_FindNextFile(filename));
-    ddio_FindFileClose();
+    if (ddio_FindFileStart(fullpath, filename)) {
+      do {
+        const char *name;
+        ddio_MakePath(fullpath, base_directory.string().c_str(), pathname, filename, NULL);
+
+        if (stricmp("d3_2.mn3", filename) == 0)
+          continue;
+        mprintf(0, "Mission path:%s\n", fullpath);
+        name = GetMissionName(filename);
+        GetMissionInfo(filename, &msninfo);
+        if (name && name[0] && msninfo.single) {
+          mprintf(0, "Name:%s\n", name);
+          c++;
+          if (!(c % 2))
+            DoWaitMessage(true);
+        } else {
+          mprintf(0, "Illegal mission:%s\n", fullpath);
+        }
+        filename[0] = 0;
+      } while (ddio_FindNextFile(filename));
+      ddio_FindFileClose();
+    }
   }
   return c;
 }
@@ -1103,27 +1106,30 @@ static inline int generate_mission_listbox(newuiListBox *lb, int n_maxfiles, cha
   char filename[_MAX_PATH];
   ddio_MakePath(fullpath, pathname, wildcard, NULL);
 
-  if (ddio_FindFileStart(fullpath, filename)) {
-    do {
-      tMissionInfo msninfo;
-      if (n_maxfiles > c) {
-        ddio_MakePath(fullpath, pathname, filename, NULL);
-        if (stricmp("d3_2.mn3", filename) == 0)
-          continue;
-        if (GetMissionInfo(filename, &msninfo) && msninfo.name[0] && msninfo.single) {
-          // if (!msninfo.training || (msninfo.training && Current_pilot.find_mission_data(TRAINING_MISSION_NAME)!= -1))
-          // {
-          filelist[c] = mem_strdup(filename);
-          lb->AddItem(msninfo.name);
-          filename[0] = 0;
-          c++;
-          if (!(c % 2))
-            DoWaitMessage(true);
-          //}
+  for (auto base_directory : Base_directories) {
+    ddio_MakePath(fullpath, base_directory.string().c_str(), pathname, wildcard, NULL);
+    if (ddio_FindFileStart(fullpath, filename)) {
+      do {
+        tMissionInfo msninfo;
+        if (n_maxfiles > c) {
+          ddio_MakePath(fullpath, base_directory.string().c_str(), pathname, filename, NULL);
+          if (stricmp("d3_2.mn3", filename) == 0)
+            continue;
+          if (GetMissionInfo(filename, &msninfo) && msninfo.name[0] && msninfo.single) {
+            // if (!msninfo.training || (msninfo.training && Current_pilot.find_mission_data(TRAINING_MISSION_NAME)!= -1))
+            // {
+            filelist[c] = mem_strdup(filename);
+            lb->AddItem(msninfo.name);
+            filename[0] = 0;
+            c++;
+            if (!(c % 2))
+              DoWaitMessage(true);
+            //}
+          }
         }
-      }
-    } while (ddio_FindNextFile(filename));
-    ddio_FindFileClose();
+      } while (ddio_FindNextFile(filename));
+      ddio_FindFileClose();
+    }
   }
   return c;
 }
@@ -1209,9 +1215,10 @@ bool MenuNewGame() {
   // add a please wait dialog here.
   n_missions = 0;
 #ifndef RELEASE
-  n_missions = count_missions(LocalLevelsDir, "*.msn");
+  const auto local_levels_relative_path = (std::filesystem::path)"data" / "levels";
+  n_missions = count_missions(local_levels_relative_path.string().c_str(), "*.msn");
 #endif
-  n_missions += count_missions(D3MissionsDir, "*.mn3");
+  n_missions += count_missions("missions", "*.mn3");
   if (n_missions) {
     // allocate extra mission slot because of check below which adds a name to the filelist.
     filelist = (char **)mem_malloc(sizeof(char *) * (n_missions + 1));
@@ -1226,9 +1233,9 @@ bool MenuNewGame() {
   // generate real listbox now.
   i = 0;
 #ifndef RELEASE
-  i = generate_mission_listbox(msn_lb, n_missions, filelist, LocalLevelsDir, "*.msn");
+  i = generate_mission_listbox(msn_lb, n_missions, filelist, local_levels_relative_path.string().c_str(), "*.msn");
 #endif
-  i += generate_mission_listbox(msn_lb, n_missions - i, filelist + i, D3MissionsDir, "*.mn3");
+  i += generate_mission_listbox(msn_lb, n_missions - i, filelist + i, "missions", "*.mn3");
   // #ifdef RELEASE
   int k;
   for (k = 0; k < n_missions; k++) {

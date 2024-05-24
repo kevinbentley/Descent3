@@ -99,8 +99,8 @@ static void cf_Close();
 static CFILE *open_file_in_lib(const char *filename);
 
 // Opens a HOG file.  Future calls to cfopen(), etc. will look in this HOG.
-// Parameters:  libname - path to the HOG file, relative to Base_directory.
-// NOTE:	libname must be valid for the entire execution of the program.  Therefore, Base_directory
+// Parameters:  libname - path to the HOG file, relative to one of the Base_directories.
+// NOTE:	libname must be valid for the entire execution of the program.  Therefore, Base_directories
 // 			must not change.
 // Returns: 0 if error, else library handle that can be used to close the library
 int cf_OpenLibrary(std::filesystem::path libname) {
@@ -452,7 +452,11 @@ CFILE *open_file_in_directory(const char *filename, const char *mode, const char
   char tmode[3] = "rb";
   if (directory != nullptr) {
     // Make a full path
-    path = ddio_FindRealPath(filename, directory);
+    if (directory[0] == '\0') {
+      path = ddio_FindRealPath(filename);
+    } else {
+      path = ddio_FindRealPath(filename, {directory});
+    }
   } else // no directory specified, so just use filename passed
     path = filename;
   // set read or write mode

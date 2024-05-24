@@ -709,3 +709,7 @@ void D3DebugResumeHandler() {
 #endif
 
 void RenderBlankScreen();
+
+std::filesystem::path GetWritableBaseDirectory() {
+  return Base_directories.back();
+}

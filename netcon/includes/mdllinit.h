@@ -271,6 +271,7 @@ DLLCheckMissionForScript = (CheckMissionForScript_fp)API.fp[107];
 DLLShowNetgameInfo = (ShowNetgameInfo_fp)API.fp[108];
 // API.fp[109]; // Not used
 DLLCheckGetD3M = (CheckGetD3M_fp)API.fp[110];
+DLLGetWritableBaseDirectory = (GetWritableBaseDirectory_fp)API.fp[111];
 
 DLLMPlayers = (player *)API.players;
 DLLNetgame = (netgame_info *)API.netgame;
@@ -282,7 +283,7 @@ DLLTracker_id = (char *)API.vp[1];
 DLLGame_is_master_tracker_game = API.vp[2];
 DLLGame_mode = *API.vp[3];
 // DLLCurrent_pilot = (pilot *)API.vp[4];
-DLLLocalD3Dir = (char *)(pilot *)API.vp[5];
+DLLBase_directories = (std::vector<std::filesystem::path> *)API.vp[5];
 DLLMultiGameStarting = (int *)API.vp[6];
 DLLMTPilotinfo = (vmt_descent3_struct *)API.vp[7];
 DLLNum_network_games_known = API.vp[8];

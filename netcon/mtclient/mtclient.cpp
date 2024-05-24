@@ -2149,7 +2149,7 @@ void CheckPXOForAnomalies() {
         // This is bad. It could be user error, but it could be something worse.
         FILE *errfile;
         char errfilepath[_MAX_PATH];
-        DLLddio_MakePath(errfilepath, DLLLocalD3Dir, "pxo.err", NULL);
+        DLLddio_MakePath(errfilepath, DLLGetWritableBaseDirectory().string().c_str(), "pxo.err", NULL);
         errfile = fopen(errfilepath, "at");
         if (errfile) {
           fprintf(errfile, "Dup TID: %s & %s / %s\n", DLLMPlayers[j].callsign, DLLMPlayers[i].callsign,
@@ -2333,12 +2333,12 @@ int MTVersionCheck() {
   // Load the DLL and get it's version
 
   // Specify the correct path
-  DLLddio_MakePath(fulldllpath, DLLLocalD3Dir, "mtav.dll", NULL);
+  DLLddio_MakePath(fulldllpath, DLLGetWritableBaseDirectory().string().c_str(), "mtav.dll", NULL);
   if (!DLLmod_LoadModule(&MTAVDLLHandle, fulldllpath, MODF_LAZY)) {
     DLLmprintf(0, "Unable to load Mastertracker Auto version update DLL (mtav.dll)\n");
     // Try restoring a backup of the DLL
-    DLLddio_MakePath(szolddll, DLLLocalD3Dir, "mtav.dll", NULL);
-    DLLddio_MakePath(szbakdll, DLLLocalD3Dir, "mtav.bak", NULL);
+    DLLddio_MakePath(szolddll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.dll", NULL);
+    DLLddio_MakePath(szbakdll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.bak", NULL);
     CopyFile(szbakdll, szolddll, FALSE);
     return 0;
   }
@@ -2347,8 +2347,8 @@ int MTVersionCheck() {
     DLLmprintf(0, "Unable to Find DLLAVInit() function in mtav.dll\n");
     DLLmod_FreeModule(&MTAVDLLHandle);
     // Try restoring a backup of the DLL
-    DLLddio_MakePath(szolddll, DLLLocalD3Dir, "mtav.dll", NULL);
-    DLLddio_MakePath(szbakdll, DLLLocalD3Dir, "mtav.bak", NULL);
+    DLLddio_MakePath(szolddll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.dll", NULL);
+    DLLddio_MakePath(szbakdll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.bak", NULL);
     CopyFile(szbakdll, szolddll, FALSE);
     return 0;
   }
@@ -2357,8 +2357,8 @@ int MTVersionCheck() {
     DLLmprintf(0, "Unable to Find DLLAVGetVersion() function in mtav.dll\n");
     DLLmod_FreeModule(&MTAVDLLHandle);
     // Try restoring a backup of the DLL
-    DLLddio_MakePath(szolddll, DLLLocalD3Dir, "mtav.dll", NULL);
-    DLLddio_MakePath(szbakdll, DLLLocalD3Dir, "mtav.bak", NULL);
+    DLLddio_MakePath(szolddll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.dll", NULL);
+    DLLddio_MakePath(szbakdll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.bak", NULL);
     CopyFile(szbakdll, szolddll, FALSE);
     return 0;
   }
@@ -2367,8 +2367,8 @@ int MTVersionCheck() {
     DLLmprintf(0, "Unable to Find DLLRunCheck() function in mtav.dll\n");
     DLLmod_FreeModule(&MTAVDLLHandle);
     // Try restoring a backup of the DLL
-    DLLddio_MakePath(szolddll, DLLLocalD3Dir, "mtav.dll", NULL);
-    DLLddio_MakePath(szbakdll, DLLLocalD3Dir, "mtav.bak", NULL);
+    DLLddio_MakePath(szolddll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.dll", NULL);
+    DLLddio_MakePath(szbakdll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.bak", NULL);
     CopyFile(szbakdll, szolddll, FALSE);
     return 0;
   }
@@ -2393,8 +2393,8 @@ int MTVersionCheck() {
     if (MTUpdateURL[0]) {
       // We need to get a new DLL
       DLLmprintf(0, "Mastertracker says we need a new version, which is at %s.\n", MTUpdateURL);
-      sprintf(sznewdll, "%s\\newmtav.dll", DLLLocalD3Dir);
-      DLLddio_MakePath(sznewdll, DLLLocalD3Dir, "newmtav.dll", NULL);
+      sprintf(sznewdll, "%s\\newmtav.dll", DLLGetWritableBaseDirectory().string().c_str());
+      DLLddio_MakePath(sznewdll, DLLGetWritableBaseDirectory().string().c_str(), "newmtav.dll", NULL);
       inetfile = new InetGetFile(MTUpdateURL, sznewdll);
       while (1) {
         DLLPollUI();
@@ -2407,8 +2407,8 @@ int MTVersionCheck() {
         if (inetfile->IsFileReceived()) {
           DLLmprintf(0, "Mastertracker update DLL received.\n");
           DLLmod_FreeModule(&MTAVDLLHandle);
-          DLLddio_MakePath(szolddll, DLLLocalD3Dir, "mtav.dll", NULL);
-          DLLddio_MakePath(szbakdll, DLLLocalD3Dir, "mtav.bak", NULL);
+          DLLddio_MakePath(szolddll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.dll", NULL);
+          DLLddio_MakePath(szbakdll, DLLGetWritableBaseDirectory().string().c_str(), "mtav.bak", NULL);
 
           // We have the file, now backup & copy it and try to reload.
           CopyFile(szolddll, szbakdll, FALSE);

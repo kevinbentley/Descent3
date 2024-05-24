@@ -193,6 +193,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <filesystem>
+#include <vector>
 
 #include "chrono_timer.h"
 #include "ddio_common.h"
@@ -432,20 +433,20 @@ bool ddio_CreateLockFile(const std::filesystem::path& dir);
 bool ddio_DeleteLockFile(const std::filesystem::path& dir);
 
 /**
- * Tries to find a relative path inside of starting_dir.
+ * Tries to find a relative path inside each of the starting_dirs.
  *
  * @param relative_path A relative path that we’ll hopefully find in
  *                      starting_dir. You don’t have to get the capitalization
  *                      of relative_path correct, even on macOS and Linux.
  *
- * @param starting_dir A place to look for relative_path. The capitalization of
- *                     the starting_dir must be correct, or else this function
- *                     will fail on case-sensitive filesystems. By default,
- *                     starting_dir is "" which means “use Base_directory as
- *                     the starting_dir”.
+ * @param starting_dirs Places to look for relative_path. The capitalization of
+ *                      the starting_dirs must be correct, or else this
+ *                      function will fail on case-sensitive filesystems. By
+ *                      default, starting_dirs is {} which means “use
+ *                      Base_directories as the starting_dirs”.
  *
  * @return An absolute path that’s inside starting_dir.
  */
-std::filesystem::path ddio_FindRealPath(std::filesystem::path relative_path, std::filesystem::path starting_dir = "");
+std::filesystem::path ddio_FindRealPath(std::filesystem::path relative_path, std::vector<std::filesystem::path> starting_dirs = {});
 
 #endif

@@ -1023,8 +1023,21 @@ static bool Graphics_init = false;
 static bool Title_bitmap_init = false;
 uint8_t Use_motion_blur = 0;
 
-// The "root" directory of the D3 file tree
-char Base_directory[_MAX_PATH];
+// The "root" directories of the D3 file tree
+//
+// Directories that come first override directories that come later. For
+// example, if Base_directories[0] / "d3_linux.hog" exists and
+// Base_directories[1] / "d3_linux.hog" also exists, then the one in
+// Base_directories[0] will get used. The one in Base_directories[1] will be
+// ignored. This allows you to write code like this:
+//
+// for (auto directory : Base_directories) {
+//  if(file_we_need_is_in(directory)) {
+//    use_file_thats_in(directory);
+//    break;
+//  }
+// }
+std::vector<std::filesystem::path> Base_directories;
 
 extern int Min_allowed_frametime;
 
@@ -1403,12 +1416,13 @@ static const int num_temp_file_wildcards = sizeof(temp_file_wildcards) / sizeof(
 void InitIOSystems(bool editor) {
   ddio_init_info io_info;
 
-  // Set the base directory
+  // Set the writable base directory
+  char writable_base_directory[_MAX_PATH];
   int dirarg = FindArg("-setdir");
   int exedirarg = FindArg("-useexedir");
   if (dirarg) {
-    strncpy(Base_directory, GameArgs[dirarg + 1], sizeof(Base_directory) - 1);
-    Base_directory[sizeof(Base_directory) - 1] = '\0';
+    strncpy(writable_base_directory, GameArgs[dirarg + 1], sizeof(writable_base_directory) - 1);
+    writable_base_directory[sizeof(writable_base_directory) - 1] = '\0';
   } else if (exedirarg) {
     char exec_path[_MAX_PATH];
     memset(exec_path, 0, sizeof(exec_path));
@@ -1418,15 +1432,29 @@ void InitIOSystems(bool editor) {
     } else {
        std::filesystem::path executablePath(exec_path);
        std::string baseDirectoryString = executablePath.parent_path().string();
-       strncpy(Base_directory, baseDirectoryString.c_str(), sizeof(Base_directory) - 1);
-       Base_directory[sizeof(Base_directory) - 1] = '\0';
-       mprintf(0, "Using working directory of %s\n", Base_directory);
+       strncpy(writable_base_directory, baseDirectoryString.c_str(), sizeof(writable_base_directory) - 1);
+       writable_base_directory[sizeof(writable_base_directory) - 1] = '\0';
+       mprintf(0, "Using working directory of %s\n", writable_base_directory);
       }
     } else {
-       ddio_GetWorkingDir(Base_directory, sizeof(Base_directory));
+       ddio_GetWorkingDir(writable_base_directory, sizeof(writable_base_directory));
     }
 
-  ddio_SetWorkingDir(Base_directory);
+  ddio_SetWorkingDir(writable_base_directory);
+  Base_directories.insert(Base_directories.begin(), (std::filesystem::path)writable_base_directory);
+
+  // Set any additional base directories
+  auto additionaldirarg = 0;
+  while (0 != (additionaldirarg = FindArg("-additionaldir", additionaldirarg))) {
+    const auto dir_to_add = GetArg(additionaldirarg + 1);
+    if (dir_to_add == NULL) {
+      mprintf(0, "-additionaldir was at the end of the argument list. It should never be at the end of the argument list.\n");
+      break;
+    } else {
+      Base_directories.insert(Base_directories.begin(), std::filesystem::path(dir_to_add));
+      additionaldirarg += 2;
+    }
+  }
 
   Descent->set_defer_handler(D3DeferHandler);
 
@@ -1983,7 +2011,7 @@ void SetupTempDirectory(void) {
     strcpy(Descent3_temp_directory, GameArgs[t_arg + 1]);
   } else {
     // initialize it to custom/cache
-    ddio_MakePath(Descent3_temp_directory, Base_directory, "custom", "cache", NULL);
+    ddio_MakePath(Descent3_temp_directory, GetWritableBaseDirectory().string().c_str(), "custom", "cache", NULL);
   }
 
   // verify that temp directory exists
@@ -2046,7 +2074,7 @@ void SetupTempDirectory(void) {
     exit(1);
   }
   // restore working dir
-  ddio_SetWorkingDir(Base_directory);
+  ddio_SetWorkingDir(GetWritableBaseDirectory().string().c_str());
 }
 
 void DeleteTempFiles(void) {
@@ -2066,7 +2094,7 @@ void DeleteTempFiles(void) {
   }
 
   // restore directory
-  ddio_SetWorkingDir(Base_directory);
+  ddio_SetWorkingDir(GetWritableBaseDirectory().string().c_str());
 }
 
 /*

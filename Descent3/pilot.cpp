@@ -1724,7 +1724,7 @@ bool PltDelete(pilot *Pilot) {
   Pilot->get_filename(pfilename);
 
   if (pfilename[0] != 0) {
-    ddio_MakePath(filename, Base_directory, pfilename, NULL);
+    ddio_MakePath(filename, GetWritableBaseDirectory().string().c_str(), pfilename, NULL);
     return (ddio_DeleteFile(pfilename) == 1);
   } else {
     Int3(); // this is odd
@@ -1740,7 +1740,7 @@ bool PltDelete(pilot *Pilot) {
 
     strcpy(pfilename, pname);
     strcat(pfilename, PLTEXTENSION);
-    ddio_MakePath(filename, Base_directory, pfilename, NULL);
+    ddio_MakePath(filename, GetWritableBaseDirectory().string().c_str(), pfilename, NULL);
     return (ddio_DeleteFile(filename) == 1);
   }
 }
@@ -1782,7 +1782,7 @@ void PltReadFile(pilot *Pilot, bool keyconfig, bool missiondata) {
     return;
 
     // open and process file
-  ddio_MakePath(filename, Base_directory, pfilename, NULL);
+  ddio_MakePath(filename, GetWritableBaseDirectory().string().c_str(), pfilename, NULL);
   try {
     file = cfopen(filename, "rb");
     if (!file)
@@ -1857,14 +1857,14 @@ char **PltGetPilots(int *count, char *ignore_filename, int display_default_confi
     switch (display_default_configs) {
     case 0:
       ASSERT(loop_count == 0);
-      ddio_MakePath(search, Base_directory, PLTWILDCARD, NULL);
+      ddio_MakePath(search, GetWritableBaseDirectory().string().c_str(), PLTWILDCARD, NULL);
       break;
     case 1:
-      ddio_MakePath(search, Base_directory, (loop_count == 0) ? PLTWILDCARD : DPLTWILDCARD, NULL);
+      ddio_MakePath(search, GetWritableBaseDirectory().string().c_str(), (loop_count == 0) ? PLTWILDCARD : DPLTWILDCARD, NULL);
       break;
     case 2:
       ASSERT(loop_count == 0);
-      ddio_MakePath(search, Base_directory, DPLTWILDCARD, NULL);
+      ddio_MakePath(search, GetWritableBaseDirectory().string().c_str(), DPLTWILDCARD, NULL);
       break;
     default:
       Int3();
@@ -3930,7 +3930,7 @@ void _ReadOldPilotFile(pilot *Pilot, bool keyconfig, bool missiondata) {
   Pilot->get_filename(pfilename);
 
   // open and process file
-  ddio_MakePath(filename, Base_directory, pfilename, NULL);
+  ddio_MakePath(filename, GetWritableBaseDirectory().string().c_str(), pfilename, NULL);
   CFILE *file = cfopen(filename, "rb");
   if (!file)
     return;

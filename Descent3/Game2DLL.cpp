@@ -592,8 +592,7 @@ bool InitGameModule(const char *name, module *mod) {
 
   // Open the hog file
   if (!cf_OpenLibrary(lib_name)) {
-    ddio_MakePath(tmp_dll_name, Base_directory, "netgames", name, NULL);
-    strcat(tmp_dll_name, ".d3m");
+    strncpy(tmp_dll_name, ddio_FindRealPath(lib_name).string().c_str(), sizeof(tmp_dll_name));
     Multi_game_dll_name[0] = '\0';
     goto loaddll;
   }
