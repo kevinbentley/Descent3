@@ -374,9 +374,6 @@ void DisplayNetDLLHelp(const char *topic);
 
 #define UID_MULTILB 0x1000
 
-#define HEAT_NAME "HEAT.NET"
-#define PXO_NAME "Parallax Online"
-
 int MainMultiplayerMenu() {
 
   mprintf(0, "Entering MainMultiplayerMenu()\n");
@@ -448,56 +445,6 @@ int MainMultiplayerMenu() {
   int dftidx = -1;
   dllcount = 0;
 
-  // Put the HEAT on top.
-  if (ddio_FindFileStart(search, buffer)) {
-
-    ddio_SplitPath(buffer, fdir, fname, fext);
-
-    if (!stricmp(HEAT_NAME, fname)) {
-      lists->AddItem(fname);
-      dllcount++;
-    }
-    if (!stricmp(sznetgame, fname)) {
-      dftidx = 0;
-    }
-
-    while ((ddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
-      ddio_SplitPath(buffer, fdir, fname, fext);
-      if (!stricmp(HEAT_NAME, fname)) {
-        lists->AddItem(fname);
-        dllcount++;
-      }
-      if (!stricmp(sznetgame, fname)) {
-        dftidx = 0;
-      }
-    }
-  }
-
-  // Put the PXO next.
-  if (ddio_FindFileStart(search, buffer)) {
-
-    ddio_SplitPath(buffer, fdir, fname, fext);
-
-    if (!stricmp(PXO_NAME, fname)) {
-      lists->AddItem(fname);
-      dllcount++;
-    }
-    if (!stricmp(sznetgame, fname)) {
-      dftidx = 1;
-    }
-
-    while ((ddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
-      ddio_SplitPath(buffer, fdir, fname, fext);
-      if (!stricmp(PXO_NAME, fname)) {
-        lists->AddItem(fname);
-        dllcount++;
-      }
-      if (!stricmp(sznetgame, fname)) {
-        dftidx = 1;
-      }
-    }
-  }
-
   if (ddio_FindFileStart(search, buffer)) {
 
     ddio_SplitPath(buffer, fdir, fname, fext);
@@ -508,13 +455,11 @@ int MainMultiplayerMenu() {
       }
     }
 
-    if ((stricmp(HEAT_NAME, fname) != 0) && (stricmp(PXO_NAME, fname) != 0)) {
-      lists->AddItem(fname);
-      if (!stricmp(sznetgame, fname)) {
-        dftidx = dllcount;
-      }
-      dllcount++;
+    lists->AddItem(fname);
+    if (!stricmp(sznetgame, fname)) {
+      dftidx = dllcount;
     }
+    dllcount++;
 
     uint32_t len;
     while ((ddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
@@ -527,13 +472,11 @@ int MainMultiplayerMenu() {
         }
       }
 
-      if ((stricmp(HEAT_NAME, fname) != 0) && (stricmp(PXO_NAME, fname) != 0)) {
-        lists->AddItem(fname);
-        if (!stricmp(sznetgame, fname)) {
-          dftidx = dllcount;
-        }
-        dllcount++;
+      lists->AddItem(fname);
+      if (!stricmp(sznetgame, fname)) {
+        dftidx = dllcount;
       }
+      dllcount++;
     }
   } else {
     dllcount = 0;
