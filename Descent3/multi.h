@@ -1222,8 +1222,8 @@ int MultiGetShipChecksum(int ship_index);
 /// Returns a unique value for this ship.
 void MultiProcessShipChecksum(MD5 *md5, int ship_index);
 
-extern int SearchForLocalGamesTCP(unsigned int ask, ushort port);
-extern int SearchForGamesPXO(unsigned int ask, ushort port);
+extern int SearchForLocalGamesTCP(uint32_t ask, uint16_t port);
+extern int SearchForGamesPXO(uint32_t ask, uint16_t port);
 extern void UpdateAndPackGameList(void);
 /// Checks if the selected mission and script are compatible
 /// - Returns: -1: Not compatible!  >=0: Number of teams supported for this mod & level

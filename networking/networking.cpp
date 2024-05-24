@@ -530,12 +530,15 @@ static int nw_PingCompare(const void *arg1, const void *arg2);
 static void nw_ReliableResend(void);
 
 /// Get the index of the next packet in order!
-static int nw_psnet_buffer_get_next(ubyte *data, int *length, network_address *from);
+static int nw_psnet_buffer_get_next(uint8_t *data, int *length, network_address *from);
 
 /// Get the index of the next packet in order!
-static int nw_psnet_buffer_get_next_by_dpid(ubyte *data, int *length, unsigned long dpid);
+static int nw_psnet_buffer_get_next_by_dpid(uint8_t *data, int *length, unsigned long dpid);
 
-static void nw_HandleUnreliableData(ubyte *data, int len, network_address *from_addr);
+/// Get the index of the next packet in order!
+static int nw_psnet_buffer_get_next_by_packet_id(uint8_t *data, int *length, uint32_t packet_id);
+
+static void nw_HandleUnreliableData(uint8_t *data, int len, network_address *from_addr);
 
 /// Called by \c psnet_init to initialize the listen socket used by a host/server.
 static int nw_InitReliableSocket();
@@ -545,7 +548,7 @@ static void nw_SendReliableAck(SOCKADDR *raddr, unsigned int sig, network_protoc
 /// Initialize the buffering system.
 static void nw_psnet_buffer_init();
 
-static void nw_HandleConnectResponse(ubyte *data, int len, network_address *server_addr);
+static void nw_HandleConnectResponse(uint8_t *data, int len, network_address *server_addr);
 
 int make_nonblocking(SOCKET sock)
 {

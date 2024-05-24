@@ -429,7 +429,7 @@ int nw_SendPilotTrackerPacket(void *packet);
 int nw_ReceivePilotTracker(void *packet);
 
 // buffer a packet (maintain order!)
-void nw_psnet_buffer_packet(ubyte *data, int length, network_address *from);
+void nw_psnet_buffer_packet(uint8_t *data, int length, network_address *from);
 
 // This is all the reliable UDP stuff...
 #define MAXNETBUFFERS                                                                                                  \

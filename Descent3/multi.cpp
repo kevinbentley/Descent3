@@ -1970,7 +1970,7 @@ static void MultiDoRequestPeerDamage(uint8_t *data, network_address *from_addr);
 /// Makes all the players ghosts.
 static void MultiMassageAllObjects(int kill_powerups, int kill_robots);
 /// Given a string, returns a unique integer for that string.
-static uint MultiGetUniqueIDFromString(char *plainstring);
+static uint32_t MultiGetUniqueIDFromString(char *plainstring);
 /// Handle robot damage.
 static void MultiDoRobotExplode(uint8_t *data);
 /// Handle message from server that robot/object took damage.
