@@ -1424,7 +1424,7 @@ void InitIOSystems(bool editor) {
       }
     } else {
        ddio_GetWorkingDir(Base_directory, sizeof(Base_directory));
-      }
+    }
 
   ddio_SetWorkingDir(Base_directory);
 
