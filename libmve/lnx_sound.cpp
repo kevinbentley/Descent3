@@ -38,7 +38,7 @@ MovieSoundDevice::MovieSoundDevice(int sample_rate, uint16_t sample_size, uint8_
       .freq = sample_rate,
       .format = format,
       .channels = channels,
-      .size = buf_size,
+      .size = 4096,
       .callback = &MovieSoundDevice::SDLAudioCallback,
       .userdata = this,
   };
