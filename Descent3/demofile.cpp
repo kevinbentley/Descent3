@@ -1677,35 +1677,6 @@ void DemoReadPlayerInfo(void) {
   }
 }
 
-void DemoPlayAutoDemo(void) {
-  char wcard_fname[_MAX_PATH * 2];
-  char auto_fname[_MAX_PATH * 2];
-  int idx = 0;
-  ddio_MakePath(wcard_fname, Base_directory, "demo", "*.dem", NULL);
-  if (ddio_FindFileStart(wcard_fname, auto_fname)) {
-    // Get to the next demo file we are scheduled to do.
-    while (idx < Demo_auto_idx) {
-      if (!ddio_FindNextFile(auto_fname)) {
-        Demo_auto_idx = 0;
-        ddio_FindFileClose();
-        // A little recursion to go back to the start
-        DemoPlayAutoDemo();
-        return;
-      }
-      idx++;
-    }
-    // Now we should have the proper filename
-    if (DemoPlaybackFile(auto_fname)) {
-      Demo_auto_play = true;
-    } else {
-      Demo_auto_play = false;
-    }
-  } else {
-    // No demo files are available, sorry!
-    Demo_auto_play = false;
-  }
-}
-
 void DemoWritePersistantHUDMessage(ddgr_color color, int x, int y, float time, int flags, int sound_index, char *msg) {
   cf_WriteByte(Demo_cfp, DT_PERSISTANT_HUD);
   cf_WriteInt(Demo_cfp, (int)color);
