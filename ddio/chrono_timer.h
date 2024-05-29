@@ -39,6 +39,8 @@ public:
   /// Get time in milliseconds after class initialization (i.e. application start)
   static int64_t GetTimeMS();
 
+  /// Get time in microseconds after class initialization (i.e. application start)
+  static int64_t GetTimeUS();
 };
 
 }

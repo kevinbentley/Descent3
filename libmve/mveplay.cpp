@@ -17,18 +17,14 @@
 
 #define AUDIO
 
+#include <chrono>
 #include <cstring>
 #include <deque>
 #include <memory>
-
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <ctime>
-#include <sys/time.h>
-#endif // _WIN32
+#include <thread>
 
 #include "byteswap.h"
+#include "chrono_timer.h"
 #include "decoders.h"
 #include "mvelib.h"
 #include "mve_audio.h"
@@ -41,24 +37,24 @@
 #endif
 #endif
 
-#define MVE_OPCODE_ENDOFSTREAM 0x00
-#define MVE_OPCODE_ENDOFCHUNK 0x01
-#define MVE_OPCODE_CREATETIMER 0x02
-#define MVE_OPCODE_INITAUDIOBUFFERS 0x03
-#define MVE_OPCODE_STARTSTOPAUDIO 0x04
-#define MVE_OPCODE_INITVIDEOBUFFERS 0x05
-
-#define MVE_OPCODE_DISPLAYVIDEO 0x07
-#define MVE_OPCODE_AUDIOFRAMEDATA 0x08
-#define MVE_OPCODE_AUDIOFRAMESILENCE 0x09
-#define MVE_OPCODE_INITVIDEOMODE 0x0A
-
-#define MVE_OPCODE_SETPALETTE 0x0C
-#define MVE_OPCODE_SETPALETTECOMPRESSED 0x0D
-
-#define MVE_OPCODE_SETDECODINGMAP 0x0F
-
-#define MVE_OPCODE_VIDEODATA 0x11
+#define MVE_OPCODE_ENDOFSTREAM 0x00           // mcmd_end
+#define MVE_OPCODE_ENDOFCHUNK 0x01            // mcmd_next
+#define MVE_OPCODE_CREATETIMER 0x02           // mcmd_syncInit
+#define MVE_OPCODE_INITAUDIOBUFFERS 0x03      // mcmd_sndConfigure
+#define MVE_OPCODE_STARTSTOPAUDIO 0x04        // mcmd_sndSync
+#define MVE_OPCODE_INITVIDEOBUFFERS 0x05      // mcmd_nfConfig
+#define MVE_OPCODE_UNKNOWN_06 0x06            // mcmd_nfDecomp
+#define MVE_OPCODE_DISPLAYVIDEO 0x07          // mcmd_sfShowFrame
+#define MVE_OPCODE_AUDIOFRAMEDATA 0x08        // mcmd_sndAdd
+#define MVE_OPCODE_AUDIOFRAMESILENCE 0x09     // mcmd_sndSilence
+#define MVE_OPCODE_INITVIDEOMODE 0x0A         // mcmd_gfxMode
+#define MVE_OPCODE_UNKNOWN_0B 0x0B            // mcmd_palMakeSynthPalette
+#define MVE_OPCODE_SETPALETTE 0x0C            // mcmd_palLoadPalette
+#define MVE_OPCODE_SETPALETTECOMPRESSED 0x0D  // mcmd_palLoadCompPalette
+#define MVE_OPCODE_UNKNOWN_0E 0x0E            // mcmd_nfChanges
+#define MVE_OPCODE_SETDECODINGMAP 0x0F        // mcmd_nfParms
+#define MVE_OPCODE_UNKNOWN_10 0x10            // mcmd_nfDecompChg
+#define MVE_OPCODE_VIDEODATA 0x11             // mcmd_nfPkDecomp
 
 #define MVE_AUDIO_FLAGS_STEREO 1
 #define MVE_AUDIO_FLAGS_16BIT 2
@@ -106,56 +102,16 @@ static int micro_frame_delay = 0;
 static int timer_started = 0;
 static unsigned long int timer_expire = 0;
 
-#if defined(_WIN32) || defined(macintosh)
-
 unsigned long int timer_getmicroseconds() {
-  static int counter = 0;
-#ifdef _WIN32
-  DWORD now = GetTickCount();
-#else
-  long now = TickCount();
-#endif
-  counter++;
-
-  return now * 1000 + counter;
+  return D3::ChronoTimer::GetTimeUS();
 }
-
-#else
-
-unsigned long int timer_getmicroseconds() {
-  struct timeval tv{};
-  static time_t starttime = 0;
-
-  gettimeofday(&tv, nullptr);
-
-  if (!starttime)
-    starttime = tv.tv_sec;
-
-  return (tv.tv_sec - starttime) * 1000000 + tv.tv_usec;
-}
-
-#endif
 
 void timer_sleepmicroseconds(unsigned long int usec) {
-#ifdef _WIN32
-  Sleep(usec / 1000);
-#elif defined(macintosh)
-  Delay(usec / 1000);
-#else
-  struct timespec ts{};
-  ts.tv_sec = usec / 1000000;
-  ts.tv_nsec = usec % 1000000 * 1000;
-  nanosleep(&ts, nullptr);
-#endif
+  std::this_thread::sleep_for(std::chrono::microseconds(usec));
 }
 
 static int create_timer_handler(unsigned char major, unsigned char minor, unsigned char *data, int len, void *context) {
-
-#if !defined(_WIN32) && !defined(macintosh) // FIXME
-  __extension__ long long temp;
-#else
   long temp;
-#endif
 
   if (timer_created)
     return 1;
@@ -185,8 +141,8 @@ static void timer_start() {
 }
 
 static void do_timer_wait() {
-  unsigned long int ts;
-  unsigned long int tv;
+  uint64_t ts;
+  uint64_t tv;
 
   if (!timer_started)
     return;

@@ -590,7 +590,7 @@ intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *ap
 
   MVESTREAM *mve = MVE_rmPrepMovie(fhandle, -1, -1, 0);
   if (mve == nullptr) {
-    mprintf((0, "Failed to PrepMovie %s\n", mvename));
+    mprintf(0, "Failed to PrepMovie %s\n", mvename);
     fclose((FILE *)fhandle);
     return MVELIB_INIT_ERROR;
   }

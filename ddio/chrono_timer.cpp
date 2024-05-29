@@ -33,4 +33,9 @@ int64_t ChronoTimer::GetTimeMS() {
       .count();
 }
 
+int64_t ChronoTimer::GetTimeUS() {
+  return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - m_start_tstamp)
+      .count();
+}
+
 } // namespace D3
