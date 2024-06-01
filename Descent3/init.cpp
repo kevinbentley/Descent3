@@ -1394,7 +1394,7 @@ struct tTempFileInfo {
 };
 static const tTempFileInfo temp_file_wildcards[] = {{"d3s*.tmp"}, {"d3m*.tmp"}, {"d3o*.tmp"},
                                                     {"d3c*.tmp"}, {"d3t*.tmp"}, {"d3i*.tmp"}};
-static const int num_temp_file_wildcards = sizeof(temp_file_wildcards) / sizeof(tTempFileInfo);
+static constexpr int num_temp_file_wildcards = sizeof(temp_file_wildcards) / sizeof(tTempFileInfo);
 
 /*
         I/O systems initialization
