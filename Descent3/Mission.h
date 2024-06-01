@@ -186,7 +186,7 @@ static constexpr int MSN_FILENAMELEN = PSPATHNAME_LEN, MSN_URLLEN = 256;
 #define MAX_KEYWORDLEN 300
 
 //	increase this value if you are going to add more levels to a mission than the max.
-constexpr int MAX_LEVELS_PER_MISSION = 30;
+static constexpr int MAX_LEVELS_PER_MISSION = 30;
 
 //	mission flags. TODO: move into an enum?
 static constexpr unsigned LVLFLAG_STARTMOVIE = 1, LVLFLAG_ENDMOVIE = 2, LVLFLAG_BRIEFING = 4, LVLFLAG_SHIPSELECT = 8,
