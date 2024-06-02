@@ -52,7 +52,7 @@
 #include "vclip.h"
 #include "osiris_dll.h"
 #include "manage.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "collide.h"
 #include "render.h"
 #include "audiotaunts.h"

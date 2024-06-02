@@ -448,7 +448,7 @@
 #include "object.h"
 #include <memory.h>
 #include <stdlib.h>
-#include "PHYSICS.H"
+#include "physics.h"
 #include "weapon.h"
 #include "lighting.h"
 #include "dedicated_server.h"

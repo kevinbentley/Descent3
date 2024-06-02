@@ -24,7 +24,7 @@
 #define LIB2D_H
 
 #include "gr.h"
-#include "renderer.h"
+#include "ddgr.h"
 
 //	structures
 

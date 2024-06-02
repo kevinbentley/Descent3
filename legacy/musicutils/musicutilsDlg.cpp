@@ -31,7 +31,7 @@
 #include "musicplay.h"
 
 #include "pserror.h"
-#include "Application.h"
+#include "application.h"
 #include "streamaudio.h"
 #include "ddio.h"
 #include "macros.h"

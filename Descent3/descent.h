@@ -131,6 +131,10 @@
 #include <stdlib.h>
 #include "application.h"
 
+#ifdef __LINUX__
+#include "linux_fix.h"
+#endif
+
 // The name of this product
 #ifdef DEMO
 #define PRODUCT_NAME "Descent 3 Demo"

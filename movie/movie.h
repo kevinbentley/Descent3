@@ -19,9 +19,12 @@
 #ifndef MOVIE_H__
 #define MOVIE_H__
 
+#include <cstdint>
+
+#include "application.h"
+#include "grdefs.h"
 #include "renderer.h"
 
-#include <cstdint>
 
 #define MVELIB_NOERROR 0
 #define MVELIB_FILE_ERROR -1

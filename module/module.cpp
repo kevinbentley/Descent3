@@ -92,9 +92,12 @@
  * $NoKeywords: $
  */
 #include "module.h"
-#include "pstypes.h"
+
+#include <cstdio>
+#include <cstdarg>
+#include <cstring>
+
 #include "pserror.h"
-#include "ddio.h"
 
 #ifdef __LINUX__
 #include <dlfcn.h>
@@ -102,12 +105,6 @@
 static bool mod_FindRealFileNameCaseInsenstive(const char *directory, const char *filename, char *new_filename);
 #endif
 
-#include "module.h"
-#include "pstypes.h"
-#include "pserror.h"
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
 #if defined(__LINUX__)
 #include "linux_fix.h"
 #endif

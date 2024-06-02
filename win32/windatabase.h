@@ -51,6 +51,8 @@
 #ifndef WIN32DATABASE
 #define WIN32DATABASE
 
+#include "appdatabase.h"
+
 /* oeWin32AppDatabase
         to get info about the application from a managed database (or a custom info file)
         we get our information from the registry!

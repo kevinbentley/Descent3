@@ -682,7 +682,7 @@
 bool Directplay_lobby_launched_game = false;
 #endif
 #include "multi_dll_mgr.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "newui_core.h"
 
 #define IDV_QUIT 0xff

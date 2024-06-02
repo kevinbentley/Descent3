@@ -58,6 +58,7 @@ void VIBE_DoForce(vector *) {}
 void VIBE_DoLevelEnd(void) {}
 #else
 
+#include "winapp.h"
 #include "intellivibe.h"
 #include "module.h"
 #include "mono.h"

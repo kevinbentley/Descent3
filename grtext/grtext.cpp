@@ -146,18 +146,18 @@
  * $NoKeywords: $
  */
 
+#include "grtext.h"
+
 #include <cstdarg>
 #include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <cctype>
 
 #include "grtextlib.h"
 
 #include "renderer.h"
 #include "pserror.h"
-#include "mem.h"
-
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
 
 #define CLIP_LEFT Grtext_left
 #define CLIP_TOP Grtext_top

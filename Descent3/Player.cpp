@@ -1096,7 +1096,7 @@
 #include "findintersection.h"
 #include "hud.h"
 #include "splinter.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "viseffect.h"
 #include "damage.h"
 #include "multi.h"

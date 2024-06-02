@@ -19,7 +19,7 @@
 #ifndef LIGHTMAP_H
 #define LIGHTMAP_H
 
-#include "pstypes.h"
+#include <cstdint>
 
 #define MAX_LIGHTMAPS (65534)
 #define BAD_LM_INDEX 65535

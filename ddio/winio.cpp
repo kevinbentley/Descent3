@@ -107,12 +107,12 @@
 
 #include <cstdarg>
 #include <cstdio>
+#include <cstdlib>
 
-#include <stdlib.h>
 #include <windows.h>
 
 #include "pserror.h"
-#include "Application.h"
+#include "winapp.h"
 #include "ddio_win.h"
 #include "ddio.h"
 #include "dinput.h"

@@ -16,6 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef MUSICLIB_H
+#define MUSICLIB_H
 
 #define OMFCMD_NUM 22
 
@@ -45,3 +47,5 @@
 // undocumented codes.
 #define OMFCMD_MPLAY 200  // internal code.
 #define OMFCMD_ENDIFI 201 // end of ifi conditional.
+
+#endif

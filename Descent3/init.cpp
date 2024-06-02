@@ -944,7 +944,7 @@
 #include "Mission.h"
 #include "findintersection.h"
 #include "appdatabase.h"
-#include "AppConsole.h"
+#include "appconsole.h"
 #include "room.h"
 #include "game.h"
 #include "render.h"
@@ -960,7 +960,7 @@
 #include "pilot.h"
 #include "gameloop.h"
 #include "trigger.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "special_face.h"
 #include "streamaudio.h"
 #include "voice.h"
@@ -977,7 +977,7 @@
 #include "SmallViews.h"
 #include "uisys.h"
 #include "rtperformance.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "PilotPicsAPI.h"
 #include "osiris_dll.h"
 #include "mem.h"
@@ -986,6 +986,8 @@
 #include "gamecinematics.h"
 #include "debuggraph.h"
 #include "vibeinterface.h"
+
+#include "ddvid.h"
 
 // Uncomment this to allow all languages
 #define ALLOW_ALL_LANG 1

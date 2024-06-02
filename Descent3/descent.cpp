@@ -395,7 +395,7 @@
 #include "Mission.h"
 #include "ddio.h"
 #include "controls.h"
-#include "Controller.h"
+#include "controller.h"
 #include "gamesequence.h"
 #include "stringtable.h"
 #include "dedicated_server.h"

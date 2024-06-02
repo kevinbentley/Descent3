@@ -136,7 +136,8 @@
 #include <cstring>
 #include <cstdlib>
 
-#include "UIlib.h"
+#include "ui.h"
+#include "ddio_common.h"
 #include "grtext.h"
 #include "Macros.h"
 #include "mem.h"

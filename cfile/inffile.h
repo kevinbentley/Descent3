@@ -23,12 +23,12 @@
 #ifndef INFFILE_H
 #define INFFILE_H
 
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
-
-#include "pstypes.h"
 #include "psclass.h"
+#include <cstdlib>
+
+#ifdef __LINUX__
+#include "linux_fix.h"
+#endif
 
 struct CFILE;
 
@@ -71,7 +71,7 @@ private:
 
   struct sym_info // full runtime symbol
   {
-    char name[PSPATHNAME_LEN];
+    char name[_MAX_PATH];
     char *text;
   };
 

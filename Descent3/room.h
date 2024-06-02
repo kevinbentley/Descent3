@@ -363,9 +363,9 @@
 #ifndef _ROOM_H
 #define _ROOM_H
 
-#include "pstypes.h"
 #include "vecmat_external.h"
 #include "gametexture.h"
+#include "bitmap.h"
 
 #ifdef NEWEDITOR
 #include "..\neweditor\ned_GameTexture.h"

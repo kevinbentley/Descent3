@@ -71,13 +71,16 @@
  * $NoKeywords: $
  */
 
+#include <cstring>
+#include <cstdlib>
+
 #include "music.h"
 #include "musiclib.h"
 #include "inffile.h"
 #include "mem.h"
+#include "mono.h"
+#include "pserror.h"
 
-#include <string.h>
-#include <stdlib.h>
 
 //	OMF INF FILE READ
 #define OMFFILEERR_ADDSECTION INFFILE_CUSTOM        // error adding section to list.

@@ -214,7 +214,6 @@ static inline void INADDR_GET_SUN_SUNB(struct in_addr *st, uint8_t *s_b1, uint8_
 
 #include "linux_fix.h"
 
-#define SOCKET int
 #define BOOL bool
 #define SOCKADDR_IN sockaddr_in
 #define SOCKADDR sockaddr

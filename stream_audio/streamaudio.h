@@ -138,10 +138,9 @@
 #ifndef __STREAMAUDIO_H_
 #define __STREAMAUDIO_H_
 
-#include "Adecode.h"
+#include "adecode.h"
 
 #include "ssl_lib.h"
-#include "TaskSystem.h"
 
 void *AudioStreamCB(void *user_data, int handle, int *size);
 int ADecodeFileRead(void *data, void *buf, uint32_t qty);

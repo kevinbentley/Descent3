@@ -32,6 +32,7 @@
 #include <mmsystem.h>
 #include <io.h>
 #include "dsound.h"
+#include "winapp.h"
 #endif
 
 #include <fcntl.h>

@@ -20,7 +20,9 @@
 #if defined(WIN32)
 #include <windows.h>
 #elif defined(__LINUX__)
-#include "lnxscreenmode.h"
+#include "lnxapp.h"
+#include <SDL.h>
+#include <SDL_opengl.h>
 #else
 #endif
 
@@ -39,7 +41,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "HardwareInternal.h"
-#include "../Descent3/args.h"
+#include "args.h"
 
 #include <NewBitmap.h>
 
@@ -48,6 +50,7 @@
 
 #if defined(WIN32)
 #include "win/arb_extensions.h"
+#include "winapp.h"
 #endif
 
 #include <algorithm>

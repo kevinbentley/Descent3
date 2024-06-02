@@ -277,20 +277,23 @@
  *
  * $NoKeywords: $
  */
+
 #include "ctlconfig.h"
+
+#include <cstring>
+
 #include "CtlCfgElem.h"
 #include "ctlconfigtxt.h"
 #include "game.h"
 #include "weapon.h"
 #include "pilot.h"
-#include "bitmap.h"
-#include "multi.h"
 #include "gameloop.h"
 #include "gamefont.h"
 #include "D3ForceFeedback.h"
 #include "hlsoundlib.h"
-#include "ddio.h"
-#include <string.h>
+#include "Macros.h"
+#include "ddio_common.h"
+
 //////////////////////////////////////////////////////////////////////////////
 #define IDV_KCONFIG 10
 #define IDV_CCONFIG 11

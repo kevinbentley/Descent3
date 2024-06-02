@@ -66,7 +66,7 @@
  */
 #ifndef APP_H
 #define APP_H
-#include "pstypes.h"
+
 /*	Basic Application data types */
 /*	Application Object
                 This object entails initialization and cleanup of all operating system
@@ -109,9 +109,5 @@ public:
         Add a platform to this list once implemented:
                 Win32				Samir		Win32App.h			06/97
 */
-#if defined(WIN32)
-#include "win\win32app.h"
-#elif defined(__LINUX__)
-#include "lnxapp.h"
-#endif
+
 #endif

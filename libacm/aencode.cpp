@@ -21,7 +21,7 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
-#include "Aencode.h"
+#include "aencode.h"
 
 typedef uint32_t uint32_t;
 typedef int32_t int32_t;

@@ -99,8 +99,6 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#include "pstypes.h"
-#include "pserror.h"
 #include "psclass.h"
 #include "streamaudio.h"
 

@@ -426,7 +426,7 @@
 #include "ship.h"
 #include "pilot.h"
 #include "mem.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "demofile.h"
 #include "stringtable.h"
 #include "pstring.h"

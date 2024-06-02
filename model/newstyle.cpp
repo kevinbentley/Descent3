@@ -77,15 +77,18 @@
  *
  */
 
+
+#include <cstdlib>
+#include <cstring>
+
 #include "pserror.h"
-#include "pstypes.h"
+#include "psrand.h"
 
 #include "3d.h"
 #include "vecmat.h"
 #include "grdefs.h"
 #include "polymodel.h"
 #include "gametexture.h"
-#include "byteswap.h"
 #include "renderer.h"
 #include "lighting.h"
 #include "game.h"
@@ -95,11 +98,6 @@
 #include "lightmap.h"
 #include "lighting.h"
 #include "findintersection.h"
-
-#include <stdlib.h>
-#include <string.h>
-
-#include "psrand.h"
 
 static float face_depth[MAX_POLYGON_VECS];
 static uint8_t triangulated_faces[MAX_FACES_PER_ROOM];

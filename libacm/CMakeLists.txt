@@ -1,4 +1,7 @@
-set(HEADERS)
+set(HEADERS
+  adecode.h
+  aencode.h)
+
 set(CPPS
   aencode.cpp
   adecode.cpp)
@@ -9,3 +12,9 @@ set(LIB_SRC
   libacm.h)
 
 add_library(libacm STATIC ${HEADERS} ${CPPS} ${LIB_SRC})
+
+target_include_directories(libacm PUBLIC
+  $<BUILD_INTERFACE:
+    ${PROJECT_SOURCE_DIR}/libacm
+  >
+)

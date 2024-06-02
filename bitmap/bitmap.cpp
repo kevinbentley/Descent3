@@ -297,13 +297,15 @@
  *
  * $NoKeywords: $
  */
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+
+
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+
 #include "cfile.h"
-#include "texture.h"
 #include "bitmap.h"
-#include "pstypes.h"
 #include "pserror.h"
 #include "mono.h"
 #include "iff.h"
@@ -311,11 +313,10 @@
 #include "lightmap.h"
 #include "bumpmap.h"
 #include "mem.h"
+
 #include "psrand.h"
+#include "grdefs.h"
 
-#include "Macros.h"
-
-#include <algorithm>
 
 #define BM_FILETYPE_TGA 1
 #define BM_FILETYPE_PCX 2

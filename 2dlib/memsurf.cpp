@@ -68,12 +68,13 @@
  * $NoKeywords: $
  */
 
+#include "gr.h"
+
+#include <cstring>
+#include <cstdlib>
+
 #include "lib2d.h"
-
 #include "bitmap.h"
-
-#include <string.h>
-#include <stdlib.h>
 #include "mem.h"
 
 //	----------------------------------------------------------------------------

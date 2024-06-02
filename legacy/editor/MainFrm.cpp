@@ -806,7 +806,7 @@
 
 // D3 EDITOR HEADERS
 #include "pserror.h"
-#include "Application.h"
+#include "application.h"
 #include "AppDatabase.h"
 #include "program.h"
 #include "gr.h"

@@ -34,12 +34,12 @@
  * $NoKeywords: $
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include <sys/stat.h>
+
 #include "pserror.h"
-#include "Macros.h"
 #include "CZip.h"
 
 CZip::CZip() {

@@ -132,7 +132,7 @@
 #ifndef WINCONTROLLER_H
 #define WINCONTROLLER_H
 
-#include "Controller.h"
+#include "controller.h"
 #include "joystick.h"
 
 #define NULL_WINCONTROLLER ((int8_t)NULL_CONTROLLER)

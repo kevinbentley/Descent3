@@ -28,3 +28,26 @@ set(CPPS
 add_definitions(-DOUTRAGE_VERSION -DDMFC_DLL)
 
 add_library(dmfc STATIC ${HEADERS} ${CPPS})
+
+
+target_link_libraries(dmfc PRIVATE
+  grtext
+  module
+  renderer
+  bitmap
+  networking
+  physics
+  model
+  manage
+  ddio
+  dd_video
+  2dlib
+  $<$<PLATFORM_ID:Linux,Darwin>:
+    linux
+  >
+  $<$<PLATFORM_ID:Windows>:
+    win32
+  >
+)
+
+target_include_directories(dmfc PUBLIC .)

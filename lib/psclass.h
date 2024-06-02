@@ -54,6 +54,9 @@
 #ifndef PSCLASS_H
 #define PSCLASS_H
 
+#include <cstdint>
+#include <cstddef>
+
 //	a universal list node to use with the list type
 template <class T> struct tListNode {
   T t;

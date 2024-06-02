@@ -18,3 +18,8 @@ endif()
 
 add_library(libmve STATIC ${HEADERS} ${CPPS} ${PLATFORM_CPPS})
 
+target_include_directories(libmve PUBLIC
+  $<BUILD_INTERFACE:
+    ${PROJECT_SOURCE_DIR}/libmve
+  >
+)

@@ -39,21 +39,18 @@
  * $NoKeywords: $
  */
 
+#include <algorithm>
+
+#include <cstdint>
 #include <cstdlib>
 #include <cstdarg>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
 
-#include <algorithm>
-
-#include "application.h"
-#include "AppConsole.h"
-#include "TaskSystem.h"
-#include "mono.h"
-// #include "local_malloc.h"
-#include "pstring.h"
 #include <unistd.h>
+
+#include "appconsole.h"
 
 static char *Con_raw_read_buf = NULL;                     // The next buffer of text from user input
 static char *Con_raw_inp_buf = NULL, Con_raw_inp_pos = 0; // Currently updating input buffer of text (and it's position)

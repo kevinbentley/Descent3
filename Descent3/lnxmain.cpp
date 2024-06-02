@@ -30,10 +30,10 @@
 
 #include <SDL.h>
 
-#include "program.h"
+#include "lnxapp.h"
+#include "lnxdatabase.h"
+
 #include "descent.h"
-#include "application.h"
-#include "appdatabase.h"
 #include "args.h"
 #include "init.h"
 
@@ -42,6 +42,7 @@
 #include "loki_utils.h"
 
 #include "log.h"
+#include "d3_version.h"
 
 extern bool ddio_mouseGrabbed;
 int no_debug_dialog = 0;

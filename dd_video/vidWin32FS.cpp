@@ -52,6 +52,7 @@
 
 #include "ddvidlib.h"
 #include "pserror.h"
+#include "grdefs.h"
 
 //	DirectDraw Display mode enumeration callback
 HRESULT WINAPI DDEnumModesCallback(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext);

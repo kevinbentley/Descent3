@@ -26,7 +26,6 @@
 #include <cstdlib>
 
 #include "ddvid.h"
-#include "application.h"
 #include "lnxapp.h"
 
 struct tinfo {

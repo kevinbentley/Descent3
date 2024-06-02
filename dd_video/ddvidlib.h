@@ -44,11 +44,14 @@
 #ifndef DDVIDLIB_H
 #define DDVIDLIB_H
 
-#include "ddvid.h"
+#include <cstdlib>
+#include <cstdint>
 
 #include <windows.h>
 #include <ddraw.h>
-#include <stdlib.h>
+
+#include "ddvid.h"
+#include "winapp.h"
 
 #define VM_MAX_MODES 96
 

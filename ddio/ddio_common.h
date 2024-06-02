@@ -117,8 +117,9 @@
 #ifndef DDIO_COMMON_H
 #define DDIO_COMMON_H
 
+#include <cstdint>
+
 #include "application.h"
-#include "pstypes.h"
 
 #define DDIO_MOUSE_LITE 2 // some ddio systems support the 'lite' extension of mice.
 

@@ -4,3 +4,5 @@ set(CPPS
 
 add_library(vecmat STATIC ${HEADERS} ${CPPS})
 target_link_libraries(vecmat fix)
+
+target_include_directories(vecmat PUBLIC .)

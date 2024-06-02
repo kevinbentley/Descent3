@@ -19,7 +19,7 @@
 #ifndef BUMPMAP_H
 #define BUMPMAP_H
 
-#include "pstypes.h"
+#include <cstdint>
 
 #define MAX_BUMPMAPS 500
 #define BAD_BUMP_INDEX 65535

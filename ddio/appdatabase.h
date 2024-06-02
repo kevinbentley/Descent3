@@ -51,7 +51,7 @@
 #ifndef APPDATABASE
 #define APPDATABASE
 
-#include "pstypes.h"
+#include <cstddef>
 
 /* oeAppDatabase
         to get info about the application from a managed database (or a custom info file)
@@ -99,11 +99,5 @@ public:
 
                 Win32				Samir		Win32Database.h			06/97
 */
-
-#if defined(WIN32)
-#include "win\Win32Database.h"
-#elif defined(__LINUX__)
-#include "linux/lnxdatabase.h"
-#endif
 
 #endif

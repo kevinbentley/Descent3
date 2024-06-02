@@ -144,13 +144,7 @@
 
 #include "music.h"
 #include "musiclib.h"
-#include "ssl_lib.h"
-#include "soundload.h"
-#include "textaux.h"
 #include "pserror.h"
-#include "ddio.h"
-#include "Macros.h"
-#include "inffile.h"
 #include "streamaudio.h"
 #include "mem.h"
 #include <string.h>

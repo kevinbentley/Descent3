@@ -598,25 +598,22 @@
  * $NoKeywords: $
  */
 
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
+
 #include "objinfo.h"
 #include "polymodel.h"
 #include "pserror.h"
 #include "3d.h"
 #include "mono.h"
-#include "bitmap.h"
 #include "renderer.h"
 #include "manage.h"
 #include "gametexture.h"
-#include "lighting.h"
 #include "ddio.h"
 #include "game.h"
-#include <stdlib.h>
-#include <string.h>
-#include "robotfire.h"
 #include "mem.h"
 #include "gamesequence.h"
-
-#include <algorithm>
 
 int Num_poly_models = 0;
 poly_model Poly_models[MAX_POLY_MODELS];

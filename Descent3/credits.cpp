@@ -88,7 +88,7 @@
 #include "descent.h"
 #include "mem.h"
 #include "3d.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "hlsoundlib.h"
 #include <string.h>
 #include <math.h>

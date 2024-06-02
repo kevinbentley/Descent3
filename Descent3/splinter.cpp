@@ -16,6 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <cstdlib>
 
 #include "fireball.h"
 #include "object.h"
@@ -23,13 +25,8 @@
 #include "polymodel.h"
 #include "renderer.h"
 #include "gametexture.h"
-
-#include "Macros.h"
-#include <stdlib.h>
-
 #include "psrand.h"
 
-#include <algorithm>
 
 // Given an object, renders the representation of this splinter
 void DrawSplinterObject(object *obj) {

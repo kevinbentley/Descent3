@@ -24,12 +24,9 @@
  * $NoKeywords: $
  */
 
-#include "3d.h"
-#include "texture.h"
 #include "gametexture.h"
 #include "lighting.h"
 #include "lightmap.h"
-#include "descent.h"
 #include "game.h"
 #include "room.h"
 #include <string.h>
@@ -42,7 +39,6 @@
 #include "config.h"
 #include "dedicated_server.h"
 #include "objinfo.h"
-#include "Macros.h"
 
 #include <algorithm>
 

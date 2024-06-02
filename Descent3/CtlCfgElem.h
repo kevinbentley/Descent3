@@ -78,7 +78,7 @@
 #define CTLCFGELEM_H
 
 #include "newui.h"
-#include "Controller.h"
+#include "controller.h"
 #include "controls.h"
 #include "stringtable.h"
 

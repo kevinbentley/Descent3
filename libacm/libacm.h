@@ -19,6 +19,8 @@
 #ifndef __LIBACM_H
 #define __LIBACM_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

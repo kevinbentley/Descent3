@@ -521,7 +521,7 @@
 #include "textaux.h"
 #include "psrand.h"
 #include "controls.h"
-#include "d3music.h"
+#include "musicapi.h"
 
 #define FRAME_RATE 30.0f
 #define TCPE_TIME 0.5f

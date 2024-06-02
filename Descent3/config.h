@@ -117,6 +117,8 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+#include <cstdint>
+
 // Main menu configuration functions
 // ------------------------------------------------------
 // ConfigForceFeedback

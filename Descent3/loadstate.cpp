@@ -212,7 +212,7 @@
 #include "matcen.h"
 #include "pilot.h"
 #include "marker.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "weather.h"
 #include "cockpit.h"
 #include "hud.h"

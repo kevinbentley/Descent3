@@ -1075,7 +1075,7 @@
 #include "lightmap_info.h"
 #include "lightmap.h"
 #include "fireball.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "TelComAutoMap.h"
 #include "aiambient.h"
 #include "ObjScript.h"

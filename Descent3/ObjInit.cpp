@@ -602,7 +602,7 @@
 #include "player.h"
 #include "ship.h"
 #include "pserror.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "weapon.h"
 #include "AIMain.h"
 #include "fireball.h"

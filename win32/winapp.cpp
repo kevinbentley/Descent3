@@ -146,16 +146,19 @@
  */
 
 #define OEAPP_INTERNAL_MODULE
+#include "winapp.h"
 
-#include "Application.h"
-#include "AppConsole.h"
+#include <cstdio>
+#include <cstdlib>
+
+#include <windows.h>
+#include <shellapi.h>
+#include <mmsystem.h>
+
+#include "appconsole.h"
 #include "mono.h"
 #include "networking.h"
 
-#include <shellapi.h>
-#include <mmsystem.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 // taken from winuser.h
 #ifndef WHEEL_DELTA

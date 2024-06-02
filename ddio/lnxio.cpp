@@ -62,7 +62,7 @@
 #include <mach-o/dyld.h>
 #endif
 
-#include "application.h"
+#include "lnxapp.h"
 #include "ddio.h"
 #include "pserror.h"
 

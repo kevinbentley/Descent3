@@ -41,13 +41,15 @@
  * $NoKeywords: $
  */
 
+#include "lnxcontroller.h"
+
 #include <cstring>
-#include "Controller.h"
+
 #include "ddio.h"
 #include "pserror.h"
 #include "joystick.h"
 #include "inffile.h"
-#include "lnxcontroller.h"
+#include "Macros.h"
 
 // Sorry! This is needed for the semi-hacky mouselook support
 #include "descent.h"
@@ -409,7 +411,7 @@ ct_config_data lnxgameController::get_controller_value(ct_type type_req) {
     }
     for (i = 2; i < m_NumControls; i++) {
       float pos;
-      int ctl = CONTROLLER_CTL_INFO(i, -1);
+      int ctl = CONTROLLER_CTL_INFO(i, 0xFF);
 
       if (m_ControlList[i].flags & (CTF_POV << pov_n)) {
         pos = get_pov_value(i, ctDigital, pov_n, JOYPOV_RIGHT);

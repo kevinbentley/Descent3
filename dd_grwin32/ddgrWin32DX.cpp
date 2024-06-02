@@ -35,7 +35,7 @@
 
 #include "ddgrWin32.h"
 #include "ddgrWin32DX.h"
-#include "Application.h"
+#include "winapp.h"
 #include "mono.h"
 #include "pserror.h"
 

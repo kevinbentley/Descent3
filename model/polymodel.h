@@ -294,11 +294,7 @@
 #ifndef POLYMODEL_H
 #define POLYMODEL_H
 
-#include "manage.h"
-#include "pstypes.h"
-#include "vecmat.h"
 #include "3d.h"
-#include "robotfirestruct.h"
 #include "polymodel_external.h"
 #include "object_external_struct.h"
 

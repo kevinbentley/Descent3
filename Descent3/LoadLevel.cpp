@@ -1287,7 +1287,7 @@
 #include "ambient.h"
 #include "matcen.h"
 #include "dedicated_server.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "levelgoal.h"
 #include "aiambient.h"
 #include "args.h"

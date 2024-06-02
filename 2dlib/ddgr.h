@@ -78,8 +78,6 @@
 #ifndef _DDGR_H
 #define _DDGR_H
 
-#include "pstypes.h"
-#include "Macros.h"
 #include "grdefs.h"
 
 //	----------------------------------------------------------------------------

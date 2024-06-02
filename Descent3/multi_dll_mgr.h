@@ -85,6 +85,9 @@
 #ifndef _multi_dll_header
 #define _multi_dll_header
 
+#include "ui.h"
+#include "newui.h"
+
 #define MT_EVT_LOGIN 1
 #define MT_EVT_FIRST_FRAME 2
 #define MT_EVT_FRAME 3

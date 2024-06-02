@@ -24,6 +24,7 @@
 #define LOKI_VERSION ""
 
 #define HGLOBAL void *
+#define SOCKET int
 
 void GlobalFree(void *);
 void *GlobalAlloc(int flags, int size);

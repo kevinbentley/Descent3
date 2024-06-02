@@ -68,14 +68,16 @@
  * $NoKeywords: $
  */
 
+#include <cstdint>
 #include <cstdlib>
 #include <cctype>
 #include <sys/time.h>
 #include <term.h>
 #include <termios.h>
 
-#include "application.h"
 #include "lnxapp.h"
+
+#include "linux_fix.h"
 
 #ifdef buttons // termios.h defines buttons, but SDL's headers use that symbol.
 #undef buttons

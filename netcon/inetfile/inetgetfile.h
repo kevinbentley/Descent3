@@ -97,8 +97,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "linux_fix.h"
-
 // Linux includes/defines
 #if !MACOSX
 #include <linux/types.h>

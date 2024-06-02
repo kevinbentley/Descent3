@@ -659,7 +659,7 @@
 #include "mem.h"
 #include "newui.h"
 #include "stringtable.h"
-#include "AppConsole.h"
+#include "appconsole.h"
 #include "pstring.h"
 #include "dedicated_server.h"
 #include "osiris_dll.h"

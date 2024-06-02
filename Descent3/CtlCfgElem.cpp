@@ -125,7 +125,6 @@
 #include "localization.h"
 
 #include <string.h>
-#include "joystick.h"
 
 // all controller binding texts
 static char Ctltext_KeyBindings[][16] = {"",

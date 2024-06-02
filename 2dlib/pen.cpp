@@ -93,6 +93,7 @@
 
 #include "lib2d.h"
 #include "pserror.h"
+#include "renderer.h"
 
 #define CLIP_LEFT (vp_InitLeft + vp_Left)
 #define CLIP_TOP (vp_InitTop + vp_Top)

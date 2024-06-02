@@ -95,14 +95,12 @@
 #include "game.h"
 #include "mem.h"
 #include "stringtable.h"
-#include "gametexture.h"
 #include "textaux.h"
 #include "TelComEfxStructs.h"
 #include "TelComEffects.h"
 #include "levelgoal.h"
 #include "textaux.h"
 #include "Mission.h"
-#include "Macros.h"
 #include "hlsoundlib.h"
 
 #include <algorithm>

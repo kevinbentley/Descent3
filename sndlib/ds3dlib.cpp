@@ -213,14 +213,14 @@
 #include "mono.h"
 #include "soundload.h"
 #include "mem.h"
-#include "application.h"
+#include "winapp.h"
 #include "auddev.h"
 #include "Macros.h"
 #include "ddio.h"
 
 // Hacked window handle -- chrishack
-static oeWin32Application *SoundApp = NULL;
-static void *GameWindowHandle;
+static oeApplication* SoundApp = nullptr;
+static void* GameWindowHandle = nullptr;
 #define MIN_SOUND_MIX_VOLUME 0.0
 #define MAX_WRITE_AHEAD .04 // Seconds to write ahead of the play position (in seconds)
 
@@ -385,7 +385,7 @@ inline void opti_16s_mix(int16_t *cur_sample_16bit, const int num_write, int &sa
     *mb = l_sample;
     mb++;
     *mb = r_sample;
-    *mb++;
+    mb++;
   }
   samples_played += (i / 2);
 }
@@ -1395,10 +1395,12 @@ int win_llsSystem::InitSoundLib(char mixer_type, oeApplication *sos, uint8_t Max
 
   // reset error system.
   SetError(SSL_OK);
-  SoundApp = (oeWin32Application *)sos;
+  SoundApp = sos;
 
-  if (sos) {
-    oeWin32Application *obj = (oeWin32Application *)sos;
+  if (sos != nullptr) {
+    oeWin32Application *obj = dynamic_cast<oeWin32Application*>(sos);
+    ASSERT(obj != nullptr);
+
 
     // If the the library if already init'ed, then return o.k.
     if (m_f_sound_lib_init)
@@ -1406,7 +1408,7 @@ int win_llsSystem::InitSoundLib(char mixer_type, oeApplication *sos, uint8_t Max
 
     GameWindowHandle = (void *)obj->m_hWnd;
   } else {
-    ASSERT(GameWindowHandle);
+    ASSERT(GameWindowHandle != nullptr);
   }
 
   ll_sound_ptr = this;

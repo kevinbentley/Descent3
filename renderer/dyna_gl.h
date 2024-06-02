@@ -21,7 +21,8 @@
 #if defined(WIN32)
 #include <GL/gl.h>
 #else
-#include "SDL_opengl.h"
+#include <SDL.h>
+#include <SDL_opengl.h>
 #endif
 
 #include "module.h"

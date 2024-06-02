@@ -89,7 +89,7 @@
 
 #include "pstypes.h"
 #include "controls.h"
-#include "Controller.h"
+#include "controller.h"
 #include "cfile.h"
 #include "weapon.h"
 #include "config.h"

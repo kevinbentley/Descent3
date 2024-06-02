@@ -197,7 +197,7 @@
 #include "stringtable.h"
 #include "gamefont.h"
 #include "textaux.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "hlsoundlib.h"
 
 #include <string.h>

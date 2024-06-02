@@ -406,21 +406,16 @@
 
 #include "controls.h"
 
-#include "object.h"
 #include "pserror.h"
 #include "game.h"
 #include "ddio.h"
 #include "joystick.h"
-#include "descent.h"
 #include "mono.h"
 #include "weapon.h"
-#include "Controller.h"
-#include "Macros.h"
 #include "gamesequence.h"
 #include "pilot.h"
 #include "hud.h"
 #include "stringtable.h"
-#include "TelCom.h"
 #include "multi.h"
 #include "args.h"
 

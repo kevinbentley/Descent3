@@ -332,15 +332,16 @@
 * $NoKeywords: $
 */
 
+#include <algorithm>
+#include <cstdlib>
+#include <cstdio>
+#include <cstdarg>
+#include <cstring>
+
 #include "weapon.h"
-#include "pstypes.h"
 #include "pserror.h"
 #include "object.h"
 #include "3d.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
 #include "bitmap.h"
 #include "vclip.h"
 #include "game.h"
@@ -348,18 +349,14 @@
 #include "player.h"
 #include "hud.h"
 #include "hlsoundlib.h"
-#include "soundload.h"
 #include "objinfo.h"
 #include "gametexture.h"
 #include "ship.h"
-#include "gauges.h"
 #include "sounds.h"
 #include "stringtable.h"
-#include "Macros.h"
 #include "cfile.h"
 #include "AIMain.h"
 
-#include <algorithm>
 
 // #include "samirlog.h"
 #define LOGFILE(_s)

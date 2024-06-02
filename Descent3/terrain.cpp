@@ -16,25 +16,21 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cstdlib>
+
 #ifdef NEWEDITOR
 #include "neweditor\globals.h"
-#else
-#include <stdlib.h>
 #endif
 #include "vecmat.h"
-#include "object.h"
 #include "mono.h"
 #include "terrain.h"
 #include "pserror.h"
-#include "texture.h"
-#include "bitmap.h"
 #include "gametexture.h"
 #include "lighting.h"
 #include "lightmap.h"
 #include "weather.h"
 #include <string.h>
 #include "mem.h"
-#include "Macros.h"
 #include "dedicated_server.h"
 #include "psrand.h"
 #ifdef EDITOR

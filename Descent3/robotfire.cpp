@@ -32,7 +32,7 @@
 #include "player.h"
 #include "demofile.h"
 #include "SmallViews.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "AIMain.h"
 
 #include <stdlib.h>

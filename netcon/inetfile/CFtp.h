@@ -58,6 +58,11 @@
 #define _CFTP_HEADER_
 
 #include <cstdint>
+#include <cstdio>
+
+#ifdef __LINUX__
+#include "linux_fix.h"
+#endif
 
 #define FTP_STATE_INTERNAL_ERROR 0
 #define FTP_STATE_SOCKET_ERROR 1

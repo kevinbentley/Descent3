@@ -462,7 +462,7 @@
 #include "genericpage.h"
 #include "mem.h"
 #include "dedicated_server.h"
-#include "AppConsole.h"
+#include "appconsole.h"
 #include "init.h"
 #include "stringtable.h"
 #include "args.h"

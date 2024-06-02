@@ -118,9 +118,6 @@
 
 #include <cstdint>
 
-#include "pstypes.h"
-#include "Macros.h"
-
 enum ct_format {
   ctNoFormat,
   ctAnalog,    // analog information (-1.0 to 1.0)
@@ -263,11 +260,5 @@ public:
 
 gameController *CreateController(int num_funcs, ct_function *funcs, char *remote_ip);
 void DestroyController(gameController *ctl);
-
-#if defined(WIN32)
-#include "win\WinController.h"
-#elif defined(__LINUX__)
-#include "lnxcontroller.h"
-#endif
 
 #endif

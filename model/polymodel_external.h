@@ -56,8 +56,8 @@
 #ifndef __POLYMODEL_EXTERNAL_H_
 #define __POLYMODEL_EXTERNAL_H_
 
+#include "robotfirestruct.h"
 #include "vecmat_external.h"
-#include "pstypes.h"
 #include "grdefs.h"
 #include "manage_external.h"
 

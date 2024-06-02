@@ -19,7 +19,7 @@
 #ifndef __LNXCONTROLLER_H_
 #define __LNXCONTROLLER_H_
 
-#include "Controller.h"
+#include "controller.h"
 #include "joystick.h"
 
 #define NULL_LNXCONTROLLER ((int8_t)NULL_CONTROLLER)

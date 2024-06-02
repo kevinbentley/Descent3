@@ -64,6 +64,11 @@
 #include "descent.h"
 
 #include "appdatabase.h"
+#if defined(WIN32)
+#include "windatabase.h"
+#elif defined(__LINUX__)
+#include "lnxdatabase.h"
+#endif
 
 program_version Program_version;
 

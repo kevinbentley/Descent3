@@ -116,7 +116,7 @@
 #include "cinematics.h"
 #include "hlsoundlib.h"
 #include "soundload.h"
-#include "d3music.h"
+#include "musicapi.h"
 
 #include "ddio.h"
 // #include <malloc.h>

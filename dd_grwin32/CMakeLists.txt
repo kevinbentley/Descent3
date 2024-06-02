@@ -9,3 +9,17 @@ set(CPPS
   ddgrWin32Init.cpp)
 
 add_library(dd_grwin32 STATIC ${HEADERS} ${CPPS})
+
+target_link_libraries(dd_grwin32
+  ddio
+  2dlib
+  $<$<PLATFORM_ID:Linux,Darwin>:
+    linux
+  >
+  $<$<PLATFORM_ID:Windows>:
+    win32
+  >
+)
+
+
+target_include_directories(dd_grwin32 PUBLIC .)

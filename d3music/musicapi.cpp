@@ -16,18 +16,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "d3music.h"
-#include "music.h"
-#include "Macros.h"
 #include <limits>
 
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
+#include "musicapi.h"
+#include "music.h"
+#include "mono.h"
+#include "pserror.h"
 
 // generic constants
 #define MUSIC_IDLE_TIME 240.0f // how many seconds before background music silences.

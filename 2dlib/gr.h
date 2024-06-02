@@ -104,7 +104,7 @@
 #ifndef _GR_H
 #define _GR_H
 
-#include "Ddgr.h"
+#include "ddgr.h"
 #include "fix.h"
 #include "pserror.h"
 #include "pstypes.h"
