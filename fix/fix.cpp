@@ -69,9 +69,9 @@
 #include "fix.h"
 
 // Tables for trig functions
-float sincos_table[321]; // 256 entries + 64 sin-only + 1 for interpolation
-angle asin_table[257];   // 1 quadrants worth, +1 for interpolation
-angle acos_table[257];
+static float sincos_table[321]; // 256 entries + 64 sin-only + 1 for interpolation
+static angle asin_table[257];   // 1 quadrants worth, +1 for interpolation
+static angle acos_table[257];
 
 // Generate the data for the trig tables
 void InitMathTables() {
