@@ -57,34 +57,45 @@ typedef void (*Debug_ConsolePrintf_fp)(int n, const char *format, ...);
 extern Debug_ConsolePrintf_fp DLLDebug_ConsolePrintf;
 #define MAXCHATBUFFER 500
 
-SOCKET Chatsock;
-SOCKADDR_IN Chataddr;
-int Socket_connecting = 0;
-char Nick_name[33];
-char Orignial_nick_name[33];
-int Nick_variety = 0;
-char szChat_channel[33] = "";
-char Input_chat_buffer[MAXCHATBUFFER] = "";
-char Chat_tracker_id[33];
-char Getting_user_channel_info_for[33] = "";
-char Getting_user_tracker_info_for[33] = "";
-int Getting_user_channel_error = 0;
-int Getting_user_tracker_error = 0;
-char User_req_tracker_id[100] = ""; // These are oversized for saftey
-char User_req_channel[100] = "";
-char *User_list = nullptr;
-char *Chan_list = nullptr;
-int Socket_connected = 0;
-int Chat_server_connected = 0;
-int Joining_channel = 0;
-int Joined_channel = 0;
-int GettingChannelList = 0;
-int GettingUserTID = 0;
-int GettingUserChannel = 0;
+static const char *ChatGetString();
+static const char *GetWordNum(int num, const char *l_String);
+static char *ParseIRCMessage(const char *Line, int iMode);
+static int AddChatUser(const char *nickname);
+static int RemoveChatUser(char *nickname);
+static void RemoveAllChatUsers();
+static void AddChatCommandToQueue(int command, const void *data, int len);
+static void FlushChatCommandQueue();
+static void AddChannel(char *channel, uint16_t numusers, char *topic);
+static void FlushChannelList();
 
-Chat_user *Firstuser, *Curruser;
-Chat_command *Firstcommand, *Currcommand;
-Chat_channel *Firstchannel, *Currchannel;
+static SOCKET Chatsock;
+static SOCKADDR_IN Chataddr;
+static int Socket_connecting = 0;
+static char Nick_name[33];
+static char Orignial_nick_name[33];
+static int Nick_variety = 0;
+static char szChat_channel[33] = "";
+static char Input_chat_buffer[MAXCHATBUFFER] = "";
+static char Chat_tracker_id[33];
+static char Getting_user_channel_info_for[33] = "";
+static char Getting_user_tracker_info_for[33] = "";
+static int Getting_user_channel_error = 0;
+static int Getting_user_tracker_error = 0;
+static char User_req_tracker_id[100] = ""; // These are oversized for saftey
+static char User_req_channel[100] = "";
+static char *User_list = nullptr;
+static char *Chan_list = nullptr;
+static int Socket_connected = 0;
+static int Chat_server_connected = 0;
+static int Joining_channel = 0;
+static int Joined_channel = 0;
+static int GettingChannelList = 0;
+static int GettingUserTID = 0;
+static int GettingUserChannel = 0;
+
+static Chat_user *Firstuser, *Curruser;
+static Chat_command *Firstcommand, *Currcommand;
+static Chat_channel *Firstchannel, *Currchannel;
 
 void ChatInit() {
   Socket_connecting = 0;
@@ -586,7 +597,7 @@ void RemoveAllChatUsers() {
   Firstuser = nullptr;
 }
 
-char *ParseIRCMessage(char *Line, int iMode) {
+char *ParseIRCMessage(const char *Line, int iMode) {
   char szRemLine[MAXLOCALSTRING];
   const char *pszTempStr;
   char szPrefix[MAXLOCALSTRING];

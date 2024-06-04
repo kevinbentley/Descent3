@@ -120,15 +120,15 @@ struct vmt_descent3_struct {
 
 extern int MT_Initialized;
 // Mastertracker sockets
-SOCKET TCP_game_tracker_socket;
-SOCKET TCP_pilot_tracker_socket;
-SOCKET TCP_chat_server_socket;
+static SOCKET TCP_game_tracker_socket;
+static SOCKET TCP_pilot_tracker_socket;
+static SOCKET TCP_chat_server_socket;
 
 // Mastertracker addresses (we resolve them on init, and don't want to have to do it again)
-SOCKADDR_IN gtrackaddr;
-SOCKADDR_IN ptrackaddr;
-SOCKADDR_IN ctrackaddr;
-SOCKADDR_IN sockaddr;
+static SOCKADDR_IN gtrackaddr;
+static SOCKADDR_IN ptrackaddr;
+static SOCKADDR_IN ctrackaddr;
+static SOCKADDR_IN sockaddr;
 
 #define DLLmprintf(...) DLLDebug_ConsolePrintf(__VA_ARGS__)
 

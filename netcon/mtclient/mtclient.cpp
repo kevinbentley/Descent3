@@ -452,11 +452,11 @@
 
 #include "DLLUiItems.h"
 
-char Ourlobby[50] = "";
-bool Login_aborted = false;
-bool Auto_start = false;
-int Bypass_chat = 0;
-int ChatStarted = 0;
+static char Ourlobby[50] = "";
+static bool Login_aborted = false;
+static bool Auto_start = false;
+static int Bypass_chat = 0;
+static int ChatStarted = 0;
 extern int Motd_version;
 
 d3_net_game_data_tiny DLLD3_tracker_info;
@@ -465,11 +465,27 @@ d3_net_game_data_tiny DLLD3_tracker_info;
 
 #define MAX_GAMELIST_ITEMS 300
 
-pxo_game_list PXOGamelist[MAX_GAMELIST_ITEMS];
-int NextGameItemNo = 0;
+static pxo_game_list PXOGamelist[MAX_GAMELIST_ITEMS];
+static int NextGameItemNo = 0;
 uint16_t DLLPXOPort = 0;
 
-void AutoLoginAndStartGame();
+static void AutoLoginAndStartGame();
+static int GetGameByHandle(uint32_t handle);
+static int GetPXOItemByHandle(uint32_t handle);
+static int GetGameByLBNo(int selno);
+static void FormatServerLine(char *fmt, int servernum, int pxonum);
+static void UpdateGamelist(void *lb);
+static void ResortGameList(void *lb, int type, bool invert);
+static int SearchMasterTrackerGameMenu();
+static void CheckPXOForAnomalies();
+static void DoMTFrame();
+static void DoMTGameOver();
+static int JoinNewLobby(char *lobby);
+static int ShowMessageOfTheDay();
+static const char *SendWhisper(const char *name);
+static int JoinPrivateLobby();
+static int FindPilot();
+static int GetPilotStats(char *pilot);
 
 int GetGameByHandle(uint32_t handle) {
   int j;
@@ -651,8 +667,8 @@ DLLEXPORT void DLLFUNCCALL DLLMultiCall(int eventnum);
 DLLEXPORT void DLLFUNCCALL DLLMultiClose();
 }
 
-bool All_ok = true;
-bool MT_Sock_inited = false;
+static bool All_ok = true;
+static bool MT_Sock_inited = false;
 
 // Initializes the game function pointers
 void DLLFUNCCALL DLLMultiInit(int *api_func) {
@@ -1644,16 +1660,16 @@ shutdownpxo:
 #define SORT_PLAYERS 34
 #define SORT_PING 35
 
-int sort_type;
+static int sort_type;
 
-bool invert_sort_gamename = true;
-bool invert_sort_gametype = true;
-bool invert_sort_mission = true;
-bool invert_sort_levels = true;
-bool invert_sort_players = true;
-bool invert_sort_ping = true;
+static bool invert_sort_gamename = true;
+static bool invert_sort_gametype = true;
+static bool invert_sort_mission = true;
+static bool invert_sort_levels = true;
+static bool invert_sort_players = true;
+static bool invert_sort_ping = true;
 
-int net_game_compare(const void *arg1, const void *arg2) {
+static int net_game_compare(const void *arg1, const void *arg2) {
 
   network_game *net1 = (network_game *)arg1;
   network_game *net2 = (network_game *)arg2;

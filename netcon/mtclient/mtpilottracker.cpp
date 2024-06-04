@@ -157,7 +157,6 @@ struct vmt_descent3_struct {
 #define DLLmprintf(...) DLLDebug_ConsolePrintf(__VA_ARGS__)
 
 typedef void (*Debug_ConsolePrintf_fp)(int n, const char *format, ...);
-
 extern Debug_ConsolePrintf_fp DLLDebug_ConsolePrintf;
 
 typedef float (*timer_GetTime_fp)();
@@ -188,46 +187,53 @@ extern nw_DoReceiveCallbacks_fp DLLnw_DoReceiveCallbacks;
 #define MAX_MOTDLEN 1000
 // Variables
 
-int D3WriteState;
-int D3ReadState;
-float D3LastSent;
-float D3FirstSent;
+static int D3WriteState;
+static int D3ReadState;
+static float D3LastSent;
+static float D3FirstSent;
 
-float D3LastSentWrite;
-float D3FirstSentWrite;
+static float D3LastSentWrite;
+static float D3FirstSentWrite;
 
-udp_packet_header d3_pilot_req, d3_pilot_write, motd_req;
-pilot_request *d3_pr;
-vmt_descent3_struct *ReadD3Pilot;
-vmt_descent3_struct WriteD3Pilot;
+static udp_packet_header d3_pilot_req, d3_pilot_write, motd_req;
+static pilot_request *d3_pr;
+static vmt_descent3_struct *ReadD3Pilot;
+static vmt_descent3_struct WriteD3Pilot;
 
-udp_packet_header PacketHeader, VersionPacketHeader;
-validate_id_request *ValidIDReq;
+static udp_packet_header PacketHeader, VersionPacketHeader;
+static validate_id_request *ValidIDReq;
 
-int MOTDState;
+static int MOTDState;
 
-float MOTDFirstSent;
-float MOTDLastSent;
+static float MOTDFirstSent;
+static float MOTDLastSent;
 
-char *Motdptr;
-uint32_t Motd_maxlen;
+static char *Motdptr;
+static uint32_t Motd_maxlen;
 
-int ValidState;
+static int ValidState;
 
-float ValidFirstSent;
-float ValidLastSent;
+static float ValidFirstSent;
+static float ValidLastSent;
 
-int VersionState;
+static int VersionState;
 
-float VersionFirstSent;
-float VersionLastSent;
-char *VersionURL;
+static float VersionFirstSent;
+static float VersionLastSent;
+static char *VersionURL;
 
-uint32_t ValidSecurity;
+static uint32_t ValidSecurity;
 
-char *Psztracker_id;
+static char *Psztracker_id;
 
-char ProccesingPilot[PILOT_NAME_LEN];
+static char ProccesingPilot[PILOT_NAME_LEN];
+
+static void AckServer(uint32_t sig);
+static void IdlePTrack();
+static void HandlePilotData(uint8_t *data, int len, network_address *from);
+static void xorcode(void *data, uint32_t len, uint32_t hash);
+static void ValidIdle();
+static void VersionIdle();
 
 typedef int (*PollUI_fp)();
 extern PollUI_fp DLLPollUI;

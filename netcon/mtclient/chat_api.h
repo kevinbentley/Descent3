@@ -60,14 +60,4 @@ char *GetChannelList();
 char *GetTrackerIdByUser(const char *nickname);
 char *GetChannelByUser(const char *nickname);
 
-const char *ChatGetString();
-const char *GetWordNum(int num, const char *l_String);
-char *ParseIRCMessage(char *Line, int iMode);
-int AddChatUser(const char *nickname);
-int RemoveChatUser(char *nickname);
-void RemoveAllChatUsers();
-void AddChatCommandToQueue(int command, const void *data, int len);
 Chat_command *GetChatCommandFromQueue();
-void FlushChatCommandQueue();
-void AddChannel(char *channel, uint16_t numusers, char *topic);
-void FlushChannelList();

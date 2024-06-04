@@ -128,7 +128,6 @@
 
 // extern float DLLtimer_GetTime(void);
 typedef float (*timer_GetTime_fp)();
-
 extern timer_GetTime_fp DLLtimer_GetTime;
 
 typedef void (*HandleGamePacket_fp)(uint8_t *data, int len, network_address *from);
@@ -146,33 +145,32 @@ extern nw_DoReceiveCallbacks_fp DLLnw_DoReceiveCallbacks;
 #endif
 
 typedef void (*Debug_ConsolePrintf_fp)(int n, const char *format, ...);
-
 extern Debug_ConsolePrintf_fp DLLDebug_ConsolePrintf;
 
 // Variables
 
-game_list GameBuffer[MAX_GAME_BUFFERS];
-int GameType; // d3 or fs
+static game_list GameBuffer[MAX_GAME_BUFFERS];
+static int GameType; // d3 or fs
 
-float LastTrackerUpdate;
-float LastSentToTracker;
+static float LastTrackerUpdate;
+static float LastSentToTracker;
 
-float LastGameOverPacket;
-float FirstGameOverPacket;
+static float LastGameOverPacket;
+static float FirstGameOverPacket;
 
-int SendingGameOver;
+static int SendingGameOver;
 
-uint32_t TrackerAckdUs;
-uint32_t TrackerGameIsRunning;
+static uint32_t TrackerAckdUs;
+static uint32_t TrackerGameIsRunning;
 
-game_packet_header TrackerGameData;
-game_packet_header GameListReq;
-game_packet_header TrackAckPacket;
-game_packet_header GameOverPacket;
+static game_packet_header TrackerGameData;
+static game_packet_header GameListReq;
+static game_packet_header TrackAckPacket;
+static game_packet_header GameOverPacket;
 
-game_packet_header inpacket;
+static game_packet_header inpacket;
 
-d3_net_game_data_tiny *D3TrackerGameData;
+static d3_net_game_data_tiny *D3TrackerGameData;
 
 extern int DLLnw_ListenPort;
 extern uint16_t DLLPXOPort;

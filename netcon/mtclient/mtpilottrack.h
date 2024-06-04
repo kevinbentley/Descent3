@@ -275,6 +275,8 @@ the client side for now
 //
 // -------------------------------------------------------------------------------------------------------------
 
+extern int Motd_version;
+
 /**
  * Get MOTD from remote. Call with NULL to poll. Call with valid pointer and maxlen to get the message of the day.
  * @param szmotd
@@ -298,7 +300,6 @@ int GetD3MOTDCancel();
 
 // Function prototypes
 int InitPilotTrackerClient();
-void AckServer(uint32_t sig);
 
 int SendD3PilotData(vmt_descent3_struct *d3_pilot);
 int GetD3PilotData(vmt_descent3_struct *d3_pilot, char *pilot_name, char *tracker_id);
@@ -311,13 +312,9 @@ int GetD3PilotData(vmt_descent3_struct *d3_pilot, char *pilot_name, char *tracke
  */
 int GetD3PilotDataCancel();
 void PollPTrackNet();
-void ValidIdle();
 // int ValidateUser(validate_id_request *valid_id);
 int ValidateUser(validate_id_request *valid_id, char *trackerid);
-void xorcode(void *data, uint32_t len, uint32_t hash);
 extern int MTAVersionCheck(uint32_t oldver, char *URL);
-void VersionIdle();
-void HandlePilotData(uint8_t *data, int len, network_address *from);
 
 #ifdef WIN32
 #pragma pack(pop, r_udp)
