@@ -330,7 +330,7 @@ void RequestGameList() {
 
   int len = strlen(DLLPXO_hosted_lobby_name) + 1;
   memcpy(GameListReq.data, DLLPXO_hosted_lobby_name, len);
-  GameListReq.len = INTEL_INT((uint32_t)(GAME_HEADER_ONLY_SIZE + len));
+  GameListReq.len = D3::convert_le<uint32_t>(GAME_HEADER_ONLY_SIZE + len);
   SendGameTrackerPacker(&GameListReq);
 }
 
