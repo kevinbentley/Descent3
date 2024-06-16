@@ -13,6 +13,7 @@ project(Descent3
 option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored compiler warnings/errors (GCC/Clang only; esp. useful with ninja)." OFF)
 option(FORCE_PORTABLE_INSTALL "Install all files into local directory defined by CMAKE_INSTALL_PREFIX" ON)
 option(ENABLE_LOGGER "Enable logging to the terminal" OFF)
+option(ENABLE_MEM_RTL "Enable Real-time library memory management functions (disable to verbose memory allocations)" ON)
 option(BUILD_TESTING "Enable testing. Requires GTest." OFF)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -69,7 +70,7 @@ if(BUILD_TESTING)
 endif()
 
 add_custom_command(
-  OUTPUT ${PROJECT_BINARY_DIR}/Descent3/d3_version.h ALL
+  OUTPUT ${PROJECT_BINARY_DIR}/lib/d3_version.h
   COMMAND ${CMAKE_COMMAND}
     -D SOURCE_DIR=${PROJECT_SOURCE_DIR}
     -D TARGET_DIR=${PROJECT_BINARY_DIR}
@@ -85,9 +86,9 @@ install(
   DESTINATION ${CMAKE_INSTALL_DOCDIR}
 )
 
-# rebuild version.hpp every time
+# rebuild d3_version.h every time
 add_custom_target(get_git_hash ALL
-  DEPENDS ${PROJECT_BINARY_DIR}/Descent3/d3_version.h
+  DEPENDS ${PROJECT_BINARY_DIR}/lib/d3_version.h
 )
 
 if(UNIX)

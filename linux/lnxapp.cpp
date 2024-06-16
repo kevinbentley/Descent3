@@ -90,19 +90,6 @@ bool con_Create(int flags);
 void con_Destroy();
 void con_Defer();
 
-void GlobalFree(void *mptr) {
-  if (mptr)
-    free(mptr);
-}
-
-void *GlobalAlloc(int flags, int size) {
-  if (size <= 0)
-    return nullptr;
-  return malloc(size);
-}
-
-void *GlobalLock(HGLOBAL hMem) { return hMem; }
-
 void Sleep(int millis) {
   struct timeval tv{};
   tv.tv_sec = 0;

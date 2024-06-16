@@ -74,14 +74,12 @@
 #ifndef MEM_H
 #define MEM_H
 
-// #define MEM_USE_RTL	1
-
-
+// Memory management debugging
 #ifdef MEM_USE_RTL
 #define mem_malloc(d) malloc(d) // Use this if your going to run BoundsChecker
 #define mem_free(d) free(d)
 #define mem_strdup(d) strdup(d)
-#define mem_size(d) _msize(d)
+#define mem_size(d) mem_size_sub(d)
 #define mem_realloc(d, e) realloc(d, e)
 #else
 // Use this if your going to NOT run BoundsChecker
@@ -102,7 +100,7 @@ extern bool Mem_superlow_memory_mode; // DAJ
 void mem_Init();
 
 // shutsdown memory
-void mem_shutdown(void);
+void mem_shutdown();
 
 // Returns the number of dynamically allocated bytes
 int mem_GetTotalMemoryUsed();
@@ -124,6 +122,6 @@ int mem_size_sub(void *memblock);
 
 bool mem_dumpmallocstofile(char *filename);
 
-void mem_heapcheck(void);
+void mem_heapcheck();
 
 #endif

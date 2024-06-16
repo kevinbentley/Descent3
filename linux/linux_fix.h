@@ -25,9 +25,6 @@
 
 #define HGLOBAL void *
 
-void GlobalFree(void *);
-void *GlobalAlloc(int flags, int size);
-void *GlobalLock(HGLOBAL hMem);
 void Sleep(int millis);
 char *strupr(char *string);
 

@@ -296,6 +296,9 @@ add_executable(Descent3
   WIN32
   ${HEADERS} ${CPPS} ${PLATFORM_CPPS} ${INCS}
 )
+target_compile_definitions(Descent3 PUBLIC
+  $<$<BOOL:${ENABLE_MEM_RTL}>:MEM_USE_RTL>
+)
 target_link_libraries(Descent3
   2dlib AudioEncode bitmap cfile czip d3music dd_video ddebug ddio libmve libacm
   fix grtext manage mem misc model module movie stream_audio

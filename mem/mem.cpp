@@ -208,13 +208,9 @@
 #endif
 #include <cstdint>
 
-#include "init.h"
 #include "mem.h"
 #include "pserror.h"
-#include "pstypes.h"
-// #include "args.h"
-// #include "ddio.h"
-//
+
 // #define MEM_DEBUG
 
 #ifdef MEM_USE_RTL
@@ -244,28 +240,34 @@ struct mem_alloc_info {
   char file[17];
 };
 
-static void *Mem_failsafe_block = NULL;
-;
+static void *Mem_failsafe_block = nullptr;
+
 bool Mem_low_memory_mode = false;
 bool Mem_superlow_memory_mode = false;
-// If this is set, the mem library ignores mem_free() calls.  All the memory is then freed at once oon exit.
-bool Mem_quick_exit = 0;
+// If this is set, the mem library ignores mem_free() calls.  All the memory is then freed at once on exit.
+bool Mem_quick_exit = false;
+
 #if defined(__LINUX__)
 // Linux memory management
 int LnxTotalMemUsed;
-void mem_shutdown(void) {}
-void mem_Init(void) { LnxTotalMemUsed = 0; }
-int mem_GetTotalMemoryUsed(void) { return LnxTotalMemUsed; }
+
+void mem_shutdown() {}
+
+void mem_Init() { LnxTotalMemUsed = 0; }
+
+int mem_GetTotalMemoryUsed() { return LnxTotalMemUsed; }
+
 void *mem_malloc_sub(int size, const char *file, int line) {
   void *new_mem = malloc(size);
   if (!new_mem) {
     mprintf(0, "Out of memory allocating %d bytes: line %d in %s\n", size, line, file);
     Int3();
-    return NULL;
+    return nullptr;
   }
   LnxTotalMemUsed += size;
   return new_mem;
 }
+
 void mem_free_sub(void *memblock) {
   if (memblock) {
 #if defined(MACOSX)
@@ -276,30 +278,37 @@ void mem_free_sub(void *memblock) {
     free(memblock);
   }
 }
+
 void mem_error_msg(const char *file, int line, int size) {
   mprintf(0, "Memory error (size=%d) line %d in %s\n", size, line, file);
   Int3();
 }
+
 char *mem_strdup_sub(const char *string, const char *file, int line) {
   char *ret = strdup(string);
   if (!ret) {
     mprintf(0, "Out of memory allocating %d bytes: line %d in %s\n", strlen(string) + 1, line, file);
     Int3();
-    return NULL;
+    return nullptr;
   }
   return ret;
 }
+
 void *mem_realloc_sub(void *mem, int size) { return realloc(mem, size); }
+
 int mem_size_sub(void *memblock) {
-#if defined(MACOSX)
+#ifdef MACOSX
   return malloc_size(memblock);
 #else
   return malloc_usable_size(memblock);
 #endif
 }
+
 bool mem_dumpmallocstofile(char *filename) { return false; }
+
 #pragma mark -
-#else // defined (WIN32)
+
+#else // defined(__LINUX__)
 // Windows memory management
 
 // Uncomment this to detect memory leaks and memory overwrites. Slows down mallocs and frees a little.

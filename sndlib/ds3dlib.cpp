@@ -2648,7 +2648,7 @@ bool win_llsSystem::SetSoundQuality(char quality) {
       int j = Sounds[i].sample_index;
 
       if (SoundFiles[j].sample_8bit && m_sound_quality == SQT_HIGH) {
-        GlobalFree(SoundFiles[j].sample_8bit);
+        mem_free(SoundFiles[j].sample_8bit);
         SoundFiles[j].sample_8bit = NULL;
 
         CheckAndForceSoundDataAlloc(i);
@@ -2657,7 +2657,7 @@ bool win_llsSystem::SetSoundQuality(char quality) {
         int count;
 
         ASSERT(SoundFiles[j].sample_8bit == NULL);
-        SoundFiles[j].sample_8bit = (uint8_t *)GlobalAlloc(0, SoundFiles[j].sample_length);
+        SoundFiles[j].sample_8bit = (uint8_t *)mem_malloc(SoundFiles[j].sample_length);
 
         // NOTE:  Interesting note on sound conversion:  16 bit sounds are signed (0 biase).  8 bit sounds are unsigned
         // (+128 biase).
@@ -2665,7 +2665,7 @@ bool win_llsSystem::SetSoundQuality(char quality) {
           SoundFiles[j].sample_8bit[count] = (uint8_t)((((int)SoundFiles[j].sample_16bit[count]) + 32767) >> 8);
         }
 
-        GlobalFree(SoundFiles[j].sample_16bit);
+        mem_free(SoundFiles[j].sample_16bit);
         SoundFiles[j].sample_16bit = NULL;
       }
     }

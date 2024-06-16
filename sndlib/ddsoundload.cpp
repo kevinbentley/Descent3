@@ -86,21 +86,13 @@
  * $NoKeywords: $
  */
 
-// yes this is a low-level library for Windows, but no use duplicating code
-// when we can fake the OS-specific functions (GlobalAlloc, etc)
-#if defined(WIN32)
-#include "windows.h"
-#include "winbase.h"
-#elif defined(__LINUX__)
-#include "linux_fix.h"
-#endif
+#include <cstdlib>
+#include <cstring>
 
 #include "ssl_lib.h"
-#include <cstdlib>
 #include "cfile.h"
 #include "mem.h"
 #include "pserror.h"
-#include <string.h>
 #include "byteswap.h"
 #include "gamesequence.h"
 
@@ -378,8 +370,7 @@ char SoundLoadWaveFile(const char *filename, float percent_volume, int sound_fil
         SoundFiles[sound_file_index].sample_length = aligned_size;
         SoundFiles[sound_file_index].np_sample_length = cksize;
 
-        SoundFiles[sound_file_index].sample_8bit = (uint8_t *)GlobalAlloc(0, aligned_size);
-        GlobalLock(SoundFiles[sound_file_index].sample_8bit);
+        SoundFiles[sound_file_index].sample_8bit = (uint8_t *)mem_malloc(aligned_size);
 
         cf_ReadBytes((uint8_t *)SoundFiles[sound_file_index].sample_8bit, cksize, cfptr);
 
@@ -398,8 +389,7 @@ char SoundLoadWaveFile(const char *filename, float percent_volume, int sound_fil
           SoundFiles[sound_file_index].sample_length = cksize / 2 + num_needed / 2;
         }
 
-        SoundFiles[sound_file_index].sample_16bit = (int16_t *)GlobalAlloc(0, cksize + num_needed);
-        GlobalLock(SoundFiles[sound_file_index].sample_16bit);
+        SoundFiles[sound_file_index].sample_16bit = (int16_t *)mem_malloc(cksize + num_needed);
         cf_ReadBytes((uint8_t *)SoundFiles[sound_file_index].sample_16bit, cksize, cfptr);
         for (count = 0; count < (int)cksize / 2; count++) {
           SoundFiles[sound_file_index].sample_16bit[count] =
@@ -447,8 +437,7 @@ char SoundLoadWaveFile(const char *filename, float percent_volume, int sound_fil
   } else if (SoundFiles[sound_file_index].sample_8bit == NULL && !f_high_quality) {
 
     SoundFiles[sound_file_index].sample_8bit =
-        (uint8_t *)GlobalAlloc(0, SoundFiles[sound_file_index].sample_length);
-    GlobalLock(SoundFiles[sound_file_index].sample_8bit);
+        (uint8_t *)mem_malloc(SoundFiles[sound_file_index].sample_length);
 
     // Do the volume clipping with the high quality sound
     for (count = 0; count < (int)SoundFiles[sound_file_index].sample_length; count++) {
@@ -462,13 +451,12 @@ char SoundLoadWaveFile(const char *filename, float percent_volume, int sound_fil
           (uint8_t)((((int)SoundFiles[sound_file_index].sample_16bit[count]) + 32767) >> 8);
     }
 
-    GlobalFree(SoundFiles[sound_file_index].sample_16bit);
+    mem_free(SoundFiles[sound_file_index].sample_16bit);
     SoundFiles[sound_file_index].sample_16bit = NULL;
 
   } else if (SoundFiles[sound_file_index].sample_16bit == NULL && f_high_quality) {
     SoundFiles[sound_file_index].sample_16bit =
-        (int16_t *)GlobalAlloc(0, SoundFiles[sound_file_index].sample_length * sizeof(int16_t));
-    GlobalLock(SoundFiles[sound_file_index].sample_16bit);
+        (int16_t *)mem_malloc(SoundFiles[sound_file_index].sample_length * sizeof(int16_t));
 
     // NOTE:  Interesting note on sound conversion:  16 bit sounds are signed (0 biase).  8 bit sounds are unsigned
     // (+128 biase).
@@ -481,7 +469,7 @@ char SoundLoadWaveFile(const char *filename, float percent_volume, int sound_fil
       SoundFiles[sound_file_index].sample_16bit[count] *= CLIP_ATTENUATION * percent_volume;
     }
 
-    GlobalFree(SoundFiles[sound_file_index].sample_8bit);
+    mem_free(SoundFiles[sound_file_index].sample_8bit);
     SoundFiles[sound_file_index].sample_8bit = NULL;
   }
 
@@ -498,12 +486,12 @@ error_state:
     cfclose(cfptr);
 
   if (SoundFiles[sound_file_index].sample_8bit) {
-    GlobalFree(SoundFiles[sound_file_index].sample_8bit);
+    mem_free(SoundFiles[sound_file_index].sample_8bit);
     SoundFiles[sound_file_index].sample_8bit = NULL;
   }
 
   if (SoundFiles[sound_file_index].sample_16bit) {
-    GlobalFree(SoundFiles[sound_file_index].sample_16bit);
+    mem_free(SoundFiles[sound_file_index].sample_16bit);
     SoundFiles[sound_file_index].sample_16bit = NULL;
   }
 
@@ -515,10 +503,10 @@ void SoundLoadFree(int sound_file_index) {
 
   if (SoundFiles[i].used != 0) {
     if (SoundFiles[i].sample_8bit)
-      GlobalFree(SoundFiles[i].sample_8bit);
+      mem_free(SoundFiles[i].sample_8bit);
 
     if (SoundFiles[i].sample_16bit)
-      GlobalFree(SoundFiles[i].sample_16bit);
+      mem_free(SoundFiles[i].sample_16bit);
   }
 
   SoundFiles[i].sample_8bit = NULL;

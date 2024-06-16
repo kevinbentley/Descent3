@@ -233,6 +233,7 @@
 #include "ssl_lib.h"
 #include "object.h"
 #include "ddio.h"
+#include "mem.h"
 #include "soundload.h"
 #include "weapon.h"
 #include "ship.h"
@@ -323,11 +324,11 @@ void FreeSoundFile(int n) {
   SoundFiles[n].used = 0;
   SoundFiles[n].name[0] = 0;
   if (SoundFiles[n].sample_8bit) {
-    GlobalFree(SoundFiles[n].sample_8bit);
+    mem_free(SoundFiles[n].sample_8bit);
     SoundFiles[n].sample_8bit = NULL;
   }
   if (SoundFiles[n].sample_16bit) {
-    GlobalFree(SoundFiles[n].sample_16bit);
+    mem_free(SoundFiles[n].sample_16bit);
     SoundFiles[n].sample_16bit = NULL;
   }
   Num_sound_files--;

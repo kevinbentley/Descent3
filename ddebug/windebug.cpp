@@ -188,14 +188,15 @@
  * $NoKeywords: $
  */
 
-#include "d3_version.h"
-#include "Debug.h"
-#include "mono.h"
-
 #include <windows.h>
 #include <cstdarg>
 #include <cstdlib>
 #include <cstdint>
+
+#include "d3_version.h"
+#include "debug.h"
+#include "mem.h"
+#include "mono.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -247,8 +248,8 @@ int Debug_ErrorBox(int type, const char *title, const char *topstring, const cha
   else
     debug_break();
 
-  char *tmpbuf = (char *)GlobalAlloc(
-      GMEM_FIXED, strlen(dumptext) + strlen(topstring) + strlen(bottomstring) +
+  char *tmpbuf = (char *)mem_malloc(
+      strlen(dumptext) + strlen(topstring) + strlen(bottomstring) +
                       10); // malloc(strlen(dumptext) + strlen(topstring) + strlen(bottomstring) + 10);
 
   strcpy(tmpbuf, topstring);
@@ -268,7 +269,7 @@ int Debug_ErrorBox(int type, const char *title, const char *topstring, const cha
   ShowCursor(FALSE);
 
   // free(tmpbuf);
-  GlobalFree(tmpbuf);
+  mem_free(tmpbuf);
 
   //	ShowWindow(wnd, SW_SHOWMAXIMIZED);
 
@@ -936,10 +937,9 @@ void DumpTextToClipboard(char *text) {
   // Length of string with CRs added
   int len = strlen(text) + extra + 1;
 
-  HGLOBAL h_text = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, len);
+  char *h_text = (char *)mem_malloc(len);
   if (!h_text)
     return;
-  ptr = (char *)GlobalLock(h_text);
   if (!ptr)
     return;
 
