@@ -324,7 +324,7 @@
 #define STAT_SCORE STAT_TIMER
 
 tVideoResolution Video_res_list[N_SUPPORTED_VIDRES] = {
-    {512, 384}, {640, 480}, {800, 600}, {960, 720}, {1024, 768}, {1280, 960}, {1600, 1200}, {640, 480} // custom
+    {512, 384}, {640, 480}, {800, 600}, {960, 720}, {1024, 768}, {1280, 960}, {1600, 1200}, {1920, 1080}, {640, 480} // custom
 };
 
 int Game_video_resolution = 1;
@@ -677,6 +677,7 @@ struct video_menu {
     sheet->AddLongRadioButton("1024x768");
     sheet->AddLongRadioButton("1280x960");
     sheet->AddLongRadioButton("1600x1200");
+    sheet->AddLongRadioButton("1920x1080");
     *resolution = iTemp;
 
 #if !defined(__LINUX__)

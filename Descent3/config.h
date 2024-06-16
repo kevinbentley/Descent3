@@ -135,7 +135,7 @@ struct tGameToggles {
 extern tGameToggles Game_toggles;
 
 // this list should match the list in config.cpp to work.
-#define N_SUPPORTED_VIDRES 8
+#define N_SUPPORTED_VIDRES 9
 
 #define RES_512X384 0
 #define RES_640X480 1
@@ -144,6 +144,8 @@ extern tGameToggles Game_toggles;
 #define RES_1024X768 4
 #define RES_1280X960 5
 #define RES_1600X1200 6
+#define RES_1920X1080 7
+
 // stored resolution list and desired game resolution
 struct tVideoResolution {
   uint16_t width;
