@@ -56,15 +56,7 @@
 // From ssl_lib.h
 #define MAX_GAME_VOLUME 1.0f
 
-#if defined(__LINUX__)
 #define DMFCDLLOUT(x) extern "C" x
-#else
-#if defined(DMFC_DLL)
-#define DMFCDLLOUT(x) DLLEXPORT x // for DMFC DLL library
-#else
-#define DMFCDLLOUT(x) CEXTERN(DLLFUNCIMPORT x) // for modules built for dmfc dll
-#endif
-#endif
 
 #define UIF_CENTER 0x01
 #define UIF_FIT 0x02

@@ -25,6 +25,6 @@ set(CPPS
   encryption.cpp
   dmfcinterface.cpp)
 
-add_definitions(-DOUTRAGE_VERSION -DDMFC_DLL)
+add_definitions(-DOUTRAGE_VERSION)
 
 add_library(dmfc STATIC ${HEADERS} ${CPPS})
