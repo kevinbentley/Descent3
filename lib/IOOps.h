@@ -18,18 +18,28 @@
 #pragma once
 
 #include <cstdint>
+#include <istream>
 #include <ostream>
 
 #include "byteswap.h"
 
 namespace D3 {
 
-template <class T>
-static inline std::ostream &bin_write(std::ostream &output, T value, bool is_little_endian = true, size_t n = sizeof(T)) {
+template <class T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
+static inline std::ostream &bin_write(std::ostream &output, T value, bool is_little_endian = true,
+                                      size_t n = sizeof(T)) {
   value = is_little_endian ? convert_le(value) : convert_be(value);
   output.write(reinterpret_cast<const char *>(&value), n);
 
   return output;
+}
+
+template <class T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
+static inline std::istream &bin_read(std::istream &input, T &value, bool is_little_endian = true, size_t n = sizeof(T)) {
+  input.read(reinterpret_cast<char *>(&value), n);
+  value = is_little_endian ? convert_le(value) : convert_be(value);
+
+  return input;
 }
 
 } // namespace D3

@@ -513,7 +513,9 @@ void Descent3() {
     MainLoop();
 
     // delete the lock file in the temp directory (as long as it belongs to us)
-    ddio_DeleteLockFile(Descent3_temp_directory);
+    if (!ddio_DeleteLockFile(std::filesystem::path(Descent3_temp_directory))) {
+      mprintf(0, "Cannot delete lock file in temp dir %s!\n", Descent3_temp_directory);
+    };
 
     // Save settings to registry
     SaveGameSettings();

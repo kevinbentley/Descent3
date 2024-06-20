@@ -92,47 +92,82 @@ The milestone needs testing on all platforms. Please report issues when found.
     - D3 Open Source compiles level scripts in their own hogfiles. Make sure you copy and overwrite `d3-{platform}.hog`.
 
 ## Building
-Build steps below assume you have already cloned the repository and entered it locally.
-
 #### Building - Windows
-Requires Visual Studio 2022 and C++ Tools (cmake and vcpkg)
+1. Make sure that you have Git and Visual Studio 2022 with the “Desktop development with C++” workload. If you don’t already have those installed or you aren’t sure, then open an elevated Command Prompt and run:
 
-Install and configure vcpkg:
-```sh
-git clone https://github.com/microsoft/vcpkg.git
-cd vcpkg && bootstrap-vcpkg.bat
-setx VCPKG_ROOT="C:\path\to\vcpkg"
-setx PATH=%VCPKG_ROOT%;%PATH%
-```
+    <!--
+    The following code block specifies the full path to the Visual Studio Installer because the Visual Studio Installer doesn’t add itself to the user’s Path. The installer is guaranteed to be in a specific location on 64-bit systems [1]. The installer will be in a different location on 32-bit systems [2], but Visual Studio 2022 doesn’t support 32-bit systems [3] so we can ignore that detail.
 
-Build Descent 3 using the "x86 native tools command prompt"
-```sh
-cmake --preset win32 -D ENABLE_LOGGER=[ON|OFF]
-cmake --build --preset win32 --config [Debug|Release]
-```
+    [1]: <https://learn.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2022>
+    [2]: <https://github.com/microsoft/vswhere/wiki#installing>
+    [3]: <https://learn.microsoft.com/en-us/answers/questions/1689898/does-visual-studio-build-tools-2022-support-32-bit>
+    -->
 
-#### Building - MacOS
-```sh
-brew bundle install
-cmake --preset mac -D ENABLE_LOGGER=[ON|OFF]
-cmake --build --preset mac --config [Debug|Release]
-```
+    ```batch
+    winget install Git.Git Microsoft.VisualStudio.2022.Community
+
+    "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\setup.exe" modify^
+        --passive^
+        --channelId VisualStudio.17.Release^
+        --productId Microsoft.VisualStudio.Product.Community^
+        --add Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended
+    ```
+
+2. Open a “x86 Native Tools Command Prompt” and run:
+
+    ```batch
+    git clone https://github.com/DescentDevelopers/Descent3
+    cd Descent3
+    cmake --preset win32 -D ENABLE_LOGGER=[ON|OFF]
+    cmake --build --preset win32 --config [Debug|Release]
+    ```
+
+Once CMake finishes, the built files will be put in `builds\win32\Descent3\Debug` or `builds\win32\Descent3\Release`.
+
+#### Building - macOS
+1. Make sure that [Xcode](https://developer.apple.com/xcode) is installed.
+
+2. Make sure that [Homebrew](https://brew.sh) is installed.
+
+3. Run these commands:
+
+    ```sh
+    git clone https://github.com/DescentDevelopers/Descent3
+    cd Descent3
+    brew bundle install
+    cmake --preset mac -D ENABLE_LOGGER=[ON|OFF]
+    cmake --build --preset mac --config [Debug|Release]
+    ```
+
+Once CMake finishes, the built files will be put in `builds/mac/Descent3/Debug` or `builds/mac/Descent3/Release`.
 
 #### Building - Linux (Ubuntu)
+Run these commands:
+
 ```sh
 sudo apt update
-sudo apt install -y --no-install-recommends ninja-build cmake g++ libsdl2-dev zlib1g-dev
+sudo apt install -y --no-install-recommends git ninja-build cmake g++ libsdl2-dev zlib1g-dev
+git clone https://github.com/DescentDevelopers/Descent3
+cd Descent3
 cmake --preset linux -D ENABLE_LOGGER=[ON|OFF]
 cmake --build --preset linux --config [Debug|Release]
 ```
 
+Once CMake finishes, the built files will be put in `builds/linux/Descent3/Debug` or `builds/linux/Descent3/Release`.
+
 #### Building - Linux (Fedora)
+Run these commands:
+
 ```sh
 sudo dnf update --refresh
-sudo dnf install -y ninja-build cmake gcc-c++ SDL2-devel zlib-devel
+sudo dnf install -y git ninja-build cmake gcc-c++ SDL2-devel zlib-devel
+git clone https://github.com/DescentDevelopers/Descent3
+cd Descent3
 cmake --preset linux -D ENABLE_LOGGER=[ON|OFF]
 cmake --build --preset linux --config [Debug|Release]
 ```
+
+Once CMake finishes, the built files will be put in `builds/linux/Descent3/Debug` or `builds/linux/Descent3/Release`.
 
 ## Contributing
 Anyone can contribute! We have an active Discord presence at [Descent Developer Network](https://discord.gg/GNy5CUQ). If you are interested in maintaining the project on a regular basis, please contact Kevin Bentley.

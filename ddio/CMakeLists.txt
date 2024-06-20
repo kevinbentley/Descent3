@@ -1,6 +1,7 @@
 set(CPPS
   chrono_timer.cpp
   ddio.cpp
+  file.cpp
   key.cpp
   $<$<PLATFORM_ID:Darwin,Linux>:
     lnxfile.cpp

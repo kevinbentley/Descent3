@@ -149,6 +149,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   add_compile_options("/MP")  # so msbuild builds with multiple processes
 endif()
 
+add_compile_definitions($<$<BOOL:${ENABLE_MEM_RTL}>:MEM_USE_RTL>)
+
 add_compile_definitions($<$<CONFIG:Release>:RELEASE>)
 add_compile_definitions($<$<CONFIG:Debug>:_DEBUG>)
 

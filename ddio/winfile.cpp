@@ -556,16 +556,6 @@ bool ddio_GetFullPath(char *full_path, const char *rel_path) {
   return 1;
 }
 
-// Renames file
-// Returns true on success or false on an error
-bool ddio_RenameFile(char *oldfile, char *newfile) {
-  int rcode = rename(oldfile, newfile);
-  if (!rcode)
-    return true;
-  else
-    return false;
-}
-
 // Give a volume label to look for, and if it's found returns a path
 // If it isn't found, return NULL (used to return "")
 const char *ddio_GetCDDrive(const char *vol) {
@@ -599,220 +589,19 @@ const char *ddio_GetCDDrive(const char *vol) {
   return NULL; // drivepath;
 }
 
-// Checks to see if a lock file is located in the specified directory.
-//	Parameters:
-//		dir		Directory for which the lock file should be checked
-//	Returns:
-//		1		Lock file doesn't exist
-//		2		Lock file was in a directory, but it belonged to a process that no longer
-//				exists, so a lock file _can_ be made in the directory.
-//		3		Lock file for this process already exists
-//		0		Lock file currently exists in directory
-//		-1		Illegal directory
-//		-2		There is a lock file in the directory, but it is in an illegal format
-int ddio_CheckLockFile(const char *dir) {
-  DWORD curr_pid = GetCurrentProcessId();
-  char old_directory[_MAX_PATH];
-  ddio_GetWorkingDir(old_directory, _MAX_PATH);
-  if (!ddio_SetWorkingDir(dir))
-    return -1;
-
-  bool found_lock_file_in_dir = false;
-  FILE *file;
-
-  chmod(".lock", _S_IREAD | _S_IWRITE);
-  file = fopen(".lock", "rb");
-
-  if (!file) {
-    // File exists, but couldn't open it
-    if (errno == EACCES) {
-      ddio_SetWorkingDir(old_directory);
-      return -2;
+bool ddio_CheckProcess(int pid) {
+  HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
+  if (proc) {
+    DWORD obj_ret = WaitForSingleObject(proc, 0);
+    CloseHandle(proc);
+    if (obj_ret == WAIT_TIMEOUT) {
+      // this process exists still
+      return true;
     }
-
-    found_lock_file_in_dir = false;
-  } else {
-    found_lock_file_in_dir = true;
-
-    // check the file, see if it is a lock file
-    char c;
-    c = fgetc(file);
-    if (c != 'L') {
-      fclose(file);
-      ddio_SetWorkingDir(old_directory);
-      return -2;
-    }
-    c = fgetc(file);
-    if (c != 'O') {
-      fclose(file);
-      ddio_SetWorkingDir(old_directory);
-      return -2;
-    }
-    c = fgetc(file);
-    if (c != 'C') {
-      fclose(file);
-      ddio_SetWorkingDir(old_directory);
-      return -2;
-    }
-    c = fgetc(file);
-    if (c != 'K') {
-      fclose(file);
-      ddio_SetWorkingDir(old_directory);
-      return -2;
-    }
-
-    // it appears to be a lock file, check the pid
-    DWORD f_pid;
-    fread(&f_pid, sizeof(DWORD), 1, file);
-    fclose(file);
-
-    // check the file id in the file, compared to our pid
-    if (f_pid == curr_pid) {
-      // lock file already exists for the current process
-      ddio_SetWorkingDir(old_directory);
-      return 3;
-    }
-
-    HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, f_pid);
-    if (proc) {
-      DWORD obj_ret = WaitForSingleObject(proc, 0);
-      CloseHandle(proc);
-      if (obj_ret == WAIT_TIMEOUT) {
-        // this process exists still
-        ddio_SetWorkingDir(old_directory);
-        return 0;
-      }
-    }
-
-    // the process no longer exists, we can create a lock file if needed
-    // we'll delete the useless one now
-    ddio_DeleteFile(".lock");
   }
-
-  ddio_SetWorkingDir(old_directory);
-  return (found_lock_file_in_dir) ? 2 : 1;
+  return false;
 }
 
-// Creates a lock file in the specified directory
-//	Parameters:
-//		dir		Directory for which the lock file should be created in
-//	Returns:
-//		1		Lock file created
-//		2		Lock file created (there was a lock file in that directory, but it belonged
-//				to a process that no longer exists)
-//		3		Lock file for this process already exists
-//		0		Lock file not created, a lock file currently exists in the directory
-//		-1		Illegal directory
-//		-2		There is a lock file in the directory, but it is in an illegal format
-//		-3		Unable to create lock file
-int ddio_CreateLockFile(const char *dir) {
-  int result = ddio_CheckLockFile(dir);
-  switch (result) {
-  case 0:
-  case -1:
-  case -2:
-  case 3:
-    return result;
-  };
-
-  DWORD curr_pid = GetCurrentProcessId();
-  char old_directory[_MAX_PATH];
-  ddio_GetWorkingDir(old_directory, _MAX_PATH);
-  if (!ddio_SetWorkingDir(dir))
-    return -1;
-
-  FILE *file;
-  file = fopen(".lock", "wb");
-  if (!file) {
-    ddio_SetWorkingDir(old_directory);
-    return -3;
-  }
-
-  fputc('L', file);
-  fputc('O', file);
-  fputc('C', file);
-  fputc('K', file);
-  fwrite(&curr_pid, sizeof(DWORD), 1, file);
-
-  fclose(file);
-  ddio_SetWorkingDir(old_directory);
-
-  // at this point result will either be 1 or 2 from checking the lock file
-  // either way, a lock file has been created
-  return result;
-}
-
-// Deletes a lock file (for the current process) in the specified directory
-//	Parameters:
-//		dir		Directory for which the lock file should be deleted from
-//	Returns:
-//		1		Lock file deleted
-//		0		Lock file not deleted, the lock file in the directory does not belong to our
-//				process
-//		-1		Illegal directory
-//		-2		A lock file exists in the directory, but wasn't deleted...illegal format
-//		-3		Unable to delete file
-int ddio_DeleteLockFile(const char *dir) {
-  DWORD curr_pid = GetCurrentProcessId();
-  char old_directory[_MAX_PATH];
-  ddio_GetWorkingDir(old_directory, _MAX_PATH);
-  if (!ddio_SetWorkingDir(dir))
-    return -1;
-
-  FILE *file;
-
-  chmod(".lock", _S_IREAD | _S_IWRITE);
-  file = fopen(".lock", "rb");
-
-  if (!file)
-    return 1;
-
-  // check the file, see if it is a lock file
-  char c;
-  c = fgetc(file);
-  if (c != 'L') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-  c = fgetc(file);
-  if (c != 'O') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-  c = fgetc(file);
-  if (c != 'C') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-  c = fgetc(file);
-  if (c != 'K') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-
-  // it appears to be a lock file, check the pid
-  DWORD f_pid;
-  fread(&f_pid, sizeof(DWORD), 1, file);
-  fclose(file);
-
-  // check the file id in the file, compared to our pid
-  if (f_pid != curr_pid) {
-    // it doesn't belong to
-    ddio_SetWorkingDir(old_directory);
-    return 0;
-  }
-
-  // the lock file in the directory belongs to us!
-  if (!ddio_DeleteFile(".lock")) {
-    ddio_SetWorkingDir(old_directory);
-    return -3;
-  }
-
-  ddio_SetWorkingDir(old_directory);
-
-  return 1;
+int ddio_GetPID() {
+  return GetCurrentProcessId();
 }

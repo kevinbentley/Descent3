@@ -52,7 +52,7 @@ typedef struct Chat_command {
 int ConnectToChatServer(const char *serveraddr, int16_t chat_port, char *nickname, char *trackerid);
 void DisconnectFromChatServer();
 const char *GetChatText();
-char *SendChatString(const char *line, int raw = 0);
+const char *SendChatString(const char *line, int raw = 0);
 Chat_command *GetChatCommand();
 char *GetChatUserList();
 int SetNewChatChannel(const char *channel);

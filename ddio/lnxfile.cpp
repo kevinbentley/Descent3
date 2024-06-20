@@ -691,16 +691,6 @@ bool ddio_GetFullPath(char *full_path, const char *rel_path) {
   return 1;
 }
 
-// Renames file
-// Returns true on success or false on an error
-bool ddio_RenameFile(char *oldfile, char *newfile) {
-  int rcode = rename(oldfile, newfile);
-  if (!rcode)
-    return true;
-  else
-    return false;
-}
-
 // Generates a temporary filename based on the prefix, and basedir
 // Parameters:
 //		basedir - directory to put the files
@@ -767,237 +757,19 @@ bool ddio_GetTempFileName(const char *basedir, const char *prefix, char *filenam
   return created;
 }
 
-// Checks to see if a lock file is located in the specified directory.
-//	Parameters:
-//		dir		Directory for which the lock file should be checked
-//	Returns:
-//		1		Lock file doesn't exist
-//		2		Lock file was in a directory, but it belonged to a process that no longer
-//				exists, so a lock file _can_ be made in the directory.
-//		3		Lock file for this process already exists
-//		0		Lock file currently exists in directory
-//		-1		Illegal directory
-//		-2		There is a lock file in the directory, but it is in an illegal format
-int ddio_CheckLockFile(const char *dir) {
-  pid_t curr_pid = getpid();
-
-  //  rcg 06092000 what's all this working dir shite?
-  //	char old_directory[_MAX_PATH];
-  //	ddio_GetWorkingDir(old_directory,_MAX_PATH);
-  //	if(!ddio_SetWorkingDir(dir))
-  //		return -1;
-
-  // rcg 06092000 The buffer stuff throughout is my add.
-  size_t bufferLen = strlen(dir) + strlen(".lock") + 2;
-  char buffer[bufferLen];
-  bool found_lock_file_in_dir = false;
-  FILE *file;
-
-  snprintf(buffer, bufferLen, "%s/%s", dir, ".lock");
-  mprintf(0, "LockFile: Checking [%s]...", buffer);
-  chmod(buffer, S_IREAD | S_IWRITE);
-  file = fopen(buffer, "rb");
-
-  if (!file) {
-    // File exists, but couldn't open it
-    if (errno == EACCES) {
-      //			ddio_SetWorkingDir(old_directory);
-      return -2;
+bool ddio_CheckProcess(int pid) {
+  if (kill(pid, 0) == -1) {
+    if (errno != ESRCH) {
+      /* some other error, log it */
+      mprintf(0, "Error sending signal to PID for lock check (%d)\n", pid);
     }
-
-    found_lock_file_in_dir = false;
+    return false;
   } else {
-    found_lock_file_in_dir = true;
-
-    // check the file, see if it is a lock file
-    char c;
-    //		c = fgetc(file); if(c!='L')	{fclose(file); ddio_SetWorkingDir(old_directory); return -2;}
-    //		c = fgetc(file); if(c!='O')	{fclose(file); ddio_SetWorkingDir(old_directory); return -2;}
-    //		c = fgetc(file); if(c!='C')	{fclose(file); ddio_SetWorkingDir(old_directory); return -2;}
-    //		c = fgetc(file); if(c!='K')	{fclose(file); ddio_SetWorkingDir(old_directory); return -2;}
-    c = fgetc(file);
-    if (c != 'L') {
-      fclose(file);
-      return -2;
-    }
-    c = fgetc(file);
-    if (c != 'O') {
-      fclose(file);
-      return -2;
-    }
-    c = fgetc(file);
-    if (c != 'C') {
-      fclose(file);
-      return -2;
-    }
-    c = fgetc(file);
-    if (c != 'K') {
-      fclose(file);
-      return -2;
-    }
-
-    // it appears to be a lock file, check the pid
-    pid_t f_pid;
-    fread(&f_pid, sizeof(pid_t), 1, file);
-    fclose(file);
-
-    // check the file id in the file, compared to our pid
-    if (f_pid == curr_pid) {
-      // lock file already exists for the current process
-      //			ddio_SetWorkingDir(old_directory);
-      return 3;
-    }
-
-    if (kill(f_pid, 0) == -1) {
-      if (errno == ESRCH) {
-        /* pid does not exist */
-
-      } else {
-        /* some other error */
-        // technically this shouldn't happen, but I get it
-        // when the pid no longer exists...so I'm going to
-        // pretend it doesn't
-        mprintf(0, "Error sending signal to pid for lock check (%d)\n", f_pid);
-        // perror ("Error sending signal to pid for lock check, maybe remove lock file in temp directory");
-        // ddio_SetWorkingDir(old_directory);
-        // return 0;
-      }
-
-    } else {
-      /* pid exists */
-      //			ddio_SetWorkingDir(old_directory);
-      return 0;
-    }
-
-    // the process no longer exists, we can create a lock file if needed
-    // we'll delete the useless one now
-    ddio_DeleteFile(".lock");
+    /* process exists */
+    return true;
   }
-
-  //	ddio_SetWorkingDir(old_directory);
-  return (found_lock_file_in_dir) ? 2 : 1;
 }
 
-// Creates a lock file in the specified directory
-//	Parameters:
-//		dir		Directory for which the lock file should be created in
-//	Returns:
-//		1		Lock file created
-//		2		Lock file created (there was a lock file in that directory, but it belonged
-//				to a process that no longer exists)
-//		3		Lock file for this process already exists
-//		0		Lock file not created, a lock file currently exists in the directory
-//		-1		Illegal directory
-//		-2		There is a lock file in the directory, but it is in an illegal format
-//		-3		Unable to create lock file
-int ddio_CreateLockFile(const char *dir) {
-  int result = ddio_CheckLockFile(dir);
-  switch (result) {
-  case 0:
-  case -1:
-  case -2:
-  case 3:
-    return result;
-  };
-
-  pid_t curr_pid = getpid();
-  char old_directory[_MAX_PATH];
-  ddio_GetWorkingDir(old_directory, _MAX_PATH);
-  if (!ddio_SetWorkingDir(dir))
-    return -1;
-
-  FILE *file;
-  file = fopen(".lock", "wb");
-  if (!file) {
-    ddio_SetWorkingDir(old_directory);
-    return -3;
-  }
-
-  fputc('L', file);
-  fputc('O', file);
-  fputc('C', file);
-  fputc('K', file);
-  fwrite(&curr_pid, sizeof(pid_t), 1, file);
-
-  fclose(file);
-  ddio_SetWorkingDir(old_directory);
-
-  // at this point result will either be 1 or 2 from checking the lock file
-  // either way, a lock file has been created
-  return result;
-}
-
-// Deletes a lock file (for the current process) in the specified directory
-//	Parameters:
-//		dir		Directory for which the lock file should be deleted from
-//	Returns:
-//		1		Lock file deleted
-//		0		Lock file not deleted, the lock file in the directory does not belong to our
-//				process
-//		-1		Illegal directory
-//		-2		A lock file exists in the directory, but wasn't deleted...illegal format
-//		-3		Unable to delete file
-int ddio_DeleteLockFile(const char *dir) {
-  pid_t curr_pid = getpid();
-  char old_directory[_MAX_PATH];
-  ddio_GetWorkingDir(old_directory, _MAX_PATH);
-  if (!ddio_SetWorkingDir(dir))
-    return -1;
-
-  FILE *file;
-
-  chmod(".lock", S_IREAD | S_IWRITE);
-  file = fopen(".lock", "rb");
-
-  if (!file)
-    return 1;
-
-  // check the file, see if it is a lock file
-  char c;
-  c = fgetc(file);
-  if (c != 'L') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-  c = fgetc(file);
-  if (c != 'O') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-  c = fgetc(file);
-  if (c != 'C') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-  c = fgetc(file);
-  if (c != 'K') {
-    fclose(file);
-    ddio_SetWorkingDir(old_directory);
-    return -2;
-  }
-
-  // it appears to be a lock file, check the pid
-  pid_t f_pid;
-  fread(&f_pid, sizeof(pid_t), 1, file);
-  fclose(file);
-
-  // check the file id in the file, compared to our pid
-  if (f_pid != curr_pid) {
-    // it doesn't belong to
-    ddio_SetWorkingDir(old_directory);
-    return 0;
-  }
-
-  // the lock file in the directory belongs to us!
-  if (!ddio_DeleteFile(".lock")) {
-    ddio_SetWorkingDir(old_directory);
-    return -3;
-  }
-
-  ddio_SetWorkingDir(old_directory);
-
-  return 1;
+int ddio_GetPID() {
+  return getpid();
 }

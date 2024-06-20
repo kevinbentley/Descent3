@@ -136,7 +136,7 @@ void DoMTFrame();
 void DoMTGameOver();
 int MTVersionCheck();
 int JoinNewLobby(const char *lobby);
-char *SendWhisper(const char *name);
+const char *SendWhisper(const char *name);
 int JoinPrivateLobby();
 int FindPilot();
 int GetPilotStats(const char *pilot);

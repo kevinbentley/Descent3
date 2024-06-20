@@ -2050,40 +2050,10 @@ void SetupTempDirectory(void) {
   mprintf(0, "Temp Directory Set To: \"%s\"\n", Descent3_temp_directory);
 
   // Lock the directory
-  int lock_res = ddio_CreateLockFile(Descent3_temp_directory);
-  switch (lock_res) {
-  case 1:
-    mprintf(0, "Lock file created in temp dir\n");
-    break;
-  case 2:
-    mprintf(0, "Lock file created in temp dir (deleted dead lock)\n");
-    break;
-  case 3:
-    mprintf(0, "Lock file created in temp dir (lock already exists)\n");
-    break;
-  case 0:
-    mprintf(0, "Lock file NOT created in temp dir\n");
-    Error("Unable to set temporary directory to: \"%s\"\nThe directory is in use, please use -tempdir to set a "
-          "different temp directory",
-          Descent3_temp_directory);
-    exit(1);
-    break;
-  case -1:
-    mprintf(0, "Illegal directory for Lock file\n");
-    Error("Unable to set temporary directory to: \"%s\"\nIllegal directory for lock file", Descent3_temp_directory);
-    exit(1);
-    break;
-  case -2:
-    mprintf(0, "Illegal Lock file, unable to create\n");
-    Error("Unable to set temporary directory to: \"%s\"\nInvalid lock file located in directory",
-          Descent3_temp_directory);
-    exit(1);
-    break;
-  case -3:
-    mprintf(0, "Error creating Lock file\n");
+  if (!ddio_CreateLockFile(std::filesystem::path(Descent3_temp_directory))) {
+    mprintf(0, "Lock file NOT created in temp dir %s!\n", Descent3_temp_directory);
     Error("Unable to set temporary directory to: \"%s\"\nUnable to create lock file", Descent3_temp_directory);
     exit(1);
-    break;
   }
   // restore working dir
   ddio_SetWorkingDir(Base_directory);

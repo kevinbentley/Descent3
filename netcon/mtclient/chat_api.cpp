@@ -88,12 +88,12 @@ Chat_channel *Firstchannel, *Currchannel;
 
 void ChatInit() {
   Socket_connecting = 0;
-  Nick_name[0];
-  Orignial_nick_name[0];
+  Nick_name[0] = 0;
+  Orignial_nick_name[0] = 0;
   Nick_variety = 0;
   szChat_channel[0] = '\0';
   Input_chat_buffer[0] = '\0';
-  Chat_tracker_id[0];
+  Chat_tracker_id[0] = 0;
   Getting_user_channel_info_for[0] = '\0';
   Getting_user_tracker_info_for[0] = '\0';
   Getting_user_channel_error = 0;
@@ -313,7 +313,7 @@ const char *GetChatText() {
 
 // Send a string to be sent as chat, or scanned for messages (/msg <user>
 // string)
-char *SendChatString(const char *line, int raw) {
+const char *SendChatString(const char *line, int raw) {
   char szCmd[200];
   char szTarget[50];
   if (!Socket_connected)
