@@ -118,7 +118,7 @@ bool ddio_GetBinaryPath(char *exec_path, size_t len) {
    fprintf(stderr, "Buffer too small; need size %u\n", size);
    return false;
   }
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined (ANDROID)
   if (realpath("/proc/self/exe", exec_path) == NULL) {
    perror("realpath");
    return false;

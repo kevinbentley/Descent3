@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/uio.h>
@@ -272,7 +272,7 @@ void mve_SetCallback(MovieFrameCallback_fp callBack) {
 // used to tell movie library how to render movies.
 void mve_SetRenderProperties(int16_t x, int16_t y, int16_t w, int16_t h, renderer_type type, bool hicolor) {}
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 // locates the case-sensitive movie file name
 bool mve_FindMovieFileRealName(const char *movie, char *real_name) {
   // split into directory and file...
@@ -306,7 +306,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
 #ifndef NO_MOVIES
   // first, find that movie..
   char real_name[_MAX_PATH];
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   if (!mve_FindMovieFileRealName(pMovieName, real_name)) {
     mprintf(0, "MOVIE: No such file %s\n", pMovieName);
     return MVELIB_FILE_ERROR;
@@ -530,7 +530,7 @@ intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app
 
   // first, find that movie..
   char real_name[_MAX_PATH];
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   if (!mve_FindMovieFileRealName(mvename, real_name)) {
     mprintf(0, "MOVIE: No such file %s\n", mvename);
     *fhandle = -1;

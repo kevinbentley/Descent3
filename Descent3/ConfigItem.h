@@ -58,7 +58,7 @@
 
 #include "newui.h"
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 void CIListBoxCallback(int ID, void *);
 void CISliderCallback(int ID, void *);
 #endif

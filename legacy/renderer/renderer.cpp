@@ -439,7 +439,7 @@
 #endif
 
 // Renderers for Linux version
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #define USE_OPENGL
 #define USE_GLIDE
 // #define USE_D3D

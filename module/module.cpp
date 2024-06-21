@@ -96,7 +96,7 @@
 #include "pserror.h"
 #include "ddio.h"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <dlfcn.h>
 
 static bool mod_FindRealFileNameCaseInsenstive(const char *directory, const char *filename, char *new_filename);
@@ -108,7 +108,7 @@ static bool mod_FindRealFileNameCaseInsenstive(const char *directory, const char
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h"
 #endif
 #if defined(WIN32) // INSTEAD OF MAKING MODULE HAVE DEPENDENCIES, PUT THE 2 DDIO FUNCTIONS I NEED HERE
@@ -158,7 +158,7 @@ static void dd_MakePath(char *newPath, const char *absolutePathHeader, const cha
   }
   va_end(args);
 }
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 // Split a pathname into its component parts
 static void dd_SplitPath(const char *srcPath, char *path, char *filename, char *ext) {
   int pathStart = -1;
@@ -281,7 +281,7 @@ void mod_GetRealModuleName(const char *modfilename, char *realmodfilename) {
   if (*extension == '\0')
 #if defined(WIN32)
     strcat(filename, ".dll");
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 #if defined(MACOSX)
     strcat(filename, ".dylib");
 #else
@@ -294,7 +294,7 @@ void mod_GetRealModuleName(const char *modfilename, char *realmodfilename) {
       strcat(filename, ".dll");
     else
       strcat(filename, extension);
-#elif defined(__LINUX__) && !defined(MACOSX)
+#elif (defined(__LINUX__) && !defined(MACOSX)) || defined(ANDROID)
     if (!stricmp(extension, ".dll") || !stricmp(extension, "msl") || !stricmp(extension, "dylib"))
       strcat(filename, ".so");
     else
@@ -348,7 +348,7 @@ bool mod_LoadModule(module *handle, const char *imodfilename, int flags) {
     }
     return false;
   }
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   int f = 0;
   if (flags & MODF_LAZY)
     f |= RTLD_LAZY;
@@ -398,7 +398,7 @@ bool mod_FreeModule(module *handle) {
   }
 #if defined(WIN32)
   ret = (FreeLibrary(handle->handle) != 0);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   dlclose(handle->handle); // dlclose() returns an int, but no docs say what values!!!
 #endif
   handle->handle = NULL;
@@ -460,7 +460,7 @@ MODPROCADDRESS mod_GetSymbol(module *handle, const char *symstr, uint8_t parmbyt
     }
     return NULL;
   }
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   sym = dlsym(handle->handle, symstr);
   if (!sym) {
     ModLastError = MODERR_OTHER;
@@ -476,7 +476,7 @@ int mod_GetLastError(void) {
   // Clear out the errors
 #if defined(WIN32)
   SetLastError(0);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   dlerror();
 #endif
   int ret = ModLastError;
@@ -484,7 +484,7 @@ int mod_GetLastError(void) {
   return ret;
 }
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <assert.h>
 #include <stdarg.h>
 #include <sys/stat.h>

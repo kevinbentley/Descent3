@@ -241,7 +241,7 @@
 #include "room.h"
 #include "doorway.h"
 
-#if defined(WIN32) || defined(__LINUX__)
+#if defined(WIN32) || defined(__LINUX__) || defined(ANDROID)
 #include "../manage/soundpage.h"
 #include "../Descent3/sounds.h"
 #endif

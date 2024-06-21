@@ -84,7 +84,7 @@
 extern char *Proxy_server;
 extern int16_t Proxy_port;
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 /*  ryan sez: use SDL.
 pthread_create_fp df_pthread_create = NULL;
 pthread_exit_fp df_pthread_exit = NULL;

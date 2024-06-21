@@ -328,7 +328,7 @@ extern bool Multi_Gamelist_changed;
 int CheckMissionForScript(char *mission, char *script, int dedicated_server_num_teams);
 void ShowNetgameInfo(network_game *game);
 // The exported DLL function call prototypes
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 typedef void DLLFUNCCALL (*DLLMultiCall_fp)(int eventnum);
 typedef void DLLFUNCCALL (*DLLMultiScoreCall_fp)(int eventnum, void *data);
 typedef void DLLFUNCCALL (*DLLMultiInit_fp)(int *api_fp);

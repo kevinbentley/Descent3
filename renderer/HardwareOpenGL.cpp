@@ -451,7 +451,7 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
     OpenGLDLLHandle = LoadOpenGLDLL(gl_library);
     if (!(OpenGLDLLHandle)) {
       // rcg07072000 last ditch effort...
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
       OpenGLDLLHandle = LoadOpenGLDLL("libGL.so.1");
 #else
       OpenGLDLLHandle = LoadOpenGLDLL("opengl32.dll");

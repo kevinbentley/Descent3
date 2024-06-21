@@ -438,7 +438,7 @@ bool Show_osiris_debug = false;
        // 0, only when the level ends
 
 // The exported DLL function call prototypes
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 typedef char DLLFUNCCALL (*InitializeDLL_fp)(tOSIRISModuleInit *function_list);
 typedef void DLLFUNCCALL (*ShutdownDLL_fp)(void);
 typedef int DLLFUNCCALL (*GetGOScriptID_fp)(const char *name, uint8_t isdoor);
@@ -3144,7 +3144,7 @@ int Osiris_ExtractScriptsFromHog(int library_handle, bool is_mission_hog) {
   int count = 0;
 
   const char *script_extension;
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #if defined(MACOSX)
   script_extension = "*.dylib";
 #else
@@ -4037,4 +4037,3 @@ void Osiris_CreateModuleInitStruct(tOSIRISModuleInit *mi) {
     mi->fp[i] = NULL;
   }
 }
-

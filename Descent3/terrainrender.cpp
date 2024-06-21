@@ -2717,7 +2717,7 @@ static g3Point *slist[256];
 // Draws the 2 triangles of the Terrainlist[index] (software)
 int DrawTerrainTrianglesSoftware(int index, int bm_handle, int upper_left, int lower_right) {
   /*
-  #ifndef __LINUX__
+  #if !defined(__LINUX__) && !defined(ANDROID)
           int i,tlist[4],close=0,lit=0;
           float closest_z=9999;
           int color;

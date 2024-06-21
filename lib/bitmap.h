@@ -22,7 +22,7 @@
 #include "pstypes.h"
 #include "cfile.h"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h" //needed for stricmp's throughout bitmap lib
 #endif
 

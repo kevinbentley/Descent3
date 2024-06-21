@@ -125,7 +125,7 @@
 
 #include <string.h>
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 int UIButton::m_ButtonFont;
 #endif
 

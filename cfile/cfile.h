@@ -153,7 +153,7 @@ int cf_OpenLibrary(const char *libname);
 // Parameters:  handle: the handle returned by cf_OpenLibrary()
 void cf_CloseLibrary(int handle);
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 // Maps fixed case file name to actual case on disk
 // Parameters:  directory: optional directory to search within (can be NULL)
 //              filename: the fixed case name to map to reality

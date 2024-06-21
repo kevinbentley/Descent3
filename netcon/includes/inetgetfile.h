@@ -86,7 +86,7 @@
 
 // At the end of this file is an example of usage
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include <ctype.h>
 #include <errno.h>
 #include <netinet/in.h>

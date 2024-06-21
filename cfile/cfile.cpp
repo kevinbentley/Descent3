@@ -24,7 +24,7 @@
 #include <cctype>
 #include <memory>
 #include <vector>
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
 // Non-Linux Build Includes
 #include <io.h>
 #else
@@ -113,7 +113,7 @@ int cf_OpenLibrary(const char *libname) {
 
   // allocation library structure
   std::shared_ptr<library> lib = std::make_shared<library>();
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   // resolve library name
   char t_dir[_MAX_PATH];
   char t_file[_MAX_PATH];
@@ -394,7 +394,7 @@ CFILE *open_file_in_lib(const char *filename) {
   return nullptr;
 }
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <glob.h>
 
 static int globerrfn(const char *path, int err) {
@@ -641,7 +641,7 @@ CFILE *open_file_in_directory(const char *filename, const char *mode, const char
   // try to open file
   fp = fopen(path, tmode);
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   // for Filesystems with case sensitive files we'll check for different versions of the filename
   // with different case's.
   if (fp) {

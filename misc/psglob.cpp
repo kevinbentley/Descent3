@@ -39,7 +39,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <ctype.h>
 #endif
 

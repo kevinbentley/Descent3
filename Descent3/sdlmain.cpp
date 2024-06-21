@@ -143,13 +143,13 @@ void just_exit(void) {
 #endif
 
   SDL_Quit();
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   sync(); // just in case.
 #endif
   _exit(0);
 }
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 void fatal_signal_handler(int signum) {
   switch (signum) {
   case SIGHUP:
@@ -612,7 +612,7 @@ int main(int argc, char *argv[]) {
     }
 
     bool run_d3 = true;
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
     if (flags & APPFLAG_USESERVICE) {
       run_d3 = false;
       pid_t np = fork();

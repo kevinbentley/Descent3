@@ -24,7 +24,7 @@
 #include "bitmap.h"
 #include "mono.h"
 #include "mem.h"
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
 #include "Macros.h"
 #endif
 

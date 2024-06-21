@@ -19,7 +19,7 @@
 #ifndef LNXAPP_H
 #define LNXAPP_H
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h"
 #endif
 

@@ -3240,7 +3240,7 @@ void ReadTerrainSkyAndLightChunk(CFILE *fp, int version) {
 
   Terrain_sky.flags = cf_ReadInt(fp);
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   if (FindArg("-noterrainfog") > 0) {
     Terrain_sky.flags &= ~TF_FOG;
   }

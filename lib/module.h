@@ -105,7 +105,7 @@ struct module {
   HINSTANCE handle; // handle to the DLL
 };
 //=======================================================================
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 //==========================Linux Definitions============================
 
 #define MODPROCADDRESS void *

@@ -133,7 +133,7 @@
 #define IDNO 7
 #endif
 // #define DEBUG_LEVEL 0		//DAJ
-#if defined(WIN32) || defined(__LINUX__)
+#if defined(WIN32) || defined(__LINUX__) || defined(ANDROID)
 constexpr const int OSMBOX_OK = 1;
 constexpr const int OSMBOX_YESNO = 2;
 constexpr const int OSMBOX_YESNOCANCEL = 3;
@@ -172,7 +172,7 @@ void Debug_ConsolePrintfAt(int n, int row, int col, const char *format, ...);
 #if !defined(RELEASE)
 #include "debugbreak.h"
 #if defined(WIN32)
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 void ddio_InternalKeyClose();
 #else
 #define debug_break()

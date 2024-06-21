@@ -19,7 +19,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <sys/types.h>
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <sys/time.h>
 #include <sys/fcntl.h>
 #include <unistd.h>

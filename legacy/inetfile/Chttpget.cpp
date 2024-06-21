@@ -129,7 +129,7 @@
 #define mem_free(a) free(a)
 #endif
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 
 inline void Sleep(int millis) {
   struct timeval tv;
@@ -143,7 +143,7 @@ inline void Sleep(int millis) {
 #define NW_AGHBN_LOOKUP 2
 #define NW_AGHBN_READ 3
 
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
 void __cdecl http_gethostbynameworker(void *parm);
 #else
 void *http_gethostbynameworker(void *parm);
@@ -151,7 +151,7 @@ void *http_gethostbynameworker(void *parm);
 
 int http_Asyncgethostbyname(uint32_t *ip, int command, char *hostname);
 
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
 void HTTPObjThread(void *obj)
 #else
 void *HTTPObjThread(void *obj)
@@ -161,7 +161,7 @@ void *HTTPObjThread(void *obj)
   ((ChttpGet *)obj)->m_Aborted = true;
   // OutputDebugString("http transfer exiting....\n");
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   return NULL;
 #endif
 }
@@ -264,7 +264,7 @@ void ChttpGet::GetFile(char *URL, char *localfile) {
     m_State = HTTP_STATE_INTERNAL_ERROR;
     return;
   }
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   pthread_t thread;
   if (!inet_LoadThreadLib()) {
     m_State = HTTP_STATE_INTERNAL_ERROR;
@@ -280,7 +280,7 @@ void ChttpGet::GetFile(char *URL, char *localfile) {
 ChttpGet::~ChttpGet() {
   if (m_DataSock != INVALID_SOCKET) {
     shutdown(m_DataSock, 2);
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
     closesocket(m_DataSock);
 #else
     close(m_DataSock);
@@ -484,7 +484,7 @@ int ChttpGet::ConnectSocket() {
   int serr = connect(m_DataSock, (SOCKADDR *)&hostaddr, sizeof(SOCKADDR));
   int cerr = WSAGetLastError();
   if (serr) {
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
     while ((cerr == WSAEALREADY) || (cerr == WSAEINVAL) || (cerr == WSAEWOULDBLOCK) || (cerr == EINPROGRESS))
 #else
     while ((cerr == WSAEALREADY) || (cerr == WSAEINVAL) || (cerr == WSAEWOULDBLOCK))
@@ -529,7 +529,7 @@ char *ChttpGet::GetHTTPLine() {
 
       if (SOCKET_ERROR == iBytesRead) {
         int error = WSAGetLastError();
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
         if (WSAEWOULDBLOCK == error || 0 == error)
 #else
         if (WSAEWOULDBLOCK == error)
@@ -552,7 +552,7 @@ char *ChttpGet::GetHTTPLine() {
 
         if (SOCKET_ERROR == iBytesRead) {
           int error = WSAGetLastError();
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
           if (WSAEWOULDBLOCK == error || 0 == error)
 #else
           if (WSAEWOULDBLOCK == error)
@@ -612,7 +612,7 @@ uint32_t ChttpGet::ReadDataChannel() {
 
     if (SOCKET_ERROR == nBytesRecv) {
       int error = WSAGetLastError();
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
       if (WSAEWOULDBLOCK == error || 0 == error)
 #else
       if (WSAEWOULDBLOCK == error)
@@ -648,7 +648,7 @@ uint32_t ChttpGet::ReadDataChannel() {
 async_dns_lookup httpaslu;
 async_dns_lookup *http_lastaslu = NULL;
 
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
 void __cdecl http_gethostbynameworker(void *parm);
 #else
 void *http_gethostbynameworker(void *parm);
@@ -672,7 +672,7 @@ int http_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
 
 #ifdef WIN32
     _beginthread(http_gethostbynameworker, 0, newaslu);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
     pthread_t thread;
     if (!inet_LoadThreadLib()) {
       return 0;
@@ -704,20 +704,20 @@ int http_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
 }
 
 // This is the worker thread which does the lookup.
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
 void __cdecl http_gethostbynameworker(void *parm)
 #else
 void *http_gethostbynameworker(void *parm)
 #endif
 {
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   df_pthread_detach(df_pthread_self());
 #endif
   async_dns_lookup *lookup = (async_dns_lookup *)parm;
   HOSTENT *he = gethostbyname(lookup->host);
   if (he == NULL) {
     lookup->error = true;
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
     return NULL;
 #else
     return;
@@ -729,7 +729,7 @@ void *http_gethostbynameworker(void *parm)
   }
   mem_free(lookup);
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   return NULL;
 #endif
 }

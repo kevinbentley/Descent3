@@ -19,7 +19,7 @@
 #if defined(WIN32)
 #include <windows.h>
 #include "ddraw.h"
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h"
 #include "lnxscreenmode.h"
 #else
@@ -83,7 +83,7 @@ static HWND hOpenGLWnd = NULL;
 static HDC hOpenGLDC = NULL;
 HGLRC ResourceContext;
 static WORD Saved_gamma_values[256 * 3];
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 static Display *OpenGL_Display = NULL;
 static Window OpenGL_Window;
 static XVisualInfo OpenGL_VisualInfo;
@@ -355,7 +355,7 @@ void opengl_SetDefaults() {
   Last_texel_unit_set = -1;
   OpenGL_multitexture_state = false;
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   OpenGL_UseLists = (FindArg("-gllists")) ? true : false;
   if (OpenGL_UseLists) {
 #endif
@@ -366,7 +366,7 @@ void opengl_SetDefaults() {
     dglVertexPointer(3, GL_FLOAT, 0, GL_verts);
     dglColorPointer(4, GL_FLOAT, 0, GL_colors);
     dglTexCoordPointer(4, GL_FLOAT, 0, GL_tex_coords);
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   }
 #endif
 
@@ -494,7 +494,7 @@ int opengl_Setup(HDC glhdc) {
 
   return 1;
 }
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 bool opengl_GetXConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value) {
   int res;
 
@@ -783,7 +783,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
   // Save gamma values for later
   GetDeviceGammaRamp(hOpenGLDC, (LPVOID)Saved_gamma_values);
 
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   /***********************************************************
    *               LINUX OPENGL
    ***********************************************************
@@ -985,7 +985,7 @@ void opengl_Close(const bool just_resizing) {
   // Change our display back
   if (!WindowGL)
     ChangeDisplaySettings(NULL, 0);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   // Restore our video mode
   LinuxVideoMode.Lock(false);
   LinuxVideoMode.RestoreVideoMode();
@@ -1034,7 +1034,7 @@ void opengl_Close(const bool just_resizing) {
   SetDeviceGammaRamp(hOpenGLDC, (LPVOID)Saved_gamma_values);
   //	I'm freeing the DC here - samir
   ReleaseDC(hOpenGLWnd, hOpenGLDC);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 
 #else
 
@@ -1561,11 +1561,11 @@ void opengl_DrawMultitexturePolygon(int handle, g3Point **p, int nv, int map_typ
   opengl_SetMultitextureBlendMode(true);
 
   // And draw!
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   if (OpenGL_UseLists) {
 #endif
     dglDrawArrays(GL_POLYGON, 0, nv);
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   } else {
     dglBegin(GL_POLYGON);
     for (i = 0; i < nv; i++) {
@@ -1746,7 +1746,7 @@ void opengl_DrawPolygon(int handle, g3Point **p, int nv, int map_type) {
       colorp->a = alpha;
     }
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
     // MY TEST HACK...MAYBE BAD DRIVERS? OR MAYBE THIS IS
     // HOW IT SHOULD BE DONE (STILL BUGGY)
     // Texture this polygon!
@@ -1778,11 +1778,11 @@ void opengl_DrawPolygon(int handle, g3Point **p, int nv, int map_type) {
   }
 
   // And draw!
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   if (OpenGL_UseLists) {
 #endif
     dglDrawArrays(GL_POLYGON, 0, nv);
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   } else {
     dglBegin(GL_POLYGON);
     for (i = 0; i < nv; i++) {
@@ -1880,7 +1880,7 @@ void opengl_Flip() {
 
 #if defined(WIN32)
   SwapBuffers((HDC)hOpenGLDC);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   glXWaitGL();
   glXSwapBuffers(OpenGL_Display, OpenGL_Window);
 #endif
@@ -2561,7 +2561,7 @@ void opengl_GetStatistics(tRendererStats *stats) {
   stats->texture_uploads = OpenGL_last_uploaded;
 }
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 void CreateFullScreenWindow(Display *dpy, Window rootwin, Window window, int DisplayScreen, int DisplayWidth,
                             int DisplayHeight) {
   // see if a motif based window manager is running.  do this by

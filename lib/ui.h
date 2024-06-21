@@ -267,7 +267,7 @@
 #ifndef UI_H
 #define UI_H
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h" //for stricmp's through code
 #endif
 
@@ -399,7 +399,7 @@ private:
   void CheckFocusOnSlaves(int mx, int my);
 
 //	universal variables
-#ifdef __LINUX__ // gcc has a hard time tracing through some of the derived classes that access m_Wnd
+#if defined(__LINUX__) || defined(ANDROID) // gcc has a hard time tracing through some of the derived classes that access m_Wnd
 public:
 #else
 protected:
@@ -421,7 +421,7 @@ protected:
   void UnlockFocus();              // releases lock on input to gadget.
 
 //	called from outside gadget hierarchy.
-#ifdef __LINUX__ // gcc has a hard time tracing through the dervived classes of newuiButton and thinks it can't access
+#if defined(__LINUX__) || defined(ANDROID) // gcc has a hard time tracing through the dervived classes of newuiButton and thinks it can't access
                  // OnFormat()
 public:
 #else
