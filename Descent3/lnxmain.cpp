@@ -272,7 +272,7 @@ oeD3LnxDatabase::oeD3LnxDatabase() : oeLnxAppDatabase() {
   Database = this;
 }
 
-static void register_d3_args(void) {
+static void register_d3_args() {
   loki_register_stdoptions();
 
   for (int i = 0; i < sizeof(d3ArgTable) / sizeof(d3ArgTable[0]); i++) {
@@ -352,13 +352,14 @@ static void check_beta() {
 //		creates all the OS objects and then runs Descent 3.
 //		this is all this function should do.
 //	---------------------------------------------------------------------------
-// int main(int argc, char *argv[]) {
+#ifdef WIN32
 int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine, int nCmdShow) {
-// int main(void) {
-  int argc = 1;
-  char* argv[10];
-#ifdef __LINUX__
+  strupr(szCmdLine);
+  GatherArgs(szCmdLine);
+#else
+int main(int argc, char *argv[]) {
   __orig_pwd = getcwd(NULL, 0);
+  GatherArgs(argv);
 #endif
 
   /* Setup the logging system */
@@ -432,7 +433,6 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine, int nC
   // if (getenv("SDL_VIDEO_YUV_HWACCEL") == NULL)
   //    putenv("SDL_VIDEO_YUV_HWACCEL=0");
 
-  GatherArgs(argv);
 
   snprintf(game_version_buffer, sizeof(game_version_buffer), "%d.%d.%d%s %s", D3_MAJORVER, D3_MINORVER, D3_BUILD,
            D3_GIT_HASH, GAME_VERS_EXT);
@@ -462,7 +462,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine, int nC
   game_version += 2; // skip those first newlines for loki_initialize.
 
   register_d3_args();
-  loki_initialize(argc, argv, game_version_buffer);
+  loki_initialize();
 
   int x;
 
@@ -625,7 +625,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine, int nC
       oeD3LnxApp d3(flags);
       oeD3LnxDatabase dbase;
       StartDedicatedServer();
-        PreInitD3Systems();
+      PreInitD3Systems();
 
       d3.init();
       d3.run();
