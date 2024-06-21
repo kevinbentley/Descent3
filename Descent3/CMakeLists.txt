@@ -271,9 +271,9 @@ set(CPPS
   weather.cpp)
 
 if(WIN32)
-  set(PLATFORM_LIBS dd_grwin32 win32 wsock32.lib winmm.lib
+  set(PLATFORM_LIBS linux wsock32.lib winmm.lib SDL2::SDL2
     ${DSOUND_LIBRARY} ${DINPUT_LIBRARY} ${DXGUID_LIBRARY} ${DDRAW_LIBRARY})
-  set(PLATFORM_CPPS winmain.cpp)
+  set(PLATFORM_CPPS loki_utils.c lnxmain.cpp)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO /NODEFAULTLIB:LIBC")
 endif()
 

@@ -19,11 +19,9 @@
 #include "byteswap.h"
 #if defined(WIN32)
 #include <windows.h>
-#elif defined(__LINUX__)
-#include "lnxscreenmode.h"
-#else
 #endif
 
+#include "lnxscreenmode.h"
 #include "pserror.h"
 #include "mono.h"
 #include "3d.h"
@@ -41,6 +39,7 @@
 #include <string.h>
 #include "HardwareInternal.h"
 #include "../Descent3/args.h"
+#include <SDL.h>
 
 #include <NewBitmap.h>
 
@@ -56,7 +55,6 @@
 int FindArg(const char *);
 void rend_SetLightingState(light_state state);
 
-#define CHANGE_RESOLUTION_IN_FULLSCREEN
 
 // General renderer states
 extern int gpu_Overlay_map;
@@ -82,18 +80,9 @@ extern vector View_position;
 
 #define CHECK_ERROR(x)
 
-#if defined(WIN32)
-//	Moved from DDGR library
-static HWND hOpenGLWnd = NULL;
-static HDC hOpenGLDC = NULL;
-HGLRC ResourceContext;
-static WORD Saved_gamma_values[256 * 3];
-#elif defined(__LINUX__)
 SDL_Window *GSDLWindow = NULL;
 SDL_GLContext GSDLGLContext = NULL;
 char loadedLibrary[_MAX_PATH];
-#else
-#endif
 
 #define GET_WRAP_STATE(x) (x >> 4)
 #define GET_FILTER_STATE(x) (x & 0x0f)
@@ -204,19 +193,6 @@ int checkForGLErrors( const char *file, int line )
 
 // Sets up multi-texturing using ARB extensions
 void opengl_GetDLLFunctions(void) {
-#if defined(WIN32)
-  oglActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)dwglGetProcAddress("glActiveTextureARB");
-  if (!oglActiveTextureARB)
-    goto dll_error;
-
-  oglClientActiveTextureARB = (PFNGLCLIENTACTIVETEXTUREARBPROC)dwglGetProcAddress("glClientActiveTextureARB");
-  if (!oglClientActiveTextureARB)
-    goto dll_error;
-
-  oglMultiTexCoord4f = (PFNGLMULTITEXCOORD4FARBPROC)dwglGetProcAddress("glMultiTexCoord4f");
-  if (!oglMultiTexCoord4f)
-    goto dll_error;
-#else
 #define mod_GetSymbol(x, funcStr, y) __SDL_mod_GetSymbol(funcStr)
 
   oglActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)mod_GetSymbol(OpenGLDLLHandle, "glActiveTextureARB", 255);
@@ -231,7 +207,6 @@ void opengl_GetDLLFunctions(void) {
   }
 
 #undef mod_GetSymbol
-#endif
 
   UseMultitexture = true;
   return;
@@ -405,103 +380,6 @@ void opengl_SetDefaults() {
 #endif
   }
 }
-
-#if defined(WIN32)
-// Check for OpenGL support,
-int opengl_Setup(HDC glhdc) {
-  if (!Already_loaded) {
-    if (!(OpenGLDLLHandle = LoadOpenGLDLL("opengl32.dll"))) {
-      rend_SetErrorMessage("Failed to load opengl dll!\n");
-      Int3();
-      return 0;
-    }
-  }
-
-  // Finds an acceptable pixel format to render to
-  PIXELFORMATDESCRIPTOR pfd, pfd_copy;
-  int pf;
-
-  memset(&pfd, 0, sizeof(pfd));
-  pfd.nSize = sizeof(pfd);
-  pfd.nVersion = 1;
-  pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER | PFD_GENERIC_ACCELERATED;
-  pfd.iPixelType = PFD_TYPE_RGBA;
-
-  /*if (!WindowGL)
-  {
-  if (gpu_preferred_state.bit_depth==32)
-  {
-  pfd.cColorBits   = 32;
-  pfd.cDepthBits   = 32;
-  }
-  else
-  {
-  pfd.cColorBits   = gpu_preferred_state.bit_depth;
-  pfd.cDepthBits   =gpu_preferred_state.bit_depth;
-  }
-
-  pfd.cColorBits   = 16;
-  pfd.cDepthBits   =16;
-
-  }
-  else
-  {
-  pfd.cColorBits   = 16;
-  pfd.cDepthBits   =16;
-  }*/
-
-  // Find the user's "best match" PFD
-  pf = ChoosePixelFormat(glhdc, &pfd);
-  if (pf == 0) {
-    Int3();
-    // FreeLibrary(opengl_dll_handle);
-    return NULL;
-  }
-
-  mprintf(0, "Choose pixel format successful!\n");
-
-  // Try and set the new PFD
-  if (SetPixelFormat(glhdc, pf, &pfd) == FALSE) {
-    DWORD ret = GetLastError();
-    Int3();
-    // FreeLibrary(opengl_dll_handle);
-    return NULL;
-  }
-
-  mprintf(0, "SetPixelFormat successful!\n");
-
-  // Get a copy of the newly set PFD
-  if (DescribePixelFormat(glhdc, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd_copy) == 0) {
-    Int3();
-    // FreeLibrary(opengl_dll_handle);
-    return NULL;
-  }
-
-  // Check the returned PFD to see if it is hardware accelerated
-  if ((pfd_copy.dwFlags & PFD_GENERIC_ACCELERATED) == 0 && (pfd_copy.dwFlags & PFD_GENERIC_FORMAT) != 0) {
-    Int3();
-    // FreeLibrary(opengl_dll_handle);
-    return NULL;
-  }
-
-  // Create an OpenGL context, and make it the current context
-  ResourceContext = dwglCreateContext((HDC)glhdc);
-  if (ResourceContext == NULL) {
-    DWORD ret = GetLastError();
-    // FreeLibrary(opengl_dll_handle);
-    Int3();
-    return NULL;
-  }
-
-  ASSERT(ResourceContext != NULL);
-  mprintf(0, "Making context current\n");
-  dwglMakeCurrent((HDC)glhdc, ResourceContext);
-
-  Already_loaded = 1;
-
-  return 1;
-}
-#elif defined(__LINUX__)
 
 extern bool linux_permit_gamma;
 extern renderer_preferred_state Render_preferred_state;
@@ -743,7 +621,6 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
   Already_loaded = 1;
   return 1;
 }
-#endif
 
 // Sets up our OpenGL rendering context
 // Returns 1 if ok, 0 if something bad
@@ -763,124 +640,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
   }
 
   int windowX = 0, windowY = 0;
-#if defined(WIN32)
-  /***********************************************************
-   *               WINDOWS OPENGL
-   ***********************************************************
-   */
-  static HWnd hwnd = NULL;
-  if (ParentApplication != NULL) {
-    hwnd = static_cast<HWnd>(reinterpret_cast<oeWin32Application *>(ParentApplication)->m_hWnd);
-  }
 
-  if (!WindowGL) {
-    // First set our display mode
-    // Create direct draw surface
-
-    DEVMODE devmode;
-
-    devmode.dmSize = sizeof(devmode);
-    devmode.dmBitsPerPel = 32;
-    // devmode.dmBitsPerPel=gpu_preferred_state.bit_depth;
-    devmode.dmPelsWidth = gpu_preferred_state.width;
-    devmode.dmPelsHeight = gpu_preferred_state.height;
-    devmode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-
-#ifdef CHANGE_RESOLUTION_IN_FULLSCREEN
-    int retval = ChangeDisplaySettings(&devmode, 0);
-#else
-    int retval = DISP_CHANGE_SUCCESSFUL;
-#endif
-    if (retval != DISP_CHANGE_SUCCESSFUL) {
-      mprintf(0, "Display mode change failed (err=%d), trying default!\n", retval);
-      retval = -1;
-      devmode.dmBitsPerPel = 32;
-      devmode.dmPelsWidth = 640;
-      devmode.dmPelsHeight = 480;
-      devmode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-
-      retval = ChangeDisplaySettings(&devmode, 0);
-      if (retval != DISP_CHANGE_SUCCESSFUL) {
-        mprintf(0, "OpenGL_INIT:Change display setting failed failed!\n");
-        rend_SetErrorMessage("OGL: ChangeDisplaySettings failed.  Make sure your desktop is set to 16bit mode!");
-        ChangeDisplaySettings(NULL, 0);
-        opengl_Close();
-        return 0;
-      } else {
-        gpu_preferred_state.bit_depth = 32;
-        gpu_preferred_state.width = 640;
-        gpu_preferred_state.height = 480;
-      }
-    } else {
-      mprintf(0, "Setdisplaymode to %d x %d (%d bits) is successful!\n", gpu_preferred_state.width,
-               gpu_preferred_state.height, gpu_preferred_state.bit_depth);
-    }
-  }
-
-  memset(&gpu_state, 0, sizeof(rendering_state));
-
-  //	These values are set here - samir
-  if (app != NULL) {
-    hOpenGLWnd = (HWND)((oeWin32Application *)app)->m_hWnd;
-  }
-
-  hOpenGLDC = GetDC(hOpenGLWnd);
-
-  if (WindowGL) {
-    RECT rect;
-    POINT topLeft;
-    GetClientRect((HWND)hOpenGLWnd, &rect);
-
-    topLeft.x = rect.left;
-    topLeft.y = rect.top;
-    ClientToScreen((HWND)hOpenGLWnd, &topLeft);
-
-    width = rect.right - rect.left + 1;
-    height = rect.bottom - rect.top + 1;
-    windowX = topLeft.x;
-    windowY = topLeft.y;
-  } else {
-    SetWindowPos(hOpenGLWnd, HWND_TOPMOST, 0, 0, gpu_preferred_state.width, gpu_preferred_state.height,
-                 SWP_FRAMECHANGED);
-    width = gpu_preferred_state.width;
-    height = gpu_preferred_state.height;
-    RECT rect;
-    GetWindowRect((HWND)hOpenGLWnd, &rect);
-    mprintf(0, "rect=%d %d %d %d\n", rect.top, rect.right, rect.bottom, rect.left);
-  }
-
-  gpu_state.screen_width = width;
-  gpu_state.screen_height = height;
-
-  if (!opengl_Setup(hOpenGLDC)) {
-    opengl_Close();
-    return 0;
-  }
-
-  // Save gamma values for later
-  GetDeviceGammaRamp(hOpenGLDC, (LPVOID)Saved_gamma_values);
-
-#elif defined(__LINUX__)
-  /***********************************************************
-   *               LINUX OPENGL
-   ***********************************************************
-   */
-  // Setup gpu_state.screen_width & gpu_state.screen_height & width & height
-  width = gpu_preferred_state.width;
-  height = gpu_preferred_state.height;
-
-  if (!opengl_Setup(app, &width, &height)) {
-    opengl_Close();
-    return 0;
-  }
-
-  memset(&gpu_state, 0, sizeof(rendering_state));
-  gpu_state.screen_width = width;
-  gpu_state.screen_height = height;
-#else
-  // Setup gpu_state.screen_width & gpu_state.screen_height & width & height
-
-#endif
   // Get some info
   opengl_GetInformation();
 
@@ -1056,34 +816,18 @@ void opengl_Close(const bool just_resizing) {
 
   mem_free(delete_list);
 
-#if defined(WIN32)
-  if (dwglMakeCurrent)
-    dwglMakeCurrent(NULL, NULL);
-
-  if (dwglDeleteContext)
-    dwglDeleteContext(ResourceContext);
-
-  // Change our display back
-  if (!WindowGL) {
-#ifdef CHANGE_RESOLUTION_IN_FULLSCREEN
-    ChangeDisplaySettings(NULL, 0);
-#endif
+  if (GSDLGLContext) {
+      SDL_GL_MakeCurrent(NULL, NULL);
+      SDL_GL_DeleteContext(GSDLGLContext);
+      GSDLGLContext = NULL;
+      GOpenGLFBOWidth = GOpenGLFBOHeight = GOpenGLFBO = GOpenGLRBOColor = GOpenGLRBODepth = 0;
   }
-#elif defined(__LINUX__)
-    if (GSDLGLContext) {
-        SDL_GL_MakeCurrent(NULL, NULL);
-        SDL_GL_DeleteContext(GSDLGLContext);
-        GSDLGLContext = NULL;
-        GOpenGLFBOWidth = GOpenGLFBOHeight = GOpenGLFBO = GOpenGLRBOColor = GOpenGLRBODepth = 0;
-    }
 
-    if (!just_resizing && GSDLWindow) {
-        SDL_DestroyWindow(GSDLWindow);
-        GSDLWindow = NULL;
-    }
-#else
+  if (!just_resizing && GSDLWindow) {
+      SDL_DestroyWindow(GSDLWindow);
+      GSDLWindow = NULL;
+  }
 
-#endif
 
   if (OpenGL_packed_pixels) {
     if (opengl_packed_Upload_data) {
@@ -1118,17 +862,6 @@ void opengl_Close(const bool just_resizing) {
     OpenGL_cache_initted = 0;
   }
 
-#if defined(WIN32)
-  // Restore gamma values
-  SetDeviceGammaRamp(hOpenGLDC, (LPVOID)Saved_gamma_values);
-  //	I'm freeing the DC here - samir
-  ReleaseDC(hOpenGLWnd, hOpenGLDC);
-#elif defined(__LINUX__)
-
-#else
-
-#endif
-  // mod_FreeModule (OpenGLDLLHandle);
   gpu_state.initted = 0;
 }
 
@@ -1577,26 +1310,6 @@ void rend_SetGammaValue(float val) {
 
   gpu_preferred_state.gamma = val;
   mprintf(0, "Setting gamma to %f\n", val);
-
-#if defined(WIN32)
-  WORD rampvals[3 * 256];
-
-  for (int i = 0; i < 256; i++) {
-    float norm = (float)i / 255.0f;
-
-    float newval = powf(norm, 1.0f / val);
-
-    newval *= 65535;
-
-    newval = std::min<float>(65535, newval);
-
-    rampvals[i] = newval;
-    rampvals[i + 256] = newval;
-    rampvals[i + 512] = newval;
-  }
-
-  SetDeviceGammaRamp(hOpenGLDC, (LPVOID)rampvals);
-#endif
 }
 
 // Resets the texture cache
@@ -1967,16 +1680,8 @@ void rend_Flip(void) {
 
   // if we're rendering to an FBO, scale to the window framebuffer!
   if (GOpenGLFBO != 0) {
-    #if defined(WIN32)
-    // !!! FIXME: is this expensive?
-    RECT rectWindow;	// rectangle for the client area of the window
-    GetClientRect(hOpenGLWnd, &rectWindow);
-    int w = (int) (rectWindow.right - rectWindow.left);
-    int h = (int) (rectWindow.bottom - rectWindow.top);
-    #else
     int w, h;
     SDL_GL_GetDrawableSize(GSDLWindow, &w, &h);
-    #endif
 
     int scaledHeight, scaledWidth;
     if (w < h) {
@@ -1999,11 +1704,7 @@ void rend_Flip(void) {
     dglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
   }
 
-#if defined(WIN32)
-  SwapBuffers((HDC)hOpenGLDC);
-#elif defined(__LINUX__)
   SDL_GL_SwapWindow(GSDLWindow);
-#endif
 
   // go back to drawing on the FBO until we want to blit to the window framebuffer again.
   if (GOpenGLFBO != 0) {

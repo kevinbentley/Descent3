@@ -26,7 +26,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <csignal>
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include <SDL.h>
 
@@ -40,6 +43,7 @@
 #include "ddio.h"
 #include "osiris_dll.h"
 #include "loki_utils.h"
+
 
 #include "log.h"
 
@@ -139,10 +143,13 @@ void just_exit(void) {
 #endif
 
   SDL_Quit();
+#ifdef __LINUX__
   sync(); // just in case.
+#endif
   _exit(0);
 }
 
+#ifdef __LINUX__
 void fatal_signal_handler(int signum) {
   switch (signum) {
   case SIGHUP:
@@ -174,7 +181,7 @@ void fatal_signal_handler(int signum) {
 
 void safe_signal_handler(int signum) {}
 
-void install_signal_handlers(void) {
+void install_signal_handlers() {
   struct sigaction sact, fact;
 
   memset(&sact, 0, sizeof(sact));
@@ -209,6 +216,9 @@ void install_signal_handlers(void) {
   if (sigaction(SIGTRAP, &fact, NULL))
     fprintf(stderr, "SIG: Unable to install SIGTRAP\n");
 }
+#else
+void install_signal_handlers() {}
+#endif
 //	---------------------------------------------------------------------------
 //	Define our operating system specific extensions to the gameos system
 //	---------------------------------------------------------------------------
@@ -281,7 +291,6 @@ int SDLCALL d3SDLEventFilter(void *userdata, SDL_Event *event) {
   case SDL_KEYUP:
   case SDL_KEYDOWN:
     return (sdlKeyFilter(event));
-
   case SDL_JOYBALLMOTION:
   case SDL_MOUSEMOTION:
     return (sdlMouseMotionFilter(event));
@@ -343,8 +352,14 @@ static void check_beta() {
 //		creates all the OS objects and then runs Descent 3.
 //		this is all this function should do.
 //	---------------------------------------------------------------------------
-int main(int argc, char *argv[]) {
+// int main(int argc, char *argv[]) {
+int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine, int nCmdShow) {
+// int main(void) {
+  int argc = 1;
+  char* argv[10];
+#ifdef __LINUX__
   __orig_pwd = getcwd(NULL, 0);
+#endif
 
   /* Setup the logging system */
   InitLog();
@@ -590,6 +605,7 @@ int main(int argc, char *argv[]) {
     }
 
     bool run_d3 = true;
+#ifdef __LINUX__
     if (flags & APPFLAG_USESERVICE) {
       run_d3 = false;
       pid_t np = fork();
@@ -603,12 +619,13 @@ int main(int argc, char *argv[]) {
         printf("Successfully forked process [new sid=%d pid=%d]\n", np, pp);
       }
     }
+#endif
 
     if (run_d3) {
       oeD3LnxApp d3(flags);
       oeD3LnxDatabase dbase;
       StartDedicatedServer();
-      PreInitD3Systems();
+        PreInitD3Systems();
 
       d3.init();
       d3.run();

@@ -264,10 +264,10 @@ public:
 gameController *CreateController(int num_funcs, ct_function *funcs, char *remote_ip);
 void DestroyController(gameController *ctl);
 
-#if defined(WIN32)
-#include "win\WinController.h"
-#elif defined(__LINUX__)
+// #if defined(WIN32)
+// #include "win\WinController.h"
+// #elif defined(__LINUX__)
 #include "lnxcontroller.h"
-#endif
+// #endif
 
 #endif
