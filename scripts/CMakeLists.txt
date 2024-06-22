@@ -86,6 +86,10 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(HOG_NAME "win")
 endif()
 
+if (HogMaker_DIR)
+  find_package(HogMaker REQUIRED)
+endif()
+
 add_custom_target(HogFull
   COMMAND $<TARGET_FILE:HogMaker>
     "$<TARGET_FILE_DIR:Descent3>/d3-${HOG_NAME}.hog"

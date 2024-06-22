@@ -169,5 +169,19 @@ cmake --build --preset linux --config [Debug|Release]
 
 Once CMake finishes, the built files will be put in `builds/linux/Descent3/Debug` or `builds/linux/Descent3/Release`.
 
+#### Note - Cross-Compiling
+A tool called `HogMaker` is built from source and then used during the Descent3 build in order to create HOG files containing level data. As a result, `HogMaker` must be built as an executable for the architecture _performing_ the build - not the architecture for which you're building. CMake does not support more than one build toolchain in a single build invocation, so if are cross-compiling Descent3 then you will need to configure and build HogMaker individually first:
+```sh
+# configure a "host" build into its own directory, and set HOST_TOOLS_ONLY to 1
+cmake -B builds/host -DHOST_TOOLS_ONLY=1
+# perform the host build
+cmake --build builds/host
+
+# now, configure your real target build, pointing to the existing host tools build
+cmake -B builds/target -DCMAKE_TOOLCHAIN_FILE=/path/to/your/toolchain.cmake -DHogMaker_DIR=$(pwd)/builds/host
+# perform your real build. CMake will not build HogMaker in this invocation, and instead use the previously-built one
+cmake --build builds/target
+```
+
 ## Contributing
 Anyone can contribute! We have an active Discord presence at [Descent Developer Network](https://discord.gg/GNy5CUQ). If you are interested in maintaining the project on a regular basis, please contact Kevin Bentley.
