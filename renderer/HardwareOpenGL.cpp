@@ -21,7 +21,6 @@
 #include <windows.h>
 #endif
 
-#include "lnxscreenmode.h"
 #include "pserror.h"
 #include "mono.h"
 #include "3d.h"
@@ -39,6 +38,7 @@
 #include <string.h>
 #include "HardwareInternal.h"
 #include "../Descent3/args.h"
+#include "lnxscreenmode.h"
 #include <SDL.h>
 
 #include <NewBitmap.h>
@@ -54,7 +54,6 @@
 
 int FindArg(const char *);
 void rend_SetLightingState(light_state state);
-
 
 // General renderer states
 extern int gpu_Overlay_map;
@@ -193,6 +192,19 @@ int checkForGLErrors( const char *file, int line )
 
 // Sets up multi-texturing using ARB extensions
 void opengl_GetDLLFunctions(void) {
+#if defined(WIN32)
+  oglActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)dwglGetProcAddress("glActiveTextureARB");
+  if (!oglActiveTextureARB)
+    goto dll_error;
+
+  oglClientActiveTextureARB = (PFNGLCLIENTACTIVETEXTUREARBPROC)dwglGetProcAddress("glClientActiveTextureARB");
+  if (!oglClientActiveTextureARB)
+    goto dll_error;
+
+  oglMultiTexCoord4f = (PFNGLMULTITEXCOORD4FARBPROC)dwglGetProcAddress("glMultiTexCoord4f");
+  if (!oglMultiTexCoord4f)
+    goto dll_error;
+#else
 #define mod_GetSymbol(x, funcStr, y) __SDL_mod_GetSymbol(funcStr)
 
   oglActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)mod_GetSymbol(OpenGLDLLHandle, "glActiveTextureARB", 255);
@@ -207,6 +219,7 @@ void opengl_GetDLLFunctions(void) {
   }
 
 #undef mod_GetSymbol
+#endif
 
   UseMultitexture = true;
   return;
@@ -435,7 +448,8 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
     // ryan's adds. 04/18/2000...SDL stuff on 04/25/2000
     bool success = true;
 
-    OpenGLDLLHandle = LoadOpenGLDLL(gl_library);
+    OpenGLDLLHandle = LoadOpenGLDLL("opengl32.dll");
+    // OpenGLDLLHandle = LoadOpenGLDLL(gl_library);
     if (!(OpenGLDLLHandle)) {
       // rcg07072000 last ditch effort...
       OpenGLDLLHandle = LoadOpenGLDLL("libGL.so.1");
@@ -640,6 +654,23 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
   }
 
   int windowX = 0, windowY = 0;
+
+  /***********************************************************
+   *               LINUX OPENGL
+   ***********************************************************
+   */
+  // Setup gpu_state.screen_width & gpu_state.screen_height & width & height
+  width = gpu_preferred_state.width;
+  height = gpu_preferred_state.height;
+
+  if (!opengl_Setup(app, &width, &height)) {
+    opengl_Close();
+    return 0;
+  }
+
+  memset(&gpu_state, 0, sizeof(rendering_state));
+  gpu_state.screen_width = width;
+  gpu_state.screen_height = height;
 
   // Get some info
   opengl_GetInformation();
@@ -862,6 +893,7 @@ void opengl_Close(const bool just_resizing) {
     OpenGL_cache_initted = 0;
   }
 
+  // mod_FreeModule (OpenGLDLLHandle);
   gpu_state.initted = 0;
 }
 
