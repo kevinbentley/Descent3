@@ -1,7 +1,7 @@
 set(CMAKE_FOLDER "Scripts")
 
 set(CPPS
-  $<$<PLATFORM_ID:Darwin,Linux>:
+  $<$<PLATFORM_ID:Darwin,Linux,Android>:
     linux_lib.cpp
   >
 )
@@ -84,6 +84,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(HOG_NAME "osx")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(HOG_NAME "win")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+  set(HOG_NAME "android")
 endif()
 
 if (HogMaker_DIR)
