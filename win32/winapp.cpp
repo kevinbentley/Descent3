@@ -145,10 +145,8 @@
  * $NoKeywords: $
  */
 
-#define OEAPP_INTERNAL_MODULE
-
-#include "Application.h"
-#include "AppConsole.h"
+#include "winapp.h"
+#include "appconsole.h"
 #include "mono.h"
 #include "networking.h"
 
@@ -194,6 +192,16 @@ const uint32_t kWindowStyle_Console = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | 
 extern LRESULT WINAPI MyConProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 extern void con_Defer();
 
+#ifndef EDITOR
+oeApplication* App()
+{
+  static oeWin32Application* instance = nullptr;
+  if(instance == nullptr)
+    instance = new oeWin32Application();
+  return instance;
+}
+#endif
+
 bool oeWin32Application::os_initialized = false;
 bool oeWin32Application::first_time = true;
 
@@ -201,7 +209,8 @@ bool oeWin32Application::first_time = true;
 LRESULT WINAPI MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //	Creates the window handle and instance
-oeWin32Application::oeWin32Application(const char *name, unsigned flags, HInstance hinst) : oeApplication{}, m_MsgFn{} {
+oeWin32Application::oeWin32Application(const char *name, unsigned flags, HInstance hinst) {
+  m_MsgFn.fill(nullptr);
   WNDCLASS wc;
   RECT rect;
 
@@ -273,13 +282,13 @@ oeWin32Application::oeWin32Application(const char *name, unsigned flags, HInstan
     m_H = rect.bottom - rect.top - 1;
   }
 
-  m_hInstance = hinst;
-  m_Flags = flags;
+  m_instance = hinst;
+  m_flags = flags;
   strcpy(m_WndName, name);
 
   os_init();
 
-  m_hWnd = NULL;
+  m_handle = NULL;
   m_WasCreated = true;
   m_DeferFunc = NULL;
   w32_mouseman_hack = false;
@@ -287,19 +296,22 @@ oeWin32Application::oeWin32Application(const char *name, unsigned flags, HInstan
 
 //	Create object with a premade window handle/instance
 oeWin32Application::oeWin32Application(tWin32AppInfo *appinfo) : oeApplication() {
-  RECT rect;
 
   //	store handles
-  m_hWnd = appinfo->hwnd;
-  m_hInstance = appinfo->hinst;
-  m_Flags = appinfo->flags;
+  m_handle = appinfo->handle;
+  m_instance = appinfo->instance;
+  m_flags = appinfo->flags;
 
   //	returns the dimensions of the window
-  GetWindowRect((HWND)m_hWnd, &rect);
-  appinfo->wnd_x = m_X = rect.left;
-  appinfo->wnd_y = m_Y = rect.bottom;
-  appinfo->wnd_w = m_W = rect.right - rect.left - 1;
-  appinfo->wnd_h = m_H = rect.bottom - rect.top - 1;
+  {
+    RECT win;
+    GetWindowRect(m_handle, &win);
+    oeApplication::setWindow(rect_t { win.left,
+                                    win.bottom,
+                                    win.right - win.left - 1,
+                                    win.bottom - win.top - 1});
+  }
+  appinfo->window = window();
 
   m_WasCreated = false;
 
@@ -307,25 +319,21 @@ oeWin32Application::oeWin32Application(tWin32AppInfo *appinfo) : oeApplication()
 
   clear_handlers();
 
-  m_DeferFunc = NULL;
+  m_DeferFunc = nullptr;
   w32_mouseman_hack = false;
 }
 
 oeWin32Application::~oeWin32Application() {
-  HWND hwnd = (HWND)m_hWnd;
-  HINSTANCE hinst = (HINSTANCE)m_hInstance;
   char str[32];
-
   // I guess we should destroy this window, here, now.
-  GetClassName(hwnd, str, sizeof(str));
-
+  GetClassName(m_handle, str, sizeof(str));
   if (m_WasCreated) {
     // do this only if we created the window, not just initializing the window
-    if (hwnd) {
-      DestroyWindow(hwnd);
+    if (m_handle) {
+      DestroyWindow(m_handle);
     }
 
-    UnregisterClass(str, hinst);
+    UnregisterClass(str, m_instance);
   }
 }
 
@@ -336,61 +344,48 @@ void oeWin32Application::init() {
   if (!m_WasCreated)
     return;
 
-  if (m_Flags & OEAPP_CONSOLE) {
+  if (m_flags & OEAPP_CONSOLE) {
     style = 0;
     winstyle = kWindowStyle_Console;
   } else {
-    style = (m_Flags & OEAPP_TOPMOST) ? WS_EX_TOPMOST : 0;
-    if (m_Flags & OEAPP_WINDOWED) {
+    style = (m_flags & OEAPP_TOPMOST) ? WS_EX_TOPMOST : 0;
+    if (m_flags & OEAPP_WINDOWED) {
       winstyle = kWindowStyle_Windowed;
     } else {
       winstyle = kWindowStyle_FullScreen;
     }
   }
 
-  m_hWnd = (HWnd)CreateWindowEx(style, (LPCSTR)m_WndName, (LPCSTR)m_WndName, winstyle, m_X, m_Y, m_W, m_H, NULL, NULL,
-                                (HINSTANCE)m_hInstance, (LPVOID)this);
+  m_handle = CreateWindowEx(style,
+                            (LPCSTR)m_WndName,
+                            (LPCSTR)m_WndName,
+                            winstyle,
+                            window().x,
+                            window().y,
+                            window().w,
+                            window().h,
+                            NULL,
+                            NULL,
+                            m_instance,
+                            (LPVOID)this);
 
-  if (m_hWnd == NULL) {
+  if (m_handle == nullptr) {
     DWORD err = GetLastError();
     mprintf(0, "Failed to create game window (err: %x)\n", err);
     return;
   }
 
-  ShowWindow((HWND)m_hWnd, SW_SHOWNORMAL);
-  UpdateWindow((HWND)m_hWnd);
+  ShowWindow(m_handle, SW_SHOWNORMAL);
+  UpdateWindow(m_handle);
 }
 
-//	Function to retrieve information from object through a platform defined structure.
-void oeWin32Application::get_info(void *info) {
-  tWin32AppInfo *appinfo = (tWin32AppInfo *)info;
-
-  appinfo->hwnd = m_hWnd;
-  appinfo->hinst = m_hInstance;
-  appinfo->flags = m_Flags;
-  appinfo->wnd_x = m_X;
-  appinfo->wnd_y = m_Y;
-  appinfo->wnd_w = m_W;
-  appinfo->wnd_h = m_H;
-}
-
-//	Function to get the flags
-int oeWin32Application::flags(void) const { return m_Flags; }
-
-void oeWin32Application::set_sizepos(int x, int y, int w, int h) {
-  if (!m_hWnd)
-    return;
-
-  m_X = x;
-  m_Y = y;
-  m_W = w;
-  m_H = h;
-
-  MoveWindow((HWND)m_hWnd, x, y, w, h, TRUE);
+void oeWin32Application::moveWindow()
+{
+  MoveWindow(m_handle, window().x, window().y, window().w, window().h, TRUE);
 }
 
 // real defer code.
-#define DEFER_PROCESS_ACTIVE 1     // process is still active
+#define DEFER_PROCESS_ACTIVE 1     (LRESULT)// process is still active
 #define DEFER_PROCESS_INPUT_IDLE 2 // process input from os not pending.
 
 int oeWin32Application::defer_block() {
@@ -415,9 +410,9 @@ int oeWin32Application::defer_block() {
 
     if (this->active()) {
 #ifndef _DEBUG
-      if (GetForegroundWindow() != (HWND)this->m_hWnd && !(m_Flags & OEAPP_CONSOLE)) {
+      if (GetForegroundWindow() != this->m_handle && !(m_flags & OEAPP_CONSOLE)) {
         mprintf(0, "forcing this window into the foreground.\n");
-        SetForegroundWindow((HWND)this->m_hWnd);
+        SetForegroundWindow(this->m_handle);
       }
 #endif
       return (DEFER_PROCESS_ACTIVE + DEFER_PROCESS_INPUT_IDLE);
@@ -537,7 +532,7 @@ tWin32OS oeWin32Application::version(int *major, int *minor, int *build, char *s
 }
 
 //	This Window Procedure is called from the global WindowProc.
-LResult oeWin32Application::WndProc(HWnd hwnd, unsigned msg, WParam wParam, LParam lParam) {
+LRESULT oeWin32Application::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
   case WM_ACTIVATEAPP:
     m_AppActive = wParam ? true : false;
@@ -545,11 +540,11 @@ LResult oeWin32Application::WndProc(HWnd hwnd, unsigned msg, WParam wParam, LPar
     break;
   }
 
-  return DefWindowProc((HWND)hwnd, (UINT)msg, (WPARAM)wParam, (LPARAM)lParam);
+  return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 //	These functions allow you to add message handlers.
-bool oeWin32Application::add_handler(unsigned msg, tOEWin32MsgCallback fn) {
+bool oeWin32Application::add_handler(UINT msg, tOEWin32MsgCallback fn) {
   //	search for redundant callbacks.
   for (const MessageFunction &rMsgFn : m_MsgFn)
     if (rMsgFn.msg == msg && rMsgFn.fn == fn)
@@ -569,7 +564,7 @@ bool oeWin32Application::add_handler(unsigned msg, tOEWin32MsgCallback fn) {
 }
 
 // These functions remove a handler
-bool oeWin32Application::remove_handler(unsigned msg, tOEWin32MsgCallback fn) {
+bool oeWin32Application::remove_handler(UINT msg, tOEWin32MsgCallback fn) {
   if (!fn)
     DebugBreak();
 
@@ -584,13 +579,19 @@ bool oeWin32Application::remove_handler(unsigned msg, tOEWin32MsgCallback fn) {
 }
 
 // Run handler for message (added by add_handler)
-bool oeWin32Application::run_handler(HWnd wnd, unsigned msg, WParam wParam, LParam lParam) {
+bool oeWin32Application::run_handler(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   //	run user-defined message handlers
   // the guess here is that any callback that returns a 0, will not want to handle the window's WndProc function.
   for (const MessageFunction &rMsgFn : m_MsgFn)
     if (msg == rMsgFn.msg && rMsgFn.fn)
-      if (!(*rMsgFn.fn)(wnd, msg, wParam, lParam))
+    {
+      if (LRESULT rval = (*rMsgFn.fn)(wnd, msg, wParam, lParam); !rval)
         return false;
+      else
+      {
+        assert(false);
+      }
+    }
 
   return true;
 }
@@ -703,11 +704,11 @@ LRESULT WINAPI MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (i < 0 || Win32_AppObjects[i].app == NULL || force_default)
     return DefWindowProc(hWnd, msg, wParam, lParam);
 
-  if (!Win32_AppObjects[i].app->run_handler((HWnd)hWnd, (unsigned)msg, (WParam)wParam, (LParam)lParam))
+  if (!Win32_AppObjects[i].app->run_handler(hWnd, (unsigned)msg, wParam, lParam))
     return 0;
 
   // run user defined window procedure.
-  return (LRESULT)Win32_AppObjects[i].app->WndProc((HWnd)hWnd, (unsigned)msg, (WParam)wParam, (LParam)lParam);
+  return Win32_AppObjects[i].app->WndProc(hWnd, (unsigned)msg, wParam, lParam);
 }
 
 // detect if application can handle what we want of it.

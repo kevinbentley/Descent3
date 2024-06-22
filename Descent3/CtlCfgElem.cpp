@@ -900,7 +900,7 @@ int cfg_element_ui::DoUI() {
 
   ui_HideCursor();
 
-  Descent->delay(0.3f);
+  App()->delay(0.3f);
   ResumeControls();
   Control_poll_flag = false; // under multiplayer, the game frame is still running, so don't let
                              // assignments make it down to game frame (HACK)
@@ -908,7 +908,7 @@ int cfg_element_ui::DoUI() {
   while (!quit) {
     int key;
 
-    Descent->defer();
+    App()->defer();
     key = ddio_KeyInKey();
 
     // quit if escape pressed

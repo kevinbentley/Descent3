@@ -44,7 +44,7 @@
 #include <cstdio>
 #include <cctype>
 
-#include "AppConsole.h"
+#include "appconsole.h"
 #include "TaskSystem.h"
 #include "ddio_common.h"
 

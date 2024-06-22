@@ -50,7 +50,7 @@
 
 #include "ddvidlib.h"
 #include "pserror.h"
-#include "Application.h"
+#include "winapp.h"
 
 #include <string.h>
 
@@ -77,7 +77,7 @@ HRESULT WINAPI DDEnumModesCallback(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpCon
 //	Functions
 
 //	called first to allow fullscreen video access
-bool ddvid_Init(oeApplication *app, char *driver) {
+bool ddvid_Init(char *driver) {
   int subsys_id;
 
   //	preinitialize system.
@@ -104,8 +104,6 @@ bool ddvid_Init(oeApplication *app, char *driver) {
 
   DDVideo_init = true;
 
-  DDVideo_info.app = (oeWin32Application *)app;
-
   //	find subsystem id based off of subsystem requested.
   for (subsys_id = 0; DDVID_subsystems[subsys_id] != -1; subsys_id++) {
     if (strcmp(DDVID_subsystem_names[subsys_id], driver) == 0)
@@ -116,7 +114,7 @@ bool ddvid_Init(oeApplication *app, char *driver) {
     Error("Subsystem %s not found during startup.", driver);
 
   DDVideo_info.subsystem = DDVID_subsystems[subsys_id];
-  DDVideo_info.hWnd = (HWND)(((oeWin32Application *)app)->m_hWnd);
+  DDVideo_info.hWnd = Win32App()->windowHandle();
 
   //	initialize directdraw object.
   switch (DDVideo_info.subsystem) {

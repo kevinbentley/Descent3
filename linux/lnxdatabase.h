@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "appdatabase.h"
 
 class CRegistry;
 
@@ -37,14 +38,14 @@ class CRegistry;
 */
 
 class oeLnxAppDatabase : public oeAppDatabase {
-
 protected:
   CRegistry *database;
-
-public:
   oeLnxAppDatabase();
-  oeLnxAppDatabase(oeLnxAppDatabase *parent);
+  friend oeAppDatabase* Database();
+public:
   virtual ~oeLnxAppDatabase();
+  oeAppDatabase* getInstance();
+
   CRegistry *GetSystemRegistry();
 
   //	creates an empty classification or structure where you can store information

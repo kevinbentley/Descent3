@@ -72,7 +72,7 @@ extern tDDGRDXInternalData DDGR_DX_lib_data;
 #define DX_DATA(_c) DDGR_DX_lib_data._c
 
 //	Initializes DX subsystem
-bool ddgr_dx_Init(oeApplication *app);
+bool ddgr_dx_Init();
 
 //	Closes DX subsystem
 void ddgr_dx_Close();

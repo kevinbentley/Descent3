@@ -299,7 +299,7 @@
 #include "cfile.h"
 #include "mem.h"
 #include "lighting.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "pilot.h"
 #include "hud.h"
 #include "voice.h"
@@ -315,7 +315,7 @@
 #include "soundload.h"
 #include "sounds.h"
 #include "ctlconfig.h"
-#include "d3music.h"
+#include "musicapi.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -889,7 +889,7 @@ struct sound_menu {
     }
 
     if (Sound_system.GetSoundMixer() == SOUND_MIXER_NONE) {
-      Sound_system.InitSoundLib(Descent, mixer_type, Sound_quality, false);
+      Sound_system.InitSoundLib(mixer_type, Sound_quality, false);
     } else {
       Sound_system.SetSoundMixer(mixer_type);
     }
@@ -1196,7 +1196,7 @@ struct details_menu {
     parent_menu = menu;
 
     // detail level radio
-    Database->read_int("PredefDetailSetting", &Default_detail_level);
+    Database()->read_int("PredefDetailSetting", &Default_detail_level);
     iTemp = Default_detail_level;
     sheet->NewGroup(TXT_CFG_PRESETDETAILS, 0, 0);
     detail_level = sheet->AddFirstRadioButton(TXT_LOW);
@@ -1265,7 +1265,7 @@ struct details_menu {
     Detail_settings.Weapon_coronas_enabled = *weapon_coronas;
 
     Default_detail_level = *detail_level;
-    Database->write("PredefDetailSetting", Default_detail_level);
+    Database()->write("PredefDetailSetting", Default_detail_level);
 
     sheet = NULL;
   };

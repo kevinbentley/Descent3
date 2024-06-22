@@ -181,8 +181,6 @@ module *OpenGLDLLHandle = NULL;
 int Already_loaded = 0;
 bool opengl_Blending_on = 0;
 
-static oeApplication *ParentApplication;
-
 #if defined(WIN32)
 PFNGLACTIVETEXTUREARBPROC oglActiveTextureARB;
 PFNGLCLIENTACTIVETEXTUREARBPROC oglClientActiveTextureARB;
@@ -524,7 +522,7 @@ bool opengl_GetXConfig(Display *dpy, XVisualInfo *vis, int attrib, int *value) {
   return false;
 }
 
-int opengl_Setup(oeApplication *app, int *width, int *height) {
+int opengl_Setup(int *width, int *height) {
   if (!Already_loaded) {
 #define MAX_ARGS 30
 #define MAX_CHARS_PER_ARG 100
@@ -644,7 +642,8 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
   // move and resize the application window
   XMoveResizeWindow(OpenGL_Display, OpenGL_Window, 0, 0, *width, *height);
 
-  OpenGL_LinuxApp->set_sizepos(0, 0, *width, *height);
+  OpenGL_LinuxApp->setWindow(rect_t{0, 0, *width, *height});
+  OpenGL_LinuxApp->moveWindow();
   OpenGL_LinuxApp->set_windowinfo(OpenGL_Display, OpenGL_Window);
   OpenGL_LinuxApp->hide_mouse();
   OpenGL_LinuxApp->clear_window();
@@ -696,12 +695,6 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
    *               WINDOWS OPENGL
    ***********************************************************
    */
-  static HWND hwnd;
-
-  if (app != NULL) {
-    ParentApplication = app;
-    hwnd = (HWND)((oeWin32Application *)app)->m_hWnd;
-  }
 
   if (!WindowGL) {
     // First set our display mode
@@ -746,7 +739,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
 
   //	These values are set here - samir
   if (app != NULL) {
-    hOpenGLWnd = (HWND)((oeWin32Application *)app)->m_hWnd;
+    hOpenGLWnd = Win32App()->windowHandle();;
   }
 
   hOpenGLDC = GetDC(hOpenGLWnd);
@@ -792,7 +785,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
   width = OpenGL_preferred_state.width;
   height = OpenGL_preferred_state.height;
 
-  if (!opengl_Setup(app, &width, &height))
+  if (!opengl_Setup(&width, &height))
     goto D3DError;
 
   memset(&OpenGL_state, 0, sizeof(rendering_state));

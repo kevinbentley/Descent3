@@ -385,7 +385,7 @@
 #include "HTexture.h"
 #include "HRoom.h"
 #include "erooms.h"
-#include "AppDatabase.h"
+#include "windatabase.h"
 
 #include "TextureGrWnd.h"
 #include "WireframeGrWnd.h"
@@ -432,6 +432,15 @@ ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
 // Standard print setup command
 ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
 END_MESSAGE_MAP()
+
+
+CEditorApp* Editor()
+{
+  static CEditorApp* instance = nullptr;
+  if(instance == nullptr)
+    instance = new CEditorApp();
+  return instance;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CEditorApp construction
@@ -609,9 +618,9 @@ END_MESSAGE_MAP()
 void CEditorApp::OnAppAbout() {
   CAboutDlg aboutDlg;
 
-  theApp.pause();
+  Editor()->pause();
   aboutDlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -688,10 +697,10 @@ BOOL CEditorApp::OnIdle(LONG lCount) {
     viewer_rotated = 1;
 
   // Update the viewer properties dialog
-  if (Viewer_moved && theApp.m_ViewerPropDlgPtr)
-    theApp.m_ViewerPropDlgPtr->UpdatePosition();
-  if ((Viewer_moved || viewer_rotated) && theApp.m_ViewerPropDlgPtr)
-    theApp.m_ViewerPropDlgPtr->UpdateOrientation();
+  if (Viewer_moved && Editor()->m_ViewerPropDlgPtr)
+    Editor()->m_ViewerPropDlgPtr->UpdatePosition();
+  if ((Viewer_moved || viewer_rotated) && Editor()->m_ViewerPropDlgPtr)
+    Editor()->m_ViewerPropDlgPtr->UpdateOrientation();
 
   if (slew_flags & SLEW_KEY) {
     //	note that if a slew key was pressed, the main view is out of keyboard focus, set
@@ -813,122 +822,120 @@ BOOL CEditorApp::OnIdle(LONG lCount) {
 
 // Save current editor settings to the registry
 void SaveEditorSettings() {
-  oeWin32AppDatabase Editor_database((oeWin32AppDatabase *)Database);
   bool res;
   int speed;
 
-  res = Editor_database.lookup_record("editor");
+  res = Database()->lookup_record("editor");
   if (!res) {
     mprintf(0, "Can't get editor registry path\n");
     Int3();
     return;
   }
 
-  Editor_database.write("texdlg_texture", D3EditState.texdlg_texture);
-  Editor_database.write("current_obj_type", D3EditState.current_obj_type);
-  Editor_database.write("current_powerup", D3EditState.current_powerup);
-  Editor_database.write("current_door", D3EditState.current_door);
-  Editor_database.write("current_robot", D3EditState.current_robot);
-  Editor_database.write("current_ship", D3EditState.current_ship);
-  Editor_database.write("current_sound", D3EditState.current_sound);
-  Editor_database.write("current_weapon", D3EditState.current_weapon);
-  Editor_database.write("current_path", D3EditState.current_path);
-  Editor_database.write("current_node", D3EditState.current_node);
-  Editor_database.write("current_megacell", D3EditState.current_megacell);
-  Editor_database.write("current_clutter", D3EditState.current_clutter);
-  Editor_database.write("current_building", D3EditState.current_building);
-  Editor_database.write("texscr_visible", D3EditState.texscr_visible);
-  Editor_database.write("texscr_x", D3EditState.texscr_x);
-  Editor_database.write("texscr_y", D3EditState.texscr_y);
-  Editor_database.write("texscr_w", D3EditState.texscr_w);
-  Editor_database.write("texscr_h", D3EditState.texscr_h);
-  Editor_database.write("wirescr_visible", D3EditState.wirescr_visible);
-  Editor_database.write("wirescr_x", D3EditState.wirescr_x);
-  Editor_database.write("wirescr_y", D3EditState.wirescr_y);
-  Editor_database.write("wirescr_w", D3EditState.wirescr_w);
-  Editor_database.write("wirescr_h", D3EditState.wirescr_h);
-  Editor_database.write("keypad_visible", D3EditState.keypad_visible);
-  Editor_database.write("keypad_current", D3EditState.keypad_current);
-  Editor_database.write("float_keypad_x", D3EditState.float_keypad_x);
-  Editor_database.write("float_keypad_y", D3EditState.float_keypad_y);
-  Editor_database.write("float_keypad_w", D3EditState.float_keypad_w);
-  Editor_database.write("float_keypad_h", D3EditState.float_keypad_h);
-  Editor_database.write("objmodeless_x", D3EditState.objmodeless_x);
-  Editor_database.write("objmodeless_y", D3EditState.objmodeless_y);
-  Editor_database.write("objmodeless_on", D3EditState.objmodeless_on);
-  Editor_database.write("tile_views", D3EditState.tile_views);
-  Editor_database.write("game_render_mode", D3EditState.game_render_mode);
-  Editor_database.write("terrain_dots", D3EditState.terrain_dots);
-  Editor_database.write("terrain_flat_shade", D3EditState.terrain_flat_shade);
-  Editor_database.write("randomize_megacell", D3EditState.randomize_megacell);
-  Editor_database.write("box_selection_mode", D3EditState.box_selection_mode);
-  Editor_database.write("object_move_mode", D3EditState.object_move_mode);
-  Editor_database.write("fullscreen_debug", D3EditState.fullscreen_debug_state);
-  Editor_database.write("object_move_axis", D3EditState.object_move_axis);
-  Editor_database.write("texture_display_flags", D3EditState.texture_display_flags);
+  Database()->write("texdlg_texture", D3EditState.texdlg_texture);
+  Database()->write("current_obj_type", D3EditState.current_obj_type);
+  Database()->write("current_powerup", D3EditState.current_powerup);
+  Database()->write("current_door", D3EditState.current_door);
+  Database()->write("current_robot", D3EditState.current_robot);
+  Database()->write("current_ship", D3EditState.current_ship);
+  Database()->write("current_sound", D3EditState.current_sound);
+  Database()->write("current_weapon", D3EditState.current_weapon);
+  Database()->write("current_path", D3EditState.current_path);
+  Database()->write("current_node", D3EditState.current_node);
+  Database()->write("current_megacell", D3EditState.current_megacell);
+  Database()->write("current_clutter", D3EditState.current_clutter);
+  Database()->write("current_building", D3EditState.current_building);
+  Database()->write("texscr_visible", D3EditState.texscr_visible);
+  Database()->write("texscr_x", D3EditState.texscr_x);
+  Database()->write("texscr_y", D3EditState.texscr_y);
+  Database()->write("texscr_w", D3EditState.texscr_w);
+  Database()->write("texscr_h", D3EditState.texscr_h);
+  Database()->write("wirescr_visible", D3EditState.wirescr_visible);
+  Database()->write("wirescr_x", D3EditState.wirescr_x);
+  Database()->write("wirescr_y", D3EditState.wirescr_y);
+  Database()->write("wirescr_w", D3EditState.wirescr_w);
+  Database()->write("wirescr_h", D3EditState.wirescr_h);
+  Database()->write("keypad_visible", D3EditState.keypad_visible);
+  Database()->write("keypad_current", D3EditState.keypad_current);
+  Database()->write("float_keypad_x", D3EditState.float_keypad_x);
+  Database()->write("float_keypad_y", D3EditState.float_keypad_y);
+  Database()->write("float_keypad_w", D3EditState.float_keypad_w);
+  Database()->write("float_keypad_h", D3EditState.float_keypad_h);
+  Database()->write("objmodeless_x", D3EditState.objmodeless_x);
+  Database()->write("objmodeless_y", D3EditState.objmodeless_y);
+  Database()->write("objmodeless_on", D3EditState.objmodeless_on);
+  Database()->write("tile_views", D3EditState.tile_views);
+  Database()->write("game_render_mode", D3EditState.game_render_mode);
+  Database()->write("terrain_dots", D3EditState.terrain_dots);
+  Database()->write("terrain_flat_shade", D3EditState.terrain_flat_shade);
+  Database()->write("randomize_megacell", D3EditState.randomize_megacell);
+  Database()->write("box_selection_mode", D3EditState.box_selection_mode);
+  Database()->write("object_move_mode", D3EditState.object_move_mode);
+  Database()->write("fullscreen_debug", D3EditState.fullscreen_debug_state);
+  Database()->write("object_move_axis", D3EditState.object_move_axis);
+  Database()->write("texture_display_flags", D3EditState.texture_display_flags);
 
   speed = ((Slew_key_speed - 0.5) / 0.5);
-  Editor_database.write("slew_key_speed", speed);
-  Editor_database.write("joy_slewing", D3EditState.joy_slewing);
+  Database()->write("slew_key_speed", speed);
+  Database()->write("joy_slewing", D3EditState.joy_slewing);
 }
 
 // Load editor settings from the registry
 void LoadEditorSettings() {
-  oeWin32AppDatabase Editor_database((oeWin32AppDatabase *)Database);
   bool res;
   int speed = (int)((Slew_key_speed - 0.5) / 0.5);
 
-  res = Editor_database.lookup_record("editor");
+  res = Database()->lookup_record("editor");
   if (!res) {
     mprintf(0, "Can't get editor registry path\n");
     Int3();
     return;
   }
 
-  Editor_database.read_int("texdlg_texture", &D3EditState.texdlg_texture);
-  Editor_database.read_int("current_obj_type", &D3EditState.current_obj_type);
-  Editor_database.read_int("current_powerup", &D3EditState.current_powerup);
-  Editor_database.read_int("current_door", &D3EditState.current_door);
-  Editor_database.read_int("current_robot", &D3EditState.current_robot);
-  Editor_database.read_int("current_clutter", &D3EditState.current_clutter);
-  Editor_database.read_int("current_building", &D3EditState.current_building);
-  Editor_database.read_int("current_ship", &D3EditState.current_ship);
-  Editor_database.read_int("current_sound", &D3EditState.current_sound);
-  Editor_database.read_int("current_weapon", &D3EditState.current_weapon);
-  Editor_database.read_int("current_path", &D3EditState.current_path);
-  Editor_database.read_int("current_node", &D3EditState.current_node);
-  Editor_database.read_int("current_megacell", &D3EditState.current_megacell);
-  Editor_database.read("texscr_visible", &D3EditState.texscr_visible);
-  Editor_database.read_int("texscr_x", &D3EditState.texscr_x);
-  Editor_database.read_int("texscr_y", &D3EditState.texscr_y);
-  Editor_database.read_int("texscr_w", &D3EditState.texscr_w);
-  Editor_database.read_int("texscr_h", &D3EditState.texscr_h);
-  Editor_database.read("wirescr_visible", &D3EditState.wirescr_visible);
-  Editor_database.read_int("wirescr_x", &D3EditState.wirescr_x);
-  Editor_database.read_int("wirescr_y", &D3EditState.wirescr_y);
-  Editor_database.read_int("wirescr_w", &D3EditState.wirescr_w);
-  Editor_database.read_int("wirescr_h", &D3EditState.wirescr_h);
-  Editor_database.read("keypad_visible", &D3EditState.keypad_visible);
-  Editor_database.read_int("keypad_current", &D3EditState.keypad_current);
-  Editor_database.read_int("float_keypad_x", &D3EditState.float_keypad_x);
-  Editor_database.read_int("float_keypad_y", &D3EditState.float_keypad_y);
-  Editor_database.read_int("float_keypad_w", &D3EditState.float_keypad_w);
-  Editor_database.read_int("float_keypad_h", &D3EditState.float_keypad_h);
-  Editor_database.read_int("objmodeless_x", &D3EditState.objmodeless_x);
-  Editor_database.read_int("objmodeless_y", &D3EditState.objmodeless_y);
-  Editor_database.read("objmodeless_on", &D3EditState.objmodeless_on);
-  Editor_database.read("tile_views", &D3EditState.tile_views);
-  Editor_database.read_int("game_render_mode", &D3EditState.game_render_mode);
-  Editor_database.read("terrain_dots", &D3EditState.terrain_dots);
-  Editor_database.read("terrain_flat_shade", &D3EditState.terrain_flat_shade);
-  Editor_database.read("randomize_megacell", &D3EditState.randomize_megacell);
-  Editor_database.read_int("box_selection_mode", &D3EditState.box_selection_mode);
-  Editor_database.read_int("object_move_mode", &D3EditState.object_move_mode);
-  Editor_database.read("fullscreen_debug", &D3EditState.fullscreen_debug_state);
-  Editor_database.read_int("object_move_axis", &D3EditState.object_move_axis);
-  Editor_database.read_int("slew_key_speed", &speed);
-  Editor_database.read_int("texture_display_flags", &D3EditState.texture_display_flags);
-  Editor_database.read_int("joy_slewing", &D3EditState.joy_slewing);
+  Database()->read_int("texdlg_texture", &D3EditState.texdlg_texture);
+  Database()->read_int("current_obj_type", &D3EditState.current_obj_type);
+  Database()->read_int("current_powerup", &D3EditState.current_powerup);
+  Database()->read_int("current_door", &D3EditState.current_door);
+  Database()->read_int("current_robot", &D3EditState.current_robot);
+  Database()->read_int("current_clutter", &D3EditState.current_clutter);
+  Database()->read_int("current_building", &D3EditState.current_building);
+  Database()->read_int("current_ship", &D3EditState.current_ship);
+  Database()->read_int("current_sound", &D3EditState.current_sound);
+  Database()->read_int("current_weapon", &D3EditState.current_weapon);
+  Database()->read_int("current_path", &D3EditState.current_path);
+  Database()->read_int("current_node", &D3EditState.current_node);
+  Database()->read_int("current_megacell", &D3EditState.current_megacell);
+  Database()->read("texscr_visible", &D3EditState.texscr_visible);
+  Database()->read_int("texscr_x", &D3EditState.texscr_x);
+  Database()->read_int("texscr_y", &D3EditState.texscr_y);
+  Database()->read_int("texscr_w", &D3EditState.texscr_w);
+  Database()->read_int("texscr_h", &D3EditState.texscr_h);
+  Database()->read("wirescr_visible", &D3EditState.wirescr_visible);
+  Database()->read_int("wirescr_x", &D3EditState.wirescr_x);
+  Database()->read_int("wirescr_y", &D3EditState.wirescr_y);
+  Database()->read_int("wirescr_w", &D3EditState.wirescr_w);
+  Database()->read_int("wirescr_h", &D3EditState.wirescr_h);
+  Database()->read("keypad_visible", &D3EditState.keypad_visible);
+  Database()->read_int("keypad_current", &D3EditState.keypad_current);
+  Database()->read_int("float_keypad_x", &D3EditState.float_keypad_x);
+  Database()->read_int("float_keypad_y", &D3EditState.float_keypad_y);
+  Database()->read_int("float_keypad_w", &D3EditState.float_keypad_w);
+  Database()->read_int("float_keypad_h", &D3EditState.float_keypad_h);
+  Database()->read_int("objmodeless_x", &D3EditState.objmodeless_x);
+  Database()->read_int("objmodeless_y", &D3EditState.objmodeless_y);
+  Database()->read("objmodeless_on", &D3EditState.objmodeless_on);
+  Database()->read("tile_views", &D3EditState.tile_views);
+  Database()->read_int("game_render_mode", &D3EditState.game_render_mode);
+  Database()->read("terrain_dots", &D3EditState.terrain_dots);
+  Database()->read("terrain_flat_shade", &D3EditState.terrain_flat_shade);
+  Database()->read("randomize_megacell", &D3EditState.randomize_megacell);
+  Database()->read_int("box_selection_mode", &D3EditState.box_selection_mode);
+  Database()->read_int("object_move_mode", &D3EditState.object_move_mode);
+  Database()->read("fullscreen_debug", &D3EditState.fullscreen_debug_state);
+  Database()->read_int("object_move_axis", &D3EditState.object_move_axis);
+  Database()->read_int("slew_key_speed", &speed);
+  Database()->read_int("texture_display_flags", &D3EditState.texture_display_flags);
+  Database()->read_int("joy_slewing", &D3EditState.joy_slewing);
 
   Slew_key_speed = ((float)speed * 0.5) + 0.5;
 
@@ -1087,7 +1094,7 @@ bool FileDialog(CWnd *wnd, BOOL open, LPCTSTR filter, char *pathname, char *init
   char saved_path[_MAX_PATH];
   char search_path[_MAX_PATH];
 
-  theApp.pause();
+  Editor()->pause();
 
   if (open)
     dlg = new CFileDialog(TRUE, 0, 0, OFN_FILEMUSTEXIST, filter, wnd);
@@ -1107,7 +1114,7 @@ bool FileDialog(CWnd *wnd, BOOL open, LPCTSTR filter, char *pathname, char *init
   if (dlg->DoModal() == IDCANCEL) {
     if (initialdir)
       ddio_SetWorkingDir(saved_path);
-    theApp.resume();
+    Editor()->resume();
     delete dlg;
     return false;
   }
@@ -1121,7 +1128,7 @@ bool FileDialog(CWnd *wnd, BOOL open, LPCTSTR filter, char *pathname, char *init
     ddio_SetWorkingDir(saved_path);
   }
 
-  theApp.resume();
+  Editor()->resume();
 
   delete dlg;
   return true;

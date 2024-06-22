@@ -47,7 +47,7 @@
 
 #include "ddvidlib.h"
 #include "pserror.h"
-#include "Application.h"
+#include "winapp.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //	Variables
@@ -75,9 +75,9 @@ bool ddvidwin_Init() {
     if (devmode.dmBitsPerPel == (uint32_t)GetDeviceCaps(hdc, BITSPIXEL) &&
         devmode.dmPelsWidth == (uint32_t)GetSystemMetrics(SM_CXSCREEN) &&
         devmode.dmPelsHeight == (uint32_t)GetSystemMetrics(SM_CYSCREEN)) {
-      if (DDVideo_info.app->NT() && devmode.dmDisplayFrequency == (uint32_t)GetDeviceCaps(hdc, VREFRESH))
+      if (Win32App()->NT() && devmode.dmDisplayFrequency == (uint32_t)GetDeviceCaps(hdc, VREFRESH))
         DDVideo_info.gdi.olddevmode = i;
-      else if (!DDVideo_info.app->NT())
+      else if (!Win32App()->NT())
         DDVideo_info.gdi.olddevmode = i;
     }
 

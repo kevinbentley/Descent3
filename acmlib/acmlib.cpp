@@ -18,7 +18,7 @@
 
 
 
-#include "Adecode.h"
+#include "adecode.h"
 #include "mem.h"
 
 #ifdef __cplusplus

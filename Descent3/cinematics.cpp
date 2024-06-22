@@ -110,7 +110,7 @@ bool PlayMovie(const char *moviename) {
 
   SetMovieProperties(0, 0, Max_window_w, Max_window_h, Renderer_type);
 
-  int mveerr = mve_PlayMovie(filename, Descent);
+  int mveerr = mve_PlayMovie(filename);
 
   // Shutdown the subtitle system
   SubtCloseSubtitles();
@@ -123,7 +123,7 @@ bool PlayMovie(const char *moviename) {
 
   //	startup D3 sound.
   if (sound_sys_active) {
-    Sound_system.InitSoundLib(Descent, Sound_mixer, Sound_quality, false);
+    Sound_system.InitSoundLib(Sound_mixer, Sound_quality, false);
   }
 
   return retval;
@@ -149,7 +149,7 @@ tCinematic *StartMovie(const char *moviename, bool looping) {
   SetMovieProperties(0, 0, Max_window_w, Max_window_h, Renderer_type);
 
   int filehandle;
-  intptr_t hMovie = mve_SequenceStart(filename, &filehandle, Descent, looping);
+  intptr_t hMovie = mve_SequenceStart(filename, &filehandle, looping);
   if (hMovie == 0)
     return NULL;
 

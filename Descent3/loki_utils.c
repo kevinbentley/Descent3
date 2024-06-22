@@ -20,28 +20,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
 #include <SDL.h>
 
 #include "loki_utils.h"
 
-static char *basepath = NULL;
-static char *prefpath = NULL;
-
-const char *loki_getdatapath(void) { return basepath; }
-
-const char *loki_getprefpath(void) { return prefpath; }
-
-void loki_initialize(int argc, char **argv, char *desc) {
-  basepath = SDL_GetBasePath();
-  if (basepath == NULL) {
-    fprintf(stderr, "ERROR: Couldn't find game directory!\n");
-    exit(43);
+const char *loki_getdatapath(void)
+{
+  static char *basepath = NULL;
+  if(basepath == NULL) {
+    basepath = SDL_GetBasePath();
+    if (basepath == NULL) {
+      fprintf(stderr, "ERROR: Couldn't find game directory!\n");
+      exit(43);
+    }
   }
+  return basepath;
+}
 
-  prefpath = SDL_GetPrefPath("Outrage Entertainment", "Descent 3");
+const char *loki_getprefpath(void)
+{
+  static char *prefpath = NULL;
   if (prefpath == NULL) {
-    fprintf(stderr, "ERROR: Couldn't find preference directory!\n");
-    exit(43);
+    prefpath = SDL_GetPrefPath("Outrage Entertainment", "Descent 3");
+    if (prefpath == NULL) {
+      fprintf(stderr, "ERROR: Couldn't find preference directory!\n");
+      exit(43);
+    }
   }
+  return prefpath;
+}
 
-} /* loki_initialize */
+/* end of loki_utils.c ... */

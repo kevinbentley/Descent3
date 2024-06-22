@@ -88,7 +88,7 @@
 #include "descent.h"
 #include "mem.h"
 #include "3d.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "hlsoundlib.h"
 #include <string.h>
 #include <math.h>
@@ -395,7 +395,7 @@ void Credits_Display(void) {
       Sound_system.EndSoundFrame();
 
       // Check for keys
-      Descent->defer();
+      App()->defer();
       if (Credits_IsKeyPressed()) {
         cur_line = count;
       }

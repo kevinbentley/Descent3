@@ -26,7 +26,6 @@
 #include <cstdlib>
 
 #include "ddvid.h"
-#include "application.h"
 #include "lnxapp.h"
 
 struct tinfo {
@@ -34,7 +33,6 @@ struct tinfo {
 };
 
 struct tDDVideoInfo {
-  oeLnxApplication *app;
   // vga_modeinfo *info;
   tinfo *info;
   bool paged;
@@ -53,12 +51,11 @@ static bool DDVideo_init = false;
 //	Functions
 
 //	called first to allow fullscreen video access
-bool ddvid_Init(oeApplication *app, char *driver) {
+bool ddvid_Init(char *driver) {
   int subsys_id;
 
   //	preinitialize system.
   if (!DDVideo_init) {
-    DDVideo_info.app = NULL;
     DDVideo_info.info = NULL;
     atexit(ddvid_Close);
   } else {
@@ -66,8 +63,6 @@ bool ddvid_Init(oeApplication *app, char *driver) {
   }
 
   DDVideo_init = true;
-
-  DDVideo_info.app = (oeLnxApplication *)app;
 
   // vga_init();
   return true;

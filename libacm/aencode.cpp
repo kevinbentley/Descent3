@@ -21,7 +21,7 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
-#include "Aencode.h"
+#include "aencode.h"
 
 struct BitsEncoder {
   FILE *m_outFile;   // var50 | offset 0x10

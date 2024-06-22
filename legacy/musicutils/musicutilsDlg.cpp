@@ -31,7 +31,7 @@
 #include "musicplay.h"
 
 #include "pserror.h"
-#include "Application.h"
+#include "application.h"
 #include "streamaudio.h"
 #include "ddio.h"
 #include "macros.h"
@@ -198,7 +198,7 @@ BOOL CMusicutilsDlg::OnInitDialog() {
   // TODO: Add extra initialization here
   tWin32AppInfo appinfo;
   appinfo.hwnd = m_hWnd;
-  appinfo.hinst = theApp.m_hInstance;
+  appinfo.hinst = Editor()->m_hInstance;
   appinfo.flags = OEAPP_WINDOWED;
 
   MusicUtils = (oeApplication *)new oeWin32Application(&appinfo);

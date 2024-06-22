@@ -48,7 +48,7 @@
 #include <sys/types.h>
 
 #include "appdatabase.h"
-#include "linux/lnxdatabase.h"
+#include "lnxdatabase.h"
 #include "pserror.h"
 #include "mono.h"
 #include "pserror.h"
@@ -58,6 +58,14 @@
 #define REGISTRY_FILENAME ".Descent3Registry"
 
 // Construction and destruction.
+
+oeAppDatabase* Database()
+{
+  static oeLnxAppDatabase* instance = nullptr;
+  if(instance == nullptr)
+    instance = new oeLnxAppDatabase();
+  return instance;
+}
 
 oeLnxAppDatabase::oeLnxAppDatabase() {
   // Open up the database file, for reading, read in all data and keep it in memory
@@ -71,16 +79,6 @@ oeLnxAppDatabase::oeLnxAppDatabase() {
   database = new CRegistry(fileName);
   database->Import();
   create_record("Version");
-}
-
-oeLnxAppDatabase::oeLnxAppDatabase(oeLnxAppDatabase *parent) {
-  char name[256];
-  CRegistry *db = parent->GetSystemRegistry();
-  db->Export();
-  database = new CRegistry("");
-  db->GetSystemName(name);
-  database->SetSystemName(name);
-  database->Import();
 }
 
 oeLnxAppDatabase::~oeLnxAppDatabase() {

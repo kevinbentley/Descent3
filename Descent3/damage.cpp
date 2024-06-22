@@ -577,7 +577,7 @@
 #include "attach.h"
 #include "difficulty.h"
 #include "demofile.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "osiris_dll.h"
 #include "D3ForceFeedback.h"
 #include "multi_server.h"

@@ -75,7 +75,7 @@
 
 #include "ddgrWin32.h"
 #include "ddgrWin32GDI.h"
-#include "Application.h"
+#include "winapp.h"
 #include "mono.h"
 #include "pserror.h"
 #include "gr.h"
@@ -90,11 +90,11 @@ tDDGRGDIInternalData DDGR_GDI_lib_data;
 //	---------------------------------------------------------------------------
 //	initializes the objects needed to use GDI
 
-bool ddgr_gdi_Init(oeApplication *app, bool fullscreen, bool ddraw) {
+bool ddgr_gdi_Init(bool fullscreen, bool ddraw) {
   HRESULT hres;
 
   GDI_DATA(fullscreen) = fullscreen;
-  GDI_DATA(hPrimaryWnd) = (HWND)((oeWin32Application *)app)->m_hWnd;
+  GDI_DATA(hPrimaryWnd) = Win32App()->windowHandle();
 
   GDI_DATA(lpDD) = NULL;
   if (ddraw) {

@@ -24,7 +24,7 @@
 #include <limits>
 
 #include "object.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "collide.h"
 #include "findintersection.h"
 #include "vecmat.h"

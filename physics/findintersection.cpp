@@ -878,7 +878,7 @@
 
 #include "BOA.h"
 #include "polymodel.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "player.h"
 #include "doorway.h"
 #include "renderer.h"

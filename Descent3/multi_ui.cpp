@@ -414,10 +414,10 @@ int MainMultiplayerMenu() {
 
   SetScreenMode(SM_MENU);
 
-  Database->read("DefaultNetConn", sznetgame, &netgamelen);
+  Database()->read("DefaultNetConn", sznetgame, &netgamelen);
   if (*sznetgame == '\0') {
     strcpy(sznetgame, "HEAT.NET");
-    Database->write("DefaultNetConn", sznetgame, strlen(sznetgame) + 1);
+    Database()->write("DefaultNetConn", sznetgame, strlen(sznetgame) + 1);
   }
 
   newuiTiledWindow menu_wnd;
@@ -619,7 +619,7 @@ int MainMultiplayerMenu() {
         // Mark this baby as default.
         lists->GetCurrentItem(def, 256);
 
-        Database->write("DefaultNetConn", def, strlen(def) + 1);
+        Database()->write("DefaultNetConn", def, strlen(def) + 1);
         snprintf(fmtmsg, sizeof(fmtmsg), TXT_SETDEFAULT, def);
         DoMessageBox(TXT_MENUMULTIPLAYER, fmtmsg, MSGBOX_OK, UICOL_WINDOW_TITLE, UICOL_TEXT_NORMAL);
         break;

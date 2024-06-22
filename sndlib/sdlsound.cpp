@@ -61,7 +61,7 @@ lnxsound::~lnxsound() {
 }
 
 // Starts the sound library, maybe have it send back some information -- 3d support?
-int lnxsound::InitSoundLib(char mixer_type, oeApplication *sos, uint8_t max_sounds_played) {
+int lnxsound::InitSoundLib(char mixer_type, uint8_t max_sounds_played) {
   SDL_AudioSpec spec;
 
   // setup mixer

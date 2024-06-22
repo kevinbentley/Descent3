@@ -32,8 +32,8 @@
 
 #include "program.h"
 #include "descent.h"
-#include "application.h"
-#include "appdatabase.h"
+#include "lnxapp.h"
+#include "lnxdatabase.h"
 #include "args.h"
 #include "init.h"
 
@@ -120,7 +120,6 @@ static volatile char already_tried_signal_cleanup = 0;
 namespace {
 extern "C" {
 char game_version_buffer[150];
-char *game_version = game_version_buffer;
 }
 } // namespace
 
@@ -209,40 +208,15 @@ void install_signal_handlers(void) {
   if (sigaction(SIGTRAP, &fact, NULL))
     fprintf(stderr, "SIG: Unable to install SIGTRAP\n");
 }
-//	---------------------------------------------------------------------------
-//	Define our operating system specific extensions to the gameos system
-//	---------------------------------------------------------------------------
-
-class oeD3LnxApp : public oeLnxApplication {
-  bool shutdown, final_shutdown;
-  int old_screen_mode;
-
-public:
-  oeD3LnxApp(unsigned flags);
-  virtual ~oeD3LnxApp() { final_shutdown = true; };
-
-  void run() { Descent3(); };
-};
-
-oeD3LnxApp::oeD3LnxApp(unsigned flags) : oeLnxApplication(flags) {
-  Descent = this;
-  shutdown = false;
-  final_shutdown = false;
-}
-
-class oeD3LnxDatabase : public oeLnxAppDatabase {
-public:
-  oeD3LnxDatabase();
-};
 
 //	---------------------------------------------------------------------------
 //	D3LnxDatabase operating system specific initialization
-oeD3LnxDatabase::oeD3LnxDatabase() : oeLnxAppDatabase() {
+void init_database(void) {
   char path[_MAX_PATH];
   char netpath[_MAX_PATH];
 
   // put directories into database
-  create_record("Descent3");
+  Database()->create_record("Descent3");
 
   char *dir = getenv("D3_LOCAL");
   char *netdir = getenv("D3_DIR");
@@ -257,9 +231,8 @@ oeD3LnxDatabase::oeD3LnxDatabase() : oeLnxAppDatabase() {
   else
     strcpy(netpath, netdir);
 
-  write("local directory", path, strlen(path) + 1);
-  write("net directory", netpath, strlen(netpath) + 1);
-  Database = this;
+  Database()->write("local directory", path, strlen(path) + 1);
+  Database()->write("net directory", netpath, strlen(netpath) + 1);
 }
 
 static void register_d3_args(void) {
@@ -444,10 +417,7 @@ int main(int argc, char *argv[]) {
 #endif
            D3_MAJORVER, D3_MINORVER, D3_BUILD, D3_GIT_HASH);
 
-  game_version += 2; // skip those first newlines for loki_initialize.
-
   register_d3_args();
-  loki_initialize(argc, argv, game_version_buffer);
 
   int x;
 
@@ -605,13 +575,12 @@ int main(int argc, char *argv[]) {
     }
 
     if (run_d3) {
-      oeD3LnxApp d3(flags);
-      oeD3LnxDatabase dbase;
+      init_database();
       StartDedicatedServer();
       PreInitD3Systems();
 
-      d3.init();
-      d3.run();
+      App()->init();
+      Descent3();
     }
   }
 

@@ -301,7 +301,8 @@ target_link_libraries(Descent3
   fix grtext manage mem misc model module movie stream_audio
   music networking physics renderer rtperformance sndlib ui unzip vecmat md5
   ${PLATFORM_LIBS})
-target_include_directories(Descent3 PRIVATE ${PROJECT_BINARY_DIR}/lib)
+target_include_directories(Descent3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+  PRIVATE ${PROJECT_BINARY_DIR}/lib)
 add_dependencies(Descent3 get_git_hash Direct_TCP_IP_Hog HogFull NetgamesDir Parallax_Online_Hog)
 install(TARGETS Descent3 RUNTIME)
 

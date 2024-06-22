@@ -114,7 +114,7 @@ static inline float UI_TIME() { return UI_input.cur_time; }
 //	FUNCTIONS
 
 //	call this function to initialize the UI system. pass a viewport where all UI will occur
-void ui_Init(oeApplication *app, tUIInitInfo *init_info);
+void ui_Init(tUIInitInfo *init_info);
 
 // closes UI system.  do this when setting a new surface.
 void ui_Close();

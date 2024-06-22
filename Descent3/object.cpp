@@ -1144,7 +1144,7 @@
 #include "slew.h"
 #include "game.h"
 #include "trigger.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "collide.h"
 #include "door.h"
 #include "controls.h"

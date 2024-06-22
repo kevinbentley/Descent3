@@ -447,7 +447,7 @@ bool PlayBriefing(tTelComInfo *tcs) {
     TelComHandleAllEvents(tcs);
 
     TelcomRenderScreen();
-    Descent->defer();
+    App()->defer();
     if (KEY_STATE(KEY_ESC))
       tcs->state = TCS_POWEROFF;
 
@@ -570,7 +570,7 @@ bool PBLoopCallback() {
   TelComHandleAllEvents(pb_tcs);
   TelcomRenderScreen();
 
-  Descent->defer();
+  App()->defer();
   if (KEY_STATE(KEY_ESC)) {
     pb_tcs->state = TCS_POWEROFF;
     ret = true;

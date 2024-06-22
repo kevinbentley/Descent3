@@ -210,9 +210,9 @@ void CAmbientSoundPattern::OnASPNewElement() {
 
   CAmbientSoundElement dlg(&new_element);
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 
   if (new_element.handle != -1) {
 
@@ -238,9 +238,9 @@ void CAmbientSoundPattern::OnASPEditElement() {
   if (m_current_element > -1) {
     CAmbientSoundElement dlg(&Ambient_sound_patterns[m_current_asp].sounds[m_current_element]);
 
-    theApp.pause();
+    Editor()->pause();
     dlg.DoModal();
-    theApp.resume();
+    Editor()->resume();
 
     UpdateDialog();
   }

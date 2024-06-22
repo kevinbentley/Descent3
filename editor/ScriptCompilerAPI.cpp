@@ -105,7 +105,7 @@ int ScriptCompile(tCompilerInfo *ci) {
 
 #ifndef NEWEDITOR
   // make sure there is a compiler defined
-  if (Database->read("EditorCompiler", Compiler_path, &len)) {
+  if (Database()->read("EditorCompiler", Compiler_path, &len)) {
     if (!cfexist(Compiler_path)) {
       OutrageMessageBox(
           "The configured virtual compiler (%s)\ncannot be found.  Please make sure\nyou have specified a proper path "
@@ -120,8 +120,8 @@ int ScriptCompile(tCompilerInfo *ci) {
     return CERR_NOCOMPILERDEFINED;
   }
 
-  Database->read_int("EditorVCWarningLevel", &Warning_level);
-  Database->read_int("EditorVCDebugLevel", &Debug_type);
+  Database()->read_int("EditorVCWarningLevel", &Warning_level);
+  Database()->read_int("EditorVCDebugLevel", &Debug_type);
 #else
   // New Editor setup
 

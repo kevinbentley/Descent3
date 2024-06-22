@@ -27,7 +27,7 @@
 #include "mono.h"
 #include "ddio.h"
 #include "ddio_win.h"
-#include "Application.h"
+#include "winapp.h"
 #include "psclass.h"
 #include "Macros.h"
 
@@ -233,7 +233,7 @@ void ddio_InternalMouseFrame() {
 
 void MouseError() { MessageBoxA(nullptr, "Failed to init raw input for mouse", "Error", MB_ICONERROR); }
 
-int RawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT RawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   uint32_t buttons;
   t_mse_event ev;
   float curtime = timer_GetTime();

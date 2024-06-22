@@ -745,7 +745,7 @@ bool TelComGoalStatus(tTelComInfo *tcs) {
     TelComHandleAllEvents(&Telcom_system);
 
     TelcomRenderScreen();
-    Descent->defer();
+    App()->defer();
     if (KEY_STATE(KEY_ESC))
       Telcom_system.state = TCS_POWEROFF;
 

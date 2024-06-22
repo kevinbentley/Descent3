@@ -165,7 +165,7 @@ void CEditorDoc::Dump(CDumpContext &dc) const { COleServerDoc::Dump(dc); }
 
 BOOL CEditorDoc::OnNewDocument() {
   // If Dallas is running, don't create a new document
-  if (theApp.m_DallasModelessDlgPtr != NULL) {
+  if (Editor()->m_DallasModelessDlgPtr != NULL) {
     OutrageMessageBox("The Dallas Script Editor is open!\n\n"
                       "You must close down Dallas before creating a New Level...");
     return FALSE;
@@ -184,7 +184,7 @@ BOOL CEditorDoc::OnNewDocument() {
   //	Create new mine
   CreateNewMine();
   SetModifiedFlag(FALSE);
-  theApp.main_doc = this;
+  Editor()->main_doc = this;
 
   // Remove any "Untitled" dallas script files
   char fullpath[_MAX_PATH];
@@ -202,7 +202,7 @@ BOOL CEditorDoc::OnOpenDocument(LPCTSTR lpszPathName) {
   BOOL opened;
 
   // If Dallas is running, don't open the document
-  if (theApp.m_DallasModelessDlgPtr != NULL) {
+  if (Editor()->m_DallasModelessDlgPtr != NULL) {
     OutrageMessageBox("The Dallas Script Editor is open!\n\n"
                       "You must close down Dallas before loading a new level...");
     return FALSE;
@@ -215,11 +215,11 @@ BOOL CEditorDoc::OnOpenDocument(LPCTSTR lpszPathName) {
   //	does the level always load correctly?
   mprintf(0, "Opening level %s...\n", lpszPathName);
 
-  theApp.pause();
+  Editor()->pause();
   CKeypadDialog::Deactivate();
   opened = EditorLoadLevel((char *)lpszPathName);
   CKeypadDialog::Activate();
-  theApp.resume();
+  Editor()->resume();
 
   if (!opened) {
     SetModifiedFlag(TRUE); // say that the old level was trashed
@@ -227,10 +227,10 @@ BOOL CEditorDoc::OnOpenDocument(LPCTSTR lpszPathName) {
   }
 
   if (D3EditState.objmodeless_on)
-    theApp.main_frame->m_ObjModeless->Refresh();
+    Editor()->main_frame->m_ObjModeless->Refresh();
 
   SetModifiedFlag(FALSE);
-  theApp.main_doc = this;
+  Editor()->main_doc = this;
 
   return true;
 }
@@ -263,8 +263,8 @@ BOOL CEditorDoc::OnSaveDocument(LPCTSTR lpszPathName) {
   if (retval) {
 
     // If Dallas is up, change its filenames
-    if (theApp.m_DallasModelessDlgPtr != NULL) {
-      theApp.m_DallasModelessDlgPtr->SetAllFilenamesToThis((char *)lpszPathName);
+    if (Editor()->m_DallasModelessDlgPtr != NULL) {
+      Editor()->m_DallasModelessDlgPtr->SetAllFilenamesToThis((char *)lpszPathName);
     }
 
     // Copy Dallas files (if doing a 'Save As')
@@ -311,7 +311,7 @@ void CEditorDoc::OnCloseDocument() {
   COleServerDoc::OnCloseDocument();
   mprintf(0, "Closing current level...\n");
 
-  theApp.main_doc = NULL;
+  Editor()->main_doc = NULL;
 }
 
 BOOL CEditorDoc::SaveModified() {

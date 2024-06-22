@@ -1,6 +1,11 @@
 set(HEADERS
+  3d.h
   dyna_gl.h
   HardwareInternal.h
+  lnxscreenmode.h
+  rend_d3d.h
+  renderer.h
+  rend_opengl.h
 )
 set(CPPS
   HardwareClipper.cpp
@@ -15,7 +20,8 @@ set(CPPS
 )
 
 if(UNIX)
-  set(CPPS ${CPPS} lnxscreenmode.cpp)
+  list(APPEND HEADERS lnxscreenmode.h)
+  list(APPEND CPPS lnxscreenmode.cpp)
 endif()
 
 # These are excluded.
@@ -28,4 +34,15 @@ target_link_libraries(renderer PRIVATE
   bitmap
   ddio
   mem
+  rtperformance
+  module
+  2dlib
+  $<$<PLATFORM_ID:Linux,Darwin>:
+    linux
+  >
+  $<$<PLATFORM_ID:Windows>:
+    win32
+  >
 )
+
+target_include_directories(renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

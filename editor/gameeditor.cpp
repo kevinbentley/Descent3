@@ -496,8 +496,8 @@
 #include "init.h"
 #include "game.h"
 #include "descent.h"
-#include "Application.h"
-#include "AppDatabase.h"
+#include "winapp.h"
+#include "windatabase.h"
 #include "program.h"
 #include "ddio.h"
 #include "object.h"
@@ -521,7 +521,7 @@
 #include "pilot.h"
 #include "streamaudio.h"
 #include "D3ForceFeedback.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "osiris_dll.h"
 #include "d3edit.h"
 #include "editordoc.h"
@@ -534,10 +534,8 @@
 //	---------------------------------------------------------------------------
 //	local globals
 //	---------------------------------------------------------------------------
-static oeApplication *Saved_editor_app = NULL; // the editor's app object
 static char Editor_dir[_MAX_PATH];             // old editor directory
 static RECT Editor_wndrect;                    // editor window rect.
-unsigned hGameWnd;                             // used for hack. window handle to draw to.
 static HMENU hEditorMenu;
 static DWORD EditorWndStyle;
 static DWORD EditorBackBrush;
@@ -606,12 +604,12 @@ void GameToEditor(bool set_viewer_from_player) {
 
   ddio_init_info io_info;
 
-  theApp.pause();
+  Editor()->pause();
   // Sleep to prevent race conditions with the display drivers
   Sleep(2000);
 
   // Close down whatever renderer we were using and restore the software renderer
-  rend_Init(RENDERER_OPENGL, Saved_editor_app, NULL);
+  rend_Init(RENDERER_OPENGL, NULL);
 
   if (Game_screen)
     delete Game_screen;
@@ -660,22 +658,16 @@ void GameToEditor(bool set_viewer_from_player) {
 
   if (PROGRAM(windowed)) {
     //	reinitialize IO system for editor
-    delete Descent;
-    Descent = Saved_editor_app;
-    io_info.obj = Descent;
+
   } else if (D3EditState.fullscreen_debug_state) {
     //	reinitialize IO system for editor
-    delete Descent;
-    Descent = Saved_editor_app;
-    io_info.obj = Descent;
 
-    theApp.main_frame->SetMenu(CMenu::FromHandle(hEditorMenu));
+
+    Editor()->main_frame->SetMenu(CMenu::FromHandle(hEditorMenu));
   } else {
-    Descent = Saved_editor_app;
-    io_info.obj = Descent;
-    theApp.main_frame->SetMenu(CMenu::FromHandle(hEditorMenu));
-    SetClassLong(theApp.main_frame->m_hWnd, GCL_HBRBACKGROUND, EditorBackBrush);
-    SetWindowLong(theApp.main_frame->m_hWnd, GWL_STYLE, EditorWndStyle);
+    Editor()->main_frame->SetMenu(CMenu::FromHandle(hEditorMenu));
+    SetClassLong(Editor()->main_frame->m_hWnd, GCL_HBRBACKGROUND, EditorBackBrush);
+    SetWindowLong(Editor()->main_frame->m_hWnd, GWL_STYLE, EditorWndStyle);
   }
 
   //	this uses information defined above
@@ -694,7 +686,7 @@ void GameToEditor(bool set_viewer_from_player) {
     Error("Graphics initialization failed.\n");
   }
 
-  //	theApp.main_frame->SetWindowPos(&CWnd::wndNoTopMost, Editor_wndrect.left, Editor_wndrect.top,
+  //	Editor()->main_frame->SetWindowPos(&CWnd::wndNoTopMost, Editor_wndrect.left, Editor_wndrect.top,
   //										Editor_wndrect.right-Editor_wndrect.left,
   //										Editor_wndrect.bottom -
   //Editor_wndrect.top, 										SWP_SHOWWINDOW);
@@ -715,11 +707,11 @@ void GameToEditor(bool set_viewer_from_player) {
 
   //	initialize systems back to editor.
   InitGameEditSystems();
-  theApp.resume();
+  Editor()->resume();
 
   // If Dallas is running, restore it to where it was
-  if (theApp.m_DallasModelessDlgPtr != NULL)
-    theApp.m_DallasModelessDlgPtr->ShowWindow(SW_SHOWNA);
+  if (Editor()->m_DallasModelessDlgPtr != NULL)
+    Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_SHOWNA);
 
   Disable_editor_rendering = false;
 }
@@ -730,8 +722,8 @@ void EditorToGame() {
   Disable_editor_rendering = true;
 
   // Hide Dallas (if it's running) so it doesn't get any keypresses
-  if (theApp.m_DallasModelessDlgPtr != NULL)
-    theApp.m_DallasModelessDlgPtr->ShowWindow(SW_HIDE);
+  if (Editor()->m_DallasModelessDlgPtr != NULL)
+    Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_HIDE);
 
   /*	Create a new window and display it.  Initialize a new GameOS Object and use this
           for our game
@@ -755,7 +747,7 @@ void EditorToGame() {
           This will annihilate all previous DDGR settings.
   */
 
-  //	theApp.main_frame->ShowWindow(SW_SHOWMINNOACTIVE);
+  //	Editor()->main_frame->ShowWindow(SW_SHOWMINNOACTIVE);
 
   //	set game working directory
   bool set_size = false;
@@ -788,9 +780,11 @@ void EditorToGame() {
   //	create a new OS object, hence a new window (The Descent III window)
   unsigned flags;
 
-  Saved_editor_app = Descent;
-  Saved_editor_app->get_info(&app_info);
-  theApp.main_frame->GetWindowRect(&Editor_wndrect);
+  {
+    RECT rect;
+    Editor()->main_frame->GetWindowRect(&rect);
+    rect.top
+  }
 
   //	close down ddgr system only.
   ddgr_Close();
@@ -802,8 +796,8 @@ void EditorToGame() {
   else
     strcpy(subsystem, "GDIX");
 
-  if (theApp.main_doc) {
-    CString path = theApp.main_doc->GetPathName();
+  if (Editor()->main_doc) {
+    CString path = Editor()->main_doc->GetPathName();
     strcpy(Editor_quickplay_levelname, path.GetBuffer(0));
     if (Editor_quickplay_levelname[0] == '\0')
       strcpy(Editor_quickplay_levelname, "Untitled.d3l");
@@ -820,58 +814,55 @@ void EditorToGame() {
 
   //	create window and start game.
   if (PROGRAM(windowed)) {
-    flags = OEAPP_WINDOWED;
-    Descent = new oeWin32Application("D3 Game Window", flags, app_info.hinst);
-    Descent->init();
+    Win32App()->setFlags(OEAPP_WINDOWED);
+    //flags = OEAPP_WINDOWED;
+    //Descent = new oeWin32Application("D3 Game Window", flags, app_info.instance);
+    //App()->init();
     set_size = true;
-    Descent->get_info(&app_info);
-    hGameWnd = app_info.hwnd;
-    SetForegroundWindow((HWND)hGameWnd);
-    Saved_editor_app->defer();
-    Descent->defer();
+    SetForegroundWindow(Win32App()->windowHandle());
+    //Saved_editor_app->defer();
+    //App()->defer();
 
     //	Initialize graphics and sound this must be done after initialization of new window and
     //	after deferring to OS.
-    if (!ddvid_Init(Descent, subsystem))
+    if (!ddvid_Init(subsystem))
       Error("Graphics initialization failed.\n");
   } else if (D3EditState.fullscreen_debug_state) {
-    CMenu *menu = theApp.main_frame->GetMenu();
+    CMenu *menu = Editor()->main_frame->GetMenu();
 
     hEditorMenu = menu->m_hMenu;
-    theApp.main_frame->SetMenu(NULL);
+    Editor()->main_frame->SetMenu(NULL);
 
-    flags = OEAPP_FULLSCREEN;
-    Descent = new oeWin32Application("D3 Game Window Debug", flags, app_info.hinst);
-    Descent->init();
+    Win32App()->setFlags(OEAPP_FULLSCREEN);
+    //Descent = new oeWin32Application("D3 Game Window Debug", flags, app_info.instance);
+    //App()->init();
     set_size = true;
-    Descent->get_info(&app_info);
-    hGameWnd = app_info.hwnd;
-    SetForegroundWindow((HWND)hGameWnd);
-    Saved_editor_app->defer();
-    Descent->defer();
+    //App()->get_info(&app_info);
+    SetForegroundWindow(app_info.handle);
+    //Saved_editor_app->defer();
+    //App()->defer();
 
     //	Initialize graphics and sound this must be done after initialization of new window and
     //	after deferring to OS.
-    if (!ddvid_Init(Saved_editor_app, subsystem))
+    if (!ddvid_Init(subsystem))
       Error("Graphics initialization failed.\n");
 
     //	force application to think it's active.
-    SetActiveWindow((HWND)hGameWnd);
-    //	Descent->activate();
+    SetActiveWindow(app_info.handle);
+    //	App()->activate();
   } else {
-    CMenu *menu = theApp.main_frame->GetMenu();
+    CMenu *menu = Editor()->main_frame->GetMenu();
 
-    hGameWnd = (unsigned)theApp.main_frame->m_hWnd;
     hEditorMenu = menu->m_hMenu;
-    theApp.main_frame->SetMenu(NULL);
-    EditorWndStyle = GetWindowLong(theApp.main_frame->m_hWnd, GWL_STYLE);
-    EditorBackBrush = GetClassLong(theApp.main_frame->m_hWnd, GCL_HBRBACKGROUND);
-    SetWindowLong(theApp.main_frame->m_hWnd, GWL_STYLE, EditorWndStyle & ~(WS_CAPTION | WS_THICKFRAME | WS_BORDER));
-    SetClassLong(theApp.main_frame->m_hWnd, GCL_HBRBACKGROUND, (DWORD)GetStockObject(HOLLOW_BRUSH));
+    Editor()->main_frame->SetMenu(NULL);
+    EditorWndStyle = GetWindowLong(Editor()->main_frame->m_hWnd, GWL_STYLE);
+    EditorBackBrush = GetClassLong(Editor()->main_frame->m_hWnd, GCL_HBRBACKGROUND);
+    SetWindowLong(Editor()->main_frame->m_hWnd, GWL_STYLE, EditorWndStyle & ~(WS_CAPTION | WS_THICKFRAME | WS_BORDER));
+    SetClassLong(Editor()->main_frame->m_hWnd, GCL_HBRBACKGROUND, (DWORD)GetStockObject(HOLLOW_BRUSH));
 
     //	Initialize graphics and sound this must be done after initialization of new window and
     //	after deferring to OS.
-    if (!ddvid_Init(Descent, subsystem))
+    if (!ddvid_Init(subsystem))
       Error("Graphics initialization failed.\n");
   }
 
@@ -885,21 +876,22 @@ void EditorToGame() {
   ForceInit();
 
   //	Create game screen and clear it.
-  ddvid_SetVideoHandle(hGameWnd);
+  ddvid_SetVideoHandle(app_info.handle);
 
   //	Initialize everything else.
   InitEditGameSystems();
 
   //	maybe we should CLEAR HERE
   if (set_size) {
-    ((oeWin32Application *)Descent)->set_sizepos(0, 0, 640, 480);
+    App()->setWindow(rect_t{0, 0, 640, 480});
+    App()->moveWindow();
   }
 
   Just_returned_from_game = 1;
   Just_returned_time = timer_GetTime();
 
   //	if (D3EditState.fullscreen_debug_state)
-  //		theApp.main_frame->MoveWindow(-50,-50,20,20);
+  //		Editor()->main_frame->MoveWindow(-50,-50,20,20);
 }
 
 void InitEditGameSystems() {
@@ -910,7 +902,7 @@ void InitEditGameSystems() {
   SetDebugBreakHandlers(D3DebugStopHandler, D3DebugResumeHandler);
 #endif
 
-  Descent->set_defer_handler(D3DeferHandler);
+  App()->set_defer_handler(D3DeferHandler);
 
   LoadAllFonts();
   InitControls();

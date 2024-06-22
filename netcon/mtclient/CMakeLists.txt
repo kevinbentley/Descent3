@@ -1,3 +1,12 @@
+set(HEADERS
+  chat_api.h
+  mtclient.h
+  mtgametrack.h
+  mt_net.h
+  mtpilottrack.h
+  mtstrings.h
+)
+
 set(CPPS
   chat_api.cpp
   mt_net.cpp
@@ -6,17 +15,27 @@ set(CPPS
   mtpilottracker.cpp
 )
 
-add_library(Parallax_Online MODULE ${CPPS})
+add_library(Parallax_Online MODULE ${HEADERS} ${CPPS})
 set_target_properties(Parallax_Online PROPERTIES PREFIX "")
 set_target_properties(Parallax_Online PROPERTIES CXX_VISIBILITY_PRESET "hidden")
 set_target_properties(Parallax_Online PROPERTIES OUTPUT_NAME "Parallax Online")
 target_link_libraries(Parallax_Online PRIVATE
   ddio
   inetfile
+  2dlib
+  networking
+  ui
+  bitmap
+  model
+  module
+  manage
+  renderer
   $<$<PLATFORM_ID:Windows>:
   ws2_32
   >
 )
+
+target_include_directories(Parallax_Online PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(Parallax_Online_Hog
   COMMAND $<TARGET_FILE:HogMaker>

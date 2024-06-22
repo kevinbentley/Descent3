@@ -209,7 +209,7 @@ void CBitmapButtonEx::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
   }
 
   // Use the Application default palette (speeds things up in 256 color)
-  palette = &theApp.m_palette;
+  palette = &Editor()->m_palette;
 
   // RECT rect=lpDrawItemStruct->rcItem;
 

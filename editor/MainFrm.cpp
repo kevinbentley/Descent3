@@ -806,8 +806,8 @@
 
 // D3 EDITOR HEADERS
 #include "pserror.h"
-#include "Application.h"
-#include "AppDatabase.h"
+#include "winapp.h"
+#include "windatabase.h"
 #include "program.h"
 #include "gr.h"
 #include "init.h"
@@ -1068,7 +1068,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
   InitKeypadDialog();
   DockKeypad(TRUE); // dock if tiled
 
-  theApp.main_frame = MFC_Main_frame = this;
+  Editor()->main_frame = MFC_Main_frame = this;
 
   return 0;
 }
@@ -1441,14 +1441,6 @@ void CMainFrame::OnDestroy() {
     delete Desktop_surf;
     Desktop_surf = NULL;
   }
-  if (Database) {
-    delete Database;
-    Database = NULL;
-  }
-  if (Descent) {
-    delete Descent;
-    Descent = NULL;
-  }
 }
 
 void InitCScripts() {
@@ -1464,11 +1456,12 @@ void InitCScripts() {
 }
 
 //	Initializes OS components for Descent3.  MUST BE DONE BEFORE ANYTHING ELSE!
+extern void WinMainInitEditor(HWND hwnd, HINSTANCE hinst);
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
   // TODO: Add your specialized code here and/or call the base class
   PreInitD3Systems();
-  WinMainInitEditor((unsigned)CWnd::m_hWnd, (unsigned)AfxGetInstanceHandle());
+  WinMainInitEditor(CWnd::m_hWnd, AfxGetInstanceHandle());
   ProgramVersion(DEVELOPMENT_VERSION, 0, 0, 0);
 
   DisplaySplashScreen();
@@ -1549,11 +1542,11 @@ void CMainFrame::OnActivateApp(BOOL bActive, HTASK hTask) {
 	CFrameWnd::OnActivateApp(bActive, hTask);
 	
 	if (bActive) {
-		theApp.resume();
+		Editor()->resume();
 		mprintf_at(2,0,0, "App Active  ");
 	}
 	else {
-		theApp.pause();
+		Editor()->pause();
 		mprintf_at(2,0,0, "App Inactive");
 	}
 
@@ -1693,41 +1686,41 @@ void CMainFrame::OnNetPane(CCmdUI *pCmdUI) {
 void CMainFrame::OnToolsWorldTextures() {
   CWorldTexturesDialog wtexdlg;
 
-  theApp.pause();
+  Editor()->pause();
   wtexdlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnToolsWorldWeapons() {
   CWorldWeaponsDialog wweapdlg;
 
-  theApp.pause();
+  Editor()->pause();
   wweapdlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnToolsWorldObjectsDoor() {
   CWorldObjectsDoorDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnToolsWorldObjectsLights() {
   CWorldObjectsLightDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnToolsWorldObjectsPlayer() {
   CWorldObjectsPlayerDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnToolsWorldObjectsPowerups() {
@@ -1736,9 +1729,9 @@ void CMainFrame::OnToolsWorldObjectsPowerups() {
   dlg.m_type = OBJ_POWERUP;
   dlg.m_current = D3EditState.current_powerup;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 
   if (dlg.m_current != -1)
     D3EditState.current_powerup = dlg.m_current;
@@ -1750,9 +1743,9 @@ void CMainFrame::OnToolsWorldObjectsRobots() {
   dlg.m_type = OBJ_ROBOT;
   dlg.m_current = D3EditState.current_robot;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 
   if (dlg.m_current != -1)
     D3EditState.current_robot = dlg.m_current;
@@ -1764,9 +1757,9 @@ void CMainFrame::OnToolsWorldObjectsClutter() {
   dlg.m_type = OBJ_CLUTTER;
   dlg.m_current = D3EditState.current_clutter;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 
   if (dlg.m_current != -1)
     D3EditState.current_clutter = dlg.m_current;
@@ -1778,9 +1771,9 @@ void CMainFrame::OnToolsWorldObjectsBuildings() {
   dlg.m_type = OBJ_BUILDING;
   dlg.m_current = D3EditState.current_building;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 
   if (dlg.m_current != -1)
     D3EditState.current_building = dlg.m_current;
@@ -1789,9 +1782,9 @@ void CMainFrame::OnToolsWorldObjectsBuildings() {
 void CMainFrame::OnSubeditorsFont() {
   CGrFontDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnUpdateViewKeypadToggle(CCmdUI *pCmdUI) { pCmdUI->SetCheck((BOOL)D3EditState.keypad_visible); }
@@ -1981,9 +1974,9 @@ void CMainFrame::OnFileLeaveEditor() {
 void CMainFrame::OnFilePreferences() {
   CPreferencesDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnImportBitmap() {
@@ -2034,9 +2027,9 @@ void CMainFrame::OnSubeditorsHogmaker() {
   //	Open the HOG Dialog
   CHogDialog dlg(this, filename);
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 //	---------------------------------------------------------------------------
@@ -2410,9 +2403,9 @@ void CMainFrame::OnObjectPlaceObject() {
 void CMainFrame::OnToolsWorldObjectsSound() {
   CWorldSoundsDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 // Keep this around
@@ -2581,13 +2574,13 @@ void ListAllObjects() {
   if (OutrageMessageBox(MBOX_YESNO, "This will take a long time.\n\nAre you sure you want to continue?") != IDYES)
     return;
 
-  theApp.pause();
+  Editor()->pause();
   Stay_paused = 1;
   SetFunctionMode(EDITOR_GAME_MODE); // keep LoadLevel() from bringing up messages
   ListObjectsInAllLevels();
   SetFunctionMode(EDITOR_MODE);
   Stay_paused = 0;
-  theApp.resume();
+  Editor()->resume();
 
   OutrageMessageBox("Object infomation written to clipboard.");
 }
@@ -2877,9 +2870,9 @@ BOOL CMainFrame::OnHelpInfo(HELPINFO *pHelpInfo) {
 void CMainFrame::OnEditorsMegacells() {
   CMegacellDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void ReorderPages(int);
@@ -2921,7 +2914,7 @@ void CMainFrame::OnFileImportRoom() {
     VerifyRoom(&Rooms[n]);
   }
 
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnObjectMovePlayer() { HObjectMoveToViewer(Player_object); }
@@ -3187,9 +3180,9 @@ void CMainFrame::OnHotspotTga() {
 void CMainFrame::OnEditorsFiles() {
   CFilePageDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnUpdateEditAttach(CCmdUI *pCmdUI) { pCmdUI->Enable(Placed_group != NULL); }
@@ -3317,17 +3310,17 @@ void CMainFrame::OnSubEditorsTableFileEdit() {
   // TODO: Add your command handler code here
   CTableFileEdit dlg;
 
-  // theApp.pause();
+  // Editor()->pause();
   dlg.DoModal();
-  // theApp.resume();
+  // Editor()->resume();
 }
 
 void CMainFrame::OnEditorsAmbientSounds() {
   CAmbientSoundPattern dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
-  theApp.resume();
+  Editor()->resume();
 }
 
 void CMainFrame::OnBriefingEditor() {
@@ -3364,12 +3357,12 @@ void CMainFrame::OnUpdateViewShowObjectsInWireframeView(CCmdUI *pCmdUI) {
 }
 
 void CMainFrame::OnEditorsDallas() {
-  if (theApp.m_DallasModelessDlgPtr == NULL) {
-    theApp.m_DallasModelessDlgPtr = new CDallasMainDlg;
-    theApp.m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
-    theApp.m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
+  if (Editor()->m_DallasModelessDlgPtr == NULL) {
+    Editor()->m_DallasModelessDlgPtr = new CDallasMainDlg;
+    Editor()->m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
+    Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
   } else
-    theApp.m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
+    Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
 }
 
 void CMainFrame::OnUpdateOsiriscompile(CCmdUI *pCmdUI) {
@@ -3623,7 +3616,7 @@ void DumpLevelGoals(char *outname, char *levelname) {
 }
 
 void CMainFrame::OnFileSaveGoalText() {
-  CString path = theApp.main_doc->GetPathName();
+  CString path = Editor()->main_doc->GetPathName();
 
   char pathname[_MAX_FNAME], filename[_MAX_FNAME], ext[_MAX_FNAME];
   ddio_SplitPath(path.GetBuffer(0), pathname, filename, ext);
@@ -3639,17 +3632,17 @@ void CMainFrame::OnFileSaveGoalText() {
 }
 
 void CMainFrame::OnViewViewprop() {
-  if (theApp.m_ViewerPropDlgPtr == NULL) {
-    theApp.m_ViewerPropDlgPtr = new CViewerPropDlg;
-    theApp.m_ViewerPropDlgPtr->Create(IDD_VIEWER_DIALOG, this);
-    theApp.m_ViewerPropDlgPtr->ShowWindow(SW_SHOW);
+  if (Editor()->m_ViewerPropDlgPtr == NULL) {
+    Editor()->m_ViewerPropDlgPtr = new CViewerPropDlg;
+    Editor()->m_ViewerPropDlgPtr->Create(IDD_VIEWER_DIALOG, this);
+    Editor()->m_ViewerPropDlgPtr->ShowWindow(SW_SHOW);
   } else {
-    theApp.m_ViewerPropDlgPtr->DestroyWindow();
+    Editor()->m_ViewerPropDlgPtr->DestroyWindow();
   }
 }
 
 void CMainFrame::OnUpdateViewViewprop(CCmdUI *pCmdUI) {
-  if (theApp.m_ViewerPropDlgPtr == NULL) {
+  if (Editor()->m_ViewerPropDlgPtr == NULL) {
     pCmdUI->SetCheck(0);
   } else {
     pCmdUI->SetCheck(1);

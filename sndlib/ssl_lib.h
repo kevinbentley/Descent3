@@ -485,7 +485,7 @@ public:
   virtual void SetSoundCard(const char *name) = 0;
 
   // Starts the sound library, maybe have it send back some information -- 3d support?
-  virtual int InitSoundLib(char mixer_type, oeApplication *sos, uint8_t max_sounds_played) = 0;
+  virtual int InitSoundLib(char mixer_type, uint8_t max_sounds_played) = 0;
   // Cleans up after the Sound Library
   virtual void DestroySoundLib() = 0;
 

@@ -280,7 +280,7 @@ public:
   bool IsActive(void);
 
   // Start and clean-up after the sound library
-  int InitSoundLib(oeApplication *sos, char mixer_type, char quality, bool f_kill_sound_lib = false);
+  int InitSoundLib(char mixer_type, char quality, bool f_kill_sound_lib = false);
   void KillSoundLib(bool f_kill_sound_list);
   void SetLLSoundQuantity(int n_sounds);
   int GetLLSoundQuantity();

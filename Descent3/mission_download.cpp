@@ -731,7 +731,7 @@ int msn_ExtractZipFile(char *zipfilename, char *mn3name) {
     if (ze->crc32 == 0)
       continue; // skip directories
 
-    Descent->defer();
+    App()->defer();
     process_file = true;
 
     mprintf(0, "Processesing: %s\n", ze->name);

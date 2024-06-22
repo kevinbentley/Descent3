@@ -213,13 +213,12 @@
 #include "mono.h"
 #include "soundload.h"
 #include "mem.h"
-#include "application.h"
-#include "auddev.h"
+#include "winapp.h"
+#include "auddev.h"static_cast<oeWin32Application*>(App())
 #include "Macros.h"
 #include "ddio.h"
 
 // Hacked window handle -- chrishack
-static oeWin32Application *SoundApp = NULL;
 static void *GameWindowHandle;
 #define MIN_SOUND_MIX_VOLUME 0.0
 #define MAX_WRITE_AHEAD .04 // Seconds to write ahead of the play position (in seconds)
@@ -260,7 +259,6 @@ static t3dEnvironmentToggles Env3dToggles;
 win_llsSystem::win_llsSystem(void) : llsSystem() {
   m_lp_ds = NULL;
   m_f_sound_lib_init = 0;
-  m_hwnd_main = NULL;
   m_mixer_type = -1;
   m_sound_quality = SQT_NORMAL;
   m_cache_stress_timer = 0.0f;
@@ -1384,7 +1382,7 @@ void win_llsSystem::SetSoundCard(const char *name) {
 }
 
 // Initializes the sound library
-int win_llsSystem::InitSoundLib(char mixer_type, oeApplication *sos, uint8_t MaxSoundsPlayed) // add playlist info
+int win_llsSystem::InitSoundLib(char mixer_type, uint8_t MaxSoundsPlayed) // add playlist info
 {
   GUID card_guid, zero_card_guid;
   GUID *pguid = NULL;
@@ -1395,7 +1393,6 @@ int win_llsSystem::InitSoundLib(char mixer_type, oeApplication *sos, uint8_t Max
 
   // reset error system.
   SetError(SSL_OK);
-  SoundApp = (oeWin32Application *)sos;
 
   if (sos) {
     oeWin32Application *obj = (oeWin32Application *)sos;
@@ -1493,7 +1490,7 @@ int win_llsSystem::InitSoundLib(char mixer_type, oeApplication *sos, uint8_t Max
 retry_mixer_init:
   if (mixer_type == SOUND_MIXER_SOFTWARE_16) {
     // test different conditions to see if we really can play sound in software
-    hresult = m_lp_ds->SetCooperativeLevel((HWND)m_hwnd_main, DSSCL_WRITEPRIMARY);
+    hresult = m_lp_ds->SetCooperativeLevel(Win32App()->windowHandle(), DSSCL_WRITEPRIMARY);
     if (hresult != DS_OK) {
       mprintf(0, "SOUND INIT(2):  SCL: WritePrimary failed. Attempting DS 8 init.\n");
       mixer_type = SOUND_MIXER_DS_8;
@@ -2686,7 +2683,7 @@ bool win_llsSystem::SetSoundMixer(char mixer_type) {
     // sounds are lost.  This shouldn't happen.  A real solutions has to take in account
     // for three things:  Normal sounds, looping sounds, and streaming audio.
     DestroySoundLib();
-    InitSoundLib(mixer_type, SoundApp, m_sound_mixer.m_max_sounds_played);
+    InitSoundLib(mixer_type, m_sound_mixer.m_max_sounds_played);
     SetSoundQuality(m_sound_quality);
   }
   return true;

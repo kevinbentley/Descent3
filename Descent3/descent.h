@@ -131,6 +131,10 @@
 #include <stdlib.h>
 #include "application.h"
 
+#ifdef __LINUX__
+#include "linux_fix.h"
+#endif
+
 // The name of this product
 #ifdef DEMO
 #define PRODUCT_NAME "Descent 3 Demo"
@@ -185,16 +189,10 @@ extern char Base_directory[];
 //	Globals
 
 extern grScreen *Game_screen;                   // The Descent 3 screen.
-extern oeApplication *Descent;                  // The Descent object
-extern oeAppDatabase *Database;                 // The Database
 extern char Descent3_temp_directory[_MAX_PATH]; // temp directory to put temp files
 extern bool Katmai;                             // whether or not katmai is detected
 //	---------------------------------------------------------------------------
 //	Functions
-
-#ifdef EDITOR
-void WinMainInitEditor(unsigned hwnd, unsigned hinst);
-#endif
 
 //	Runs Descent III
 void Descent3();
@@ -223,7 +221,7 @@ inline void CREATE_VIEWPORT(grViewport **vp) { CreateGameViewport(vp); }
 
 inline void DESTROY_VIEWPORT(grViewport *vp) { DestroyGameViewport(vp); }
 
-inline void DELAY(float secs) { Descent->delay(secs); }
+inline void DELAY(float secs) { App()->delay(secs); }
 
 #ifndef RELEASE
 //	this is called when you hit a debug break!

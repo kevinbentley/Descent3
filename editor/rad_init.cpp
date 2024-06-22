@@ -317,7 +317,7 @@ void CalculateRadiosity() {
 
     rad_StepCount++;
 
-    Descent->defer();
+    App()->defer();
     //		ddio_KeyFrame();
     while ((key = ddio_KeyInKey()) != 0) {
       if (key == KEY_LAPOSTRO) {

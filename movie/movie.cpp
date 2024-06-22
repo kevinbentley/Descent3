@@ -41,7 +41,6 @@
 #include "mvelibw.h"
 #include "pserror.h"
 #include "renderer.h"
-#include "application.h"
 #include "ddio.h"
 #include "ddvid.h"
 #include "grtext.h"
@@ -49,6 +48,12 @@
 #include "bitmap.h"
 #include "gamefont.h"
 #include "game.h"
+
+#ifdef WIN32
+#include "winapp.h"
+#elif defined(__LINUX__)
+#include "lnxapp.h"
+#endif
 
 namespace {
 MovieFrameCallback_fp Movie_callback = NULL;
@@ -442,7 +447,7 @@ static void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32
                               uint32_t hicolor);
 
 #ifndef NO_MOVIES
-static bool mve_InitSound(oeApplication *app, MovieSoundDevice &device);
+static bool mve_InitSound(MovieSoundDevice &device);
 static void mve_CloseSound(MovieSoundDevice &device);
 #endif
 
@@ -497,7 +502,7 @@ bool mve_FindMovieFileRealName(const char *movie, char *real_name) {
 #endif
 
 // plays a movie using the current screen.
-int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
+int mve_PlayMovie(const char *pMovieName) {
 #ifndef NO_MOVIES
   // first, find that movie..
   char real_name[_MAX_PATH];
@@ -531,7 +536,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   Movie_bm_handle = -1;
 
   MovieSoundDevice soundDevice;
-  if (!mve_InitSound(pApp, soundDevice)) {
+  if (!mve_InitSound(soundDevice)) {
     mprintf(0, "Failed to initialize sound\n");
     close(hFile);
     return MVELIB_INIT_ERROR;
@@ -549,7 +554,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   Movie_current_framenum = 0;
   while ((result = MVE_rmStepMovie()) == 0) {
     // let the OS do its thing
-    pApp->defer();
+    App()->defer();
 
     // check for bail
     int key = ddio_KeyInKey();
@@ -720,7 +725,7 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
 }
 #endif
 
-intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app, bool looping) {
+intptr_t mve_SequenceStart(const char *mvename, int *fhandle, bool looping) {
 #ifndef NO_MOVIES
 
   // first, find that movie..
@@ -875,7 +880,7 @@ BOOL CALLBACK DSEnumCallback(LPGUID lp_guid, LPCSTR lpstr_description, LPCSTR lp
   return TRUE;
 }
 
-bool mve_InitSound(oeApplication *app, MovieSoundDevice &device) {
+bool mve_InitSound(MovieSoundDevice &device) {
   //	Perform Direct Sound Initialization
   device.SetDirectSound(NULL);
 
@@ -895,7 +900,7 @@ bool mve_InitSound(oeApplication *app, MovieSoundDevice &device) {
     return false;
   }
 
-  HWND hWnd = (HWND)((oeWin32Application *)app)->m_hWnd;
+  HWND hWnd = Win32App()->windowHandle();;
   hr = lpDS->SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
   if (hr != DS_OK) {
     lpDS->Release();
@@ -956,7 +961,7 @@ void mve_CloseSound(MovieSoundDevice &device) {
   }
 }
 #else
-bool mve_InitSound(oeApplication *app, MovieSoundDevice &device) {
+bool mve_InitSound(MovieSoundDevice &device) {
 
   LnxSoundDevice snddev;
   bool use_22k_sound = false;

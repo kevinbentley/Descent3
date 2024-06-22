@@ -112,7 +112,7 @@
 #include <windows.h>
 
 #include "pserror.h"
-#include "Application.h"
+#include "winapp.h"
 #include "ddio_win.h"
 #include "ddio.h"
 #include "dinput.h"
@@ -127,7 +127,6 @@ dinput_data DInputData;
 // ----------------------------------------------------------------------------
 
 bool ddio_InternalInit(ddio_init_info *init_info) {
-  oeWin32Application *obj = (oeWin32Application *)init_info->obj;
   LPDIRECTINPUT lpdi;
   HRESULT dires;
 
@@ -137,15 +136,15 @@ bool ddio_InternalInit(ddio_init_info *init_info) {
   mprintf(0, "DI system initializing.\n");
 
   // Try to open DirectX 5.00
-  dires = DirectInputCreate((HINSTANCE)obj->m_hInstance, DIRECTINPUT_VERSION, &lpdi, NULL);
+  dires = DirectInputCreate(Win32App()->instance(), DIRECTINPUT_VERSION, &lpdi, NULL);
 
   // Deal with error opening DX5
   if (dires != DI_OK) {
 
     // If running NT, try DirectX 3.0
-    if (obj->NT()) {
+    if (Win32App()->NT()) {
 
-      dires = DirectInputCreate((HINSTANCE)obj->m_hInstance, 0x0300, &lpdi, NULL);
+      dires = DirectInputCreate(Win32App()->instance(), 0x0300, &lpdi, NULL);
       if (dires != DI_OK) {
         Error("Unable to DirectInput system (Requires at least DirectX 3.0 For NT) [DirectInput:%x]\n", dires);
       }
@@ -156,9 +155,8 @@ bool ddio_InternalInit(ddio_init_info *init_info) {
     }
   }
 
-  DInputData.app = obj;
   DInputData.lpdi = lpdi;
-  DInputData.hwnd = (HWND)obj->m_hWnd;
+  DInputData.hwnd = Win32App()->windowHandle();
 
   DDIO_init = 1;
 

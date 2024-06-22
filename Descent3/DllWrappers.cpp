@@ -123,17 +123,17 @@ void assertdll(int x, const char *expression, const char *file, int line) {
 
 void RetrieveUICallback(void **fn) { *fn = (void *)GetUICallback(); }
 
-bool dDatabaseRead1(const char *label, char *entry, int *entrylen) { return Database->read(label, entry, entrylen); }
+bool dDatabaseRead1(const char *label, char *entry, int *entrylen) { return Database()->read(label, entry, entrylen); }
 
-bool dDatabaseRead2(const char *label, void *entry, int wordsize) { return Database->read(label, entry, wordsize); }
+bool dDatabaseRead2(const char *label, void *entry, int wordsize) { return Database()->read(label, entry, wordsize); }
 
-bool dDatabaseRead3(const char *label, bool *entry) { return Database->read(label, entry); }
+bool dDatabaseRead3(const char *label, bool *entry) { return Database()->read(label, entry); }
 
 bool dDatabaseWrite1(const char *label, const char *entry, int entrylen) {
-  return Database->write(label, entry, entrylen);
+  return Database()->write(label, entry, entrylen);
 }
 
-bool dDatabaseWrite2(const char *label, int entry) { return Database->write(label, entry); }
+bool dDatabaseWrite2(const char *label, int entry) { return Database()->write(label, entry); }
 
 // Attaches 2 objects via attach points on each.  The f_used_aligned allows for an aligned connection.
 // NOTE: The child always moves to the parent

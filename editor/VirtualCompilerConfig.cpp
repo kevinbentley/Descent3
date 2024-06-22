@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "editor.h"
-#include "AppDatabase.h"
+#include "windatabase.h"
 #include "VirtualCompilerConfig.h"
 #include "Descent.h"
 
@@ -82,19 +82,19 @@ BOOL CVirtualCompilerConfig::OnInitDialog() {
   char buffer[_MAX_PATH];
   int len = _MAX_PATH;
 
-  if (Database->read("EditorCompiler", buffer, &len)) {
+  if (Database()->read("EditorCompiler", buffer, &len)) {
     m_Compiler = buffer;
   } else {
     m_Compiler = "";
   }
 
-  if (Database->read_int("EditorVCWarningLevel", &len)) {
+  if (Database()->read_int("EditorVCWarningLevel", &len)) {
     m_WarningLevel = len;
   } else {
     m_WarningLevel = 0;
   }
 
-  if (Database->read_int("EditorVCDebugLevel", &len)) {
+  if (Database()->read_int("EditorVCDebugLevel", &len)) {
     m_DebugType = len;
   } else {
     m_DebugType = 0;
@@ -110,9 +110,9 @@ void CVirtualCompilerConfig::OnOK() {
   UpdateData(true);
 
   strcpy(buffer, m_Compiler.GetBuffer(0));
-  Database->write("EditorCompiler", buffer, strlen(buffer) + 1);
+  Database()->write("EditorCompiler", buffer, strlen(buffer) + 1);
 
-  Database->write("EditorVCWarningLevel", m_WarningLevel);
-  Database->write("EditorVCDebugLevel", m_DebugType);
+  Database()->write("EditorVCWarningLevel", m_WarningLevel);
+  Database()->write("EditorVCDebugLevel", m_DebugType);
   CDialog::OnOK();
 }

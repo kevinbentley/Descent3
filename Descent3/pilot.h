@@ -186,7 +186,7 @@
 
 /*
 #include "controls.h"
-#include "Controller.h"
+#include "controller.h"
 #include "ship.h"
 
 #define PILOT_STRING_SIZE	20

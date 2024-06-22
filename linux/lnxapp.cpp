@@ -67,6 +67,7 @@
  *
  * $NoKeywords: $
  */
+#include "lnxapp.h"
 
 #include <cstdlib>
 #include <cctype>
@@ -75,7 +76,6 @@
 #include <termios.h>
 
 #include "application.h"
-#include "lnxapp.h"
 
 #ifdef buttons // termios.h defines buttons, but SDL's headers use that symbol.
 #undef buttons
@@ -83,8 +83,14 @@
 
 static struct termios Linux_initial_terminal_settings;
 
-bool oeLnxApplication::os_initialized = false;
-bool oeLnxApplication::first_time = true;
+oeApplication* App()
+{
+  static oeLnxApplication* instance = nullptr;
+  if(instance == nullptr)
+    instance = new oeLnxApplication();
+  return instance;
+}
+
 
 bool con_Create(int flags);
 void con_Destroy();
@@ -121,16 +127,8 @@ void LnxAppShutdown() {
 }
 
 //	Creates the application object
-oeLnxApplication::oeLnxApplication(unsigned flags) {
-  m_Flags = flags;
+oeLnxApplication::oeLnxApplication() {
   m_AppActive = true;
-
-  if (flags & OEAPP_CONSOLE) {
-    tcgetattr(0, &Linux_initial_terminal_settings);
-    con_Create(m_Flags);
-  }
-
-  LinuxAppFlags = m_Flags;
 
   if (!LinuxAppSetAtExit) {
     LinuxAppSetAtExit = true;
@@ -138,47 +136,22 @@ oeLnxApplication::oeLnxApplication(unsigned flags) {
   }
 }
 
-//	Create object with a premade info
-oeLnxApplication::oeLnxApplication(tLnxAppInfo *appinfo) {
-  tcgetattr(0, &Linux_initial_terminal_settings);
-  m_Flags = appinfo->flags;
-  m_X = appinfo->wnd_x;
-  m_Y = appinfo->wnd_y;
-  m_W = appinfo->wnd_w;
-  m_H = appinfo->wnd_h;
-  m_AppActive = true;
+void oeLnxApplication::setFlags(int f) {
+  oeApplication::setFlags(f);
 
-  if (m_Flags & OEAPP_CONSOLE) {
-    con_Create(m_Flags);
+  if (f & OEAPP_CONSOLE) {
+    tcgetattr(0, &Linux_initial_terminal_settings);
+    con_Create(f);
   }
-
-  LinuxAppFlags = m_Flags;
-
-  if (!LinuxAppSetAtExit) {
-    LinuxAppSetAtExit = true;
-    atexit(LnxAppShutdown);
-  }
+  LinuxAppFlags = f;
 }
 
 //	Destructor
 oeLnxApplication::~oeLnxApplication() { LnxAppShutdown(); }
 
-//	initializes the object
 void oeLnxApplication::init() {
-  if (m_WasCreated) {
-    // Create graphics window and prepare for graphics!
-  }
 }
 
-//	Function to retrieve information from object through a platform defined structure.
-void oeLnxApplication::get_info(void *info) {
-  tLnxAppInfo *appinfo = (tLnxAppInfo *)info;
-  appinfo->flags = m_Flags;
-  appinfo->wnd_x = m_X;
-  appinfo->wnd_y = m_Y;
-  appinfo->wnd_w = m_W;
-  appinfo->wnd_h = m_H;
-}
 
 //	defer returns some flags.   essentially this function defers program control to OS.
 unsigned oeLnxApplication::defer() {
@@ -203,26 +176,13 @@ void oeLnxApplication::delay(float secs) {
   Sleep(msecs);
 }
 
-//	Function to get the flags
-int oeLnxApplication::flags() const { return m_Flags; }
-
-//	Sizes the displayable region of the app (the window)
-void oeLnxApplication::set_sizepos(int x, int y, int w, int h) {
-  m_X = x;
-  m_Y = y;
-  m_W = w;
-  m_H = h;
+void oeLnxApplication::moveWindow()
+{
+  // unused?
+  //SDL_SetWindowPosition
 }
 
 const char *oeLnxApplication::get_window_name(void) { return "Descent 3"; }
 
 void oeLnxApplication::clear_window(void) {
-}
-
-// initializes OS components.
-void oeLnxApplication::os_init() {
-  /*	We only need to do this once */
-  if (!os_initialized) {
-    os_initialized = true;
-  }
 }

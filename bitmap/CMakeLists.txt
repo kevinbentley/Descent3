@@ -1,9 +1,14 @@
-set(HEADERS iff.h)
+set(HEADERS
+  bitmap.h
+  bumpmap.h
+  iff.h
+  lightmap.h
+  NewBitmap.h)
+
 set(CPPS
   NewBitmap.cpp
   NewBitmap.h
-
-  bitmain.cpp
+  bitmap.cpp
   bumpmap.cpp
   iff.cpp
   lightmap.cpp
@@ -17,9 +22,8 @@ target_link_libraries(bitmap PRIVATE
   ddio
   mem
   stb
+  renderer
+  2dlib
 )
-target_include_directories(bitmap PUBLIC
-  $<BUILD_INTERFACE:
-    ${PROJECT_SOURCE_DIR}/bitmap
-  >
-)
+
+target_include_directories(bitmap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

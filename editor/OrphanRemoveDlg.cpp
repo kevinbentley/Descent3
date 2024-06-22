@@ -309,7 +309,7 @@ void COrphanRemoveDlg::Enable(bool enable) {
 void COrphanRemoveDlg::SetStatus(char *status) {
   CWnd *stat = (CWnd *)GetDlgItem(IDC_STATUS);
   stat->SetWindowText(status);
-  Descent->defer();
+  App()->defer();
 }
 
 void COrphanRemoveDlg::OnOK() {
@@ -381,7 +381,7 @@ bool IsFileUsed(char *filename) {
     found = IsFileInGenericPage(filename);
 
 done:
-  Descent->defer();
+  App()->defer();
 
   return found;
 }

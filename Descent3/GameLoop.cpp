@@ -833,8 +833,8 @@
 #include "SmallViews.h"
 #include "newui.h"
 #include "Inventory.h"
-#include "PHYSICS.H"
-#include "Controller.h"
+#include "physics.h"
+#include "controller.h"
 #include "controls.h"
 #include "gamesequence.h"
 #include "cockpit.h"
@@ -862,7 +862,7 @@
 #include "pilot.h"
 #include "rtperformance.h"
 #include "demofile.h"
-#include "d3music.h"
+#include "musicapi.h"
 // #include "gamespy.h"
 #include "osiris_dll.h"
 #include "aiambient.h"
@@ -1828,7 +1828,7 @@ void ProcessTestKeys(int key) {
       Sound_system.KillSoundLib(false);
     } else {
       AddHUDMessage("Sound system on.");
-      Sound_system.InitSoundLib(Descent, Sound_mixer, Sound_quality, false);
+      Sound_system.InitSoundLib(Sound_mixer, Sound_quality, false);
     }
     break;
 
@@ -2888,7 +2888,7 @@ void GameFrame(void) {
   INT64 curr_time;
 #endif
 
-  bool is_game_idle = !Descent->active();
+  bool is_game_idle = !App()->active();
 
   if (Tracking_FVI) {
     mprintf(0, "Beginning frame!\n");
@@ -3195,7 +3195,7 @@ void GameFrame(void) {
   }
 
   if (!is_game_idle) {
-    Descent->defer();
+    App()->defer();
   }
 }
 

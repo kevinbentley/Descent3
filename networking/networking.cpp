@@ -595,7 +595,7 @@ void nw_InitNetworking(int iReadBufSizeOverride) {
   static char szconntype[100];
   int parmlen;
   int len = 99;
-  Database->read("NetworkConnection", szconntype, &len);
+  Database()->read("NetworkConnection", szconntype, &len);
   if (stricmp(szconntype, "DIALUP") == 0) {
     Dialup_connection = 1;
   } else {
@@ -2280,7 +2280,7 @@ int nw_ReccomendPPS() {
   static char szconnspeed[100];
   int len = 99;
   strcpy(szconnspeed, "");
-  Database->read("ConnectionSpeed", szconnspeed, &len);
+  Database()->read("ConnectionSpeed", szconnspeed, &len);
   if (stricmp(szconnspeed, "28K") == 0)
     return 5;
   else if (stricmp(szconnspeed, "33K") == 0)

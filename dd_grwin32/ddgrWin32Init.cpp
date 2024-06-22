@@ -115,13 +115,13 @@ bool ddgr_Init(oeApplication *app, char *subsystem, bool fullscreen) {
   //	Initialize that subsystem
   switch (DDGR_subsystems[subsys_id]) {
   case DDGR_GDI_SUBSYSTEM:
-    ddgr_gdi_Init(app, fullscreen, false);
+    ddgr_gdi_Init(fullscreen, false);
     break;
   case DDGR_GDIX_SUBSYSTEM:
-    ddgr_gdi_Init(app, fullscreen, true);
+    ddgr_gdi_Init(fullscreen, true);
     break;
   case DDGR_DX_SUBSYSTEM:
-    ddgr_dx_Init(app);
+    ddgr_dx_Init();
     break;
 
   default:

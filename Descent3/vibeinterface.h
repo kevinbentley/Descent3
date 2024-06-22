@@ -24,7 +24,7 @@
 #include "controls.h"
 
 // Initialize IntelliVIBE
-void VIBE_Init(oeApplication *app);
+void VIBE_Init(void);
 
 // Shutdown IntelliVIBE
 void VIBE_Close(void);

@@ -19,7 +19,9 @@
 #include "byteswap.h"
 #if defined(WIN32)
 #include <windows.h>
+#include "winapp.h"
 #elif defined(__LINUX__)
+#include "lnxapp.h"
 #include "lnxscreenmode.h"
 #else
 #endif
@@ -28,7 +30,6 @@
 #include "mono.h"
 #include "3d.h"
 #include "renderer.h"
-#include "application.h"
 #include "bitmap.h"
 #include "lightmap.h"
 #include "rend_opengl.h"
@@ -154,8 +155,6 @@ bool OpenGL_multitexture_state = false;
 module *OpenGLDLLHandle = NULL;
 int Already_loaded = 0;
 bool opengl_Blending_on = 0;
-
-static oeApplication *ParentApplication = NULL;
 
 /* framebuffer object for backbuffer, scale to window size without changing resolution.  --ryan, 2019. */
 #define GL_DEPTH_COMPONENT16_EXT              0x81A5
@@ -508,7 +507,7 @@ extern renderer_preferred_state Render_preferred_state;
 extern bool ddio_mouseGrabbed;
 int SDLCALL d3SDLEventFilter(void *userdata, SDL_Event *event);
 
-int opengl_Setup(oeApplication *app, int *width, int *height) {
+int opengl_Setup(int *width, int *height) {
   int winw = Video_res_list[Game_video_resolution].width;
   int winh = Video_res_list[Game_video_resolution].height;
 
@@ -736,9 +735,9 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
     linux_permit_gamma = (SDL_SetWindowGammaRamp(GSDLWindow, ramp, ramp, ramp) == 0);
   } // else
 
-  if (ParentApplication) {
-    reinterpret_cast<oeLnxApplication *>(ParentApplication)->set_sizepos(0, 0, *width, *height);
-  }
+
+  App()->setWindow(rect_t{0, 0, *width, *height});
+  App()->moveWindow();
 
   Already_loaded = 1;
   return 1;
@@ -747,7 +746,7 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
 
 // Sets up our OpenGL rendering context
 // Returns 1 if ok, 0 if something bad
-int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
+int opengl_Init(renderer_preferred_state *pref_state) {
   int width, height;
   int retval = 1;
   int i;
@@ -758,21 +757,12 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
     gpu_preferred_state = *pref_state;
   }
 
-  if (app != NULL) {
-    ParentApplication = app;
-  }
-
   int windowX = 0, windowY = 0;
 #if defined(WIN32)
   /***********************************************************
    *               WINDOWS OPENGL
    ***********************************************************
    */
-  static HWnd hwnd = NULL;
-  if (ParentApplication != NULL) {
-    hwnd = static_cast<HWnd>(reinterpret_cast<oeWin32Application *>(ParentApplication)->m_hWnd);
-  }
-
   if (!WindowGL) {
     // First set our display mode
     // Create direct draw surface
@@ -821,7 +811,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
 
   //	These values are set here - samir
   if (app != NULL) {
-    hOpenGLWnd = (HWND)((oeWin32Application *)app)->m_hWnd;
+    hOpenGLWnd = Win32App()->windowHandle();;
   }
 
   hOpenGLDC = GetDC(hOpenGLWnd);
@@ -869,7 +859,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
   width = gpu_preferred_state.width;
   height = gpu_preferred_state.height;
 
-  if (!opengl_Setup(app, &width, &height)) {
+  if (!opengl_Setup(&width, &height)) {
     opengl_Close();
     return 0;
   }
@@ -1712,7 +1702,7 @@ void opengl_ChangeChunkedBitmap(int bm_handle, chunked_bitmap *chunk) {
 void rend_SetMipState(int8_t mipstate) {}
 
 // Init our renderer
-int rend_Init(renderer_type state, oeApplication *app, renderer_preferred_state *pref_state) {
+int rend_Init(renderer_type state, renderer_preferred_state *pref_state) {
 #ifndef DEDICATED_ONLY
   int retval = 0;
   rend_SetRendererType(state);
@@ -1733,13 +1723,12 @@ int rend_Init(renderer_type state, oeApplication *app, renderer_preferred_state 
   mprintf(0, "Renderer init is set to %d\n", Renderer_initted);
 
 #ifndef OEM_V3
-  int flags = app->flags();
-  if (flags & OEAPP_WINDOWED) {
+  if (App()->flags() & OEAPP_WINDOWED) {
     // initialize for windowed
-    retval = rend_InitOpenGLWindow(app, pref_state);
+    retval = rend_InitOpenGLWindow(pref_state);
   } else {
     // initialize for full screen
-    retval = opengl_Init(app, pref_state);
+    retval = opengl_Init(pref_state);
   }
 #endif
 
@@ -2363,7 +2352,7 @@ void rend_SetZBufferWriteMask(int state) {
 
 int rend_ReInit() {
   opengl_Close(true);
-  return opengl_Init(NULL, &gpu_preferred_state);
+  return opengl_Init(&gpu_preferred_state);
 }
 
 // Takes a bitmap and blits it to the screen using linear frame buffer stuff
@@ -2398,9 +2387,9 @@ void rend_SetFrameBufferCopyState(bool state) {
 }
 
 // Gets OpenGL ready to work in a window
-int rend_InitOpenGLWindow(oeApplication *app, renderer_preferred_state *pref_state) {
+int rend_InitOpenGLWindow(renderer_preferred_state *pref_state) {
   WindowGL = 1;
-  return opengl_Init(app, pref_state);
+  return opengl_Init(pref_state);
 }
 
 // Shuts down OpenGL in a window

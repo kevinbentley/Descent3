@@ -675,7 +675,7 @@ BOOL CAudioTab::OnInitDialog() {
   }
 
   // If it's the first time since install, autodetect the best card
-  if (theApp.m_straight_to_setup) {
+  if (Editor()->m_straight_to_setup) {
     current = DetermineBestCard();
     mixer_id = DetermineDefaultMixer(current);
   }

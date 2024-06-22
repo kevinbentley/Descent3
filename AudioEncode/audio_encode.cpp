@@ -22,7 +22,7 @@
 #include <string.h>
 #include "audio_encode.h"
 #include "mono.h"
-#include "Aencode.h"
+#include "aencode.h"
 
 int32_t aenc_ReadSamp(void *data) {
   FILE *f = (FILE *)data;

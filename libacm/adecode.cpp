@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Adecode.h"
+#include "adecode.h"
 
 #include "libacm.h"
 

@@ -671,10 +671,10 @@ loaddll:
   api_fp = (void *)GetMultiAPI;
 
   if (Auto_login_name[0]) {
-    Database->write("TrackerLogin", Auto_login_name, strlen(Auto_login_name) + 1);
+    Database()->write("TrackerLogin", Auto_login_name, strlen(Auto_login_name) + 1);
   }
   if (Auto_login_pass[0]) {
-    Database->write("TrackerPassword", Auto_login_pass, strlen(Auto_login_pass) + 1);
+    Database()->write("TrackerPassword", Auto_login_pass, strlen(Auto_login_pass) + 1);
   }
   if (!Dedicated_server) {
     strcpy(PXO_hosted_lobby_name, "global");
@@ -757,17 +757,17 @@ const char *ListGetItem(UIListBox *item, int index) {
 }
 int ListGetSelectedIndex(UIListBox *item) { return item->GetSelectedIndex(); }
 void ListSetSelectedIndex(UIListBox *item, int index) { item->SetSelectedIndex(index); }
-void DatabaseRead(const char *label, char *entry, int *entrylen) { Database->read(label, entry, entrylen); }
-void DatabaseWrite(const char *label, const char *entry, int entrylen) { Database->write(label, entry, entrylen); }
+void DatabaseRead(const char *label, char *entry, int *entrylen) { Database()->read(label, entry, entrylen); }
+void DatabaseWrite(const char *label, const char *entry, int entrylen) { Database()->write(label, entry, entrylen); }
 void DatabaseReadInt(const char *label, int *val) {
-  Database->read_int(label, val);
+  Database()->read_int(label, val);
   mprintf(0, "Read int: %s:%d\n", label, *val);
 }
 void DatabaseWriteInt(const char *label, int val) {
   mprintf(0, "Writing int: %s:%d\n", label, val);
-  Database->write(label, val);
+  Database()->write(label, val);
 }
-void DescentDefer(void) { Descent->defer(); }
+void DescentDefer(void) { App()->defer(); }
 void *NewUIGameWindowCreate(int x, int y, int w, int h, int flags) {
   NewUIGameWindow *newgamewin;
   newgamewin = new NewUIGameWindow;
@@ -811,7 +811,7 @@ int PollUI(void) {
 
   UI_LastPoll = timer_GetTime();
 
-  Descent->defer();
+  App()->defer();
   DoUIFrame();
   rend_Flip();
   result = GetUIFrameResult();

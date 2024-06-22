@@ -744,7 +744,7 @@ void CDallasMainDlg::PostNcDestroy() {
   CNewEditorApp *theApp = (CNewEditorApp *)AfxGetApp();
   theApp->DallasDone();
 #else
-  theApp.m_DallasModelessDlgPtr = NULL;
+  Editor()->m_DallasModelessDlgPtr = NULL;
 #endif
 
   // Delete the Dallas instance
@@ -1719,7 +1719,7 @@ void CDallasMainDlg::SetAllFilenames(void) {
 #ifdef NEWEDITOR
   level_fname = Level_name;
 #else
-  level_fname = theApp.main_doc->GetPathName();
+  level_fname = Editor()->main_doc->GetPathName();
 #endif
 
   if (level_fname.IsEmpty())
@@ -16091,11 +16091,9 @@ void CDallasMainDlg::OnExportButton() {
 
 CDallasMainDlg *GetDallasDialogPtr(void) {
 #ifdef NEWEDITOR
-  CNewEditorApp *editor_app;
-  editor_app = (CNewEditorApp *)AfxGetApp();
+  CNewEditorApp *editor_app = (CNewEditorApp *)AfxGetApp();
 #else
-  CEditorApp *editor_app;
-  editor_app = &theApp;
+  CEditorApp *editor_app = Editor();
 #endif
 
   return editor_app->m_DallasModelessDlgPtr;

@@ -1,4 +1,10 @@
-set(HEADERS UIlib.h)
+set(HEADERS
+  uidraw.h
+  ui.h
+  UIlib.h
+  uires.h
+  uisys.h)
+
 set(CPPS
   UIButton.cpp
   UICombo.cpp
@@ -20,4 +26,11 @@ add_library(ui STATIC ${HEADERS} ${CPPS})
 target_link_libraries(ui PRIVATE
   ddio
   mem
+  bitmap
+  grtext
+  renderer
+  dd_video
+  2dlib
 )
+
+target_include_directories(ui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -499,10 +499,10 @@ void CEditorView::OnDraw(CDC *pDC) {
   ASSERT_VALID(pDoc);
 
   // TODO: add draw code for native data here
-  if (!theApp.paused()) {
-    if (theApp.wireframe_view)
+  if (!Editor()->paused()) {
+    if (Editor()->wireframe_view)
       m_grwndWireframe.Render();
-    if (theApp.textured_view)
+    if (Editor()->textured_view)
       m_grwndTexture.Render();
   }
 }
@@ -529,7 +529,7 @@ void CEditorView::OnInitialUpdate() {
   CView::OnInitialUpdate();
 
   // TODO: Add your specialized code here and/or call the base class
-  theApp.main_view = this;
+  Editor()->main_view = this;
 
   CWnd *wnd = GetParent();
 
@@ -554,7 +554,7 @@ void CEditorView::OnSize(UINT nType, int cx, int cy) {
 }
 
 void CEditorView::OnDestroy() {
-  theApp.main_view = NULL;
+  Editor()->main_view = NULL;
   CView::OnDestroy();
 }
 
@@ -573,9 +573,9 @@ void CEditorView::ActivateView() {
 */
 void CEditorView::KillChildViews() {
   if (m_grwndCreated) {
-    if (theApp.wireframe_view)
+    if (Editor()->wireframe_view)
       m_grwndWireframe.DestroyWindow();
-    if (theApp.textured_view)
+    if (Editor()->textured_view)
       m_grwndTexture.DestroyWindow();
     m_grwndCreated = FALSE;
   }
@@ -647,7 +647,7 @@ void CEditorView::OnViewTexturemine() {
     if (D3EditState.tile_views) {
       DeactivateView();
       ActivateView();
-    } else if (theApp.textured_view)
+    } else if (Editor()->textured_view)
       m_grwndTexture.DestroyWindow();
   } else {
     if (D3EditState.tile_views) { // for tiling, reinit the views.
@@ -672,7 +672,7 @@ void CEditorView::OnViewWireframemine() {
     if (D3EditState.tile_views) {
       DeactivateView();
       ActivateView();
-    } else if (theApp.wireframe_view)
+    } else if (Editor()->wireframe_view)
       m_grwndWireframe.DestroyWindow();
   } else {
     if (D3EditState.tile_views) { // for tiling, reinit the views
@@ -804,7 +804,7 @@ void CEditorView::OnRoomDelete() {
   World_changed = 1;
 }
 
-void CEditorView::OnRoomGrabTexture() { theApp.main_frame->m_TextureDialog->OnTexpadGrab(); }
+void CEditorView::OnRoomGrabTexture() { Editor()->main_frame->m_TextureDialog->OnTexpadGrab(); }
 
 void CEditorView::OnRoomNextFace() {
   SelectNextFace();
@@ -928,7 +928,7 @@ void CEditorView::OnRoomSelectFaceByNumber() {
   }
 }
 
-void CEditorView::OnRoomSaveCurrentRoom() { theApp.main_frame->m_RoomDialog->OnSaveRoomLocally(); }
+void CEditorView::OnRoomSaveCurrentRoom() { Editor()->main_frame->m_RoomDialog->OnSaveRoomLocally(); }
 
 void CEditorView::OnZbutton() {
   // TODO: Add your command handler code here

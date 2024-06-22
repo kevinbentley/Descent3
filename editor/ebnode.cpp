@@ -1366,7 +1366,7 @@ void EBNode_Draw(char draw_type, grViewport *vp, vector *viewer_eye, matrix *vie
 #ifndef NEWEDITOR
   int roomnum = Viewer_object->roomnum;
 #else
-  int roomnum = ROOMNUM(theApp.m_pLevelWnd->m_Prim.roomp);
+  int roomnum = ROOMNUM(Editor()->m_pLevelWnd->m_Prim.roomp);
 #endif
 
   switch (draw_type) {

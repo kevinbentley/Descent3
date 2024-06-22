@@ -355,7 +355,7 @@ bool TelComAutoMap(tTelComInfo *tcs) {
     TelComHandleAllEvents(tcs);
 
     TelcomRenderScreen();
-    Descent->defer();
+    App()->defer();
     if (KEY_STATE(KEY_ESC)) {
       AM_tcs->state = TCS_POWEROFF;
     }

@@ -19,6 +19,7 @@
 #ifndef LNXAPP_H
 #define LNXAPP_H
 
+#include "application.h"
 #include "linux_fix.h"
 
 // if no-display/input specifier is given, it will use defaults
@@ -29,58 +30,35 @@
 #define APPFLAG_WINDOWEDMODE 0x00001000   // run in a window
 #define APPFLAG_DGAMOUSE 0x00002000       // use DGA for Mouse
 
-/*	Basic Application Linux data types */
-
 //	This structure is used to retrieve and set
 struct tLnxAppInfo {
   unsigned flags;                 // Application Flags
   int wnd_x, wnd_y, wnd_w, wnd_h; // Window dimensions
 };
 
-/*	Linux Application Object
-                This object entails initialization and cleanup of all operating system
-                elements, as well as data that libraries may need to initialize their
-                systems.
-
-        We also allow the option of setting these handles from outside the Application object.
-*/
-
-/*	Callbacks return a 0 if we don't want to call the default action for the message, otherwise return 1
- */
-// typedef int (*tOELnxMsgCallback)(HWnd,unsigned,unsigned,unsigned);
-
 class oeLnxApplication : public oeApplication {
-  bool m_WasCreated;              // Tells us if this app set graphics or not.
   void (*m_DeferFunc)(bool idle); // function to call when deffering to OS
-  static bool os_initialized;     // is the OS check initialized?
-  static bool first_time;         // first time init?
+  oeLnxApplication();
+  friend oeApplication* App();
 public:
-  //	Creates the application object
-  oeLnxApplication(unsigned flags);
-  //	Create object with a premade info
-  oeLnxApplication(tLnxAppInfo *appinfo);
-  virtual ~oeLnxApplication();
+  ~oeLnxApplication();
   //	initializes the object
-  virtual void init();
-  //	Function to retrieve information from object through a platform defined structure.
-  virtual void get_info(void *appinfo);
+  void init();
   //	defer returns some flags.   essentially this function defers program control to OS.
-  virtual unsigned defer();
-  virtual const char *get_window_name(void);
-  virtual void clear_window(void);
+  unsigned defer();
+  const char *get_window_name(void);
+  void clear_window(void);
   //	set a function to run when deferring to OS.
-  virtual void set_defer_handler(void (*func)(bool isactive));
+  void set_defer_handler(void (*func)(bool isactive));
   //	delays app for a certain amount of time
-  virtual void delay(float secs);
+  void delay(float secs);
   //	Sizes the displayable region of the app (the window)
-  void set_sizepos(int x, int y, int w, int h);
+  void moveWindow();
 
-  virtual int flags(void) const;
+  void setFlags(int f);
 
-  unsigned m_Flags;
-  int m_X, m_Y, m_W, m_H;   // window dimensions.
 private:
-  void os_init(); // initializes OS components.
+  int m_X, m_Y, m_W, m_H;   // window dimensions.
 };
 
 #endif

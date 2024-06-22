@@ -357,7 +357,7 @@ public:
   ~win_llsSystem(void);
 
   // Starts the sound library
-  virtual int InitSoundLib(char mixer_type, oeApplication *sos, uint8_t max_sounds_played);
+  virtual int InitSoundLib(char mixer_type, uint8_t max_sounds_played);
 
   // Cleans up after the Sound Library
   virtual void DestroySoundLib(void);

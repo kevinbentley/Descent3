@@ -207,7 +207,7 @@
 #include "gamefont.h"
 #include "AIMain.h"
 #include "controls.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "gamesequence.h"
 #include "demofile.h"
 #include "osiris_dll.h"

@@ -63,20 +63,17 @@
 #include "pserror.h"
 #include "descent.h"
 
-#include "appdatabase.h"
+
+#if defined(WIN32) // I'm sorry.  Samir
+#include "windatabase.h"
+#elif defined(__LINUX__)
+#include "lnxdatabase.h"
+#endif
 
 program_version Program_version;
 
-//	Initializes the current program state
-
+// Initializes the current program state
 void ProgramVersion(int version_type, uint8_t major, uint8_t minor, uint8_t build) {
-#if defined(WIN32) // I'm sorry.  Samir
-  oeWin32AppDatabase dbase((oeWin32AppDatabase *)Database);
-#elif defined(__LINUX__)
-  oeLnxAppDatabase dbase((oeLnxAppDatabase *)Database);
-#else
-  oeAppDatabase dbase(Database); // this will fail without an operating system equiv
-#endif
 
   Program_version.version_type = version_type;
   Program_version.major = major;
@@ -110,10 +107,10 @@ void ProgramVersion(int version_type, uint8_t major, uint8_t minor, uint8_t buil
     Int3(); // NO NO NO
   }
 
-  if (dbase.lookup_record("Version")) {
-    dbase.write("Major", Program_version.major);
-    dbase.write("Minor", Program_version.minor);
-    dbase.write("Build", Program_version.build);
+  if (Database()->lookup_record("Version")) {
+    Database()->write("Major", Program_version.major);
+    Database()->write("Minor", Program_version.minor);
+    Database()->write("Build", Program_version.build);
   } else {
     Error("Unable to find version key for %s", PRODUCT_NAME);
   }

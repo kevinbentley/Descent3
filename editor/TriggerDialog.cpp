@@ -797,21 +797,21 @@ void CTriggerDialog::OnTrigEditScript() {
   mprintf(0, "Edit script for trigger %d\n", Current_trigger);
 
   // Make sure Dallas is open
-  if (theApp.m_DallasModelessDlgPtr == NULL) {
-    theApp.m_DallasModelessDlgPtr = new CDallasMainDlg;
-    theApp.m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
-    theApp.m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
+  if (Editor()->m_DallasModelessDlgPtr == NULL) {
+    Editor()->m_DallasModelessDlgPtr = new CDallasMainDlg;
+    Editor()->m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
+    Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
   } else
-    theApp.m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
+    Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
 
   // make sure a trigger was selected
   if (Current_trigger == -1)
     return;
 
   // Tell Dallas to add a new script with this trigger as the owner
-  theApp.m_DallasModelessDlgPtr->m_ScriptOwnerType = TRIGGER_TYPE;
-  theApp.m_DallasModelessDlgPtr->m_ScriptOwnerHandle = Current_trigger;
-  theApp.m_DallasModelessDlgPtr->PostMessage(WM_HIGHLIGHT_SCRIPTS);
+  Editor()->m_DallasModelessDlgPtr->m_ScriptOwnerType = TRIGGER_TYPE;
+  Editor()->m_DallasModelessDlgPtr->m_ScriptOwnerHandle = Current_trigger;
+  Editor()->m_DallasModelessDlgPtr->PostMessage(WM_HIGHLIGHT_SCRIPTS);
 }
 
 void CTriggerDialog::OnTrigActivClutter() {

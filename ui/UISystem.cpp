@@ -191,7 +191,6 @@ float UI_aspect_x = 1.0f;
 float UI_aspect_y = 1.0f;
 //	application object
 static bool UI_init = false;
-static oeApplication *UI_app = NULL;
 static int UI_cursor_bm = -1;
 static tUIWindowNode *UIWindowList = NULL;
 static tUIWindowNode *UIWindowTail = NULL;
@@ -204,16 +203,15 @@ void ui_UpdateWindows();
 //////////////////////////////////////////////////////////////////////////////
 //	FUNCTIONS
 //	call this function to initialize the UI system. pass a surface where all UI will occur
-void ui_Init(oeApplication *app, tUIInitInfo *init_info) {
+void ui_Init(tUIInitInfo *init_info) {
   //	initialize variables
-  if (UI_app) {
+  if (UI_init) {
     ui_Close();
   }
   //	clear out input poller.
   ui_Flush();
   UI_cursor_bm = -1;
   UI_cursor_show = 0;
-  UI_app = app;
   UIWindowList = NULL;
   UIWindowTail = NULL;
   UITextItem::SetDefaultFont(init_info->window_font);
@@ -251,7 +249,6 @@ void ui_Close() {
   }
   //	delete window node list.
   ui_RemoveAllWindows();
-  UI_app = NULL;
   UI_init = false;
 }
 //	retrieves input for user interface

@@ -114,7 +114,7 @@ BOOL CViewerPropDlg::OnInitDialog() {
 
 void CViewerPropDlg::PostNcDestroy() {
   // Set the pointer back to null so rest of app knows Viewer Prog dlg has shut down
-  theApp.m_ViewerPropDlgPtr = NULL;
+  Editor()->m_ViewerPropDlgPtr = NULL;
 
   // Delete the viewer prop instance
   delete this;

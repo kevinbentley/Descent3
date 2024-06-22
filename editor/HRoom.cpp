@@ -528,7 +528,7 @@ void AddRoom() {
   Curedge = Curvert = 0;
   Curportal = -1;
 #else
-  theApp.m_pLevelWnd->SetPrim(rp, 1, -1, 0, 0);
+  Editor()->m_pLevelWnd->SetPrim(rp, 1, -1, 0, 0);
 #endif
 
   // Set the flag
@@ -1735,7 +1735,7 @@ void DeleteRoomFromMine(room *rp) {
     Curface = Curedge = Curvert = 0;
     Curportal = -1;
 #else
-    theApp.m_pLevelWnd->SetPrim(newroomp, 0, -1, 0, 0);
+    Editor()->m_pLevelWnd->SetPrim(newroomp, 0, -1, 0, 0);
 #endif
 
     EditorStatus("Current room set to %d.", ROOMNUM(Curroomp));
@@ -1828,7 +1828,7 @@ void DropRoom(room *baseroomp, int baseface, int droproom_num) {
   Curface = Curedge = Curvert = 0;
   Curportal = -1;
 #else
-  theApp.m_pLevelWnd->SetPrim(newroomp, 0, -1, 0, 0);
+  Editor()->m_pLevelWnd->SetPrim(newroomp, 0, -1, 0, 0);
 #endif
 
   // We're done
@@ -2630,7 +2630,7 @@ void BuildSmoothBridge(room *rp0, int facenum0, room *rp1, int facenum1) {
   Curedge = Curvert = 0;
   Curportal = -1;
 #else
-  theApp.m_pLevelWnd->SetPrim(rp, nfaces - 2, -1, 0, 0);
+  Editor()->m_pLevelWnd->SetPrim(rp, nfaces - 2, -1, 0, 0);
 #endif
 
   // Set the flag

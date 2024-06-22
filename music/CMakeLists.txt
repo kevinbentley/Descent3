@@ -1,4 +1,7 @@
-set(HEADERS)
+set(HEADERS
+  music.h
+  musiclib.h)
+
 set(CPPS
   omflex.cpp
   sequencer.cpp
@@ -6,15 +9,15 @@ set(CPPS
   tracklist.cpp)
 
 add_library(music STATIC ${HEADERS} ${CPPS})
-target_link_libraries(music
+target_link_libraries(music PRIVATE
   cfile
   ddio
   mem
   sndlib
   stream_audio
+  libacm
+  manage
+  bitmap
 )
-target_include_directories(music PUBLIC
-  $<BUILD_INTERFACE:
-  ${PROJECT_SOURCE_DIR}/music
-  >
-)
+
+target_include_directories(music PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -64,7 +64,7 @@ public:
   void GetEnvironmentToggles(t3dEnvironmentToggles *env) override;
 
   // Starts the sound library, maybe have it send back some information -- 3d support?
-  int InitSoundLib(char mixer_type, oeApplication *sos, uint8_t max_sounds_played) override;
+  int InitSoundLib(char mixer_type, uint8_t max_sounds_played) override;
   // Cleans up after the Sound Library
   void DestroySoundLib() override;
 

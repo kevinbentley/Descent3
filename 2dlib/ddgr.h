@@ -92,16 +92,11 @@
 //	Data structures
 //	----------------------------------------------------------------------------
 
-/*	Type definitions */
-
-class oeApplication;
-
 /*
         Diagnostic DDGR system types and functions
 */
 
 struct ddgr_init_info {
-  oeApplication *obj;  // the app object created by app calling
   char *subsystem;     // subsystem name (i.e. 'DirectDraw', 'GDI')
   uint16_t windowed : 1; // are we running in a fullscreen or windowed mode
   uint16_t debug : 1;    // are we running in debug mode?
@@ -111,7 +106,7 @@ struct ddgr_init_info {
         subsystem = subsystem name ('DirectDraw', 'GDI')
         fullscreen = whether it's full screen or windowed
 */
-bool ddgr_Init(oeApplication *app, char *subsystem, bool fullscreen);
+bool ddgr_Init(char *subsystem, bool fullscreen);
 void ddgr_Close();
 void ddgr_GetSubsystem(char *name, bool *fullscreen);
 

@@ -22,7 +22,7 @@
 #include "lightmap_info.h"
 #include "lightmap.h"
 #include "mono.h"
-#include "Ddgr.h"
+#include "ddgr.h"
 #include "grdefs.h"
 #include "renderer.h"
 #include <stdlib.h>

@@ -1,17 +1,30 @@
+set(HEADERS
+  appconsole.h
+  appdatabase.h
+  application.h
+  chrono_timer.h
+  controller.h
+  ddio_common.h
+  ddio.h
+  $<$<PLATFORM_ID:Darwin,Linux>: ddio_lnx.h>
+  $<$<PLATFORM_ID:Windows>: ddio_win.h>
+  forcefeedback.h
+  joystick.h
+)
+
 set(CPPS
   chrono_timer.cpp
   ddio.cpp
-  file.cpp
   key.cpp
   $<$<PLATFORM_ID:Darwin,Linux>:
     lnxfile.cpp
     lnxforcefeedback.cpp
     lnxio.cpp
-    sdljoy.cpp
     lnxkey.cpp
     lnxkey_null.cpp
-    lnxmouse.cpp
     lnxkey_sdl.cpp
+    lnxmouse.cpp
+    sdljoy.cpp
   >
   $<$<PLATFORM_ID:Windows>:
     winfile.cpp
@@ -22,13 +35,16 @@ set(CPPS
     winmouse.cpp
   >
 )
-add_library(ddio STATIC ${CPPS})
+add_library(ddio STATIC ${HEADERS} ${CPPS})
 target_link_libraries(ddio PRIVATE
   ddebug
   mem
-)
-target_include_directories(ddio PUBLIC
-  $<BUILD_INTERFACE:
-  ${PROJECT_SOURCE_DIR}/ddio
+  $<$<PLATFORM_ID:Linux,Darwin>:
+    linux
+  >
+  $<$<PLATFORM_ID:Windows>:
+    win32
   >
 )
+
+target_include_directories(ddio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

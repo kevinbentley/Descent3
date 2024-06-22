@@ -1534,7 +1534,7 @@
 #include "attach.h"
 #include "demofile.h"
 #include "matcen.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "difficulty.h"
 #include "osiris_dll.h"
 #include "multi.h"

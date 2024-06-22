@@ -82,20 +82,15 @@
 
 #include <array>
 #include <cstdint>
+#include <WinDef.h>
 
-/*	Basic Application Win32 data types, to prevent include of windows.h */
-typedef uintptr_t   HWnd;
-typedef uintptr_t   HInstance;
-typedef uintptr_t   WParam;
-typedef intptr_t    LParam;
-typedef intptr_t    LResult;
+#include "application.h"
 
-//	This structure is used to retrieve and set
 struct tWin32AppInfo {
-  unsigned flags;                 // Application Flags
-  HWnd hwnd;                      // Window Handle
-  HInstance hinst;                // Window Instance
-  int wnd_x, wnd_y, wnd_w, wnd_h; // Window dimensions
+  uint32_t flags = 0; // Application Flags
+  HWND handle = nullptr; // Window Handle
+  HINSTANCE instance = nullptr; // Window Instance
+  rect_t window = { 0,0,0,0 }; // Window dimensions
 };
 
 enum tWin32OS { NoWin32, Win9x, WinNT, WinCE };
@@ -133,27 +128,26 @@ tOEWin32MsgCallback:
                         endif
 */
 
-typedef int (*tOEWin32MsgCallback)(HWnd, unsigned, WParam, LParam);
+typedef __stdcall LRESULT (*tOEWin32MsgCallback)(HWND, UINT, WPARAM, LPARAM);
+
+static inline class oeWin32Application* Win32App()
+  { return static_cast<oeWin32Application*>(App()); }
 
 class oeWin32Application : public oeApplication {
-#if defined(OEAPP_INTERNAL_MODULE)
-public:
-#else
 private:
-#endif
-  bool m_WasCreated{}; // Tells us if this app created the window handle or not.
+  bool m_WasCreated = false; // Tells us if this app created the window handle or not.
 
   struct MessageFunction { // assign functions to messages.
-    unsigned msg;
+    uint32_t msg;
     tOEWin32MsgCallback fn;
   };
   std::array<MessageFunction, 64> m_MsgFn{};
 
-  bool m_NTFlag{}; // Are we in NT?
+  bool m_NTFlag = false; // Are we in NT?
 
-  void (*m_DeferFunc)(bool){}; // function to call when deffering to OS (OnIdle for instance)
+  void (*m_DeferFunc)(bool) = nullptr; // function to call when deffering to OS (OnIdle for instance)
 
-  char m_WndName[64]{}; // name of window.
+  char m_WndName[64] { '\0' }; // name of window.
 
   static bool os_initialized; // is the OS check initialized?
   static bool first_time;     // first time init?
@@ -161,9 +155,11 @@ private:
 private:
   int defer_block(); // real defer code.
 
+  oeWin32Application();
+  friend oeApplication* App();
 public:
   //	Creates the window handle
-  oeWin32Application(const char *name, unsigned flags, HInstance hinst);
+  oeWin32Application(const char *name, unsigned flags, HINSTANCE hinst);
 
   //	Create object with a premade window handle/instance
   //	we just give it the window handle, instance handle and flags
@@ -173,11 +169,6 @@ public:
 
   //	initializes the object
   virtual void init();
-
-  //	Function to retrieve information from object through a platform defined structure.
-  virtual void get_info(void *appinfo);
-
-  virtual int flags(void) const;
 
   //	defer returns some flags.   essentially this function defers program control to OS.
   virtual unsigned defer();
@@ -189,19 +180,19 @@ public:
   virtual void delay(float secs);
 
   //	Sizes the displayable region of the app (the window)
-  void set_sizepos(int x, int y, int w, int h);
+  void moveWindow();
 
   //	returns -1 if we pass to default window handler.
-  virtual LResult WndProc(HWnd hwnd, unsigned msg, WParam wParam, LParam lParam);
+  virtual LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
   //	These functions allow you to add message handlers.
-  bool add_handler(unsigned msg, tOEWin32MsgCallback fn);
+  bool add_handler(UINT msg, tOEWin32MsgCallback fn);
 
   // These functions remove a handler
-  bool remove_handler(unsigned msg, tOEWin32MsgCallback fn);
+  bool remove_handler(UINT msg, tOEWin32MsgCallback fn);
 
   // Run handler for message (added by add_handler)
-  bool run_handler(HWnd wnd, unsigned msg, WParam wParam, LParam lParam);
+  bool run_handler(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
   //	clears handler list
   void clear_handlers();
@@ -210,17 +201,16 @@ public:
   bool NT() const { return m_NTFlag; }
 
   // retreive full version information
-  static tWin32OS version(int *major, int *minor, int *build = NULL, char *desc = NULL);
+  static tWin32OS version(int *major, int *minor, int *build = NULL, char *desc = nullptr);
 
   // detect if application can handle what we want of it.
   static bool GetSystemSpecs(const char *fname);
 
+  constexpr HWND windowHandle() const { return m_handle; }
+  constexpr HINSTANCE instance() const { return m_instance; }
 public:
-  HWnd m_hWnd{}; // handles created by the system
-  HInstance m_hInstance{};
-  unsigned m_Flags{};
-  int m_X{}, m_Y{}, m_W{}, m_H{}; // window dimensions.
-
+  HWND m_handle = nullptr; // Window Handle
+  HINSTANCE m_instance = nullptr; // Window Instance
 private:
   void os_init(); // initializes OS components.
 };

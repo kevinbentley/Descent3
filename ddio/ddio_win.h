@@ -79,7 +79,6 @@
 class oeWin32Application;
 
 struct dinput_data {
-  oeWin32Application *app;
   HWND hwnd;
   LPDIRECTINPUT lpdi;
   bool preemptive;

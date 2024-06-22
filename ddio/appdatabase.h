@@ -58,14 +58,14 @@
         Again, this class should be the parent of a platform specific class like osWinDatabase, for instance.
 */
 
-class oeAppDatabase {
-public:
-  oeAppDatabase(){};
+class oeAppDatabase* Database();
 
-  //	you can also create a reference to a current database.  this is good if
-  //	you have a hierachical database.
-  oeAppDatabase(oeAppDatabase *parent){};
-  virtual ~oeAppDatabase(){};
+class oeAppDatabase {
+protected:
+  oeAppDatabase() = default;
+public:
+  oeAppDatabase(oeAppDatabase&) = delete;
+  virtual ~oeAppDatabase() = default;
 
   //	creates an empty classification or structure where you can store information
   virtual bool create_record(const char *pathname) = 0;
@@ -93,17 +93,5 @@ public:
 
 // Macro to write a string
 #define write_string(label, varp) write(label, varp, strlen(varp))
-
-/*	This section includes the platform-specific header files
-        Add a platform to this list once implemented:
-
-                Win32				Samir		Win32Database.h			06/97
-*/
-
-#if defined(WIN32)
-#include "win\Win32Database.h"
-#elif defined(__LINUX__)
-#include "linux/lnxdatabase.h"
-#endif
 
 #endif

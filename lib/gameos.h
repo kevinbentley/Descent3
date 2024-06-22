@@ -116,7 +116,6 @@ public:
   //	returns a packet with a code telling us either to quit or that we are in some
   //	sort of idle state, which means we perform tasks like a game.
   virtual gameos_packet *defer() = 0; // defers game operation to OS.
-  virtual void get_info(void *info, int size_str) = 0;
 };
 /* osDatabase
         to get info about the application from an OS managed database (or a custom info file)

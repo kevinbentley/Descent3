@@ -44,7 +44,7 @@
 #include "vibeinterface.h"
 
 #ifndef WIN32
-void VIBE_Init(oeApplication *app) {}
+void VIBE_Init() {}
 void VIBE_Close(void) {}
 void VIBE_DoFrame(void) {}
 void VIBE_WeaponFire(int weapon_index) {}
@@ -59,6 +59,7 @@ void VIBE_DoLevelEnd(void) {}
 #else
 
 #include "intellivibe.h"
+#include "winapp.h"
 #include "module.h"
 #include "mono.h"
 #include "object_external_struct.h"
@@ -78,7 +79,7 @@ static IntelliVIBE_DoQuaterFrame_fp IVIBE_DoQuaterFrame = NULL;
       return;                                                                                                          \
     }                                                                                                                  \
   }
-void VIBE_Init(oeApplication *app) {
+void VIBE_Init() {
   if (!mod_LoadModule(&IntelliVIBE_module, "ivibe_D3.dll")) {
     mprintf(0, "Unable to load IntelliVIBE DLL\n");
     IntelliVIBE_module.handle = NULL;
@@ -97,8 +98,8 @@ void VIBE_Init(oeApplication *app) {
   TEST_MODULE(IVIBE_DoQuaterFrame);
 
   d3_init_info info;
-  info.hinst = (HINSTANCE)((oeWin32Application *)app)->m_hInstance;
-  info.hwnd = (HWND)((oeWin32Application *)app)->m_hWnd;
+  info.hinst = Win32App()->instance();
+  info.hwnd = Win32App()->windowHandle();
 
   ASSERT(IVIBE_Initialize != NULL);
   if (!IVIBE_Initialize(&info)) {

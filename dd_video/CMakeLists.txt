@@ -1,3 +1,8 @@
+set(HEADERS
+  ddvid.h
+  ddvidlib.h
+)
+
 set(CPPS
   $<$<PLATFORM_ID:Windows>:
     video_win32.cpp
@@ -9,9 +14,17 @@ set(CPPS
   >
 )
 
-add_library(dd_video STATIC ${CPPS})
+add_library(dd_video STATIC ${HEADERS} ${CPPS})
 target_link_libraries(dd_video PRIVATE
   $<$<PLATFORM_ID:Linux,Darwin>:
     linux
   >
+  $<$<PLATFORM_ID:Windows>:
+    win32
+  >
+  ddio
+  2dlib
+)
+
+target_include_directories(dd_video PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )

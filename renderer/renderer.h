@@ -507,7 +507,7 @@ void rend_StartFrame(int x1, int y1, int x2, int y2, int clear_flags = RF_CLEAR_
 void rend_EndFrame();
 
 // Init our renderer, pass the application object also.
-int rend_Init(renderer_type state, oeApplication *app, renderer_preferred_state *pref_state);
+int rend_Init(renderer_type state, renderer_preferred_state *pref_state);
 
 // de-init the renderer
 void rend_Close();
@@ -636,13 +636,13 @@ void rend_GetRenderState(rendering_state *rstate);
 void rend_DrawSimpleBitmap(int bm_handle, int x, int y);
 
 // Gets OpenGL ready to work in a window
-int rend_InitOpenGLWindow(oeApplication *app, renderer_preferred_state *pref_state);
+int rend_InitOpenGLWindow(renderer_preferred_state *pref_state);
 
 // Shuts down OpenGL in a window
 void rend_CloseOpenGLWindow();
 
 // Sets the state of the OpenGLWindow to on or off
-void rend_SetOpenGLWindowState(int state, oeApplication *app, renderer_preferred_state *pref_state);
+void rend_SetOpenGLWindowState(int state, renderer_preferred_state *pref_state);
 
 // Sets the hardware bias level for coplanar polygons
 // This helps reduce z buffer artifaces

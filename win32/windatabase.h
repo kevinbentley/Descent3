@@ -51,22 +51,36 @@
 #ifndef WIN32DATABASE
 #define WIN32DATABASE
 
+#include "appdatabase.h"
+#include <winbase.h>
+#include <winreg.h>
+
 /* oeWin32AppDatabase
         to get info about the application from a managed database (or a custom info file)
         we get our information from the registry!
 */
 
 class oeWin32AppDatabase : public oeAppDatabase {
-  unsigned hBaseKey; // look up from this key.
-  unsigned hCurKey;  // current key for lookup
-
 protected:
-  char m_Basepath[256];
-
-public:
+  HKEY hCurKey;  // current key for lookup
+  struct regkey_t
+  {
+    HKEY hBaseKey; // look up from this key.
+    char path[_MAX_PATH + 1];
+  } m_regkey;
   oeWin32AppDatabase();
-  oeWin32AppDatabase(oeWin32AppDatabase *parent);
+  friend oeAppDatabase* Database();
+public:
   virtual ~oeWin32AppDatabase();
+
+  constexpr const char* key_path(void) { return m_regkey.path; }
+  constexpr bool append_path(const char* appendage)
+  {
+    if(lstrlen(m_regkey.path) + lstrlen(appendage) > 255)
+      return false;
+    lstrcat(m_regkey.path, appendage);
+    return true;
+  }
 
   //	creates an empty classification or structure where you can store information
   virtual bool create_record(const char *pathname);

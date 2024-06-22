@@ -66,7 +66,15 @@
  */
 #ifndef APP_H
 #define APP_H
-#include "pstypes.h"
+
+#include <cstdint>
+
+struct rect_t
+{
+  int x, y;
+  int w, h;
+};
+
 /*	Basic Application data types */
 /*	Application Object
                 This object entails initialization and cleanup of all operating system
@@ -79,39 +87,38 @@ const int OEAPP_WINDOWED = 1, // App will run in a window. May not be supported.
     OEAPP_FULLSCREEN = 2,     // App will run in fullscreen.  May not be supported.
     OEAPP_TOPMOST = 4,        // App will be on the topmost display.  May not be supported.
     OEAPP_CONSOLE = 8;        // App will run in a console style window.
+
+class oeApplication* App();
+
 class oeApplication {
 protected:
-  bool m_AppActive;
+  bool m_AppActive = false;
+  uint32_t m_flags = 0;
+  rect_t m_window;
 
 public:
-  oeApplication() { m_AppActive = true; };
+  oeApplication() { activate(); };
   virtual ~oeApplication(){};
   //	initializes the object
   virtual void init() = 0;
-  //	Function to retrieve information from object through a platform defined structure.
-  virtual void get_info(void *buffer) = 0;
-  //	Function to get the flags
-  virtual int flags(void) const = 0;
   //	defer returns some flags.   essentially this function defers program control to OS.
   virtual unsigned defer() = 0;
   //	suspends application for a certain amout of time...
   virtual void delay(float secs) = 0;
   //	set a function to run when deferring to OS.
   virtual void set_defer_handler(void (*func)(bool)) = 0;
+  //    set the application window to the location in m_window.
+  virtual void moveWindow() = 0;
 
-public:
-  //	checks if the application is active
-  bool active() const { return m_AppActive; };
-  void activate() { m_AppActive = true; };
-  void deactivate() { m_AppActive = false; };
+  constexpr int flags(void) const { return m_flags; }
+  constexpr void setFlags(int f) { m_flags = f; }
+
+  constexpr const rect_t& window() const { return m_window; }
+  constexpr void setWindow(rect_t win) { m_window = win; }
+
+  constexpr bool active() const { return m_AppActive; };
+  constexpr void activate() { m_AppActive = true; };
+  constexpr void deactivate() { m_AppActive = false; };
 };
-/*	This section includes the platform-specific header files
-        Add a platform to this list once implemented:
-                Win32				Samir		Win32App.h			06/97
-*/
-#if defined(WIN32)
-#include "win\win32app.h"
-#elif defined(__LINUX__)
-#include "lnxapp.h"
-#endif
+
 #endif

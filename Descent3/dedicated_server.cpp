@@ -120,7 +120,7 @@ typedef int socklen_t;
 #include "dedicated_server.h"
 #include "multi.h"
 #include "args.h"
-#include "AppConsole.h"
+#include "appconsole.h"
 #include "ddio.h"
 #include "newui.h"
 #include "ui.h"

@@ -20,7 +20,7 @@
 #include "DDAccess.h" // This module has access to machine-dependent variables.
 #include "pstypes.h"
 #include "pserror.h"
-#include "Application.h"
+#include "winapp.h"
 #include "renderer.h"
 #include "3d.h"
 #include "bitmap.h"
@@ -34,15 +34,11 @@
 #include "bumpmap.h"
 #include "mem.h"
 #include "rtperformance.h"
-#include "appdatabase.h"
+#include "windatabase.h"
 
 #include <algorithm>
 
-static oeApplication *ParentApplication;
-
 extern int FindArg(const char *);
-
-extern oeAppDatabase *Database;
 
 rendering_state D3D_state = {0}; // set initted to zero
 renderer_preferred_state D3D_preferred_state = {0, 1, 1.5};
@@ -474,7 +470,7 @@ d3d_device *d3d_PollDevices() {
       int templen = 255;
       mprintf(0, "More than one D3D device found!\n");
 
-      Database->read("RenderingDeviceName", tempbuffer, &templen);
+      Database()->read("RenderingDeviceName", tempbuffer, &templen);
 
       int done = 0;
       for (i = 0; i < Num_d3d_devices && !done; i++) {
@@ -1328,7 +1324,7 @@ bool d3d_UsingDX6() {
 
 // Sets up our Direct3D rendering context
 // Returns 1 if ok, 0 if something bad
-int d3d_Init(oeApplication *app, renderer_preferred_state *pref_state) {
+int d3d_Init(renderer_preferred_state *pref_state) {
   HRESULT ddrval;
   HWND hwnd;
   d3d_device *dd;
@@ -1342,8 +1338,6 @@ int d3d_Init(oeApplication *app, renderer_preferred_state *pref_state) {
     rend_SetErrorMessage("DirectX 6 is not properly installed.");
     return 0;
   }
-
-  ParentApplication = app;
 
   if (pref_state != &D3D_preferred_state)
     D3D_preferred_state = *pref_state;
@@ -1359,7 +1353,7 @@ TryAgain:
     return 0;
   }
 
-  hwnd = (HWND)((oeWin32Application *)app)->m_hWnd;
+  hwnd = Win32App()->windowHandle();;
 
   // Create our direct draw stuff
   ddrval = DirectDrawCreate(dd->pguid_2d, &lpDD1, NULL);
@@ -1630,16 +1624,13 @@ void d3d_Close() {
 
   if (lpDD1) {
 
-    HRESULT ddrval;
-    HWND hwnd = (HWND)((oeWin32Application *)ParentApplication)->m_hWnd;
-
-    ddrval = lpDD->RestoreDisplayMode();
-    if (ddrval != DD_OK) {
+    if (HRESULT ddrval = lpDD->RestoreDisplayMode();
+        ddrval != DD_OK) {
       mprintf(0, "RestoreDisplayMode failed (0x%x)\n", ddrval);
     }
 
-    ddrval = lpDD->SetCooperativeLevel(hwnd, DDSCL_NORMAL);
-    if (ddrval != DD_OK) {
+    if (HRESULT ddrval = lpDD->SetCooperativeLevel(Win32App()->windowHandle(), DDSCL_NORMAL);
+        ddrval != DD_OK) {
       mprintf(0, "WIN_DD32: SetCooperativeLevel W Failed (0x%x)\n", ddrval);
     }
 
@@ -2957,7 +2948,7 @@ int d3d_SetPreferredState(renderer_preferred_state *pref_state) {
 
     if (reinit) {
       d3d_Close();
-      retval = d3d_Init(ParentApplication, &D3D_preferred_state);
+      retval = d3d_Init(&D3D_preferred_state);
     } else {
       if (old_state.gamma != pref_state->gamma) {
         d3d_SetGammaValue(pref_state->gamma);
@@ -2981,7 +2972,7 @@ void d3d_SetResolution(int width, int height) {
   if (D3D_state.initted) {
     if (width != D3D_state.screen_width || height != D3D_state.screen_height) {
       d3d_Close();
-      d3d_Init(ParentApplication, &D3D_preferred_state);
+      d3d_Init(&D3D_preferred_state);
     }
   }
 }

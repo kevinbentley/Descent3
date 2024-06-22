@@ -36,11 +36,11 @@ class oeApplication;
 int mve_Init(const char *dir, const char *sndcard);
 
 // simply plays a movie.
-int mve_PlayMovie(const char *mvename, oeApplication *app);
+int mve_PlayMovie(const char *mvename);
 
 // used to copy movie data to a pointer, looping will loop, fhandle will be a pointer to a file handle to be returned
 // handle to movie sequence is returned by function.
-intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app, bool looping = false);
+intptr_t mve_SequenceStart(const char *mvename, int *fhandle, bool looping = false);
 
 //	frames movies started with SequenceStart.  Optionally, pass a pointer to a variable which will receive
 //	bitmap handle containing data, nx and ny will contain adjusted x and y coordinates if needed.

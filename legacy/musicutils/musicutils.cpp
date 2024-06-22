@@ -24,7 +24,7 @@
 #include "musicutilsDlg.h"
 #include "musicplay.h"
 
-#include "Application.h"
+#include "application.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

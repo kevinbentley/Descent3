@@ -902,7 +902,7 @@ void CObjectDialog::OnObjpadProperties() {
     return;
   }
 
-  theApp.pause();
+  Editor()->pause();
 
   switch (Objects[Cur_object_index].type) {
   case OBJ_POWERUP: {
@@ -912,7 +912,7 @@ void CObjectDialog::OnObjpadProperties() {
   }
   }
 
-  theApp.resume();
+  Editor()->resume();
 }
 
 /////////////////////////////////////////////////////////////////////

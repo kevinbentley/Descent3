@@ -295,7 +295,7 @@
 #include "matcen.h"
 #include "hud.h"
 #include "marker.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "weather.h"
 
 // function prototypes.

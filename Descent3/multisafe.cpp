@@ -665,7 +665,7 @@
 #include "door.h"
 #include "demofile.h"
 #include "stringtable.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "multi_world_state.h"
 #include "osiris_predefs.h"
 #include "viseffect.h"

@@ -218,7 +218,7 @@ void pilot::initialize(void) {
   bool kiddie_settings = true;
 
   if (Database) {
-    Database->read("ProfanityPrevention", &kiddie_settings);
+    Database()->read("ProfanityPrevention", &kiddie_settings);
   }
 
   if (kiddie_settings) {

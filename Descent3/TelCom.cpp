@@ -521,7 +521,7 @@
 #include "textaux.h"
 #include "psrand.h"
 #include "controls.h"
-#include "d3music.h"
+#include "musicapi.h"
 
 #define FRAME_RATE 30.0f
 #define TCPE_TIME 0.5f
@@ -751,7 +751,7 @@ void TelComMain(bool ingame, bool SelectShip) {
     // Process all waiting events for the TelCom	(we may only want to handle this once a frame!)
     TelComHandleAllEvents(&Telcom_system);
     TelcomRenderScreen(false, false, 2);
-    Descent->defer();
+    App()->defer();
   }
 
   TelcomStopSound(TCSND_SHUTDOWN);
@@ -1340,7 +1340,7 @@ bool TelComMainMenu(tTelComInfo *tcs) {
     }
 
     TelcomRenderScreen();
-    Descent->defer();
+    App()->defer();
     if (KEY_STATE(KEY_ESC))
       Telcom_system.state = TCS_POWEROFF;
 
@@ -1491,7 +1491,7 @@ void TelcomRenderScreen(bool poweron, bool powerup, uint8_t power_effect) {
 
   float cap_time = last_rendertime + (1.0f / FRAME_RATE);
   if (cap_time > newtime) {
-    Descent->delay(cap_time - newtime);
+    App()->delay(cap_time - newtime);
     newtime = timer_GetTime();
   }
 
@@ -3611,7 +3611,7 @@ void TelComSingleShipSelect(tTelComInfo *tcs) {
     }
 
     TelcomRenderScreen();
-    Descent->defer();
+    App()->defer();
     if (KEY_STATE(KEY_ESC))
       tcs->state = TCS_POWEROFF;
 

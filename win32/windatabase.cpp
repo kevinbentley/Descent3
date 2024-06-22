@@ -68,7 +68,7 @@
  * $NoKeywords: $
  */
 
-#include "AppDatabase.h"
+#include "windatabase.h"
 
 #include <windows.h>
 #include <assert.h>
@@ -78,32 +78,37 @@
 
 //	Construction and destruction.
 
+oeAppDatabase* Database()
+{
+  static oeWin32AppDatabase* instance = nullptr;
+  if(instance == nullptr)
+    instance = new oeWin32AppDatabase();
+  return instance;
+}
+
+static_assert(sizeof(char) == sizeof(BYTE), "assumed size is incorrect!");
+static_assert(sizeof(DWORD) == sizeof(size_t), "assumed size is incorrect!");
+
 oeWin32AppDatabase::oeWin32AppDatabase() {
   bool res;
 
   hCurKey = 0;
-
-  hBaseKey = (unsigned)HKEY_CURRENT_USER;
+  m_regkey.hBaseKey = HKEY_CURRENT_USER;
 
   //	create outrage entertainment key
-  lstrcpy(m_Basepath, "SOFTWARE\\Outrage");
-  res = lookup_record(m_Basepath);
+  lstrcpy(m_regkey.path, "SOFTWARE\\Outrage");
+  res = lookup_record(m_regkey.path);
   if (!res) {
-    res = create_record(m_Basepath);
+    res = create_record(m_regkey.path);
     if (!res) {
       mprintf(1, "Unable to create registry directory.\n");
     }
   }
 }
 
-oeWin32AppDatabase::oeWin32AppDatabase(oeWin32AppDatabase *parent) {
-  hCurKey = 0;
-  hBaseKey = parent->hCurKey;
-}
-
 oeWin32AppDatabase::~oeWin32AppDatabase() {
   if (hCurKey) {
-    RegCloseKey((HKEY)hCurKey);
+    RegCloseKey(hCurKey);
   }
 }
 
@@ -112,104 +117,92 @@ oeWin32AppDatabase::~oeWin32AppDatabase() {
 
 //	creates an empty classification or structure where you can store information
 bool oeWin32AppDatabase::create_record(const char *pathname) {
-  LONG lres;
   HKEY hkey;
   DWORD disp;
 
-  assert(hBaseKey);
+  assert(m_regkey.hBaseKey);
 
-  lres = RegCreateKeyEx((HKEY)hBaseKey, pathname, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &disp);
-  if (lres != ERROR_SUCCESS) {
+  if(LSTATUS lres = RegCreateKeyEx(m_regkey.hBaseKey, pathname, 0, "", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hCurKey, &disp);
+    lres != ERROR_SUCCESS) {
+    hCurKey = 0;
     mprintf(1, "Unable to create key %s (%x)\n", pathname, lres);
-    return 0;
+    return false;
   }
 
-  hCurKey = (unsigned)hkey;
-
-  return 1;
+  return true;
 }
 
 //	set current database focus to a particular record
 bool oeWin32AppDatabase::lookup_record(const char *pathname) {
-  LONG lres;
-  HKEY hkey;
-
-  assert(hBaseKey);
+  assert(m_regkey.hBaseKey);
 
   if (hCurKey) {
-    RegCloseKey((HKEY)hCurKey);
+    RegCloseKey(hCurKey);
   }
 
-  lres = RegOpenKeyEx((HKEY)hBaseKey, pathname, 0, KEY_READ | KEY_WRITE | KEY_EXECUTE, &hkey);
-  if (lres != ERROR_SUCCESS) {
+  if(LSTATUS lres = RegOpenKeyEx(m_regkey.hBaseKey, pathname, 0, KEY_READ | KEY_WRITE | KEY_EXECUTE, hCurKey);
+    lres != ERROR_SUCCESS) {
+    hCurKey = 0;
     mprintf(1, "Unable to open key %s (%x)\n", pathname, lres);
-    return 0;
+    return false;
   }
 
-  hCurKey = (unsigned)hkey;
-
-  return 1;
+  return true;
 }
 
 //	read either a string from the current record
 bool oeWin32AppDatabase::read(const char *label, char *entry, int *entrylen) {
-  LONG lres;
   DWORD type;
 
-  assert(hBaseKey);
+  assert(m_regkey.hBaseKey);
   assert(label != NULL);
   assert(entry != NULL);
   assert(entrylen != NULL);
 
-  lres = RegQueryValueEx((HKEY)hCurKey, label, NULL, &type, (LPBYTE)entry, (LPDWORD)entrylen);
-
-  assert(type != REG_DWORD);
-
-  if (lres != ERROR_SUCCESS) {
+  if(LSTATUS lres = RegQueryValueEx(hCurKey, label, NULL, &type, (LPBYTE)entry, (LPDWORD)entrylen);
+    lres != ERROR_SUCCESS) {
     mprintf(1, "Unable to query str key %s (%x)\n", label, lres);
-    return 0;
+    return false;
   }
-  return 1;
+  assert(type != REG_DWORD);
+  return true;
 }
 
 // read a variable-sized integer from the current record
 bool oeWin32AppDatabase::read(const char *label, void *entry, int wordsize) {
-  LONG lres;
   DWORD len = 4;
   DWORD type;
   int t;
 
-  assert(hBaseKey);
+  assert(m_regkey.hBaseKey);
   assert(label != NULL);
   assert(entry != NULL);
 
-  lres = RegQueryValueEx((HKEY)hCurKey, label, NULL, &type, (LPBYTE)&t, &len);
-
-  assert(len == 4);
-
-  if (lres != ERROR_SUCCESS) {
+  if (LSTATUS lres = RegQueryValueEx(hCurKey, label, NULL, &type, (LPBYTE)&t, &len);
+      lres != ERROR_SUCCESS) {
     mprintf(1, "Unable to query int key %s (%x)\n", label, lres);
-    return 0;
+    return false;
   }
 
+  assert(len == 4);
   assert(type == REG_DWORD);
 
   switch (wordsize) {
   case 1:
-    *((char *)entry) = (char)t;
+    *static_cast<char *>(entry) = (char)t;
     break;
   case 2:
-    *((int16_t *)entry) = (int16_t)t;
+    *static_cast<int16_t *>(entry) = (int16_t)t;
     break;
   case 4:
-    *((int *)entry) = (int)t;
+    *static_cast<int *>(entry) = (int)t;
     break;
   default:
     Int3();
     break; // invalid word size
   }
 
-  return 1;
+  return true;
 }
 
 bool oeWin32AppDatabase::read(const char *label, bool *entry) {
@@ -224,40 +217,36 @@ bool oeWin32AppDatabase::read(const char *label, bool *entry) {
 
 //	write either an integer or string to a record.
 bool oeWin32AppDatabase::write(const char *label, const char *entry, int entrylen) {
-  LONG lres;
-
-  assert(hBaseKey);
+  assert(m_regkey.hBaseKey);
   assert(label != NULL);
   assert(entry != NULL);
   //	assert(entrylen > 0);
 
-  lres = RegSetValueEx((HKEY)hCurKey, label, 0, REG_SZ, (LPBYTE)entry, entrylen);
-
-  if (lres != ERROR_SUCCESS) {
+  if(LSTATUS lres = RegSetValueEx(hCurKey, label, 0, REG_SZ, (LPBYTE)entry, entrylen);
+      lres != ERROR_SUCCESS) {
     mprintf(1, "Unable to write str key %s (%x)\n", label, lres);
-    return 0;
+    return false;
   }
-  return 1;
+  return true;
 }
 
 bool oeWin32AppDatabase::write(const char *label, int entry) {
-  LONG lres;
-
-  assert(hBaseKey);
+  assert(m_regkey.hBaseKey);
   assert(label != NULL);
 
-  lres = RegSetValueEx((HKEY)hCurKey, label, 0, REG_DWORD, (LPBYTE)&entry, sizeof(int));
-
-  if (lres != ERROR_SUCCESS) {
+  if(LSTATUS lres = RegSetValueEx(hCurKey, label, 0, REG_DWORD, (LPBYTE)&entry, sizeof(int));
+      lres != ERROR_SUCCESS) {
     mprintf(1, "Unable to write int key %s (%x)\n", label, lres);
-    return 0;
+    return false;
   }
 
-  return 1;
+  return true;
 }
 
 // get the current user's name from the os
-void oeWin32AppDatabase::get_user_name(char *buffer, size_t *size) { GetUserName(buffer, reinterpret_cast<LPDWORD>(size)); }
+void oeWin32AppDatabase::get_user_name(char *buffer, size_t *size) {
+  GetUserName(buffer, reinterpret_cast<LPDWORD>(size));
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 // pass name of dll which contains desired language
@@ -281,10 +270,10 @@ bool win32_SetResourceDLL(const char *libname) {
 // returns a string from the current resource
 bool win32_GetStringResource(int txt_id, char *buffer, int buflen) {
   if (LoadString(hThisResourceModule, txt_id, buffer, buflen)) {
-    buffer[buflen - 1] = 0;
+    buffer[buflen - 1] = '\0';
     return true;
   }
   strncpy(buffer, "!!!ERROR MISSING DLL STRING!!!", buflen - 1);
-  buffer[buflen - 1] = 0;
+  buffer[buflen - 1] = '\0';
   return false;
 }

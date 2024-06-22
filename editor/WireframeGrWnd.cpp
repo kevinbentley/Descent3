@@ -309,13 +309,13 @@ int CWireframeGrWnd::OnCreate(LPCREATESTRUCT lpCreateStruct) {
   if (CGrWnd::OnCreate(lpCreateStruct) == -1)
     return -1;
 
-  theApp.wireframe_view = this;
+  Editor()->wireframe_view = this;
   return 0;
 }
 
 void CWireframeGrWnd::OnDestroy() {
   CGrWnd::OnDestroy();
-  theApp.wireframe_view = NULL;
+  Editor()->wireframe_view = NULL;
 }
 
 void CWireframeGrWnd::OnSize(UINT nType, int cx, int cy) {
@@ -498,7 +498,7 @@ void EndWireframeSel(editorSelectorManager *esm) {
     int x1, y1, x2, y2;
     esm->m_OwnerWnd->GetWindowRect(&rect);
     esm->m_OwnerWnd->ScreenToClient(&rect);
-    theApp.wireframe_view->GetMagCoords(&x1, &y1, &x2, &y2);
+    Editor()->wireframe_view->GetMagCoords(&x1, &y1, &x2, &y2);
 
     float xstep = (float)(x2 - x1) / (float)rect.right;
     float ystep = (float)(abs(y2 - y1)) / (float)rect.bottom;
@@ -538,7 +538,7 @@ void EndWireframeSel(editorSelectorManager *esm) {
 
     if (KEY_STATE(KEY_LALT)) {
 
-      theApp.wireframe_view->SetMagCoords(left, (TERRAIN_DEPTH - 1) - top, right, (TERRAIN_DEPTH - 1) - bot);
+      Editor()->wireframe_view->SetMagCoords(left, (TERRAIN_DEPTH - 1) - top, right, (TERRAIN_DEPTH - 1) - bot);
     }
 
     World_changed = 1;
@@ -602,8 +602,8 @@ getout:
 }
 
 void DrawPlayerOnWireframe() {
-  if (theApp.wireframe_view)
-    theApp.wireframe_view->DrawPlayerOnTerrain();
+  if (Editor()->wireframe_view)
+    Editor()->wireframe_view->DrawPlayerOnTerrain();
 }
 
 void CWireframeGrWnd::GetMagCoords(int *x1, int *y1, int *x2, int *y2) {
@@ -633,7 +633,7 @@ void CWireframeGrWnd::DrawTerrainCell(int seg) {
   int rowsize = cur_surf->rowsize() / 2;
   int x1, y1, x2, y2;
 
-  theApp.wireframe_view->GetMagCoords(&x1, &y1, &x2, &y2);
+  Editor()->wireframe_view->GetMagCoords(&x1, &y1, &x2, &y2);
 
   fix xstep = IntToFix(x2 - x1) / cur_surf->width();
   fix ystep = IntToFix(abs(y2 - y1)) / cur_surf->height();
@@ -697,7 +697,7 @@ void CWireframeGrWnd::DrawTerrainWorld(grViewport *vp,vector *view_target,matrix
         int rowsize=cur_surf->rowsize()/2;
         int x1,y1,x2,y2;
 
-        theApp.wireframe_view->GetMagCoords (&x1,&y1,&x2,&y2);
+        Editor()->wireframe_view->GetMagCoords (&x1,&y1,&x2,&y2);
 
         fix xstep=IntToFix(x2-x1)/cur_surf->width();
         fix ystep=IntToFix(abs(y2-y1))/cur_surf->height();
@@ -762,7 +762,7 @@ void CWireframeGrWnd::DrawTerrainWorld(grViewport *vp, vector *view_target, matr
   int rowsize = cur_surf->rowsize() / 2;
   int x1, y1, x2, y2;
 
-  theApp.wireframe_view->GetMagCoords(&x1, &y1, &x2, &y2);
+  Editor()->wireframe_view->GetMagCoords(&x1, &y1, &x2, &y2);
 
   fix xstep = IntToFix(x2 - x1) / cur_surf->width();
   fix ystep = IntToFix(abs(y2 - y1)) / cur_surf->height();
@@ -854,7 +854,7 @@ void DrawIntoTopoMap(int x, int y) {
   int i, t, segx, segz;
 
   if (KEY_STATE(KEY_LSHIFT)) {
-    int seg = theApp.wireframe_view->GetCellFromPoint(x, y);
+    int seg = Editor()->wireframe_view->GetCellFromPoint(x, y);
     if (seg < 0 || seg >= TERRAIN_WIDTH * TERRAIN_DEPTH)
       Int3(); // get Jason
 
@@ -872,9 +872,9 @@ void DrawIntoTopoMap(int x, int y) {
         segx += t;
 
         Terrain_tex_seg[Terrain_seg[(segz * TERRAIN_WIDTH) + segx].texseg_index].tex_index = D3EditState.texdlg_texture;
-        theApp.wireframe_view->DrawTerrainCell((segz * TERRAIN_WIDTH) + segx);
+        Editor()->wireframe_view->DrawTerrainCell((segz * TERRAIN_WIDTH) + segx);
       }
     }
-    theApp.wireframe_view->Invalidate();
+    Editor()->wireframe_view->Invalidate();
   }
 }

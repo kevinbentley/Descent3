@@ -105,10 +105,12 @@ class CViewerPropDlg;
 // See editor.cpp for the implementation of this class
 //
 
-class CEditorApp : public CWinApp {
-public:
-  CEditorApp();
+class CEditorApp* Editor();
 
+class CEditorApp : public CWinApp {
+private:
+  CEditorApp();
+  friend CEditorApp* Editor();
   // Overrides
   // ClassWizard generated virtual function overrides
   //{{AFX_VIRTUAL(CEditorApp)

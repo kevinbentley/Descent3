@@ -67,8 +67,8 @@
 #include <cstdarg>
 #include <cstdio>
 
-#include "Application.h"
-#include "AppConsole.h"
+#include "winapp.h"
+#include "appconsole.h"
 #include "TaskSystem.h"
 
 #include <windows.h>
@@ -218,7 +218,6 @@ LRESULT WINAPI MyConProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 // console window helper functions
 void con_Create(HWND hWnd, LPCREATESTRUCT lpcs) {
-  oeWin32Application *app = (oeWin32Application *)lpcs->lpCreateParams;
   HDC hdc;
   HFONT oldfont;
   RECT rect;
@@ -252,10 +251,8 @@ void con_Create(HWND hWnd, LPCREATESTRUCT lpcs) {
   AdjustWindowRect(&rect, lpcs->style, FALSE);
   MoveWindow(hWnd, lpcs->x, lpcs->y, rect.right - rect.left, rect.bottom - rect.top, TRUE);
 
-  app->m_X = lpcs->x;
-  app->m_Y = lpcs->y;
-  app->m_W = rect.right - rect.left;
-  app->m_H = rect.bottom - rect.top;
+  Win32App()->setWindow({lpcs->x, lpcs->y, rect.right - rect.left, rect.bottom - rect.top});
+  Win32App()->moveWindow();
 
   SelectObject(hdc, oldfont);
   ReleaseDC(hWnd, hdc);

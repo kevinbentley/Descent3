@@ -411,7 +411,7 @@ BOOL CD3LaunchDlg::OnInitDialog() {
 
   CBitmap *dlgBmap;
 
-  dlgBmap = &(theApp.m_bkBmap);
+  dlgBmap = &(Editor()->m_bkBmap);
 
   RECT rectClient;
   dlgBmap->GetObject(sizeof(BITMAP), &m_bmInfo);
@@ -472,7 +472,7 @@ BOOL CD3LaunchDlg::OnInitDialog() {
   RefreshDialog();
 
   // Copy over the appropriate help files
-  if (theApp.m_straight_to_setup)
+  if (Editor()->m_straight_to_setup)
     CopyHelpFiles(TRUE);
   else
     CopyHelpFiles(FALSE);
@@ -506,7 +506,7 @@ BOOL CD3LaunchDlg::OnInitDialog() {
   ::GetCursorPos(&last_mouse_pos);
 
   // if we should be going straight to the Setup, do it now!
-  if (theApp.m_straight_to_setup) {
+  if (Editor()->m_straight_to_setup) {
     PostMessage(WM_STRAIGHT_TO_SETUP);
   }
 
@@ -543,8 +543,8 @@ void CD3LaunchDlg::OnPaint() {
     GetClientRect(&crect);
 
     memDC.CreateCompatibleDC( &dc );
-    CBitmap *bitmap=&(theApp.m_bkBmap);
-    CPalette *palette=&(theApp.m_palette);
+    CBitmap *bitmap=&(Editor()->m_bkBmap);
+    CPalette *palette=&(Editor()->m_palette);
 
     memDC.SelectObject( bitmap );	// Select and realize the palette
     if( dc.GetDeviceCaps(RASTERCAPS) & RC_PALETTE && palette->m_hObject != NULL )	{
@@ -637,9 +637,9 @@ void CD3LaunchDlg::OnBtnSetup() {
   sheet.AddPage(&keyboardtab);
 
   if (sheet.DoModal() == IDOK) {
-    if (theApp.m_straight_to_setup) {
+    if (Editor()->m_straight_to_setup) {
       os_config_write_uint(szSectionName, "StraightToSetup", 0);
-      theApp.m_straight_to_setup = 0;
+      Editor()->m_straight_to_setup = 0;
     }
     if (DetailLevelConfigured)
       os_config_write_uint(szSectionName, "DetailLevelConfigured", 1);
@@ -801,7 +801,7 @@ void CD3LaunchDlg::OnBtnPlay() {
     dedicated_switch_set = TRUE;
 
   // Display message explaining that user must configure system
-  if (theApp.m_straight_to_setup) {
+  if (Editor()->m_straight_to_setup) {
     msg.LoadString(IDS_D3LAUNCHDLG_PLAY_WARNING_MSG);
     title.LoadString(IDS_AUDIOTAB_WARNING);
     if (MessageBox(msg, title, MB_YESNO | MB_ICONWARNING) != IDYES)
@@ -1208,35 +1208,35 @@ BOOL CD3LaunchDlg::PreCreateWindow(CREATESTRUCT &cs) {
 // Sets the new language resource DLL
 bool CD3LaunchDlg::SetLanguageDLL(int lang_type) {
   // If a DLL is currently loaded, free it
-  if (theApp.m_hResInst != NULL) {
-    FreeLibrary(theApp.m_hResInst);
-    theApp.m_hResInst = NULL;
+  if (Editor()->m_hResInst != NULL) {
+    FreeLibrary(Editor()->m_hResInst);
+    Editor()->m_hResInst = NULL;
   }
 
   switch (lang_type) {
   case LANGUAGE_ENGLISH:
-    AfxSetResourceHandle(theApp.m_hDefResInst);
+    AfxSetResourceHandle(Editor()->m_hDefResInst);
     return TRUE;
   case LANGUAGE_FRENCH:
-    theApp.m_hResInst = LoadLibrary(FRENCH_RESOURCE_DLL);
+    Editor()->m_hResInst = LoadLibrary(FRENCH_RESOURCE_DLL);
     break;
   case LANGUAGE_GERMAN:
-    theApp.m_hResInst = LoadLibrary(GERMAN_RESOURCE_DLL);
+    Editor()->m_hResInst = LoadLibrary(GERMAN_RESOURCE_DLL);
     break;
   case LANGUAGE_ITALIAN:
-    theApp.m_hResInst = LoadLibrary(ITALIAN_RESOURCE_DLL);
+    Editor()->m_hResInst = LoadLibrary(ITALIAN_RESOURCE_DLL);
     break;
   case LANGUAGE_SPANISH:
-    theApp.m_hResInst = LoadLibrary(SPANISH_RESOURCE_DLL);
+    Editor()->m_hResInst = LoadLibrary(SPANISH_RESOURCE_DLL);
     break;
   }
 
-  if (theApp.m_hResInst != NULL) {
-    AfxSetResourceHandle(theApp.m_hResInst);
+  if (Editor()->m_hResInst != NULL) {
+    AfxSetResourceHandle(Editor()->m_hResInst);
     return TRUE;
   }
 
-  AfxSetResourceHandle(theApp.m_hDefResInst);
+  AfxSetResourceHandle(Editor()->m_hDefResInst);
   return FALSE;
 }
 
@@ -1270,8 +1270,8 @@ BOOL CD3LaunchDlg::OnEraseBkgnd(CDC *pDC) {
   CRect crect;
   GetClientRect(&crect);
 
-  CBitmap *bitmap = &(theApp.m_bkBmap);
-  CPalette *palette = &(theApp.m_palette);
+  CBitmap *bitmap = &(Editor()->m_bkBmap);
+  CPalette *palette = &(Editor()->m_palette);
 
   // Select and realize the palette
   if (pDC->GetDeviceCaps(RASTERCAPS) & RC_PALETTE && palette->m_hObject != NULL) {

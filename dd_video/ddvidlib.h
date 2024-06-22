@@ -57,10 +57,7 @@ const int VID_GDIF_SUBSYSTEM = 0, // GDI fullscreen subsystem
     VID_GDIX_SUBSYSTEM = 2,       // GDIX subsystem (GDI+DirectX)
     VID_DX_SUBSYSTEM = 3;         // DIRECTX subsystem
 
-class oeWin32Application;
-
 struct tDDVideoInfo {
-  oeWin32Application *app;
   HWND hWnd;
   HWND hVidWnd;
   int subsystem;

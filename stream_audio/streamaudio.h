@@ -138,7 +138,7 @@
 #ifndef __STREAMAUDIO_H_
 #define __STREAMAUDIO_H_
 
-#include "Adecode.h"
+#include "adecode.h"
 
 #include "ssl_lib.h"
 #include "TaskSystem.h"

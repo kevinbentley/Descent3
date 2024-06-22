@@ -414,7 +414,7 @@
 #include "descent.h"
 #include "mono.h"
 #include "weapon.h"
-#include "Controller.h"
+#include "controller.h"
 #include "Macros.h"
 #include "gamesequence.h"
 #include "pilot.h"

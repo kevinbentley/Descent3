@@ -25,7 +25,7 @@
 class oeApplication;
 
 // Starts up glide
-int d3d_Init(oeApplication *app, renderer_preferred_state *pref_state);
+int d3d_Init(renderer_preferred_state *pref_state);
 
 // Closes down glide
 void d3d_Close();

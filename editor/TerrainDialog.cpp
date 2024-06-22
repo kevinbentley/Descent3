@@ -1294,10 +1294,10 @@ void CTerrainDialog::OnKillfocusPixelErrorEdit() {
 void CTerrainDialog::OnTerrpadSelectrange() {
   SelectRangeDialog dlg;
 
-  theApp.pause();
+  Editor()->pause();
   dlg.DoModal();
   World_changed = 1;
-  theApp.resume();
+  Editor()->resume();
 }
 
 //	These functions allow the terrain keypad to scroll!!

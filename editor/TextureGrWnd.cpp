@@ -498,7 +498,7 @@
 
 #include "TextureGrWnd.h"
 
-#include "application.h"
+#include "winapp.h"
 #include "editor.h"
 #include "render.h"
 #include "manage.h"
@@ -598,13 +598,12 @@ extern float Just_returned_time;
 int Successive_count = 0;
 
 HWND save_wnd;
-oeWin32Application *app;
 
 void CTextureGrWnd::TexGrStartOpenGL() {
   if (DoOpenGL) {
     app = (oeWin32Application *)Descent;
     StateLimited = 1;
-    save_wnd = (HWND)app->m_hWnd;
+    save_wnd = Win32App()->windowHandle();;
     app->m_hWnd = (HWnd)m_hWnd;
     // rend_SetOpenGLWindowState (1,Descent,NULL); // LGT: not defined anymore
     rend_ClearScreen(0);
@@ -776,7 +775,7 @@ void CTextureGrWnd::OnPaint() {
   CPaintDC dc(this); // device context for painting
 
   //	Draw what's on the screen back page to the desktop
-  if (theApp.paused())
+  if (Editor()->paused())
     return;
 
   if (m_StartFlip) { // do if a flip was signaled
@@ -814,7 +813,7 @@ void CTextureGrWnd::OnPaint() {
 void CTextureGrWnd::OnDestroy() {
   //	mprintf(0, "CTextureGrWnd::OnDestroy:: m_grScreen\n");
   CGrWnd::OnDestroy();
-  theApp.textured_view = NULL;
+  Editor()->textured_view = NULL;
 }
 
 void CTextureGrWnd::OnMove(int x, int y) {
@@ -835,7 +834,7 @@ int CTextureGrWnd::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     return -1;
 
   // TODO: Add your specialized creation code here
-  theApp.textured_view = this;
+  Editor()->textured_view = this;
 
   return 0;
 }
@@ -982,13 +981,13 @@ void CTextureGrWnd::OnLButtonDown(UINT nFlags, CPoint point) {
       if (TSearch_found_type == TSEARCH_FOUND_SATELLITE) {
         if (nFlags & MK_SHIFT) {
           Terrain_sky.satellite_texture[TSearch_seg] = D3EditState.texdlg_texture;
-          theApp.main_frame->m_TerrainDialog->SetCurrentMoon(TSearch_seg);
+          Editor()->main_frame->m_TerrainDialog->SetCurrentMoon(TSearch_seg);
           World_changed = 1;
           TV_changed = 1;
         }
 
         else {
-          theApp.main_frame->m_TerrainDialog->SetCurrentMoon(TSearch_seg);
+          Editor()->main_frame->m_TerrainDialog->SetCurrentMoon(TSearch_seg);
           if (KEY_STATE(KEY_G))
             D3EditState.texdlg_texture = Terrain_sky.satellite_texture[TSearch_seg];
         }
@@ -1476,21 +1475,21 @@ BOOL CTextureGrWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
       // Nate: Add code here to edit/view an object's scripts
 
       // Make sure Dallas is open
-      if (theApp.m_DallasModelessDlgPtr == NULL) {
-        theApp.m_DallasModelessDlgPtr = new CDallasMainDlg;
-        theApp.m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
-        theApp.m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
+      if (Editor()->m_DallasModelessDlgPtr == NULL) {
+        Editor()->m_DallasModelessDlgPtr = new CDallasMainDlg;
+        Editor()->m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
+        Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
       } else
-        theApp.m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
+        Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
 
       object *curobj = &Objects[Cur_object_index];
       if (curobj->name == NULL)
         break;
 
       // Tell Dallas to add a new script with this object as the owner
-      theApp.m_DallasModelessDlgPtr->m_ScriptOwnerType = OBJECT_TYPE;
-      theApp.m_DallasModelessDlgPtr->m_ScriptOwnerHandle = curobj->handle;
-      theApp.m_DallasModelessDlgPtr->PostMessage(WM_HIGHLIGHT_SCRIPTS);
+      Editor()->m_DallasModelessDlgPtr->m_ScriptOwnerType = OBJECT_TYPE;
+      Editor()->m_DallasModelessDlgPtr->m_ScriptOwnerHandle = curobj->handle;
+      Editor()->m_DallasModelessDlgPtr->PostMessage(WM_HIGHLIGHT_SCRIPTS);
     } break;
 
     case POPUP_NEWSCRIPT: {
@@ -1498,21 +1497,21 @@ BOOL CTextureGrWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
       // Nate: Add code here to create a new script for an object
 
       // Make sure Dallas is open
-      if (theApp.m_DallasModelessDlgPtr == NULL) {
-        theApp.m_DallasModelessDlgPtr = new CDallasMainDlg;
-        theApp.m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
-        theApp.m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
+      if (Editor()->m_DallasModelessDlgPtr == NULL) {
+        Editor()->m_DallasModelessDlgPtr = new CDallasMainDlg;
+        Editor()->m_DallasModelessDlgPtr->Create(IDD_DALLAS_MAIN_DIALOG, this);
+        Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_SHOW);
       } else
-        theApp.m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
+        Editor()->m_DallasModelessDlgPtr->ShowWindow(SW_RESTORE);
 
       object *curobj = &Objects[Cur_object_index];
       if (curobj->name == NULL)
         break;
 
       // Tell Dallas to highlight all scripts that have this object as the owner
-      theApp.m_DallasModelessDlgPtr->m_ScriptOwnerType = OBJECT_TYPE;
-      theApp.m_DallasModelessDlgPtr->m_ScriptOwnerHandle = curobj->handle;
-      theApp.m_DallasModelessDlgPtr->PostMessage(WM_ADD_SCRIPT);
+      Editor()->m_DallasModelessDlgPtr->m_ScriptOwnerType = OBJECT_TYPE;
+      Editor()->m_DallasModelessDlgPtr->m_ScriptOwnerHandle = curobj->handle;
+      Editor()->m_DallasModelessDlgPtr->PostMessage(WM_ADD_SCRIPT);
     } break;
 
     case POPUP_EDITNAME: {
@@ -1648,7 +1647,7 @@ void ShowRadView() {
   grSurface *cur_surf;
   int i, t;
 
-  CTextureGrWnd *tview = theApp.textured_view;
+  CTextureGrWnd *tview = Editor()->textured_view;
 
   cur_surf = rad_Viewport->lock();
   uint16_t *dest = (uint16_t *)cur_surf->data();

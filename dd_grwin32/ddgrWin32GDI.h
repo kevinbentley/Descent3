@@ -94,7 +94,7 @@ extern tDDGRGDIInternalData DDGR_GDI_lib_data;
  */
 
 //	Initializes GDI subsystem
-bool ddgr_gdi_Init(oeApplication *app, bool fullscreen, bool ddraw);
+bool ddgr_gdi_Init(bool fullscreen, bool ddraw);
 
 //	Closes GDI subsystem
 void ddgr_gdi_Close();

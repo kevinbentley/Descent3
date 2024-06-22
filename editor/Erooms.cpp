@@ -1754,7 +1754,7 @@ void DeleteRoomFace(room *rp, int facenum, bool delete_unused_verts) {
 
   // Adjust the current and marked faces if necessary
 #ifdef NEWEDITOR
-  if (theApp.m_pLevelWnd != NULL)
+  if (Editor()->m_pLevelWnd != NULL)
 #endif
     if (rp == Curroomp) {
       if (Curface == rp->num_faces)

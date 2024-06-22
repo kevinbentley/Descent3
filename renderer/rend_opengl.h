@@ -25,7 +25,7 @@
 class oeApplication;
 
 // Starts up opengl
-int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state);
+int opengl_Init(renderer_preferred_state *pref_state);
 
 // Closes down opengl
 void opengl_Close(const bool just_resizing=false);

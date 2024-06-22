@@ -309,7 +309,7 @@
  * $NoKeywords: $
  */
 
-#include "Controller.h"
+#include "wincontroller.h"
 
 #include <math.h>
 

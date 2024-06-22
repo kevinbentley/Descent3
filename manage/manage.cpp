@@ -462,7 +462,7 @@
 #include "genericpage.h"
 #include "mem.h"
 #include "dedicated_server.h"
-#include "AppConsole.h"
+#include "appconsole.h"
 #include "init.h"
 #include "stringtable.h"
 #include "args.h"
@@ -539,7 +539,7 @@ int mng_IsNetworkUp() {
 
   char net_dir[255] = {0};
   int dirlen = 255;
-  Database->read("net directory", net_dir, &dirlen);
+  Database()->read("net directory", net_dir, &dirlen);
   if (net_dir[0] == 0)
     return 0;
   ddio_MakePath(dir, net_dir, "data", NULL);
@@ -566,7 +566,7 @@ void Read256TextureNames();
 int mng_InitTableFiles() {
   size_t size = TABLE_NAME_LEN;
   int answer;
-  Database->get_user_name(TableUser, &size);
+  Database()->get_user_name(TableUser, &size);
   if (FindArg("-filter"))
     Use_old_update_method = true;
   // Read256TextureNames ();
@@ -721,7 +721,7 @@ int mng_InitLocalTables() {
 int mng_InitNetTables() {
   char dir[255];
   int dirlen = 255;
-  Database->read("net directory", dir, &dirlen);
+  Database()->read("net directory", dir, &dirlen);
   if (dir[0] == 0)
     Error("D3_DIR environment variable not set.");
 

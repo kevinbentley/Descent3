@@ -1692,7 +1692,7 @@
 #include "doorway.h"
 #include "object_lighting.h"
 #include "spew.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "SmallViews.h"
 #include "demofile.h"
 #include "debuggraph.h"

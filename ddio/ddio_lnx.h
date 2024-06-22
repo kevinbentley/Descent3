@@ -24,8 +24,6 @@
 #ifndef DDIO_LNX_H
 #define DDIO_LNX_H
 
-#include "application.h"
-
-extern oeLnxApplication *Lnx_app_obj;
+#include "lnxapp.h"
 
 #endif

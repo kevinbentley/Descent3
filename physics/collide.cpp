@@ -832,7 +832,7 @@
 #include <stdio.h>
 
 #include "collide.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "pserror.h"
 #include "mono.h"
 #include "object.h"

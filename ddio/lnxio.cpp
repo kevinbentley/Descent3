@@ -62,12 +62,11 @@
 #include <mach-o/dyld.h>
 #endif
 
-#include "application.h"
+#include "lnxapp.h"
 #include "ddio.h"
 #include "pserror.h"
 
 bool DDIO_init = false;
-oeLnxApplication *Lnx_app_obj = NULL;
 
 // ----------------------------------------------------------------------------
 //	Initialization and destruction functions
@@ -75,7 +74,6 @@ oeLnxApplication *Lnx_app_obj = NULL;
 
 bool ddio_InternalInit(ddio_init_info *init_info) {
   mprintf(0, "DDIO: ddio_InternalInit() called.");
-  Lnx_app_obj = (oeLnxApplication *)init_info->obj;
   DDIO_init = true;
   return true;
 }
@@ -85,7 +83,6 @@ void ddio_InternalClose() {
 
   if (DDIO_init) {
     DDIO_init = false;
-    Lnx_app_obj = NULL;
   } // if
 
   mprintf(0, "DDIO: ddio_InternalClose() returning.");

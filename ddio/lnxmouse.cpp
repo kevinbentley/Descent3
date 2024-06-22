@@ -153,7 +153,7 @@ void ddio_MouseGetLimits(int *left, int *top, int *right, int *bottom, int *zmin
 }
 
 void ddio_MouseReset() {
-  ddio_MouseSetLimits(0, 0, Lnx_app_obj->m_W, Lnx_app_obj->m_H);
+  ddio_MouseSetLimits(0, 0, App()->window().w, App()->window().h);
   DDIO_mouse_state.btn_mask = 0;
 
   // reset button states
@@ -164,19 +164,19 @@ void ddio_MouseReset() {
                   return;
           bool use_dga = false;
 
-          if(Lnx_app_obj && Lnx_app_obj->m_Flags&APPFLAG_DGAMOUSE)
+          if(App()->flags() & APPFLAG_DGAMOUSE)
                   use_dga = true;
 
           //	warp the mouse.
           if(!use_dga)
           {
-                  XWarpPointer(Lnx_app_obj->m_Display, None, Lnx_app_obj->m_Window,
-                          0,0,0,0, Lnx_app_obj->m_W/2, Lnx_app_obj->m_H/2);
+                  XWarpPointer(App()->m_Display, None, App()->m_Window,
+                          0,0,0,0, App()->window().w / 2, App()->window().h / 2;
           }
   */
 
-  DDIO_mouse_state.x = DDIO_mouse_state.cx = Lnx_app_obj->m_W / 2;
-  DDIO_mouse_state.y = DDIO_mouse_state.cy = Lnx_app_obj->m_H / 2;
+  DDIO_mouse_state.x = DDIO_mouse_state.cx = App()->window().w / 2;
+  DDIO_mouse_state.y = DDIO_mouse_state.cy = App()->window().h / 2;
   DDIO_mouse_state.dy = DDIO_mouse_state.dx = 0;
 }
 
@@ -404,13 +404,13 @@ int sdlMouseMotionFilter(SDL_Event const *event) {
 
           bool use_dga = false;
 
-          if(Lnx_app_obj->m_Flags&APPFLAG_DGAMOUSE)
+          if(App()->m_Flags&APPFLAG_DGAMOUSE)
                   use_dga = true;
 
           if(Mouse_mode==MOUSE_STANDARD_MODE)
                   return;
 
-          while (XCheckMaskEvent(Lnx_app_obj->m_Display, PointerMotionMask | ButtonPressMask | ButtonReleaseMask, &evt))
+          while (XCheckMaskEvent(App()->m_Display, PointerMotionMask | ButtonPressMask | ButtonReleaseMask, &evt))
           {
                   switch (evt.type)
                   {
@@ -451,8 +451,8 @@ int sdlMouseMotionFilter(SDL_Event const *event) {
                   //	warp the mouse.
                   if(!use_dga)
                   {
-                          XWarpPointer(Lnx_app_obj->m_Display, None, Lnx_app_obj->m_Window,
-                                  0,0,0,0, Lnx_app_obj->m_W/2, Lnx_app_obj->m_H/2);
+                          XWarpPointer(App()->m_Display, None, App()->m_Window,
+                                  0,0,0,0, App()->window().w / 2, App()->window().h / 2);
                   }
           }
   */

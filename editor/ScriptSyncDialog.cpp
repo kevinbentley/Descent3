@@ -373,7 +373,7 @@ void CScriptSyncDialog::DoStuff(void) {
         // attempt to recompile the script
         // make sure there is a compiler defined
         if (m_HasCompiler == -1) {
-          if (Database->read("EditorCompiler", Compiler_path, &len)) {
+          if (Database()->read("EditorCompiler", Compiler_path, &len)) {
             if (!cfexist(Compiler_path)) {
               m_HasCompiler = 0;
             } else {

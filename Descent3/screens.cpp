@@ -317,7 +317,7 @@ bool PostLevelResults(bool success) {
 
     while ((timer_GetTime() - start_time) < time_to_wait) {
       Multi_bail_ui_menu = 0;
-      Descent->defer();
+      App()->defer();
       DoUIFrame();
       rend_Flip();
       GetUIFrameResult();
@@ -340,11 +340,11 @@ bool PostLevelResults(bool success) {
 
       while ((timer_GetTime() - start_time) < time_to_wait) {
         while ((timer_GetTime() - timelast) < MAX_PLR_FPS_TIME) {
-          Descent->delay(0);
+          App()->delay(0);
         }
         timelast = timer_GetTime();
 
-        Descent->defer();
+        App()->defer();
         DoUIFrame();
         rend_Flip();
         GetUIFrameResult();
@@ -363,12 +363,12 @@ bool PostLevelResults(bool success) {
       }
     }
     while ((timer_GetTime() - timelast) < MAX_PLR_FPS_TIME) {
-      Descent->delay(0);
+      App()->delay(0);
     }
     timelast = timer_GetTime();
 
     Multi_bail_ui_menu = 0;
-    Descent->defer();
+    App()->defer();
     int x, y, dx, dy;
     if (ddio_MouseGetState(&x, &y, &dx, &dy)) {
       rval = true;

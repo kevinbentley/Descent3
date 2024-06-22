@@ -2,6 +2,8 @@ set(HEADERS
   doorpage.h
   gamefilepage.h
   genericpage.h
+  manage_external.h
+  manage.h
   megapage.h
   powerpage.h
   robotpage.h
@@ -9,6 +11,7 @@ set(HEADERS
   soundpage.h
   texpage.h
   weaponpage.h)
+
 set(CPPS
   doorpage.cpp
   gamefilepage.cpp
@@ -28,4 +31,12 @@ target_link_libraries(manage PRIVATE
   mem
   sndlib
   stream_audio
+  2dlib
+  model
+  networking
+  bitmap
+  renderer
 )
+
+target_include_directories(manage PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+

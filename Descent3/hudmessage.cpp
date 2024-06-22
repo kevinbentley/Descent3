@@ -339,7 +339,7 @@
 #include "game2dll.h"
 #include "stringtable.h"
 #include "dedicated_server.h"
-#include "AppConsole.h"
+#include "appconsole.h"
 #include "demofile.h"
 #include "mem.h"
 #include "textaux.h"

@@ -60,8 +60,8 @@
 #include <cstdio>
 #include <cctype>
 
-#include "application.h"
-#include "AppConsole.h"
+#include "lnxapp.h"
+#include "appconsole.h"
 
 enum {
   Console_null,

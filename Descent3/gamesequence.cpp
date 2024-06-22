@@ -1075,7 +1075,7 @@
 #include "lightmap_info.h"
 #include "lightmap.h"
 #include "fireball.h"
-#include "d3music.h"
+#include "musicapi.h"
 #include "TelComAutoMap.h"
 #include "aiambient.h"
 #include "ObjScript.h"
@@ -1218,7 +1218,7 @@ bool GameSequencer() {
       if (Game_interface_mode != GAME_INTERFACE) {
         RunGameMenu();
       } else {
-        Descent->defer();
+        App()->defer();
         GameFrame();
       }
       break;
@@ -2007,7 +2007,7 @@ void SetNextLevel() {
     if (lvl->flags & LVLFLAG_SPAWNSECRET) {
       // display secret level screen?
       ShowProgressScreen(TXT_ENTERSECRETLVL, NULL, true);
-      Descent->delay(1.0f);
+      App()->delay(1.0f);
       Current_mission.game_state_flags &= (~MSN_STATE_SECRET_LEVEL);
       SetCurrentLevel(lvl->secretlvl);
     } else {

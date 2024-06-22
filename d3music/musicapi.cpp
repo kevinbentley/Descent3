@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "d3music.h"
+#include "musicapi.h"
 #include "music.h"
 #include "Macros.h"
 #include <limits>

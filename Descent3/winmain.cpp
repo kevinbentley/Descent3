@@ -23,8 +23,8 @@
 #include "mono.h"
 #include "descent.h"
 #include "texture.h"
-#include "application.h"
-#include "appdatabase.h"
+#include "winapp.h"
+#include "windatabase.h"
 #include "pserror.h"
 #include "args.h"
 #include "init.h"
@@ -121,7 +121,7 @@ class oeD3Win32App : public oeWin32Application {
   HANDLE hAppMutex;
 
 public:
-  oeD3Win32App(unsigned flags, HInstance hinst) : oeWin32Application(PRODUCT_NAME, flags, hinst) {
+  oeD3Win32App(unsigned flags, HINSTANCE hinst) : oeWin32Application(PRODUCT_NAME, flags, hinst) {
     Descent = this;
     shutdown = false;
     final_shutdown = false;
@@ -145,7 +145,7 @@ public:
   void run() { Descent3(); }
 
   //	returns 0 if we pass to default window handler.
-  virtual LResult WndProc(HWnd hwnd, unsigned msg, WParam wParam, LParam lParam) override {
+  virtual LRESULT WndProc(HWND hwnd, unsigned msg, WPARAM wParam, LPARAM lParam) override {
     if (final_shutdown) {
       return oeWin32Application::WndProc(hwnd, msg, wParam, lParam);
     }
@@ -178,70 +178,56 @@ public:
   }
 };
 
-class oeD3Win32Database : public oeWin32AppDatabase {
-public:
-  oeD3Win32Database();
-};
-
-//	---------------------------------------------------------------------------
-//	D3WinDatabase operating system specific initialization
-
-oeD3Win32Database::oeD3Win32Database() : oeWin32AppDatabase() {
+void init_database(void) {
   char path[_MAX_PATH];
   bool res;
 
   //	create descent III entry if it doesn't exit.
-
 #if defined(EDITOR)
-  lstrcat(m_Basepath, "\\D3Edit");
+  Database()->appendPath("\\D3Edit");
 #elif defined(DEMO)
-  lstrcat(m_Basepath, "\\Descent3Demo2");
+  Database()->appendPath("\\Descent3Demo2");
 #elif defined(OEM_V3)
-  lstrcat(m_Basepath, "\\Descent3_OEM_V3");
+  Database()->appendPath("\\Descent3_OEM_V3");
 #elif defined(OEM_KATMAI)
-  lstrcat(m_Basepath, "\\Descent3_OEM_KM");
+  Database()->appendPath("\\Descent3_OEM_KM");
 #elif defined(OEM)
-  lstrcat(m_Basepath, "\\Descent3_OEM");
+  Database()->appendPath("\\Descent3_OEM");
 #else
-  lstrcat(m_Basepath, "\\Descent3");
+  Database()->appendPath("\\Descent3");
 #endif
 
-  res = lookup_record(m_Basepath);
+  res = Database()->lookup_record(Database()->key_path());
   if (!res) {
-    res = create_record(m_Basepath);
+    res = Database()->create_record(Database()->key_path());
     if (!res) {
       Error("Failed to create registry key for %s", PRODUCT_NAME);
     }
   }
 
   // create version key.
-  lstrcpy(path, m_Basepath);
-  lstrcat(path, "\\Version");
-  res = lookup_record(path);
+  res = Database()->lookup_record("Version");
   if (!res) {
-    res = create_record(path);
+    res = Database()->create_record("Version");
     if (!res) {
       Error("Failed to create registry key for %s", PRODUCT_NAME);
     }
   }
 
 #ifdef EDITOR // Maybe this code should be in the editor startup
-  lstrcpy(path, m_Basepath);
-  lstrcat(path, "\\editor");
-  res = lookup_record(path);
+  res = Database()->lookup_record("\\editor");
   if (!res) {
-    res = create_record(path);
+    res = Database()->create_record("\\editor");
     if (!res) {
       Error("Failed to create registry key for %s.", PRODUCT_NAME);
     }
   }
 #endif
 
-  res = lookup_record(m_Basepath);
+  res = Database()->lookup_record(Database()->key_path());
 
   // Get net directory for manage system
-  char netpath[_MAX_PATH];
-  lstrcpy(netpath, "");
+  char netpath[_MAX_PATH] = { '\0' };
 #ifndef EDITOR
   if (FindArg("-update")) // For the game-only build, require -update to update data
 #endif
@@ -251,9 +237,7 @@ oeD3Win32Database::oeD3Win32Database() : oeWin32AppDatabase() {
     if (netdir)
       lstrcpy(netpath, netdir);
   }
-  write("net directory", netpath, lstrlen(netpath) + 1);
-
-  Database = this;
+  Database()->write("net directory", netpath, lstrlen(netpath) + 1);
 }
 
 bool Win32JoystickCalibrate() {
@@ -273,15 +257,9 @@ bool Win32JoystickCalibrate() {
   if (!flag) {
     return false;
   } else {
-    tWin32AppInfo appinfo;
-    HWND hWnd;
-
-    Descent->get_info(&appinfo);
-    hWnd = (HWND)appinfo.hwnd;
-
     WaitForInputIdle(pi.hProcess, INFINITE);
-    ShowWindow(hWnd, SW_MINIMIZE);
-    Descent->delay(0.5f);
+    ShowWindow(Win32App()->windowHandle(), SW_MINIMIZE);
+    App()->delay(0.5f);
 
     while (WaitForSingleObject(pi.hProcess, 0) != WAIT_OBJECT_0) {
       extern void D3DeferHandler(bool is_active);
@@ -290,8 +268,8 @@ bool Win32JoystickCalibrate() {
 
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
-    ShowWindow(hWnd, SW_MAXIMIZE);
-    Descent->delay(0.5f);
+    ShowWindow(Win32App()->windowHandle(), SW_MAXIMIZE);
+    App()->delay(0.5f);
   }
 
   return true;
@@ -306,24 +284,18 @@ bool Win32JoystickCalibrate() {
 
 #pragma message("Compiling editor WinMain substitute function.")
 
-void WinMainInitEditor(unsigned hwnd, unsigned hinst) {
+void WinMainInitEditor(HWND hwnd, HINSTANCE hinst) {
   tWin32AppInfo appinfo;
 
-  appinfo.hwnd = (HWnd)hwnd;
-  appinfo.hinst = (HInstance)hinst;
+  appinfo.hwnd = hwnd;
+  appinfo.hinst = hinst;
   appinfo.flags = OEAPP_WINDOWED;
 
   Descent = new oeWin32Application(&appinfo);
-  Database = new oeD3Win32Database;
+  init_database();
 }
 
 #else
-
-void D3End() {
-  if (Descent) {
-    delete Descent;
-  }
-}
 
 // Localization defines
 #define LANGUAGE_ENGLISH 0
@@ -470,8 +442,8 @@ int PASCAL HandledWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine,
   strupr(szCmdLine);
   GatherArgs(szCmdLine);
 
-  // This must come AFTER the GatherArgs() call, because its constructer used FindArg()
-  oeD3Win32Database dbase;
+  // This must come AFTER the GatherArgs() call, because it calls FindArg()
+  init_database();
 
   no_debug_dialog = FindArg("-nocrashbox");
 
@@ -487,7 +459,7 @@ int PASCAL HandledWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine,
 #endif
 
   if (Dedicated_server) {
-    d3 = new oeD3Win32App(OEAPP_CONSOLE, (HInstance)hInst);
+    d3 = new oeD3Win32App(OEAPP_CONSOLE, (HINSTANCE)hInst);
   } else {
     uint32_t flags = OEAPP_FULLSCREEN;
 #ifndef RELEASE // TODO: remove #ifndef when window mode is ready for primetime
@@ -497,9 +469,9 @@ int PASCAL HandledWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine,
     }
 #endif
 
-    d3 = new oeD3Win32App(flags, (HInstance)hInst);
+    d3 = new oeD3Win32App(flags, (HINSTANCE)hInst);
   }
-  atexit(D3End);
+  atexit([]{ if(App() != nullptr) { delete App(); } });
 
   w32_mouseman_hack = false;
   joy_chpro_hack = false;
@@ -513,7 +485,7 @@ int PASCAL HandledWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine,
 
   // determine preinit language for resource strings
   int language = 0;
-  dbase.read_int("LanguageType", &language);
+  Database()->read_int("LanguageType", &language);
   m_resource_language = language;
 
   if (!Win32SystemCheck(hInst))

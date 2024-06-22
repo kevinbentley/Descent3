@@ -510,12 +510,12 @@ void hlsSystem::SetLLSoundQuantity(int n_sounds) {
   n_lls_sounds = n_sounds;
   mprintf(1, "SNDLIB: Allow %d sounds to be mixed.\n", n_sounds);
   if (m_f_hls_system_init) {
-    InitSoundLib(NULL, Sound_mixer, Sound_quality, false);
+    InitSoundLib(Sound_mixer, Sound_quality, false);
   }
 }
 int hlsSystem::GetLLSoundQuantity() { return n_lls_sounds; }
 // Start and clean-up after the sound library
-int hlsSystem::InitSoundLib(oeApplication *sos, char mixer_type, char quality, bool f_kill_sound_list) {
+int hlsSystem::InitSoundLib(char mixer_type, char quality, bool f_kill_sound_list) {
   int status;
   // Turn off sound if desired
   if ((FindArg("-nosound")) || Dedicated_server) {
@@ -541,7 +541,7 @@ int hlsSystem::InitSoundLib(oeApplication *sos, char mixer_type, char quality, b
   } else {
     m_ll_sound_ptr->SetSoundCard(NULL);
   }
-  status = m_ll_sound_ptr->InitSoundLib(mixer_type, sos, n_lls_sounds);
+  status = m_ll_sound_ptr->InitSoundLib(mixer_type, n_lls_sounds);
   // Initialize the high-level sound library
   // Set the flag to initialized if all was o.k.
   if (status) {
@@ -1395,7 +1395,7 @@ void hlsSystem::SetMasterVolume(float volume) {
     m_master_volume = 0;
   } else {
     if (m_master_volume == 0) {
-      InitSoundLib(Descent, Sound_mixer, Sound_quality, false);
+      InitSoundLib(Sound_mixer, Sound_quality, false);
       InitVoices();
     }
   }

@@ -420,8 +420,6 @@ static function_mode Function_mode = INIT_MODE; // Game function mode
 static function_mode Last_function_mode = INIT_MODE;
 
 grScreen *Game_screen = NULL;   // The one and only video screen
-oeApplication *Descent = NULL;  // The Main application
-oeAppDatabase *Database = NULL; // Application database.
 
 bool Descent_overrided_intro = false;
 
@@ -628,7 +626,7 @@ void ShowStaticScreen(char *bitmap_filename, bool timed, float delay_time) {
       rend_Flip();
       EndFrame();
 
-      Descent->defer();
+      App()->defer();
 
       if (!timed) {
         int key = ddio_KeyInKey();
@@ -706,7 +704,7 @@ void D3DebugStopHandler() {
 void D3DebugResumeHandler() {
   //	reopen all systems for gameplay.
   if (rend_initted)
-    rend_initted = rend_Init(PreferredRenderer, Descent, &Render_preferred_state);
+    rend_initted = rend_Init(PreferredRenderer, &Render_preferred_state);
 
   if (rend_initted != 0)
     rend_initted = 1;

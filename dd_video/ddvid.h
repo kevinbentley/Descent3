@@ -47,10 +47,8 @@
 #include "pstypes.h"
 #include "grdefs.h"
 
-class oeApplication;
-
 //	called first to allow fullscreen video access
-bool ddvid_Init(oeApplication *app, char *driver);
+bool ddvid_Init(char *driver);
 void ddvid_Close();
 
 //	sets the appropriate video mode.

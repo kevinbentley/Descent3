@@ -593,7 +593,7 @@
 #include "objinfo.h"
 #include "gametexture.h"
 #include "splinter.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "damage.h"
 #include "gameevent.h"
 #include "weapon.h"

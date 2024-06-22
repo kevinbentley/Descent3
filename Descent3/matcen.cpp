@@ -165,7 +165,7 @@
 #include "viseffect.h"
 #include "viseffect_external.h"
 #include "damage.h"
-#include "PHYSICS.H"
+#include "physics.h"
 #include "mem.h"
 #include "ObjScript.h"
 #ifndef NEWEDITOR
