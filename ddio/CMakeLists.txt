@@ -10,7 +10,7 @@ set(CPPS
   lnxkey_null.cpp
   lnxmouse.cpp
   lnxkey_sdl.cpp
-  $<$<PLATFORM_ID:Darwin,Linux>:
+  $<$<PLATFORM_ID:Darwin,Linux,Android>:
     lnxfile.cpp
   >
   $<$<PLATFORM_ID:Windows>:
