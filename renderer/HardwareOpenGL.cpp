@@ -448,11 +448,14 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
     // ryan's adds. 04/18/2000...SDL stuff on 04/25/2000
     bool success = true;
 
-    OpenGLDLLHandle = LoadOpenGLDLL("opengl32.dll");
-    // OpenGLDLLHandle = LoadOpenGLDLL(gl_library);
+    OpenGLDLLHandle = LoadOpenGLDLL(gl_library);
     if (!(OpenGLDLLHandle)) {
       // rcg07072000 last ditch effort...
+#ifdef __LINUX__
       OpenGLDLLHandle = LoadOpenGLDLL("libGL.so.1");
+#else
+      OpenGLDLLHandle = LoadOpenGLDLL("opengl32.dll");
+#endif
       if (!(OpenGLDLLHandle)) {
         success = false;
       }
