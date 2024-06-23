@@ -10,3 +10,4 @@ set(CPPS
 
 add_library(dd_grwin32 STATIC ${HEADERS} ${CPPS})
 target_compile_definitions(dd_grwin32 PRIVATE DX_APP)
+target_link_libraries(dd_grwin32 PRIVATE ${DDRAW_LIBRARY})

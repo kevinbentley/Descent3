@@ -271,8 +271,7 @@ set(CPPS
   weather.cpp)
 
 if(WIN32)
-  set(PLATFORM_LIBS linux wsock32.lib winmm.lib SDL2::SDL2
-    ${DSOUND_LIBRARY} ${DINPUT_LIBRARY} ${DXGUID_LIBRARY} ${DDRAW_LIBRARY})
+  set(PLATFORM_LIBS linux wsock32.lib winmm.lib SDL2::SDL2)
   set(PLATFORM_CPPS loki_utils.c lnxmain.cpp)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO /NODEFAULTLIB:LIBC")
 endif()
@@ -294,7 +293,7 @@ add_executable(Descent3
   WIN32
   ${HEADERS} ${CPPS} ${PLATFORM_CPPS} ${INCS}
 )
-target_link_libraries(Descent3
+target_link_libraries(Descent3 PRIVATE
   2dlib AudioEncode bitmap cfile czip d3music dd_video ddebug ddio libmve libacm
   fix grtext manage mem misc model module movie stream_audio
   music networking physics renderer rtperformance sndlib ui unzip vecmat md5
