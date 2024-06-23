@@ -288,7 +288,13 @@ endif()
 
 file(GLOB_RECURSE INCS "../lib/*.h")
 
-add_executable(Descent3 WIN32 ${HEADERS} ${CPPS} ${INCS})
+if(ANDROID)
+  add_library(Descent3 MODULE ${HEADERS} ${CPPS} ${INCS}
+  )
+else()
+  add_executable(Descent3 WIN32 ${HEADERS} ${CPPS} ${INCS})
+  install(TARGETS Descent3 RUNTIME)
+endif()
 target_link_libraries(Descent3 PRIVATE
   2dlib AudioEncode bitmap cfile czip d3music dd_video ddebug ddio libmve libacm
   fix grtext manage mem misc model module movie stream_audio linux SDL2::SDL2
@@ -296,7 +302,6 @@ target_link_libraries(Descent3 PRIVATE
   ${PLATFORM_LIBS})
 target_include_directories(Descent3 PRIVATE ${PROJECT_BINARY_DIR}/lib)
 add_dependencies(Descent3 get_git_hash Direct_TCP_IP_Hog HogFull NetgamesDir Parallax_Online_Hog)
-install(TARGETS Descent3 RUNTIME)
 
 if(BUILD_TESTING)
   add_subdirectory(tests)
