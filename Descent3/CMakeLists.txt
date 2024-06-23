@@ -270,7 +270,7 @@ set(CPPS
   WeaponFire.cpp
   weather.cpp
   loki_utils.c
-  lnxmain.cpp)
+  sdlmain.cpp)
 
 if(WIN32)
   set(PLATFORM_LIBS wsock32.lib winmm.lib)

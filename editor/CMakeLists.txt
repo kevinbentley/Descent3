@@ -560,7 +560,7 @@ set(SOURCE
     WorldWeaponsDialog.cpp
     editor.rc
     ../Descent3/loki_utils.c
-    ../Descent3/lnxmain.cpp
+    ../Descent3/sdlmain.cpp
 )
 
 # Editor only works in Windows, because of MFC and DirectX dependencies
