@@ -22,12 +22,7 @@ jobs:
       matrix:
         os:
           - runner: windows-latest
-            preset: win32
-            cc: cl
-            cxx: cl
-            name: Windows-x86
-          - runner: windows-latest
-            preset: win64
+            preset: win
             cc: cl
             cxx: cl
             name: Windows-x64
@@ -80,7 +75,7 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.os.runner == 'windows-latest' }}
         with:
-           arch: ${{ matrix.os.preset }}
+           arch: win64
 
       - name: Configure CMake
         env:

@@ -454,7 +454,7 @@ int main(int argc, char *argv[]) {
 #elif defined(WIN32)
            "Windows",
 #else
-           "Linux",       
+           "Linux",
 #endif
 
 #ifdef DEDICATED
