@@ -70,7 +70,7 @@
 
 #include <cstdlib>
 #include <cctype>
-#ifdef __LINUX___
+#ifdef __LINUX__
 #include <sys/time.h>
 #include <term.h>
 #include <termios.h>
@@ -85,7 +85,7 @@
 #undef buttons
 #endif
 
-#ifdef __LINUX___
+#ifdef __LINUX__
 static struct termios Linux_initial_terminal_settings;
 #endif
 
