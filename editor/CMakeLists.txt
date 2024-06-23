@@ -562,10 +562,10 @@ set(SOURCE
 )
 
 # Editor only works in Windows
-set(PLATFORM_LIBS wsock32.lib winmm.lib
+set(PLATFORM_LIBS linux wsock32.lib winmm.lib dd_grwin32 win32 SDL2::SDL2
     ${DSOUND_LIBRARY} ${DINPUT_LIBRARY} ${DXGUID_LIBRARY} ${DDRAW_LIBRARY})
-set(PLATFORM_SOURCES ../descent3/winmain.cpp)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE /SAFESEH:NO /SUBSYSTEM:WINDOWS /NODEFAULTLIB:LIBC")
+set(PLATFORM_CPPS ../descent3/loki_utils.c ../descent3/lnxmain.cpp)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO /NODEFAULTLIB:LIBC")
 
 
 add_executable(Descent3Editor ${HEADERS} ${SOURCE} ${PLATFORM_SOURCES})
@@ -611,8 +611,5 @@ target_link_libraries(Descent3Editor
     ${PLATFORM_LIBS}
 )
 
-if (WIN32)
-    set_target_properties(Descent3Editor PROPERTIES WIN32_EXECUTABLE ON)
-endif()
-
+add_dependencies(Descent3Editor get_git_hash)
 install(TARGETS Descent3Editor RUNTIME)

@@ -178,12 +178,12 @@ add_subdirectory(czip)
 add_subdirectory(d3music)
 add_subdirectory(ddebug)
 
-# if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-#   add_subdirectory(dd_grwin32)
-#   add_subdirectory(win32)
-# else()
+if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  add_subdirectory(dd_grwin32)
+  add_subdirectory(win32)
+endif()
+
 add_subdirectory(linux)
-# endif()
 
 add_subdirectory(ddio)
 add_subdirectory(dd_video)

@@ -1557,7 +1557,7 @@ void CMainFrame::OnActivateApp(BOOL bActive, HTASK hTask) {
 		mprintf_at(2,0,0, "App Inactive");
 	}
 
-  ((oeWin32Application *)Descent)->run_handler(this->m_hWnd, WM_ACTIVATEAPP, (unsigned)bActive, 0);
+  ((oeLnxApplication *)Descent)->run_handler(this->m_hWnd, WM_ACTIVATEAPP, (unsigned)bActive, 0);
 #endif
 }
 

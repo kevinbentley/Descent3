@@ -252,7 +252,12 @@ oeD3LnxDatabase::oeD3LnxDatabase() : oeLnxAppDatabase() {
   char netpath[_MAX_PATH];
 
   // put directories into database
+
+#ifdef EDITOR
+  create_record("D3Edit");
+#else
   create_record("Descent3");
+#endif
 
   char *dir = getenv("D3_LOCAL");
   char *netdir = getenv("D3_DIR");
