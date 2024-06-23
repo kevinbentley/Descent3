@@ -79,7 +79,6 @@ static cmdLineArg d3ArgTable[] = {
 
     {"joystick", 'j', "Specify a joystick (number)."},
     {"nomousegrab", 'm', "Don't grab the mouse."},
-    {"cdrom", 'C', "Specify a path to check for CD-ROM based files."},
 
     {"deadzone0", 'D', "Specify a joystick deadzone (0.0 to 1.0)"},
 
@@ -125,10 +124,7 @@ char *game_version = game_version_buffer;
 }
 } // namespace
 
-// Given a device/drive, this marks it as the default CD-ROM drive
-void ddio_MarkDefaultCDDrive(char *drive);
 void ddio_InternalClose();        // needed for emergency cleanup.
-void cdrom_system_shutdown(void); // needed for emergency cleanup.
 
 #ifdef __PERMIT_LINUX_GLIDE
 void glide_Close(void);
@@ -136,7 +132,6 @@ void glide_Close(void);
 
 void just_exit(void) {
   ddio_InternalClose(); // try to reset serial port.
-  cdrom_system_shutdown();
 
 #ifdef __PERMIT_LINUX_GLIDE
   if (Renderer_type == RENDERER_GLIDE)
@@ -610,12 +605,6 @@ int main(int argc, char *argv[]) {
     }
 
     if (run_d3) {
-      int cdrom_arg;
-      cdrom_arg = FindArgChar("-cdrom", 'C');
-      if (cdrom_arg > 0) {
-        ddio_MarkDefaultCDDrive(GameArgs[cdrom_arg + 1]);
-      }
-
       oeD3LnxApp d3(flags);
       oeD3LnxDatabase dbase;
       StartDedicatedServer();

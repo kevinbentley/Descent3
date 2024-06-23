@@ -27,4 +27,5 @@ add_library(renderer STATIC ${HEADERS} ${CPPS})
 target_link_libraries(renderer PRIVATE
   bitmap
   ddio
+  mem
 )

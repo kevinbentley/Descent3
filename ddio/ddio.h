@@ -402,10 +402,6 @@ bool ddio_GetFullPath(char *full_path, const char *rel_path);
 // Returns TRUE if successful, FALSE if an error
 bool ddio_GetTempFileName(const char *basedir, const char *prefix, char *filename);
 
-// Give a volume label to look for, and if it's found returns a path
-// If it isn't found, return NULL
-const char *ddio_GetCDDrive(const char *vol);
-
 /**
  * Check process existence by PID
  * @param pid PID of requested process

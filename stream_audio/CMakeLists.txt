@@ -7,6 +7,7 @@ add_library(stream_audio STATIC ${HEADERS} ${CPPS})
 target_link_libraries(stream_audio PRIVATE
   ddio
   libacm
+  mem
   sndlib
 )
 target_include_directories(stream_audio PUBLIC

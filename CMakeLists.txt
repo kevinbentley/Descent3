@@ -69,8 +69,11 @@ if(BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
+# rebuild d3_version.h every time
+add_custom_target(get_git_hash ALL)
+
 add_custom_command(
-  OUTPUT ${PROJECT_BINARY_DIR}/lib/d3_version.h
+  TARGET get_git_hash
   COMMAND ${CMAKE_COMMAND}
     -D SOURCE_DIR=${PROJECT_SOURCE_DIR}
     -D TARGET_DIR=${PROJECT_BINARY_DIR}
@@ -84,11 +87,6 @@ add_custom_command(
 install(
   FILES LICENSE README.md THIRD_PARTY.md
   DESTINATION ${CMAKE_INSTALL_DOCDIR}
-)
-
-# rebuild d3_version.h every time
-add_custom_target(get_git_hash ALL
-  DEPENDS ${PROJECT_BINARY_DIR}/lib/d3_version.h
 )
 
 if(UNIX)
@@ -148,8 +146,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
   add_compile_options("/MP")  # so msbuild builds with multiple processes
 endif()
-
-add_compile_definitions($<$<BOOL:${ENABLE_MEM_RTL}>:MEM_USE_RTL>)
 
 add_compile_definitions($<$<CONFIG:Release>:RELEASE>)
 add_compile_definitions($<$<CONFIG:Debug>:_DEBUG>)

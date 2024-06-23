@@ -1088,7 +1088,6 @@
 #include "gamepath.h"
 #include "vclip.h"
 #include "bsp.h"
-#include "vibeinterface.h"
 
 #include "args.h"
 void ResetHudMessages(void);
@@ -1895,9 +1894,6 @@ void FlushDataCache() {
 
 // Parameter:	state -  1 = success, 0 = failure, -1 = abort
 void EndLevel(int state) {
-  // tell IntelliVIBE
-  VIBE_DoLevelEnd();
-
   tLevelNode *lvl = &Current_mission.levels[Current_mission.cur_level - 1];
 
   // Tells all the clients to end the level

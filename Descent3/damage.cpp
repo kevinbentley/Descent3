@@ -586,7 +586,6 @@
 #include "AIGoal.h"
 #include "viseffect.h"
 #include "psrand.h"
-#include "vibeinterface.h"
 
 #include <algorithm>
 
@@ -689,11 +688,6 @@ void DecreasePlayerShields(int slot, float damage) {
       Multi_bail_ui_menu = true;
 
     Game_music_info.player_damaged = true;
-
-    // update IntelliVIBE
-    if (damage > 0) {
-      VIBE_DoPlayerDamage(damage);
-    }
   }
 }
 
@@ -763,11 +757,6 @@ void PlayPlayerInvulnerabilitySound(object *playerobj) {
 // Kills the player
 // weapon_id can be -1 for no weapon
 void KillPlayer(object *playerobj, object *killer, float damage_amount, int weapon_id) {
-  // tell IntelliVIBE that the player is dying
-  if (playerobj->id == Player_num) {
-    VIBE_PlayerDeath();
-  }
-
   // Save the killer
   Players[playerobj->id].killer_objnum = killer ? OBJNUM(killer) : 0;
 

@@ -976,7 +976,6 @@
 #include "marker.h"
 #include "gamecinematics.h"
 #include "debuggraph.h"
-#include "vibeinterface.h"
 
 // Uncomment this to allow all languages
 #define ALLOW_ALL_LANG 1
@@ -1905,8 +1904,6 @@ void InitD3Systems1(bool editor) {
   //	Initialize Cinematics system
   InitCinematics();
 
-  // Initialize IntelliVIBE (if available)
-  VIBE_Init(Descent);
 }
 
 // Initialize rest of stuff

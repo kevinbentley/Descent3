@@ -716,48 +716,6 @@ void D3DebugResumeHandler() {
 
 void RenderBlankScreen();
 
-const char *GetCDVolume(int cd_num) {
-  const char *p = nullptr;
-
-#if   !defined(OEM)
-  const char volume_labels[3][_MAX_PATH] = {"", "D3_1", "D3_2"};
-#else
-  const char volume_labels[3][_MAX_PATH] = {"", "D3OEM_1", ""};
-#endif
-
-  p = ddio_GetCDDrive("D3_DVD");
-
-  if (!p)
-    p = ddio_GetCDDrive(volume_labels[cd_num]);
-
-  if (p) {
-    // We've got the disk already in the drive!
-    return p;
-  } else {
-    // prompt them to enter the disk...
-    do {
-      char message_txt[50];
-      snprintf(message_txt, sizeof(message_txt), TXT_CDPROMPT, cd_num);
-      // We need a background drawn!
-
-      void (*ui_cb)() = GetUICallback();
-      if (ui_cb == nullptr)
-        SetUICallback(RenderBlankScreen);
-      int res = DoMessageBox(PRODUCT_NAME, message_txt, MSGBOX_OKCANCEL, UICOL_WINDOW_TITLE, UICOL_TEXT_NORMAL);
-      SetUICallback(ui_cb);
-      //
-      if (res == 0) {
-        return nullptr;
-      }
-      p = ddio_GetCDDrive(volume_labels[cd_num]);
-      if (p && *p)
-        return p;
-    } while (!(p && *p));
-
-    return nullptr;
-  }
-}
-
 struct file_vols {
   char file[_MAX_PATH];
   char localpath[_MAX_PATH * 2];
@@ -804,12 +762,6 @@ const char *GetMultiCDPath(const char *file) {
   ddio_MakePath(fullpath, LocalD3Dir, it->localpath, file, nullptr);
   // See if the file is in the local dir already.
   if (cfexist(fullpath)) {
-    return fullpath;
-  }
-
-  const char *p = GetCDVolume(it->volume);
-  if (p) {
-    ddio_MakePath(fullpath, p, it->localpath, file, nullptr);
     return fullpath;
   }
 

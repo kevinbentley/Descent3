@@ -7,4 +7,5 @@ set(CPPS
 add_library(grtext STATIC ${HEADERS} ${CPPS})
 target_link_libraries(grtext PRIVATE
   ddio
+  mem
 )

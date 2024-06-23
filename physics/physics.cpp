@@ -44,7 +44,6 @@
 #include "D3ForceFeedback.h"
 #include "player.h"
 #include "demofile.h"
-#include "vibeinterface.h"
 
 // Global variables for physics system
 uint8_t Default_player_terrain_leveling = 0;
@@ -3039,8 +3038,6 @@ void phys_apply_force(object *obj, vector *force_vec, int16_t weapon_index) {
     }
 
     // mprintf(0,"Force: Magnitude = %f   Scale = %1.3f\n",magnitude,scale);
-
-    VIBE_DoForce(force_vec);
   }
   //------------------------------
 

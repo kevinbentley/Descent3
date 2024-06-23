@@ -556,39 +556,6 @@ bool ddio_GetFullPath(char *full_path, const char *rel_path) {
   return 1;
 }
 
-// Give a volume label to look for, and if it's found returns a path
-// If it isn't found, return NULL (used to return "")
-const char *ddio_GetCDDrive(const char *vol) {
-
-#define MAX_FSTYPE_LEN 30
-  static char drivepath[10];
-  DWORD volflags;
-  int i;
-  char volume[_MAX_PATH];
-  char fsname[MAX_FSTYPE_LEN] = "";
-  DWORD serial;
-  DWORD component;
-
-  strcpy(drivepath, "c:\\");
-
-  for (i = 1; i <= 26; i++) {
-    if (DRIVE_CDROM == GetDriveType(drivepath)) {
-      // Get the drive volume name
-      volume[0] = 0;
-      if (!GetVolumeInformation(drivepath, volume, _MAX_PATH, &serial, &component, &volflags, fsname, MAX_FSTYPE_LEN)) {
-        mprintf(0, "Call to GetVolumeInformation() failed. Last error = %d\n", GetLastError());
-      }
-
-      if (stricmp(volume, vol) == 0) {
-        return drivepath;
-      }
-    }
-    drivepath[0]++;
-  }
-  drivepath[0] = 0;
-  return NULL; // drivepath;
-}
-
 bool ddio_CheckProcess(int pid) {
   HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
   if (proc) {

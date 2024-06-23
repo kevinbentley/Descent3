@@ -134,7 +134,6 @@ set(HEADERS
   terrain.h
   trigger.h
   vclip.h
-  vibeinterface.h
   viseffect.h
   viseffect_external.h
   voice.h
@@ -197,7 +196,6 @@ set(CPPS
   huddisplay.cpp
   hudmessage.cpp
   init.cpp
-  intellivibe.cpp
   Inventory.cpp
   levelgoal.cpp
   lighting.cpp

@@ -941,7 +941,6 @@
 #include "doorway.h"
 #include "psrand.h"
 #include "BOA.h"
-#include "vibeinterface.h"
 
 #include <algorithm>
 
@@ -3025,9 +3024,6 @@ void FireWeaponFromPlayer(object *objp, int weapon_type, int down_count, bool do
   if (Demo_flags == DF_RECORDING) {
     DemoWriteObjWeapFireFlagChanged(OBJNUM(objp));
   }
-
-  // tell IntelliVIBE that we fired a weapon
-  VIBE_WeaponFire(weapon_type);
 }
 
 // Fires a flare from our player.

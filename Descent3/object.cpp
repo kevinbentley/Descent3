@@ -1184,7 +1184,6 @@
 #include "stringtable.h"
 #include "levelgoal.h"
 #include "psrand.h"
-#include "vibeinterface.h"
 
 #ifdef EDITOR
 #include "editor\d3edit.h"
@@ -2388,11 +2387,6 @@ void DoFlyingControl(object *objp) {
     if (!(pp->controller_bitflags & PCBF_AFTERBURNER)) {
       controls.afterburn_thrust = 0.0f;
     }
-  }
-
-  // Update IntelliVIBE
-  if (objp == Player_object) {
-    VIBE_DoControls(&controls);
   }
 
   // Send an event to the Game DLLs so they can do any processing of game controls

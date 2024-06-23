@@ -1132,8 +1132,6 @@
 #include "config.h"
 #include "osiris_dll.h"
 #include "gamesequence.h"
-#include "vibeinterface.h"
-
 
 #include <algorithm>
 
@@ -1571,11 +1569,6 @@ void InitPlayerNewShip(int slot, int inven_reset) {
     if ((!Players[slot].inventory.CheckItem(OBJ_ROBOT, ROBOT_GUIDEBOT)) &&
         (ObjGet(Buddy_handle[slot])->type != OBJ_ROBOT))
       Players[slot].inventory.Add(OBJ_ROBOT, ROBOT_GUIDEBOT);
-  }
-
-  // update IntelliVIBE
-  if (slot == Player_num) {
-    VIBE_PlayerRespawn();
   }
 }
 

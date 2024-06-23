@@ -31,7 +31,6 @@ extern "C" {
 #endif
 
 void loki_initialize(int argc, char **argv, char *desc);
-int loki_getmountpoint(const char *device, char *mountpoint, int max_size);
 const char *loki_getdatapath(void);
 const char *loki_getprefpath(void);
 

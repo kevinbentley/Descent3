@@ -134,7 +134,6 @@ set(HEADERS
     ../descent3/terrain.h
     ../descent3/trigger.h
     ../descent3/vclip.h
-    ../descent3/vibeinterface.h
     ../descent3/viseffect.h
     ../descent3/viseffect_external.h
     ../descent3/voice.h
@@ -343,7 +342,6 @@ set(SOURCE
     ../descent3/huddisplay.cpp
     ../descent3/hudmessage.cpp
     ../descent3/init.cpp
-    ../descent3/intellivibe.cpp
     ../descent3/Inventory.cpp
     ../descent3/levelgoal.cpp
     ../descent3/lighting.cpp

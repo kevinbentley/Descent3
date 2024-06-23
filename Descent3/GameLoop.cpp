@@ -876,7 +876,6 @@
 #include "grtext.h"
 #include "gamefont.h"
 #include "renderobject.h"
-#include "vibeinterface.h"
 #include "buddymenu.h"
 
 #ifdef EDITOR
@@ -2948,9 +2947,6 @@ void GameFrame(void) {
   }
 
 #endif
-  // Do our first quaterframe of IntelliVIBE
-  VIBE_DoQuaterFrame(true);
-
   // clear out music struct
   memset(&Game_music_info, 0, sizeof(Game_music_info));
 
@@ -3021,9 +3017,6 @@ void GameFrame(void) {
     DoPlayerFrame();
     RTP_tENDTIME(playerframe_time, curr_time);
 
-    // Do our second quaterframe of IntelliVIBE
-    VIBE_DoQuaterFrame(false);
-
     // Weather frame
     RTP_tSTARTTIME(weatherframe_time, curr_time);
     DoWeatherForFrame();
@@ -3048,15 +3041,8 @@ void GameFrame(void) {
     // Process any in-game cinematics
     Cinematic_Frame();
 
-    // Do our third quaterframe of IntelliVIBE
-    VIBE_DoQuaterFrame(false);
-
   } else {
-    // Do our second quaterframe of IntelliVIBE
-    VIBE_DoQuaterFrame(false);
     Sleep(3);
-    // Do our third quaterframe of IntelliVIBE
-    VIBE_DoQuaterFrame(false);
   }
 
   // do music always.
@@ -3075,12 +3061,6 @@ void GameFrame(void) {
   RTP_tSTARTTIME(multiframe_time, curr_time);
   MultiDoFrame();
   RTP_tENDTIME(multiframe_time, curr_time);
-
-  // Do Gamespy stuff
-  //	gspy_DoFrame();
-
-  // Do our fourth quaterframe of IntelliVIBE
-  VIBE_DoQuaterFrame(false);
 
 #ifdef USE_RTP
   RTP_GETCLOCK(curr_time); // update the current time, since something has happened since ENDFTIME
