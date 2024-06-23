@@ -1463,6 +1463,18 @@ void InitCScripts() {
   ddio_MakePath(path, Base_directory, "data", "levels", NULL);
 }
 
+// Copied from winmain.cpp
+void WinMainInitEditor(unsigned hwnd, unsigned hinst) {
+  tLnxAppInfo appinfo;
+
+  // TODO: HWnd from SDL2 Window
+  // appinfo.hwnd = (HWnd)hwnd;
+  // appinfo.hinst = (HInstance)hinst;
+  appinfo.flags = OEAPP_WINDOWED;
+
+  Descent = new oeLnxApplication(&appinfo);
+  Database = new oeLnxAppDatabase;
+}
 //	Initializes OS components for Descent3.  MUST BE DONE BEFORE ANYTHING ELSE!
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
