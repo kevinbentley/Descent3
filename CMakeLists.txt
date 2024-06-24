@@ -1,5 +1,21 @@
 cmake_minimum_required(VERSION 3.20)  # For using CMAKE_<LANG>_BYTE_ORDER
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+  if (ANDROID_ABI MATCHES "arm64-v8a")
+    set(VCPKG_TARGET_TRIPLET "arm64-android" CACHE STRING "" FORCE)
+  elseif(ANDROID_ABI MATCHES "armeabi-v7a")
+    set(VCPKG_TARGET_TRIPLET "arm-android" CACHE STRING "" FORCE)
+  elseif(ANDROID_ABI MATCHES "x86_64")
+    set(VCPKG_TARGET_TRIPLET "x64-android" CACHE STRING "" FORCE)
+  elseif(ANDROID_ABI MATCHES "x86")
+    set(VCPKG_TARGET_TRIPLET "x86-android" CACHE STRING "" FORCE)
+  else()
+    message(FATAL_ERROR "ANDROID_ABI not set or not recognized")
+  endif()
+
+  set(ENV{ANDROID_NDK_HOME} ${CMAKE_ANDROID_NDK})
+endif()
+
 if (NOT DEFINED ENV{VCPKG_ROOT})
   message(FATAL_ERROR "
     Please set an environment variable VCPKG_ROOT

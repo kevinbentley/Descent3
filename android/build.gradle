@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+
+def hostBuildDir = new File(rootProject.buildDir, "host")
+task configureHostTools(type: Exec) {
+    workingDir ".."
+    commandLine "cmake", "-B", hostBuildDir, "-G", "Ninja Multi-Config", "-DHOST_TOOLS_ONLY=1"
+    // intentionally do not track inputs/outputs - let cmake figure that out.
+}
+["Debug", "RelWithDebInfo"].each { buildConfig ->
+    def buildHostToolsTask = tasks.register('buildHostTools' + buildConfig, Exec) {
+        workingDir ".."
+        commandLine "cmake", "--build", hostBuildDir, "--target", "HogMaker", "--config", buildConfig
+        dependsOn configureHostTools
+        // intentionally do not track inputs/outputs - let cmake figure that out.
+    }
+    preBuild.dependsOn buildHostToolsTask
+}
+
+android {
+    namespace "com.descent3.droid"
+    compileSdkVersion 32
+    defaultConfig {
+        minSdkVersion 32
+        targetSdkVersion 32
+        versionCode 1
+        versionName "1.0"
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_APP_PLATFORM=android-19", "-DANDROID_STL=c++_static", "-DHogMaker_DIR=" + hostBuildDir
+                // abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+                abiFilters 'arm64-v8a'
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    applicationVariants.all { variant ->
+        tasks["merge${variant.name.capitalize()}Assets"]
+            .dependsOn("externalNativeBuild${variant.name.capitalize()}")
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+            java.srcDirs = ['src/main/java']
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path '../CMakeLists.txt'
+        }
+    }
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
