@@ -937,9 +937,10 @@ void DumpTextToClipboard(char *text) {
   // Length of string with CRs added
   int len = strlen(text) + extra + 1;
 
-  char *h_text = (char *)mem_malloc(len);
+  HGLOBAL h_text = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, len);
   if (!h_text)
     return;
+  ptr = (char *)GlobalLock(h_text);
   if (!ptr)
     return;
 

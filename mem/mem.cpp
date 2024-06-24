@@ -673,7 +673,11 @@ void *mem_realloc_sub(void *memblock, int size) {
   return retp;
 #endif
 }
+
 int mem_size_sub(void *memblock) {
+#ifdef MEM_USE_RTL
+  return _msize(memblock);
+#else // MEM_USE_RTL
 #if defined(WIN32)
   if (!Heap) {
     return 0;
@@ -683,7 +687,9 @@ int mem_size_sub(void *memblock) {
     return 0;
   }
   return HeapSize(Heap, 0, memblock);
+#endif
 }
+
 void mem_shutdown();
 MemClass::~MemClass() { mem_shutdown(); }
 //	memory routines
