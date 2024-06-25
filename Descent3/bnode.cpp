@@ -109,7 +109,7 @@
 #include "BOA.h"
 #include "psrand.h"
 
-static bn_list BNode_terrain_list[8];
+bn_list BNode_terrain_list[8];
 bool BNode_allocated = false;
 bool BNode_verified = false;
 

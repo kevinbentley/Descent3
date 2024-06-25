@@ -107,6 +107,7 @@ extern void BNode_ClearBNodeInfo(void);
 
 bn_list *BNode_GetBNListPtr(int roomnum, bool f_in_load_level = false);
 
+extern bn_list BNode_terrain_list[8];
 extern bool BNode_allocated;
 extern bool BNode_verified;
 void BNode_RemapTerrainRooms(int old_hri, int new_hri);
