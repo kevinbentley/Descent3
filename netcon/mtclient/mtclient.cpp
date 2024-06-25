@@ -480,12 +480,12 @@ static int SearchMasterTrackerGameMenu();
 static void CheckPXOForAnomalies();
 static void DoMTFrame();
 static void DoMTGameOver();
-static int JoinNewLobby(char *lobby);
+static int JoinNewLobby(const char *lobby);
 static int ShowMessageOfTheDay();
 static const char *SendWhisper(const char *name);
 static int JoinPrivateLobby();
 static int FindPilot();
-static int GetPilotStats(char *pilot);
+static int GetPilotStats(const char *pilot);
 
 int GetGameByHandle(uint32_t handle) {
   int j;
