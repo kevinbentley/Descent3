@@ -919,18 +919,7 @@ bool LoadMission(const char *mssn) {
   ResetMission(); // Reset everything.
                   // open MN3 if filename passed was an mn3 file.
 
-  // Correct for mission split hack
-
-  if (stricmp(mssn, "d3_2.mn3") == 0) {
-    strcpy(mission, "d3_2.mn3");
-    strcpy(pathname, "d3_2.mn3");
-
-  } else if (stricmp(mssn, "d3.mn3") == 0) {
-    strcpy(mission, "d3.mn3");
-    strcpy(pathname, "d3.mn3");
-
-  }
-  else if (IS_MN3_FILE(mssn)) {
+  if (IS_MN3_FILE(mssn)) {
     strcpy(mission, mssn);
     ddio_MakePath(pathname, D3MissionsDir, mission, NULL);
   } else {
@@ -1837,13 +1826,9 @@ bool mn3_Open(const char *mn3file) {
     mn3file = tempMn3File;
   }
 
-  const char *p = GetMultiCDPath((char *)mn3file);
-  // ddio_MakePath(pathname, D3MissionsDir, mn3file, NULL);
-  if (!p)
-    return false;
-  strcpy(pathname, p);
+  ddio_MakePath(pathname, D3MissionsDir, mn3file, NULL);
   // open MN3 HOG.
-  mn3_handle = cf_OpenLibrary(pathname);
+  mn3_handle = cf_OpenLibrary(mn3file);
   if (mn3_handle == 0) {
     return false;
   } else {
@@ -1852,27 +1837,22 @@ bool mn3_Open(const char *mn3file) {
   // do table file stuff.
   ddio_SplitPath(mn3file, NULL, filename, ext);
 
-  //	char voice_hog[_MAX_PATH*2];
+  char voice_hog[_MAX_PATH*2];
   if ((stricmp(filename, "d3") == 0) || (stricmp(filename, "training") == 0)) {
     // Open audio hog file
-    // ddio_MakePath(voice_hog, D3MissionsDir, "d3voice1.hog", NULL);//Audio for levels 1-4
-    const char *v = GetMultiCDPath("d3voice1.hog");
-    if (!v)
-      return false;
-    Mission_voice_hog_handle = cf_OpenLibrary(v);
+    ddio_MakePath(voice_hog, D3MissionsDir, "d3voice1.hog", nullptr); // Audio for levels 1-4
+    Mission_voice_hog_handle = cf_OpenLibrary(voice_hog);
   } else if (stricmp(filename, "d3_2") == 0) {
     // Open audio hog file
-    // ddio_MakePath(voice_hog, D3MissionsDir, "d3voice2.hog", NULL);//Audio for levels 5-17
-    const char *v = GetMultiCDPath("d3voice2.hog");
-    if (!v)
-      return false;
-    Mission_voice_hog_handle = cf_OpenLibrary(v);
+    ddio_MakePath(voice_hog, D3MissionsDir, "d3voice2.hog", nullptr); // Audio for levels 5-17
+    Mission_voice_hog_handle = cf_OpenLibrary(voice_hog);
   }
   strcat(filename, ".gam");
   mng_SetAddonTable(filename);
   Current_mission.mn3_handle = mn3_handle;
   return true;
 }
+
 // returns mission information given the mn3 file.
 bool mn3_GetInfo(const char *mn3file, tMissionInfo *msn) {
   int handle;
@@ -1880,14 +1860,7 @@ bool mn3_GetInfo(const char *mn3file, tMissionInfo *msn) {
   char pathname[_MAX_PATH];
   char filename[PSFILENAME_LEN + 1];
 
-  if (stricmp(mn3file, "d3.mn3") == 0) {
-    const char *p = GetMultiCDPath((char *)mn3file);
-    if (!p)
-      return false;
-    strcpy(pathname, p);
-  } else {
-    ddio_MakePath(pathname, D3MissionsDir, mn3file, NULL);
-  }
+  ddio_MakePath(pathname, D3MissionsDir, mn3file, nullptr);
   handle = cf_OpenLibrary(pathname);
   if (handle == 0) {
     mprintf(0, "MISSION: MN3 failed to open.\n");

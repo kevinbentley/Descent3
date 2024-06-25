@@ -493,9 +493,7 @@ void Descent3() {
         for (auto const &intro : intros) {
           ddio_MakePath(intropath, Base_directory, "movies", intro, nullptr);
           if (cfexist(intropath)) {
-            const char *t = GetMultiCDPath(intro);
-            if (t)
-              PlayMovie(t);
+            PlayMovie(intropath);
           }
         }
       }
@@ -715,55 +713,3 @@ void D3DebugResumeHandler() {
 #endif
 
 void RenderBlankScreen();
-
-struct file_vols {
-  char file[_MAX_PATH];
-  char localpath[_MAX_PATH * 2];
-  int volume;
-  bool localized;
-};
-
-// This function figures out whether or not a file needs to be loaded off of
-// CD or off of the local drive. If it needs to come from a CD, it figures out
-// which CD and prompts the user to enter that CD. If they hit cancel, it
-// returns NULL.
-const char *GetMultiCDPath(const char *file) {
-  // Filename, directory it might be installed on the hard drive, CD number to look for it
-  const std::vector<file_vols> file_volumes = {
-      // file, localpath, volume, localized
-      {"d3.mn3", "missions", 1, false},
-      {"d3_2.mn3", "missions", 2, false},
-      {"level1.mve", "movies", 1, true},
-      {"level5.mve", "movies", 2, true},
-      {"end.mve", "movies", 2, true},
-      {"intro.mve", "movies", 1, true},
-      {"dolby1.mv8", "movies", 1, true},
-      {"d3voice1.hog", "missions", 1, true},
-      {"d3voice2.hog", "missions", 2, true},
-  };
-
-  static char fullpath[_MAX_PATH * 2];
-
-  if ((file == nullptr) || (*file == '\0'))
-    return nullptr;
-
-  auto it = std::find_if(
-      file_volumes.begin(), file_volumes.end(),
-      [&file](const file_vols& file_volume) {
-        return (stricmp(file_volume.file, file) == 0);
-      }
-  );
-
-  // This is a file we don't know about
-  if (it == file_volumes.end()) {
-    return file;
-  }
-
-  ddio_MakePath(fullpath, LocalD3Dir, it->localpath, file, nullptr);
-  // See if the file is in the local dir already.
-  if (cfexist(fullpath)) {
-    return fullpath;
-  }
-
-  return nullptr;
-}

@@ -13,9 +13,7 @@ set_target_properties(Parallax_Online PROPERTIES OUTPUT_NAME "Parallax Online")
 target_link_libraries(Parallax_Online PRIVATE
   ddio
   inetfile
-  $<$<PLATFORM_ID:Windows>:
-  ws2_32
-  >
+  $<$<PLATFORM_ID:Windows>:ws2_32>
 )
 
 add_custom_target(Parallax_Online_Hog

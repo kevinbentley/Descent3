@@ -966,7 +966,7 @@ void SetScreenMode(int sm, bool force_res_change) {
     } else {
       scr_width = FIXED_SCREEN_WIDTH;
       scr_height = FIXED_SCREEN_HEIGHT;
-      scr_bitdepth = 16;
+      scr_bitdepth = 32;
     }
 
     if (!rend_initted) {
@@ -999,7 +999,7 @@ void SetScreenMode(int sm, bool force_res_change) {
         rend_initted = 1;
         mprintf(0, "Changing menu settings to default!\n");
         Game_video_resolution = RES_640X480;
-        Render_preferred_state.bit_depth = 16;
+        Render_preferred_state.bit_depth = 32;
         scr_width = 640;
         scr_height = 480;
       }
@@ -1017,7 +1017,7 @@ void SetScreenMode(int sm, bool force_res_change) {
           rend_initted = 1;
           mprintf(0, "Changing menu settings to default!\n");
           Game_video_resolution = RES_640X480;
-          Render_preferred_state.bit_depth = 16;
+          Render_preferred_state.bit_depth = 32;
           scr_width = 640;
           scr_height = 480;
           Render_preferred_state.width = scr_width;

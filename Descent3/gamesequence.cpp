@@ -1308,9 +1308,8 @@ void CheckHogfile() {
       (Current_mission.cur_level > 4)) {
     // close the mission hog file and open d3_2.mn3
     mn3_Close();
-    const char *hogp = GetMultiCDPath("d3_2.mn3");
-    if (hogp) {
-      strcpy(hogpath, hogp);
+    ddio_MakePath(hogpath, D3MissionsDir, "d3_2.mn3", nullptr);
+    if (cfexist(hogpath)) {
       mn3_Open(hogpath);
       mem_free(Current_mission.filename);
       Current_mission.filename = mem_strdup("d3_2.mn3");
@@ -1322,9 +1321,8 @@ void CheckHogfile() {
     // Part 2 of the mission is d3_2.mn3
     // close the mission hog file and open d3.mn3
     mn3_Close();
-    const char *hogp = GetMultiCDPath("d3.mn3");
-    if (hogp) {
-      strcpy(hogpath, hogp);
+    ddio_MakePath(hogpath, D3MissionsDir, "d3.mn3", nullptr);
+    if (cfexist(hogpath)) {
       mn3_Open(hogpath);
       mem_free(Current_mission.filename);
       Current_mission.filename = mem_strdup("d3.mn3");
@@ -1643,9 +1641,8 @@ bool LoadAndStartCurrentLevel() {
       (Current_mission.cur_level > 4)) {
     // close the mission hog file and open d3_2.mn3
     mn3_Close();
-    const char *hogp = GetMultiCDPath("d3_2.mn3");
-    if (hogp) {
-      strcpy(hogpath, hogp);
+    ddio_MakePath(hogpath, D3MissionsDir, "d3_2.mn3", nullptr);
+    if (cfexist(hogpath)) {
       mn3_Open(hogpath);
       mem_free(Current_mission.filename);
       Current_mission.filename = mem_strdup("d3_2.mn3");
@@ -1657,9 +1654,8 @@ bool LoadAndStartCurrentLevel() {
     // Part 2 of the mission is d3_2.mn3
     // close the mission hog file and open d3.mn3
     mn3_Close();
-    const char *hogp = GetMultiCDPath("d3.mn3");
-    if (hogp) {
-      strcpy(hogpath, hogp);
+    ddio_MakePath(hogpath, D3MissionsDir, "d3.mn3", nullptr);
+    if (cfexist(hogpath)) {
       mn3_Open(hogpath);
       mem_free(Current_mission.filename);
       Current_mission.filename = mem_strdup("d3.mn3");

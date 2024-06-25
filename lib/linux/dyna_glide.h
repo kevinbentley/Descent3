@@ -165,6 +165,8 @@
 
 */
 
+#include <cstdint>
+
 typedef uint8_t FxU8;
 
 typedef int8_t FxI8;

@@ -1155,12 +1155,10 @@ bool MenuNewGame() {
 
     FirstGame = true;
 
-    char temppath[_MAX_PATH];
-    const char *moviepath;
-    moviepath = GetMultiCDPath("level1.mve");
-    if (moviepath) {
-      strcpy(temppath, moviepath);
-      PlayMovie(temppath);
+    char moviepath[_MAX_PATH];
+    ddio_MakePath(moviepath, LocalD3Dir, "movies", "level1.mve", nullptr);
+    if (cfexist(moviepath)) {
+      PlayMovie(moviepath);
     }
     Skip_next_movie = true;
 

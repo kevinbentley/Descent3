@@ -1627,7 +1627,6 @@ void InitGameSystems(bool editor) {
   // Check for aspect ratio override
   int t = FindArg("-aspect");
   if (t) {
-    extern void g3_SetAspectRatio(float);
     float aspect = atof(GameArgs[t + 1]);
     if (aspect > 0.0)
       g3_SetAspectRatio(aspect);

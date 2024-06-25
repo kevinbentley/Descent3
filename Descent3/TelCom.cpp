@@ -3752,6 +3752,11 @@ void TCSSSCallback(void) {
 
   grtext_Flush();
   StartFrame(325, 142, 535, 280);
+
+  // backup user-specified aspect ratio, than disable it for ship select screen
+  float aspect = g3_GetAspectRatio();
+  g3_SetAspectRatio(0.0f);
+
   g3_StartFrame(&viewer_eye, &viewer_orient, D3_DEFAULT_ZOOM);
   rend_SetFlatColor(0);
 
@@ -3792,6 +3797,9 @@ void TCSSSCallback(void) {
 
   DrawPolygonModel(&view_pos, &view_orient, TCShipSelect.ship_model, normalized_time, 0, &light_vec, light_scalar,
                    light_scalar, light_scalar);
+
+  // restore user-specified aspect ratio
+  g3_SetAspectRatio(aspect);
 
   g3_EndFrame();
   EndFrame();

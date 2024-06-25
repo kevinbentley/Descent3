@@ -393,7 +393,7 @@ bool ddio_FindFileStart(const char *wildcard, char *namebuf) {
   return false;
 #else
   int rc, flags;
-  flags = GLOB_MARK | GLOB_PERIOD | GLOB_TILDE;
+  flags = GLOB_MARK | GLOB_TILDE;
   rc = glob(wildcard, flags, globerrfn, &ffres);
   if (rc == GLOB_NOSPACE) {
     mprintf(0, "Out of space during glob\n");

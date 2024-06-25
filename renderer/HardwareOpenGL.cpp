@@ -780,7 +780,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
     DEVMODE devmode;
 
     devmode.dmSize = sizeof(devmode);
-    devmode.dmBitsPerPel = 16;
+    devmode.dmBitsPerPel = 32;
     // devmode.dmBitsPerPel=gpu_preferred_state.bit_depth;
     devmode.dmPelsWidth = gpu_preferred_state.width;
     devmode.dmPelsHeight = gpu_preferred_state.height;
@@ -794,7 +794,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
     if (retval != DISP_CHANGE_SUCCESSFUL) {
       mprintf(0, "Display mode change failed (err=%d), trying default!\n", retval);
       retval = -1;
-      devmode.dmBitsPerPel = 16;
+      devmode.dmBitsPerPel = 32;
       devmode.dmPelsWidth = 640;
       devmode.dmPelsHeight = 480;
       devmode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
@@ -807,7 +807,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
         opengl_Close();
         return 0;
       } else {
-        gpu_preferred_state.bit_depth = 16;
+        gpu_preferred_state.bit_depth = 32;
         gpu_preferred_state.width = 640;
         gpu_preferred_state.height = 480;
       }

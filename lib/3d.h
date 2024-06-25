@@ -284,6 +284,11 @@ void g3_GetViewMatrix(matrix *mat);
 //	returns the current unscaled view matrix
 void g3_GetUnscaledMatrix(matrix *mat);
 
+// allows the user to specify an aspect ratio that overrides the renderer's
+void g3_SetAspectRatio(float);
+// returns the user-specified aspect ratio used to override the renderer's
+float g3_GetAspectRatio();
+
 // Instancing
 
 // instance at specified point with specified orientation
