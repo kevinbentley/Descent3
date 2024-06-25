@@ -505,8 +505,8 @@ void GoalInitWanderAround(object *obj, goal *goal_ptr) {
       pos.y += (ai_info->biased_flight_max + ai_info->biased_flight_min) / 2.0f;
     }
   } else {
-    int tx = (ps_rand() % (TERRAIN_WIDTH - 56)) + (56 / 2);
-    int tz = (ps_rand() % (TERRAIN_DEPTH - 56)) + (56 / 2);
+    int tx = D3::RandomInt(56 / 2, TERRAIN_WIDTH - 56 / 2 - 1);
+    int tz = D3::RandomInt(56 / 2, TERRAIN_DEPTH - 56 / 2 - 1);
 
     int cell = tx + TERRAIN_WIDTH * tz;
     roomnum = 0x80000000 | cell;
@@ -517,7 +517,7 @@ void GoalInitWanderAround(object *obj, goal *goal_ptr) {
   goal_ptr->g_info.pos = pos;
   goal_ptr->g_info.roomnum = roomnum;
 
-  goal_ptr->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + ps_rand() / (float)D3_RAND_MAX;
+  goal_ptr->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + D3::RandomFloat();
   goal_ptr->flags |= GF_HAS_PATH;
 }
 
@@ -829,7 +829,7 @@ void GoalDoFrame(object *obj) {
         GoalClearGoal(obj, cur_goal, kill_reason);
       } else {
         //  Update time regardless of if we made the path (so dont don't do this every frame
-        cur_goal->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + ps_rand() / (float)D3_RAND_MAX;
+        cur_goal->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + D3::RandomFloat();
       }
     }
   }
@@ -851,7 +851,7 @@ void GoalPathComplete(object *obj) {
 
       if (AIPathAllocPath(obj, ai_info, cur_goal, &obj->roomnum, &obj->pos, &goal_obj->roomnum, &goal_obj->pos, 0.0f, 0,
                           obj->handle, ignore_obj)) {
-        cur_goal->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + ps_rand() / (float)D3_RAND_MAX;
+        cur_goal->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + D3::RandomFloat();
       }
     } else {
       GoalClearGoal(obj, cur_goal, AIN_GOAL_COMPLETE);
@@ -1009,7 +1009,7 @@ int GoalAddGoal(object *obj, uint32_t goal_type, void *arg_struct, int level, fl
 
       if (AIPathAllocPath(obj, ai_info, &ai_info->goals[goal_index], &obj->roomnum, &obj->pos, &goal_obj->roomnum,
                           &goal_obj->pos, 0.0f, 0, obj->handle, ignore_obj)) {
-        goal_ptr->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + ps_rand() / (float)D3_RAND_MAX;
+        goal_ptr->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + D3::RandomFloat();
       } else {
         goal_ptr->next_path_time = Gametime;
       }
@@ -1030,7 +1030,7 @@ int GoalAddGoal(object *obj, uint32_t goal_type, void *arg_struct, int level, fl
 
       if (AIPathAllocPath(obj, ai_info, &ai_info->goals[goal_index], &obj->roomnum, &obj->pos, &goal_obj->roomnum,
                           &goal_obj->pos, 0.0f, 0, obj->handle, ignore_obj)) {
-        goal_ptr->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + ps_rand() / (float)D3_RAND_MAX;
+        goal_ptr->next_path_time = Gametime + MIN_NEXT_PATH_INTERVAL + D3::RandomFloat();
       } else {
         goal_ptr->next_path_time = Gametime;
       }

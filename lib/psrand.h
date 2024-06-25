@@ -33,15 +33,37 @@
  *
  * $NoKeywords: $
  */
-#ifndef PS_RAND_H
-#define PS_RAND_H
+
+#pragma once
 
 #include <cstdint>
+#include <cstdlib>
+
+#include <type_traits>
 
 #define D3_RAND_MAX 0x7fff
 
-void ps_srand(uint32_t seed);
+// Seed the random number generator with the given number.
+void ps_srand(const std::uint32_t seed);
 
-int32_t ps_rand(void);
+// Return a random integer in the range [0, D3_RAND_MAX].
+std::int32_t ps_rand(void);
 
-#endif
+namespace D3 {
+// Return a random integer in the range [min, max].
+template <typename T = std::int32_t>
+std::enable_if_t<std::is_integral_v<T>, T> RandomInt(const T min = 0, const T max = D3_RAND_MAX) {
+  return min + ps_rand() % (std::abs(max - min) + 1);
+}
+
+// Return a random float in the range [min, max].
+template <typename T = float>
+std::enable_if_t<std::is_floating_point_v<T>, T> RandomFloat(const T min = 0, const T max = 1) {
+  return min + (ps_rand() / (T)D3_RAND_MAX) * std::abs(max - min);
+}
+
+// Return true with the frequency of chance, and false with the inverse frequency of chance.
+template <typename T = float> std::enable_if_t<std::is_floating_point_v<T>, bool> RandomBool(const T chance = 0.5) {
+  return ps_rand() / (T)D3_RAND_MAX < chance;
+}
+}; // namespace D3
