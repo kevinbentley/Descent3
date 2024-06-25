@@ -537,7 +537,7 @@ void grfont_FreeTemplate(tFontTemplate *ft) {
   }
 }
 
-// MTS: unused?
+// TODO: MTS: unused?
 // sets a template to a font, be careful.
 bool grfont_SetTemplate(const char *pathname, const tFontTemplate *ft) {
   // okay, load the font manually, set the template members, then save it out.
@@ -689,7 +689,7 @@ bool grfont_SetTemplate(const char *pathname, const tFontTemplate *ft) {
   return true;
 }
 
-// MTS: Unused?
+// TODO: MTS: unused?
 // sets a font's template without saving...
 bool grfont_SetKerning(int font, uint8_t *kern_data) {
   tFontInfo *oldft = &Fonts[font];
@@ -722,7 +722,7 @@ bool grfont_SetKerning(int font, uint8_t *kern_data) {
   return true;
 }
 
-// MTS: Unused?
+// TODO: MTS: unused?
 // sets a font's tracking
 bool grfont_SetTracking(int font, int tracking) {
   ASSERT(font >= 0 && font < MAX_FONTS);
@@ -1069,7 +1069,7 @@ int grfont_KeyToAscii(int font, int key) {
   return key;
 }
 
-// MTS: Unused?
+// TODO: MTS: unused?
 // returns the raw bitmap data for a character in a font, its width and height
 // returned data should be in 565 hicolor format if (*mono) is false.  if (*mono) is true,
 //	then a bitmask will be returned, and you should treat a bit as a pixel.

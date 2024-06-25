@@ -475,7 +475,7 @@ static void DoControllerWeapons(game_controls *controls);
 static void DoMisc(game_controls *contols);
 static void DoKeyboardMisc(game_controls *controls);
 static void DoControllerMisc(game_controls *controls);
-// MTS: no implementation!
+// FIXME: MTS: no implementation!
 void DoCommands();
 
 static void ToggleHeadlightControlState();

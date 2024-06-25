@@ -671,8 +671,6 @@
 
 #include <algorithm>
 
-void MultiProcessShipChecksum(MD5 *md5, int ship_index);
-
 int GameDLLGetConnectingPlayersTeam(int slot);
 
 int Moved_robots[MAX_NET_PLAYERS][MAX_CHANGED_OBJECTS];
@@ -702,8 +700,6 @@ int MTReadingPilot = -1;
 int MTWritingPilot = -1;
 
 int Player_count = 0; // The total number of players playing the game
-
-extern int Use_file_xfer;
 
 uint32_t Secret_net_id = 0;
 // Stars a multiplayer server.  If playing is non-zero, then the server is a player in the

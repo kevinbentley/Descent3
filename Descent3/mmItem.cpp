@@ -131,8 +131,8 @@ static mmInterface *MM_object = NULL;
 // attached window.
 mmInterface *mmItem::m_window = NULL;
 
-const char *MMSoundFiles[N_MM_SOUNDS] = {"MenuBeepEnter", "MenuBeepSelect"};
-void PlayMenuSound(int sound_index, bool wait_till_done = false);
+static const char *const MMSoundFiles[N_MM_SOUNDS] = {"MenuBeepEnter", "MenuBeepSelect"};
+static void PlayMenuSound(int sound_index, bool wait_till_done = false);
 
 /*
 $$TABLE_SOUND "MenuBeepEnter"

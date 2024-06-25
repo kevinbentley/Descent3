@@ -995,6 +995,9 @@ static void fvi_rooms_objs(void);
 static int obj_in_list(int objnum, int *obj_list);
 static void make_trigger_face_list(int last_sim_faces);
 static bool PhysPastPortal(const room *rp, portal *pp);
+static bool BBoxPlaneIntersection(bool fast_exit, vector *collision_point, vector *collision_normal,
+                                  object *obj, vector *new_pos, int nv, vector **vertex_ptr_list,
+                                  vector *face_normal, matrix *orient, vector *rotvel, vector *velocity);
 
 //------------------------------------------------------------------------------------------
 // FVI FUNCTIONS
@@ -3226,7 +3229,6 @@ vector PointSpeed(object *obj, vector *pos, matrix *orient, vector *rotvel, vect
   return *velocity + w1;
 }
 
-// MTS: only used in this file.
 // Hacked for some initial testing
 bool BBoxPlaneIntersection(bool fast_exit, vector *collision_point, vector *collision_normal, object *obj,
                            vector *new_pos, int nv, vector **vertex_ptr_list, vector *face_normal, matrix *orient,

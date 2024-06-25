@@ -364,7 +364,7 @@ char HelpText4[MAX_HELP_TEXT_LEN];
 
 int MultiDLLGameStarting = 0;
 
-void DisplayNetDLLHelp(const char *topic);
+static void DisplayNetDLLHelp(const char *topic);
 // The first multiplayer menu that the user will see...all multiplayer stuff is
 // reached from this menu
 // Returns true if we're starting a multiplayer game
@@ -1725,7 +1725,7 @@ bool DoPlayerMouselookCheck(uint32_t flags) {
 extern char *Multi_recieved_player_list;
 extern bool Multi_got_player_list;
 
-void RequestPlayerList(network_address *addr);
+extern void RequestPlayerList(network_address *addr);
 
 #define ASK_PLAYERS_RETRY_INTERVAL 2.0
 #define ASK_PLAYERS_RETRIES 4

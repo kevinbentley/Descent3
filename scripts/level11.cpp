@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -965,170 +980,170 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_130 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_171 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_125 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_131 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_156 = 0;
-int ScriptActionCtr_132 = 0;
-int ScriptActionCtr_129 = 0;
-int ScriptActionCtr_153 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_136 = 0;
-int ScriptActionCtr_133 = 0;
-int ScriptActionCtr_134 = 0;
-int ScriptActionCtr_140 = 0;
-int ScriptActionCtr_149 = 0;
-int ScriptActionCtr_139 = 0;
-int ScriptActionCtr_150 = 0;
-int ScriptActionCtr_145 = 0;
-int ScriptActionCtr_138 = 0;
-int ScriptActionCtr_137 = 0;
-int ScriptActionCtr_135 = 0;
-int ScriptActionCtr_141 = 0;
-int ScriptActionCtr_148 = 0;
-int ScriptActionCtr_147 = 0;
-int ScriptActionCtr_144 = 0;
-int ScriptActionCtr_143 = 0;
-int ScriptActionCtr_142 = 0;
-int ScriptActionCtr_146 = 0;
-int ScriptActionCtr_152 = 0;
-int ScriptActionCtr_151 = 0;
-int ScriptActionCtr_155 = 0;
-int ScriptActionCtr_154 = 0;
-int ScriptActionCtr_160 = 0;
-int ScriptActionCtr_159 = 0;
-int ScriptActionCtr_158 = 0;
-int ScriptActionCtr_157 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_165 = 0;
-int ScriptActionCtr_164 = 0;
-int ScriptActionCtr_163 = 0;
-int ScriptActionCtr_162 = 0;
-int ScriptActionCtr_161 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_166 = 0;
-int ScriptActionCtr_169 = 0;
-int ScriptActionCtr_168 = 0;
-int ScriptActionCtr_167 = 0;
-int ScriptActionCtr_170 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_130 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_171 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_131 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_156 = 0;
+static int ScriptActionCtr_132 = 0;
+static int ScriptActionCtr_129 = 0;
+static int ScriptActionCtr_153 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_136 = 0;
+static int ScriptActionCtr_133 = 0;
+static int ScriptActionCtr_134 = 0;
+static int ScriptActionCtr_140 = 0;
+static int ScriptActionCtr_149 = 0;
+static int ScriptActionCtr_139 = 0;
+static int ScriptActionCtr_150 = 0;
+static int ScriptActionCtr_145 = 0;
+static int ScriptActionCtr_138 = 0;
+static int ScriptActionCtr_137 = 0;
+static int ScriptActionCtr_135 = 0;
+static int ScriptActionCtr_141 = 0;
+static int ScriptActionCtr_148 = 0;
+static int ScriptActionCtr_147 = 0;
+static int ScriptActionCtr_144 = 0;
+static int ScriptActionCtr_143 = 0;
+static int ScriptActionCtr_142 = 0;
+static int ScriptActionCtr_146 = 0;
+static int ScriptActionCtr_152 = 0;
+static int ScriptActionCtr_151 = 0;
+static int ScriptActionCtr_155 = 0;
+static int ScriptActionCtr_154 = 0;
+static int ScriptActionCtr_160 = 0;
+static int ScriptActionCtr_159 = 0;
+static int ScriptActionCtr_158 = 0;
+static int ScriptActionCtr_157 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_165 = 0;
+static int ScriptActionCtr_164 = 0;
+static int ScriptActionCtr_163 = 0;
+static int ScriptActionCtr_162 = 0;
+static int ScriptActionCtr_161 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_166 = 0;
+static int ScriptActionCtr_169 = 0;
+static int ScriptActionCtr_168 = 0;
+static int ScriptActionCtr_167 = 0;
+static int ScriptActionCtr_170 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_025 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1683,8 +1698,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1850,217 +1865,219 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 19
-const char *Door_names[NUM_DOOR_NAMES] = {"ExitDoor-1",    "VertShaft",     "LockedDoor-3",    "LockedDoor-4",
-                                    "LockedDoor-1",  "LockedDoor-2",  "SecondaryDoor-1", "SecondaryDoor-2",
-                                    "EX-Right-2",    "EX-Left-1",     "EX-Right-3",      "EX-Left-2",
-                                    "EX-Right-4",    "EX-Left-3",     "EX-Right-1",      "EX-Left-4",
-                                    "AnotherDoor-2", "AnotherDoor-1", "EscapeDoor-1"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {
+    "ExitDoor-1",   "VertShaft",       "LockedDoor-3",    "LockedDoor-4", "LockedDoor-1",
+    "LockedDoor-2", "SecondaryDoor-1", "SecondaryDoor-2", "EX-Right-2",   "EX-Left-1",
+    "EX-Right-3",   "EX-Left-2",       "EX-Right-4",      "EX-Left-3",    "EX-Right-1",
+    "EX-Left-4",    "AnotherDoor-2",   "AnotherDoor-1",   "EscapeDoor-1"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 137
-const char *Object_names[NUM_OBJECT_NAMES] = {"EndLevelCam",
-                                        "KeyCard",
-                                        "BackSmallPipe-2",
-                                        "BackSmallPipe-1",
-                                        "FirstFFPipe",
-                                        "MainFFPipe-1",
-                                        "MainFFPipe-3",
-                                        "MainFFPipe-2",
-                                        "HWFFPipe-1",
-                                        "HWFFPipe-2",
-                                        "FFPipeExtra-2",
-                                        "FFPipeExtra-1",
-                                        "SmallPipePrison-2",
-                                        "PrisonSmallPipe-3",
-                                        "SmallPipePrison-1",
-                                        "SlaveGun-41",
-                                        "SlaveGun-44",
-                                        "SlaveGun-42",
-                                        "SlaveGun-43",
-                                        "SlaveGun-34",
-                                        "SlaveGun-33",
-                                        "SlaveGun-31",
-                                        "SlaveGun-32",
-                                        "SlaveGun-21",
-                                        "SlaveGun-23",
-                                        "SlaveGun-22",
-                                        "SlaveGun-51",
-                                        "SlaveGun-52",
-                                        "SlaveGun-72",
-                                        "SlaveGun-71",
-                                        "SlaveGun-B4",
-                                        "SlaveGun-B1",
-                                        "SlaveGun-B2",
-                                        "SlaveGun-B3",
-                                        "SlaveGun-62",
-                                        "SlaveGun-64",
-                                        "SlaveGun-63",
-                                        "SlaveGun-61",
-                                        "SlaveGun-81",
-                                        "SlaveGun-83",
-                                        "SlaveGun-82",
-                                        "SlaveGun-92",
-                                        "SlaveGun-93",
-                                        "SlaveGun-91",
-                                        "SlaveGun-A1",
-                                        "SlaveGun-C1",
-                                        "SlaveGun-C2",
-                                        "SlaveGun-D2",
-                                        "SlaveGun-D1",
-                                        "SlaveGun-F2",
-                                        "SlaveGun-F1",
-                                        "SlaveGun-E2",
-                                        "SlaveGun-E1",
-                                        "SlaveGun-12",
-                                        "SlaveGun-11",
-                                        "Camera-1",
-                                        "FFControlHW-1",
-                                        "HW-1",
-                                        "FFControlHW-2",
-                                        "HW-2",
-                                        "FFControlFirst",
-                                        "FirstPopUp",
-                                        "FFControlMain-1",
-                                        "Main-1",
-                                        "FFControlMain-2",
-                                        "Main-2",
-                                        "FFControlMain-3",
-                                        "Main-3",
-                                        "FFControlExtra-2",
-                                        "Extra-2",
-                                        "FFControlExtra-1",
-                                        "Extra-1",
-                                        "PrisonShip",
-                                        "MineSwitch-1",
-                                        "MineCart-1",
-                                        "MineSwitch-2",
-                                        "MineCart-2",
-                                        "RockWallTop-1",
-                                        "RockWallBottom-1",
-                                        "RockWallBottom-2",
-                                        "RockWallBottom-3",
-                                        "RockWallBottom-4",
-                                        "RockWallTop-6",
-                                        "RockWallTop-2",
-                                        "WindowPump-1",
-                                        "WindowPump-2",
-                                        "GenericSpew-18",
-                                        "GSpew17",
-                                        "GSpew16",
-                                        "GSpew15",
-                                        "GSpew14",
-                                        "GSpew13",
-                                        "GSpew12",
-                                        "GSpew11",
-                                        "GSpew10",
-                                        "GSpew9",
-                                        "GSpew8",
-                                        "GSpew7",
-                                        "GSpew6",
-                                        "GSpew5",
-                                        "GSpew4",
-                                        "GSpew3",
-                                        "GSpew2",
-                                        "GSpew1",
-                                        "AnotherSwitch-2",
-                                        "AnotherSwitch-1",
-                                        "Camera-F",
-                                        "Camera-E",
-                                        "Camera-D",
-                                        "Camera-C",
-                                        "Camera-B",
-                                        "Camera-A",
-                                        "Camera-9",
-                                        "Camera-8",
-                                        "Camera-7",
-                                        "Camera-6",
-                                        "Camera-5",
-                                        "Camera-4",
-                                        "Camera-3",
-                                        "Camera-2",
-                                        "Sparker-1",
-                                        "Sparker-2",
-                                        "Sparker-3",
-                                        "Sparker-4",
-                                        "PrisonFreeSwitch",
-                                        "PSpark-1",
-                                        "PSpark-2",
-                                        "PSpark-3",
-                                        "ExitDoor-1",
-                                        "PSwitch6",
-                                        "PSwitch5",
-                                        "PSwitch4",
-                                        "PSwitch3",
-                                        "PFSwitch2",
-                                        "PFSwitch1",
-                                        "SEFFSwitch-2",
-                                        "SEFFSwitch-1"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"EndLevelCam",
+                                                           "KeyCard",
+                                                           "BackSmallPipe-2",
+                                                           "BackSmallPipe-1",
+                                                           "FirstFFPipe",
+                                                           "MainFFPipe-1",
+                                                           "MainFFPipe-3",
+                                                           "MainFFPipe-2",
+                                                           "HWFFPipe-1",
+                                                           "HWFFPipe-2",
+                                                           "FFPipeExtra-2",
+                                                           "FFPipeExtra-1",
+                                                           "SmallPipePrison-2",
+                                                           "PrisonSmallPipe-3",
+                                                           "SmallPipePrison-1",
+                                                           "SlaveGun-41",
+                                                           "SlaveGun-44",
+                                                           "SlaveGun-42",
+                                                           "SlaveGun-43",
+                                                           "SlaveGun-34",
+                                                           "SlaveGun-33",
+                                                           "SlaveGun-31",
+                                                           "SlaveGun-32",
+                                                           "SlaveGun-21",
+                                                           "SlaveGun-23",
+                                                           "SlaveGun-22",
+                                                           "SlaveGun-51",
+                                                           "SlaveGun-52",
+                                                           "SlaveGun-72",
+                                                           "SlaveGun-71",
+                                                           "SlaveGun-B4",
+                                                           "SlaveGun-B1",
+                                                           "SlaveGun-B2",
+                                                           "SlaveGun-B3",
+                                                           "SlaveGun-62",
+                                                           "SlaveGun-64",
+                                                           "SlaveGun-63",
+                                                           "SlaveGun-61",
+                                                           "SlaveGun-81",
+                                                           "SlaveGun-83",
+                                                           "SlaveGun-82",
+                                                           "SlaveGun-92",
+                                                           "SlaveGun-93",
+                                                           "SlaveGun-91",
+                                                           "SlaveGun-A1",
+                                                           "SlaveGun-C1",
+                                                           "SlaveGun-C2",
+                                                           "SlaveGun-D2",
+                                                           "SlaveGun-D1",
+                                                           "SlaveGun-F2",
+                                                           "SlaveGun-F1",
+                                                           "SlaveGun-E2",
+                                                           "SlaveGun-E1",
+                                                           "SlaveGun-12",
+                                                           "SlaveGun-11",
+                                                           "Camera-1",
+                                                           "FFControlHW-1",
+                                                           "HW-1",
+                                                           "FFControlHW-2",
+                                                           "HW-2",
+                                                           "FFControlFirst",
+                                                           "FirstPopUp",
+                                                           "FFControlMain-1",
+                                                           "Main-1",
+                                                           "FFControlMain-2",
+                                                           "Main-2",
+                                                           "FFControlMain-3",
+                                                           "Main-3",
+                                                           "FFControlExtra-2",
+                                                           "Extra-2",
+                                                           "FFControlExtra-1",
+                                                           "Extra-1",
+                                                           "PrisonShip",
+                                                           "MineSwitch-1",
+                                                           "MineCart-1",
+                                                           "MineSwitch-2",
+                                                           "MineCart-2",
+                                                           "RockWallTop-1",
+                                                           "RockWallBottom-1",
+                                                           "RockWallBottom-2",
+                                                           "RockWallBottom-3",
+                                                           "RockWallBottom-4",
+                                                           "RockWallTop-6",
+                                                           "RockWallTop-2",
+                                                           "WindowPump-1",
+                                                           "WindowPump-2",
+                                                           "GenericSpew-18",
+                                                           "GSpew17",
+                                                           "GSpew16",
+                                                           "GSpew15",
+                                                           "GSpew14",
+                                                           "GSpew13",
+                                                           "GSpew12",
+                                                           "GSpew11",
+                                                           "GSpew10",
+                                                           "GSpew9",
+                                                           "GSpew8",
+                                                           "GSpew7",
+                                                           "GSpew6",
+                                                           "GSpew5",
+                                                           "GSpew4",
+                                                           "GSpew3",
+                                                           "GSpew2",
+                                                           "GSpew1",
+                                                           "AnotherSwitch-2",
+                                                           "AnotherSwitch-1",
+                                                           "Camera-F",
+                                                           "Camera-E",
+                                                           "Camera-D",
+                                                           "Camera-C",
+                                                           "Camera-B",
+                                                           "Camera-A",
+                                                           "Camera-9",
+                                                           "Camera-8",
+                                                           "Camera-7",
+                                                           "Camera-6",
+                                                           "Camera-5",
+                                                           "Camera-4",
+                                                           "Camera-3",
+                                                           "Camera-2",
+                                                           "Sparker-1",
+                                                           "Sparker-2",
+                                                           "Sparker-3",
+                                                           "Sparker-4",
+                                                           "PrisonFreeSwitch",
+                                                           "PSpark-1",
+                                                           "PSpark-2",
+                                                           "PSpark-3",
+                                                           "ExitDoor-1",
+                                                           "PSwitch6",
+                                                           "PSwitch5",
+                                                           "PSwitch4",
+                                                           "PSwitch3",
+                                                           "PFSwitch2",
+                                                           "PFSwitch1",
+                                                           "SEFFSwitch-2",
+                                                           "SEFFSwitch-1"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 10
-const char *Room_names[NUM_ROOM_NAMES] = {"HugeWHouse-2", "HugeWHouse-1", "FirstFFRoom", "MainFFRoom", "Extra-1",
-                                    "Extra-2",      "Prisoner-3",   "Prisoner-2",  "Prisoner-1", "SecretElevator"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"HugeWHouse-2", "HugeWHouse-1",  "FirstFFRoom", "MainFFRoom",
+                                                       "Extra-1",      "Extra-2",       "Prisoner-3",  "Prisoner-2",
+                                                       "Prisoner-1",   "SecretElevator"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 36
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "NearingTop-2",   "NearingTop-1",   "EnteredMine",    "X-Left-1",      "X-Left-2",       "X-Left-3",
     "X-Right-1",      "X-Right-2",      "X-Right-3",      "AboutToLeave",  "PipeDemoBackup", "PipeDemo",
     "EscapeDoor-Bar", "EscapeDoor-2",   "EscapeDoor-1",   "Music-Cave",    "Music-Terrain",  "Music-MineCar2",
     "Music-MineCar1", "Music-Main5",    "Music-Main4",    "Music-Main3",   "Music-Main2",    "Music-Main1",
     "Music-Second1",  "Music-PreShip2", "Music-PreShip1", "Music-Key4",    "Music-Key3",     "Music-Key2",
     "Music-Key1",     "Music-Dungeon2", "Music-Dungeon1", "PlayerCheat-3", "PlayerCheat-1",  "PrisonCinema"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 7
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbEnergyPumpB", "AmbSwitch41", "Powerup pickup", "AmbSwitch31",
-                                      "AmbMineCar",     "AmbFurn21",   "Siren"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {
+    "AmbEnergyPumpB", "AmbSwitch41", "Powerup pickup", "AmbSwitch31", "AmbMineCar", "AmbFurn21", "Siren"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 0
-const char **Texture_names = NULL;
-int *Texture_indexes = NULL;
+static const char **Texture_names = NULL;
+static int *Texture_indexes = NULL;
 
 #define NUM_PATH_NAMES 10
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCam",   "IntroShip",   "CameraShow", "EscapeRoute-1", "MineCart-1",
-                                    "MineCart-2", "CapturedCam", "Captured",   "PipeDemo",      "PrisonCinema"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"IntroCam",   "IntroShip",   "CameraShow",  "EscapeRoute-1",
+                                                       "MineCart-1", "MineCart-2",  "CapturedCam", "Captured",
+                                                       "PipeDemo",   "PrisonCinema"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 0
-const char **Matcen_names = NULL;
-int *Matcen_indexes = NULL;
+static const char **Matcen_names = NULL;
+static int *Matcen_indexes = NULL;
 
 #define NUM_GOAL_NAMES 8
-const char *Goal_names[NUM_GOAL_NAMES] = {"Destroy secondary forcefield generator",
-                                    "Shoot switches to avoid forcefield",
-                                    "Destroy primary forcefield generators",
-                                    "Disable secondary forcefield controls",
-                                    "Disable primary forcefield controls",
-                                    "Get past the blocked entrance",
-                                    "Rescue the Prisoner",
-                                    "Release the prisoner"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Destroy secondary forcefield generator",
+                                                       "Shoot switches to avoid forcefield",
+                                                       "Destroy primary forcefield generators",
+                                                       "Disable secondary forcefield controls",
+                                                       "Disable primary forcefield controls",
+                                                       "Get past the blocked entrance",
+                                                       "Rescue the Prisoner",
+                                                       "Release the prisoner"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 16
-const char *Message_names[NUM_MESSAGE_NAMES] = {"Work",
-                                          "FirstCamera",
-                                          "ForcefieldDisabled",
-                                          "MainDestroyed",
-                                          "ForcefieldsDisabled",
-                                          "ForcefieldFirst",
-                                          "PickupKey",
-                                          "DoorUnlocked",
-                                          "Spotted",
-                                          "GotHim",
-                                          "FreeAtLast",
-                                          "GoUpLeft",
-                                          "PipeDemo",
-                                          "Reroute",
-                                          "All6Deactive",
-                                          "DestroyThese"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"Work",
+                                                             "FirstCamera",
+                                                             "ForcefieldDisabled",
+                                                             "MainDestroyed",
+                                                             "ForcefieldsDisabled",
+                                                             "ForcefieldFirst",
+                                                             "PickupKey",
+                                                             "DoorUnlocked",
+                                                             "Spotted",
+                                                             "GotHim",
+                                                             "FreeAtLast",
+                                                             "GoUpLeft",
+                                                             "PipeDemo",
+                                                             "Reroute",
+                                                             "All6Deactive",
+                                                             "DestroyThese"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

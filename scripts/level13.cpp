@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -713,141 +728,141 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_133 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_125 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_130 = 0;
-int ScriptActionCtr_129 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_131 = 0;
-int ScriptActionCtr_132 = 0;
-int ScriptActionCtr_134 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_133 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_130 = 0;
+static int ScriptActionCtr_129 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_131 = 0;
+static int ScriptActionCtr_132 = 0;
+static int ScriptActionCtr_134 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1310,8 +1325,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1477,177 +1492,179 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 1
-const char *Door_names[NUM_DOOR_NAMES] = {"Engine Core Aux Do"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"Engine Core Aux Do"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 88
-const char *Object_names[NUM_OBJECT_NAMES] = {"Bay 62 FusableLink",
-                                        "Bay 62 Lance1",
-                                        "Bay 62 Lance2",
-                                        "Engine Spew 1",
-                                        "Engine Spew 2",
-                                        "Intake1",
-                                        "Intake2",
-                                        "Engine1",
-                                        "Engine2",
-                                        "Engine3",
-                                        "Engine Spew 3",
-                                        "Core Switch3",
-                                        "Core Switch2",
-                                        "Core Switch1",
-                                        "Q Door Eng",
-                                        "Lvl E Q Door",
-                                        "Leader Trooper",
-                                        "Eng Cam2",
-                                        "Eng Viewer",
-                                        "Primer Spew 1",
-                                        "Primer Spew 2",
-                                        "Primer Spew 3",
-                                        "Primer Fuse",
-                                        "Exhaust Cooler",
-                                        "Exhaust Patrol1",
-                                        "Exhaust Patrol2",
-                                        "Acc FloorSpew",
-                                        "Aft Well Turret1",
-                                        "Aft Well Commander",
-                                        "Aft Well Turret2",
-                                        "Aft Matcen Switch",
-                                        "Q Door",
-                                        "Q Door D deck",
-                                        "Q Door Exp Well",
-                                        "Q Door B Deck",
-                                        "Q Door C Acc",
-                                        "Q Door Acc1",
-                                        "Q Door Acc2",
-                                        "Q Door Core Acc",
-                                        "Q Door E Deck",
-                                        "Q Door 4way Acc",
-                                        "Q Door Acc0",
-                                        "Q Door A Deck",
-                                        "Q Door D Deck2",
-                                        "Bay62 Landing Door",
-                                        "62Banging",
-                                        "Core Link",
-                                        "Bay 36 Link",
-                                        "Main Deck Link",
-                                        "Bay 62 Data Link",
-                                        "AftMatcen Head Lin",
-                                        "Stern Data Arm",
-                                        "Bad White",
-                                        "Bad White Cage",
-                                        "Bad Tailbot",
-                                        "Bad Tailbot Cage",
-                                        "Air Spewer1",
-                                        "Air Spewer2",
-                                        "Floor Grid Spewer",
-                                        "Floor Spewer",
-                                        "Jeffrey1 Spew",
-                                        "Jeffry 2 Spew",
-                                        "Engine Core Aux Do",
-                                        "Jugg Storage",
-                                        "Recon Interface",
-                                        "ST Hall Monitor",
-                                        "Bay 36 Cam",
-                                        "Aft Well Cam",
-                                        "Saw U Cam",
-                                        "DeathStar Hall Cam",
-                                        "Main Hall Josh",
-                                        "A Deck Cam",
-                                        "Informant Scrubber",
-                                        "Aft Matcen Cam",
-                                        "Main Deck Cam",
-                                        "Core Cam",
-                                        "Bay 62 Matcen Fuse",
-                                        "Missile Exhaust",
-                                        "Spyhunter1",
-                                        "Sub Squid",
-                                        "Josh Act",
-                                        "FlameRas1",
-                                        "FlameRas2",
-                                        "ST Hall Monitor2",
-                                        "ST Hallmonitor3",
-                                        "ST HallMonitor4",
-                                        "DatShip1",
-                                        "Aft Matcen Hole"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"Bay 62 FusableLink",
+                                                           "Bay 62 Lance1",
+                                                           "Bay 62 Lance2",
+                                                           "Engine Spew 1",
+                                                           "Engine Spew 2",
+                                                           "Intake1",
+                                                           "Intake2",
+                                                           "Engine1",
+                                                           "Engine2",
+                                                           "Engine3",
+                                                           "Engine Spew 3",
+                                                           "Core Switch3",
+                                                           "Core Switch2",
+                                                           "Core Switch1",
+                                                           "Q Door Eng",
+                                                           "Lvl E Q Door",
+                                                           "Leader Trooper",
+                                                           "Eng Cam2",
+                                                           "Eng Viewer",
+                                                           "Primer Spew 1",
+                                                           "Primer Spew 2",
+                                                           "Primer Spew 3",
+                                                           "Primer Fuse",
+                                                           "Exhaust Cooler",
+                                                           "Exhaust Patrol1",
+                                                           "Exhaust Patrol2",
+                                                           "Acc FloorSpew",
+                                                           "Aft Well Turret1",
+                                                           "Aft Well Commander",
+                                                           "Aft Well Turret2",
+                                                           "Aft Matcen Switch",
+                                                           "Q Door",
+                                                           "Q Door D deck",
+                                                           "Q Door Exp Well",
+                                                           "Q Door B Deck",
+                                                           "Q Door C Acc",
+                                                           "Q Door Acc1",
+                                                           "Q Door Acc2",
+                                                           "Q Door Core Acc",
+                                                           "Q Door E Deck",
+                                                           "Q Door 4way Acc",
+                                                           "Q Door Acc0",
+                                                           "Q Door A Deck",
+                                                           "Q Door D Deck2",
+                                                           "Bay62 Landing Door",
+                                                           "62Banging",
+                                                           "Core Link",
+                                                           "Bay 36 Link",
+                                                           "Main Deck Link",
+                                                           "Bay 62 Data Link",
+                                                           "AftMatcen Head Lin",
+                                                           "Stern Data Arm",
+                                                           "Bad White",
+                                                           "Bad White Cage",
+                                                           "Bad Tailbot",
+                                                           "Bad Tailbot Cage",
+                                                           "Air Spewer1",
+                                                           "Air Spewer2",
+                                                           "Floor Grid Spewer",
+                                                           "Floor Spewer",
+                                                           "Jeffrey1 Spew",
+                                                           "Jeffry 2 Spew",
+                                                           "Engine Core Aux Do",
+                                                           "Jugg Storage",
+                                                           "Recon Interface",
+                                                           "ST Hall Monitor",
+                                                           "Bay 36 Cam",
+                                                           "Aft Well Cam",
+                                                           "Saw U Cam",
+                                                           "DeathStar Hall Cam",
+                                                           "Main Hall Josh",
+                                                           "A Deck Cam",
+                                                           "Informant Scrubber",
+                                                           "Aft Matcen Cam",
+                                                           "Main Deck Cam",
+                                                           "Core Cam",
+                                                           "Bay 62 Matcen Fuse",
+                                                           "Missile Exhaust",
+                                                           "Spyhunter1",
+                                                           "Sub Squid",
+                                                           "Josh Act",
+                                                           "FlameRas1",
+                                                           "FlameRas2",
+                                                           "ST Hall Monitor2",
+                                                           "ST Hallmonitor3",
+                                                           "ST HallMonitor4",
+                                                           "DatShip1",
+                                                           "Aft Matcen Hole"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 3
-const char *Room_names[NUM_ROOM_NAMES] = {"Engine", "Core Acc", "Primer Chamber"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"Engine", "Core Acc", "Primer Chamber"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 40
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"Bay 62 PersonDr",
-                                          "Main Deck Ppl Door",
-                                          "Person Door2",
-                                          "Ppl Door Sub",
-                                          "Primer Damaged",
-                                          "CoreEffect",
-                                          "E Acc Matcen Trigge",
-                                          "Core Forcefield Acc",
-                                          "Missile1a",
-                                          "MHull-C",
-                                          "MHull-B",
-                                          "MHull-A",
-                                          "MHull-9",
-                                          "MHull-8",
-                                          "MHull-7",
-                                          "MHull-6",
-                                          "MHull-5",
-                                          "MHull-4",
-                                          "MHull-3",
-                                          "MHull-2",
-                                          "MHull-1",
-                                          "MCargo-4",
-                                          "MCargo-3",
-                                          "MCargo-2",
-                                          "MCargo-1",
-                                          "MStern-5",
-                                          "MStern-4",
-                                          "MStern-3",
-                                          "MStern-2",
-                                          "MStern-1",
-                                          "MAft-7",
-                                          "MAft-6",
-                                          "MAft-5",
-                                          "MAft-4",
-                                          "MAft-3",
-                                          "MAft-2",
-                                          "MAft-1",
-                                          "FlameRasTrigger",
-                                          "StreamAudio1",
-                                          "StreamAudio2"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {"Bay 62 PersonDr",
+                                                             "Main Deck Ppl Door",
+                                                             "Person Door2",
+                                                             "Ppl Door Sub",
+                                                             "Primer Damaged",
+                                                             "CoreEffect",
+                                                             "E Acc Matcen Trigge",
+                                                             "Core Forcefield Acc",
+                                                             "Missile1a",
+                                                             "MHull-C",
+                                                             "MHull-B",
+                                                             "MHull-A",
+                                                             "MHull-9",
+                                                             "MHull-8",
+                                                             "MHull-7",
+                                                             "MHull-6",
+                                                             "MHull-5",
+                                                             "MHull-4",
+                                                             "MHull-3",
+                                                             "MHull-2",
+                                                             "MHull-1",
+                                                             "MCargo-4",
+                                                             "MCargo-3",
+                                                             "MCargo-2",
+                                                             "MCargo-1",
+                                                             "MStern-5",
+                                                             "MStern-4",
+                                                             "MStern-3",
+                                                             "MStern-2",
+                                                             "MStern-1",
+                                                             "MAft-7",
+                                                             "MAft-6",
+                                                             "MAft-5",
+                                                             "MAft-4",
+                                                             "MAft-3",
+                                                             "MAft-2",
+                                                             "MAft-1",
+                                                             "FlameRasTrigger",
+                                                             "StreamAudio1",
+                                                             "StreamAudio2"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 4
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbExplosionFarC", "AmbDistantBangMany", "Powerup pickup", "HudMessage"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbExplosionFarC", "AmbDistantBangMany", "Powerup pickup",
+                                                         "HudMessage"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 0
-const char **Texture_names = NULL;
-int *Texture_indexes = NULL;
+static const char **Texture_names = NULL;
+static int *Texture_indexes = NULL;
 
 #define NUM_PATH_NAMES 13
-const char *Path_names[NUM_PATH_NAMES] = {"AFTMatcen Cine", "EndLevelCamPath",  "PlayerEndPath", "Aft Matcen1",
-                                    "AftMatcenArt2",  "AftMatcenArt3",    "AftMatcenArt1", "AftMatcenSwCam",
-                                    "LeaderCamPath",  "StormtrooperCine", "CamIntroPath",  "PlayerIntroPath",
-                                    "Dat Ship1"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {
+    "AFTMatcen Cine", "EndLevelCamPath", "PlayerEndPath",  "Aft Matcen1",   "AftMatcenArt2",
+    "AftMatcenArt3",  "AftMatcenArt1",   "AftMatcenSwCam", "LeaderCamPath", "StormtrooperCine",
+    "CamIntroPath",   "PlayerIntroPath", "Dat Ship1"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 9
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Aft Matcen1",    "Aft Matcen2",      "Aft Matcen3",
-                                        "Bay 62 Matcen1", "Bay 62 Matcen2",   "Bay 62 Matcen3",
-                                        "Bay 62 Matcen4", "Cargo Acc Matcen", "Aft Matcen4"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {"Aft Matcen1",    "Aft Matcen2",      "Aft Matcen3",
+                                                           "Bay 62 Matcen1", "Bay 62 Matcen2",   "Bay 62 Matcen3",
+                                                           "Bay 62 Matcen4", "Cargo Acc Matcen", "Aft Matcen4"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 5
-const char *Goal_names[NUM_GOAL_NAMES] = {"ShutdownEngineCore", "Disable Aft Matcen", "Destroy StormTrooper Leader",
-                                    "Eliminate Remaining StormTroopers", "Reduce Infected Robot Threat"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {
+    "ShutdownEngineCore", "Disable Aft Matcen", "Destroy StormTrooper Leader", "Eliminate Remaining StormTroopers",
+    "Reduce Infected Robot Threat"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 39
-const char *Message_names[NUM_MESSAGE_NAMES] = {
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {
     "PplDoors1",      "Bay62Lance",        "EngineDown",   "NoEntry",        "EngineMisfire",  "SecondaryObjective",
     "EngineTakover",  "PrimerDamage",      "CoreRads",     "LevelObjA",      "NoEntry62",      "CoreInfo2",
     "CoreInfo1",      "BayInfoGame",       "BayInfoHud",   "MainDeckGame",   "MainDeckHud",    "Bay62Game",
@@ -1655,7 +1672,7 @@ const char *Message_names[NUM_MESSAGE_NAMES] = {
     "EndMission",     "GotReconInterface", "RobotCount",   "EndCine",        "LevelObjtives1", "LevelObjtives2",
     "LevelObjtives3", "LeaderTaunt1",      "LeaderTaunt2", "LeaderTaunt3",   "LeaderTaunt4",   "LeaderTaunt5",
     "IntroText",      "Bay62Fuse",         "SpyPlead"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

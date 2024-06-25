@@ -105,6 +105,8 @@
 #define MAX_SCRIPT_LEN 40
 #define MAX_FORMAT_STRING 300
 
+extern uint16_t DLLPXOPort;
+
 typedef struct s_pxo_game_list {
   /*
   char name[MAX_GAME_NAME_LEN];
@@ -129,17 +131,9 @@ typedef struct s_pxo_game_list {
 
 int LoginMasterTracker();
 int MainMultiplayerMenu();
-int SearchMasterTrackerGameMenu();
 int StartMultiplayerGameMenu();
 void MultiplayerOptionsMenu();
-void DoMTFrame();
-void DoMTGameOver();
 int MTVersionCheck();
-int JoinNewLobby(const char *lobby);
-const char *SendWhisper(const char *name);
-int JoinPrivateLobby();
-int FindPilot();
-int GetPilotStats(const char *pilot);
 void AutoLoginAndJoinGame();
-int ShowMessageOfTheDay();
+
 #endif

@@ -64,7 +64,7 @@ struct cc_packet {
 };
 
 // Sends a command out to a robot
-bool SendCommand(int me, int it, char command, void *ptr) {
+static inline bool SendCommand(int me, int it, char command, void *ptr) {
   bot_com com;
 
   com.action = command;

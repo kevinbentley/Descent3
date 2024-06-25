@@ -298,6 +298,7 @@
 // We borrow a lot of code from the savegame system
 #include "gamesave.h"
 #include "demofile.h"
+#include "menu.h"
 
 extern bool is_multi_demo;
 static CFILE *Demo_cfp = NULL;
@@ -734,7 +735,6 @@ int DemoPlaybackFile(char *filename) {
   return 1;
 }
 
-extern bool IsRestoredGame;
 int DemoReadHeader() {
   char szsig[10];
   int16_t ver;

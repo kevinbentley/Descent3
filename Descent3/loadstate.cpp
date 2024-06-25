@@ -216,6 +216,8 @@
 #include "weather.h"
 #include "cockpit.h"
 #include "hud.h"
+#include "menu.h"
+#include "PHYSICS.H"
 
 #include <algorithm>
 
@@ -258,7 +260,6 @@ void IncreaseRestoreCount(const char *file) {
   }
 }
 
-extern bool IsRestoredGame;
 ///////////////////////////////////////////////////////////////////////////////
 //	loads a game from a given slot.
 int LoadGameState(const char *pathname) {
@@ -813,9 +814,6 @@ int LGSPlayers(CFILE *fp) {
 
   return LGS_OK;
 }
-
-extern int Physics_NumLinked;
-extern int PhysicsLinkList[MAX_OBJECTS];
 
 int inreadobj = 0;
 

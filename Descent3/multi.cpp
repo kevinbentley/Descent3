@@ -1708,7 +1708,6 @@
 #include "psrand.h"
 
 #include "../md5/md5.h"
-void MultiProcessShipChecksum(MD5 *md5, int ship_index);
 
 
 #include <algorithm>
@@ -1720,9 +1719,9 @@ player_pos_suppress Player_pos_fix[MAX_PLAYERS];
 // #define RELIABLE_SECONDARIES
 
 // If this is true, PXO games won't save the kills, deaths, etc.
-bool Multi_no_stats_saved = false;
+static bool Multi_no_stats_saved = false;
 
-uint32_t Netgame_curr_handle = 1;
+static uint32_t Netgame_curr_handle = 1;
 
 uint16_t Local_object_list[MAX_OBJECTS];
 uint16_t Server_object_list[MAX_OBJECTS];
@@ -1733,8 +1732,8 @@ int Multi_packet_tracking[255];
 #endif
 
 // This is for clearing lightmapped objects on the client/server
-int Num_client_lm_objects, Num_server_lm_objects;
-uint16_t Client_lightmap_list[MAX_OBJECTS], Server_lightmap_list[MAX_OBJECTS];
+static int Num_client_lm_objects, Num_server_lm_objects;
+static uint16_t Client_lightmap_list[MAX_OBJECTS], Server_lightmap_list[MAX_OBJECTS];
 
 // This is for breakable glass
 uint16_t Broke_glass_rooms[MAX_BROKE_GLASS], Broke_glass_faces[MAX_BROKE_GLASS];
@@ -1743,8 +1742,8 @@ int Num_broke_glass = 0;
 // This is for getting out a menu if in multiplayer
 bool Multi_bail_ui_menu = false;
 
-uint32_t Multi_generic_match_table[MAX_OBJECT_IDS];
-uint32_t Multi_weapon_match_table[MAX_WEAPONS];
+static uint32_t Multi_generic_match_table[MAX_OBJECT_IDS];
+static uint32_t Multi_weapon_match_table[MAX_WEAPONS];
 uint8_t Multi_receive_buffer[MAX_RECEIVE_SIZE];
 
 uint8_t Multi_send_buffer[MAX_NET_PLAYERS][MAX_GAME_DATA_SIZE];
@@ -1753,7 +1752,7 @@ int Multi_send_size[MAX_NET_PLAYERS];
 player_fire_packet Player_fire_packet[MAX_NET_PLAYERS];
 float Multi_last_sent_time[MAX_NET_PLAYERS][MAX_NET_PLAYERS];
 
-uint8_t Multi_reliable_send_buffer[MAX_NET_PLAYERS][MAX_GAME_DATA_SIZE];
+static uint8_t Multi_reliable_send_buffer[MAX_NET_PLAYERS][MAX_GAME_DATA_SIZE];
 int Multi_reliable_send_size[MAX_NET_PLAYERS];
 float Multi_reliable_last_send_time[MAX_NET_PLAYERS];
 uint8_t Multi_reliable_sent_position[MAX_NET_PLAYERS];
@@ -1792,8 +1791,8 @@ char Tracker_id[TRACKER_ID_LEN];
 
 vmt_descent3_struct MTPilotinfo[MAX_NET_PLAYERS];
 
-int16_t Multi_kills[MAX_NET_PLAYERS];
-int16_t Multi_deaths[MAX_NET_PLAYERS];
+static int16_t Multi_kills[MAX_NET_PLAYERS];
+static int16_t Multi_deaths[MAX_NET_PLAYERS];
 
 int Got_new_game_time = 0;
 
@@ -1802,19 +1801,19 @@ float turret_holder[MAX_COOP_TURRETS];
 
 #define DATA_CHUNK_SIZE 450
 
-int Bandwidth_throttle = 0;
+static int Bandwidth_throttle = 0;
 
 int Use_file_xfer = 1;
 
-int Reliable_count = 0;
-int Last_reliable_count = 0;
+static int Reliable_count = 0;
+static int Last_reliable_count = 0;
 
-float Time_last_taunt_request = 0.0f;
+static float Time_last_taunt_request = 0.0f;
 
 // Display logos or not?
 bool Multi_logo_state = true;
 
-bool Multi_Expect_demo_object_flags = false;
+static bool Multi_Expect_demo_object_flags = false;
 
 // Heartbeat flag
 bool Got_heartbeat = false;
@@ -1823,11 +1822,232 @@ bool Got_heartbeat = false;
 char Multi_message_of_the_day[HUD_MESSAGE_LENGTH * 2] = {0};
 
 // Local function prototypes
-void SendDataChunk(int playernum);
-void DenyFile(int playernum, int filenum, int file_who);
-void MultiDoFileCancelled(uint8_t *data);
-void MultiDoCustomPlayerData(uint8_t *data);
-char *GetFileNameFromPlayerAndID(int16_t playernum, int16_t id);
+static void SendDataChunk(int playernum);
+static void DenyFile(int playernum, int filenum, int file_who);
+static void MultiDoFileCancelled(uint8_t *data);
+static void MultiDoCustomPlayerData(uint8_t *data);
+static char *GetFileNameFromPlayerAndID(int16_t playernum, int16_t id);
+static void BailOnMultiplayer(const char *message);
+static void MultiAddPositionData(vector *pos, uint8_t *data, int *count);
+static void MultiExtractPositionData(vector *vec, uint8_t *data, int *count);
+static void MultiSendBadChecksum(int slot);
+static void DoNextPlayerFile(int playernum);
+static void MultiDoRobotFire(uint8_t *data);
+/// Does a cool vis effect to announce a player or powerup.
+static void MultiAnnounceEffect(object *obj, float size, float time);
+/// Returns to the slot number of the player that the passed in address belongs to.
+static int MultiMatchPlayerToAddress(network_address *from_addr);
+/// Gets info about a player.
+/// Server only.
+static void MultiDoMyInfo(uint8_t *data);
+/// Tell a client about the players connected.
+/// Server only.
+static void MultiDoRequestPlayers(uint8_t *data);
+/// Tell a client about the buildings.
+/// Server only.
+void MultiDoRequestBuildings(uint8_t *data);
+/// Tell a client about the objects.
+/// Server only.
+static void MultiDoRequestObjects(uint8_t *data);
+/// Tell a client about the objects.
+/// Server only.
+static void MultiDoRequestWorldStates(uint8_t *data);
+/// The server is telling me about a player in the game.
+/// Client only.
+static void MultiDoPlayer(uint8_t *data);
+static void MultiDoPlayerEnteredGame(uint8_t *data);
+/// Sends a new player to existing players.
+/// Sends to "slot" and describes player "which".
+/// Server only.
+static void MultiSendPlayerEnteredGame(int which);
+/// Client is saying that he's entering the game.
+/// Server only.
+static void MultiDoEnteringGame(uint8_t *data);
+/// Tell the server I'm entering the game
+static void MultiSendEnteringGame();
+/// The server says to damage a player, so do it!
+static void MultiDoDamagePlayer(uint8_t *data);
+/// Server is telling us that its done sending players.
+static void MultiDoDonePlayers(uint8_t *data);
+/// Server is telling us that its done sending buildings.
+static void MultiDoDoneBuildings(uint8_t *data);
+/// Server is telling us that its done sending objects.
+static void MultiDoDoneObjects(uint8_t *data);
+/// Server is telling us that its done sending objects.
+static void MultiDoDoneWorldStates(uint8_t *data);
+static void MultiDoPlayerPos(uint8_t *data);
+/// Handle robot position
+static void MultiDoRobotPos(uint8_t *data);
+/// Returns \c true if there is enough ammo to allow this player to fire, else \c false .
+static bool MultiEnoughAmmoToFire(int slot, int wb_index);
+static void MultiSubtractAmmoToFire(int slot, int wb_index);
+/// Does player firing.
+static void MultiDoFirePlayerWB(uint8_t *data);
+/// Tell everyone I'm quitting.
+static void MultiSendLeaveGame();
+/// Releases a missile that belongs to a player
+static void MultiDoReleaseTimeoutMissile(uint8_t *data);
+/// Tells all the clients who are trying to join to piss off until the next level.
+static void MultiSendConnectBail();
+/// Server is telling us to bail on our connection.
+static void MultiDoConnectBail();
+/// server is telling us the level has ended
+static void MultiDoLevelEnded(uint8_t *data);
+/// Do leave game stuff
+static void MultiDoLeaveGame(uint8_t *data);
+static void MultiDoServerQuit(uint8_t *data);
+static void MultiDoDisconnect(uint8_t *data);
+static void MultiDoServerRejectedChecksum(uint8_t *data);
+/// Lets us know if the server says its okay to join.
+static void MultiDoJoinResponse(uint8_t *data);
+/// Returns an index of a unconnected slot;
+/// Returns -1 if there are none.
+static int MultiFindFreeSlot();
+/// Someone is asking to join our game.
+/// Tell them if it's okay.
+static void MultiDoAskToJoin(uint8_t *data, network_address *from_addr);
+/// Someone is asking about our game.
+static void MultiDoGetGameInfo(uint8_t *data, network_address *from_addr);
+/// Someone is asking about our PXO game
+static void MultiDoGetPXOGameInfo(uint8_t *data, network_address *from_addr);
+/// A server is telling us about a game we've requested.
+static void MultiDoGameInfo(uint8_t *data, network_address *from_addr);
+/// Blowup a building because the server told us so.
+static void MultiDoBlowupBuilding(uint8_t *data);
+/// Server is telling us about buildings to get rid of.
+static void MultiDoBuilding(uint8_t *data);
+/// Server is telling us the world state.
+static void MultiDoWorldStates(uint8_t *data);
+/// Server is telling us about objects in the game
+static void MultiDoJoinObjects(uint8_t *data);
+/// Starts a death sequence of a player
+static void MultiDoPlayerDead(uint8_t *data);
+/// A player is coming back from the dead... restore his ship!
+static void MultiDoRenewPlayer(uint8_t *data);
+/// Tell everyone that a player is coming back from the dead.
+static void MultiSendRenewPlayer(int slot);
+/// This player says he's done dying.
+static void MultiDoEndPlayerDeath(uint8_t *data);
+static void MultiDoGameTimeReq(uint8_t *data, network_address *from_addr);
+static void MultiDoSetGameTime(uint8_t *data);
+/// Prints out a message we got from the server.
+static void MultiDoMessageFromServer(uint8_t *data);
+/// Prints out a message we got from the server.
+static void MultiDoMessageToServer(uint8_t *data);
+/// Executes a dll that the server says to.
+static void MultiDoExecuteDLL(uint8_t *data);
+/// Server is telling us to create an object.
+static void MultiDoObject(uint8_t *data);
+static void MultiDoGuidedInfo(uint8_t *data);
+/// Guided missile release.
+static void MultiDoMissileRelease(int slot, uint8_t *data);
+/// Calls the scripts packet extractor code.
+static void MultiDoSpecialPacket(uint8_t *data);
+/// Server is telling us to remove an object.
+static void MultiDoRemoveObject(uint8_t *data);
+/// Repositions a powerup to be where it should be.
+static void MultiDoPowerupReposition(uint8_t *data);
+/// Client is telling us about weapons and energy he has.
+static void MultiDoWeaponsLoad(uint8_t *data);
+/// Server is telling us to start/stop and on/off weapon.
+static void MultiDoOnOff(uint8_t *data);
+/// Server is telling us to apply damage to a player.
+static void MultiDoAdditionalDamage(uint8_t *data);
+/// Someone wants us to give them shields.
+static void MultiDoRequestShields(uint8_t *data);
+/// Someone wants us to damage them.
+static void MultiDoRequestDamage(uint8_t *data);
+/// Server is telling us to create a countermeasure.
+static void MultiDoRequestCountermeasure(uint8_t *data);
+/// Server is telling us about a player who is changing his observer mode
+static void MultiDoObserverChange(uint8_t *data);
+/// Someone is asking us for permission to enter observer mode
+static void MultiDoRequestToObserve(uint8_t *data);
+/// Server is telling us about players that we can see
+static void MultiDoVisiblePlayers(uint8_t *data);
+static void MultiDoRequestPeerDamage(uint8_t *data, network_address *from_addr);
+/// Deletes all the objects in the level except for players.
+/// Makes all the players ghosts.
+static void MultiMassageAllObjects(int kill_powerups, int kill_robots);
+/// Given a string, returns a unique integer for that string.
+static uint32_t MultiGetUniqueIDFromString(char *plainstring);
+/// Handle robot damage.
+static void MultiDoRobotExplode(uint8_t *data);
+/// Handle message from server that robot/object took damage.
+static void MultiDoRobotDamage(uint8_t *data);
+/// Handle an animation update.
+static void MultiDoObjAnimUpdate(uint8_t *data);
+/// Play a 3d sound that the server told us about.
+static void MultiDoPlay3dSound(uint8_t *data);
+/// Play the robot sound that the server told us about.
+static void MultiDoRobotFireSound(uint8_t *data);
+/// Handle a turret update from the server.
+static void MultiDoTurretUpdate(uint8_t *data);
+/// Handle a client use inventory item packet.
+static void MultiDoClientInventoryUseItem(int slot, uint8_t *data);
+/// Handle a remove item from inventory.
+static void MultiDoClientInventoryRemoveItem(int slot, uint8_t *data);
+static void MultiDoAudioTauntTime(uint8_t *data);
+static void MultiDoBytesSent(uint8_t *data);
+static void MultiSendPPSSet(int pps);
+static void MultiDoPPSSet(uint8_t *data, int slot);
+static void MultiDoGreetings(uint8_t *data, network_address *addr);
+static void MultiDoFileReq(uint8_t *data);
+static void MultiDoFileDenied(uint8_t *data);
+static void MultiDoFileData(uint8_t *data);
+static void MultiDoFileAck(uint8_t *data);
+static void MultiDoGhostObject(uint8_t *data);
+#pragma mark - Ping functions to find the players latency
+static void MultiDoPing(uint8_t *data, network_address *addr);
+static void MultiDoPong(uint8_t *data);
+static void MultiDoLagInfo(uint8_t *data);
+#pragma mark -
+/// The server is telling us to play an audio taunt.
+static void MultiDoPlayTaunt(uint8_t *data);
+/// Tell the clients to play an audio taunt.
+static void MultiSendPlayTaunt(int pnum, int index);
+/// Process a request by a client to play an audio taunt.
+static void MultiDoRequestPlayTaunt(uint8_t *data);
+/// The server is telling us that about a player's message-type state (is [not] typing a message).
+static void MultiDoTypeIcon(uint8_t *data);
+/// Tell the clients that a player is [not] typing a message.
+static void MultiSendTypeIcon(int pnum, bool typing_message);
+/// Process a request by a client that he is [not] typing a message.
+static void MultiDoRequestTypeIcon(uint8_t *data);
+static void MultiDoAiWeaponFlags(uint8_t *data);
+static void MultiDoAttach(uint8_t *data);
+static void MultiDoAttachRad(uint8_t *data);
+static void MultiDoUnattach(uint8_t *data);
+static void MultiDoThiefSteal(uint8_t *data);
+static void MultiDoPermissionToFire(uint8_t *data);
+static void MultiSendPermissionToFire(int pnum);
+/// A client is asking for permission to fire.
+static void MultiDoRequestToFire(uint8_t *data);
+/// Server is processing a request for a marker.
+static void MultiDoRequestMarker(uint8_t *data);
+/// The server is telling me to adjust my position.
+static void MultiDoAdjustPosition(uint8_t *data);
+/// Server is telling the client to update his position.
+static void MultiSendAdjustPosition(int slot, float timestamp);
+/// Client is asking permission to move.
+static void MultiDoRequestToMove(uint8_t *data);
+/// Server is giving us a list of objects that aren't visible.
+static void MultiDoGenericNonVis(uint8_t *data);
+/// Server is telling us to break some glass.
+static void MultiDoBreakGlass(uint8_t *data);
+/// Server is telling me to strip bare!
+static void MultiDoStripPlayer(int slot, uint8_t *data);
+/// Server is telling me about a player rank.
+static void MultiDoInitialRank(uint8_t *data);
+/// A client is requesting a list of players... so give it to em!
+static void DoReqPlayerList(network_address *addr);
+static void DoPlayerListData(uint8_t *data, int len);
+/// Tell a player what ship they are supposed to switch to
+/// if the one they chose isn't allowed.
+static void MultiBashPlayerShip(int slot, char *ship);
+static void MultiDoBashPlayerShip(uint8_t *data);
+/// Takes the individual packet types and passes their data to the appropriate routines.
+static void MultiProcessData(uint8_t *data, int len, int slot, network_address *from_addr);
 
 // Multiplayer position flags
 #define MPF_AFTERBURNER 1 // Afterburner is on
@@ -2284,7 +2504,7 @@ int MultiMatchPlayerToAddress(network_address *from_addr) {
 // Gets info about a player
 // Server only
 extern int Buddy_handle[MAX_PLAYERS];
-bool AINotify(object *obj, uint8_t notify_type, void *info);
+extern bool AINotify(object *obj, uint8_t notify_type, void *info);
 void MultiDoMyInfo(uint8_t *data) {
   int count = 0;
   char ship_name[PAGENAME_LEN];
@@ -2643,7 +2863,7 @@ void MultiDoPlayer(uint8_t *data) {
 }
 
 // Tells all our clients about a new player entering the game
-void MultiSendNewPlayer(int slot) {}
+//void MultiSendNewPlayer(int slot) {}
 
 void MultiDoPlayerEnteredGame(uint8_t *data) {
   int count = 0;
@@ -4115,6 +4335,7 @@ void MultiDoGameInfo(uint8_t *data, network_address *from_addr) {
     Int3(); // How'd we get here?
 }
 
+// FIXME: MTS: unused?
 // Tells our clients that building exploded
 // Server only
 void MultiSendBlowupBuilding(int hit_objnum, int killer_objnum, float damage) {
@@ -4195,7 +4416,7 @@ void MultiDoBuilding(uint8_t *data) {
   Multi_num_buildings_changed = num;
 }
 
-doorway *GetDoorwayFromObject(int door_obj_handle);
+extern doorway *GetDoorwayFromObject(int door_obj_handle);
 // Server is telling us the world state
 void MultiDoWorldStates(uint8_t *data) {
   int count = 0;
@@ -5889,6 +6110,7 @@ void MultiSendWeaponsLoad() {
   nw_Send(&Netgame.server_address, data, count, 0);
 }
 
+// FIXME: MTS: Unused?
 // Tells the other players that a slot is starting/stopping its on/off weapon
 void MultiSendOnOff(object *obj, uint8_t on, uint8_t wb_index, uint8_t fire_mask) {
   int count = 0;
@@ -6351,6 +6573,7 @@ void MultiSendRequestPeerDamage(object *killer, int weapon_id, int damage_type, 
   nw_SendReliable(NetPlayers[Player_num].reliable_socket, data, count);
 }
 
+// FIXME: MTS: Unused?
 // Starts a new multiplayer game
 void StartNewMultiplayerGame() { SetGameState(GAMESTATE_LVLSTART); }
 
@@ -6414,7 +6637,7 @@ void MultiMassageAllObjects(int kill_powerups, int kill_robots) {
   }
 }
 
-int MultiGetShipChecksum(int ship_index);
+extern int MultiGetShipChecksum(int ship_index);
 // Starts multiplayer-specific stuff for a new level
 // Anything not specific to multiplayer should be in StartNewLevel()
 bool MultiStartNewLevel(int level) {
@@ -6527,6 +6750,7 @@ void MultiSendFullPacket(int slot, int flags) {
   Multi_send_size[slot] = 0;
 }
 
+// FIXME: MTS: Unused?
 // Sends a full packet out the the server
 // Resets the send_size variable
 // Client and Server
@@ -6700,7 +6924,7 @@ void MultiPaintGoalRooms(int *texcolors) {
   $$TABLE_TEXTURE "Yellowbase"
   */
 
-  const char *tnames[] = {"RedBase", "BlueBase", "GreenBase", "YellowBase"};
+  const char *const tnames[] = {"RedBase", "BlueBase", "GreenBase", "YellowBase"};
 
   for (i = 0; i < MAX_TEAMS; i++) {
     int roomnum = GetGoalRoomForTeam(i);
@@ -8977,7 +9201,7 @@ void MultiSendAdjustPosition(int slot, float timestamp) {
   nw_Send(&NetPlayers[slot].addr, data, count, 0);
 }
 
-float Last_update_time[MAX_PLAYERS];
+static float Last_update_time[MAX_PLAYERS];
 // Client is asking permission to move
 void MultiDoRequestToMove(uint8_t *data) {
   MULTI_ASSERT_NOMESSAGE(Netgame.local_role == LR_SERVER);
@@ -9435,7 +9659,7 @@ void MultiBashPlayerShip(int slot, char *ship) {
   nw_SendReliable(NetPlayers[slot].reliable_socket, outdata, count, true);
 }
 
-int ObjInitTypeSpecific(object *objp, bool reinitializing);
+extern int ObjInitTypeSpecific(object *objp, bool reinitializing);
 
 void MultiDoBashPlayerShip(uint8_t *data) {
   int count = 0;
@@ -9506,8 +9730,8 @@ void MultiSendHeartbeat() {
 }
 
 //-----------------------------------------------
-void MultiDoMSafeFunction(uint8_t *data);
-void MultiDoMSafePowerup(uint8_t *data);
+extern void MultiDoMSafeFunction(uint8_t *data);
+extern void MultiDoMSafePowerup(uint8_t *data);
 
 // This allows us to specify under what sequences certain packets are accepted
 #define ACCEPT_CONDITION(s, e)                                                                                         \

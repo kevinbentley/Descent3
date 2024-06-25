@@ -83,7 +83,7 @@ typedef int socklen_t;
 
 #include "CFtp.h"
 
-// MTS: only used in this file?
+// FIXME: MTS: only used in this file.
 #ifdef __LINUX__
 int FTPObjThread(void *obj)
 #else

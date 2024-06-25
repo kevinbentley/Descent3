@@ -47,6 +47,16 @@
 #include "AppConsole.h"
 #include "TaskSystem.h"
 #include "ddio_common.h"
+#include "mono.h"
+// #include "local_malloc.h"
+#include "pstring.h"
+#include "lnxcon.hpp"
+#include "ddio.h"
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
 
 static char *Con_raw_read_buf = nullptr; // The next buffer of text from user input
 static char *Con_raw_inp_buf = nullptr,
@@ -74,7 +84,7 @@ bool con_raw_Input(char *buf, int buflen) {
   return false;
 }
 
-void con_raw_Defer() {
+void con_raw_Defer(void) {
   int keypressed = ddio_KeyInKey();
 
   while (keypressed != 0) {

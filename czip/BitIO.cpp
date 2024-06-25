@@ -62,7 +62,7 @@ BITFILE *CZip::OpenInputBitFile(char *filename) {
   return (bit_file);
 }
 
-bool fexist(const char *filename) {
+static bool fexist(const char *filename) {
   FILE *cfp;
 
   cfp = fopen(filename, "rb");

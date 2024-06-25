@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -88,11 +103,11 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_005 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -151,9 +166,9 @@ struct tTextureInfo {
 
 #define NUM_MONITORS 11
 
-bool TextureInfoInitialized = false;
+static bool TextureInfoInitialized = false;
 
-tTextureInfo texture_info[NUM_MONITORS] = {
+static tTextureInfo texture_info[NUM_MONITORS] = {
     {"Beam Emitter Rm", 0, 1775}, {"EmitterRm DataTerm", 0, 50}, {"Room 51", 0, 2},
     {"SubObs DataTerm", 0, 50},   {"SubObs Console2", 0, 50},    {"Emitter Generator", 0, 286},
     {"Dock Console", 0, 50},      {"West Dock Console", 0, 50},  {"Room 69", 0, 125},
@@ -166,13 +181,13 @@ struct tMatcenInfo {
 
 #define NUM_MATCENS 14
 
-bool MatcenInfoInitialized = false;
+static bool MatcenInfoInitialized = false;
 
-tMatcenInfo matcen_info[NUM_MATCENS] = {{"StartingDock Matcen", 0}, {"West Dock", 0},      {"Parts Room", 0},
-                                        {"Con Room Matcen1", 0},    {"Powerup Rm1", 0},    {"Powerup Rm2", 0},
-                                        {"Powerup Rm3", 0},         {"Powerup Rm4", 0},    {"Powerup Rm5", 0},
-                                        {"SubObs Matcen1", 0},      {"SubObs Matcen2", 0}, {"SubObs Matcen3", 0},
-                                        {"Emitter Room Matcen", 0}, {"Radio Rm", 0}};
+static tMatcenInfo matcen_info[NUM_MATCENS] = {{"StartingDock Matcen", 0}, {"West Dock", 0},      {"Parts Room", 0},
+                                               {"Con Room Matcen1", 0},    {"Powerup Rm1", 0},    {"Powerup Rm2", 0},
+                                               {"Powerup Rm3", 0},         {"Powerup Rm4", 0},    {"Powerup Rm5", 0},
+                                               {"SubObs Matcen1", 0},      {"SubObs Matcen2", 0}, {"SubObs Matcen3", 0},
+                                               {"Emitter Room Matcen", 0}, {"Radio Rm", 0}};
 
 /*
 $$CATEGORIES
@@ -329,8 +344,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -496,49 +511,49 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 0
-const char **Door_names = NULL;
-int *Door_handles = NULL;
+static const char **Door_names = NULL;
+static int *Door_handles = NULL;
 
 #define NUM_OBJECT_NAMES 27
-const char *Object_names[NUM_OBJECT_NAMES] = {
+static const char *const Object_names[NUM_OBJECT_NAMES] = {
     "Spew1",  "Spew2",  "Spew3",  "Spew4",  "Spew5",     "Spew6",     "Spew7",     "Spew8",       "Spew9",
     "Spew10", "Spew11", "Spew12", "Spew13", "Spew14",    "Spew15",    "Spew16",    "Spew17",      "Spew18",
     "Spew19", "Spew20", "Spew21", "Spew22", "Big Spew1", "Big Spew2", "Big Spew3", "Repair Unit", "Wind Sound1"};
-int Object_handles[NUM_OBJECT_NAMES];
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 9
-const char *Room_names[NUM_ROOM_NAMES] = {"203", "201", "204", "198", "207", "206", "205", "195", "208"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"203", "201", "204", "198", "207", "206", "205", "195", "208"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 0
-const char **Trigger_names = NULL;
-int *Trigger_indexes = NULL;
-int *Trigger_faces = NULL;
-int *Trigger_rooms = NULL;
+static const char **Trigger_names = NULL;
+static int *Trigger_indexes = NULL;
+static int *Trigger_faces = NULL;
+static int *Trigger_rooms = NULL;
 
 #define NUM_SOUND_NAMES 3
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbExplosionFarC", "Briefstartup1", "AmbDroneCaveWind"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbExplosionFarC", "Briefstartup1", "AmbDroneCaveWind"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 0
-const char **Texture_names = NULL;
-int *Texture_indexes = NULL;
+static const char **Texture_names = NULL;
+static int *Texture_indexes = NULL;
 
 #define NUM_PATH_NAMES 0
-const char **Path_names = NULL;
-int *Path_indexes = NULL;
+static const char **Path_names = NULL;
+static int *Path_indexes = NULL;
 
 #define NUM_MATCEN_NAMES 0
-const char **Matcen_names = NULL;
-int *Matcen_indexes = NULL;
+static const char **Matcen_names = NULL;
+static int *Matcen_indexes = NULL;
 
 #define NUM_GOAL_NAMES 0
-const char **Goal_names = NULL;
-int *Goal_indexes = NULL;
+static const char **Goal_names = NULL;
+static int *Goal_indexes = NULL;
 
 #define NUM_MESSAGE_NAMES 0
-const char **Message_names = NULL;
-const char **Message_strings = NULL;
+static const char **Message_names = NULL;
+static const char **Message_strings = NULL;
 
 // ===============
 // InitializeDLL()

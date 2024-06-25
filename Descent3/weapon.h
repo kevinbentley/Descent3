@@ -326,9 +326,9 @@ extern float Primary_ramp_time, Secondary_ramp_time;
 
 extern int Num_weapons;
 extern weapon Weapons[MAX_WEAPONS];
-extern const char *Static_weapon_names[];
-extern int Static_weapon_names_msg[];
-extern int Static_weapon_ckpt_names[][2];
+extern const char *const Static_weapon_names[];
+extern const int Static_weapon_names_msg[];
+extern const int Static_weapon_ckpt_names[][2];
 
 // Sets all weapons to unused
 void InitWeapons();

@@ -62,7 +62,7 @@ static const uint32_t ice_pbox[32] = {
     0x00000002, 0x00000040, 0x00000800, 0x00001000, 0x00040000, 0x00100000, 0x02000000, 0x80000000};
 
 // key rotation schedule
-static const int ice_keyrot[16] = {0, 1, 2, 3, 2, 1, 3, 0, 1, 3, 2, 0, 3, 1, 0, 2};
+static constexpr int ice_keyrot[16] = {0, 1, 2, 3, 2, 1, 3, 0, 1, 3, 2, 0, 3, 1, 0, 2};
 
 //
 // 8-bit Galois Field multiplication of a by b, modulo m.

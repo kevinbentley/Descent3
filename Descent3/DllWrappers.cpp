@@ -200,7 +200,7 @@ void dSetAudioTaunts(bool enable) {
 
 // Changes the ship_index for a given player
 void ChangePlayerShipIndex(int pnum, int ship_index) {
-  int ObjInitTypeSpecific(object * objp, bool reinitializing);
+  extern int ObjInitTypeSpecific(object * objp, bool reinitializing);
 
   if (pnum < 0 || pnum >= MAX_PLAYERS)
     return;

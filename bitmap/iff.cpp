@@ -112,8 +112,8 @@ struct iff_bitmap_header {
   int16_t row_size;              // offset to next row
 };
 
-int16_t iff_transparent_color;
-int16_t iff_has_transparency; // 0=no transparency, 1=iff_transparent_color is valid
+static int16_t iff_transparent_color;
+static int16_t iff_has_transparency; // 0=no transparency, 1=iff_transparent_color is valid
 
 #define MIN(a, b) ((a < b) ? a : b)
 

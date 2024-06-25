@@ -42,8 +42,8 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
-int String_table_size = 0;
-char **String_table = NULL;
+static int String_table_size = 0;
+static char **String_table = NULL;
 static const char *_Error_string = "!!ERROR MISSING STRING!!";
 static const char *_Empty_string = "";
 const char *GetStringFromTable(int index) {

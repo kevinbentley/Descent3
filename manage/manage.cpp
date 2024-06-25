@@ -520,8 +520,8 @@ struct old_file {
 #define MAX_OLDFILE_ELEMENTS 10000
 int Num_old_files = 0;
 old_file *OldFiles;
-const char *PageNames[] = {"Unknown",     "Texture", "Weapon",   "Robot", "Powerup",        "Door",
-                     "Player ship", "Sound",   "Megacell", "Files", "Generic objects"};
+const char *const PageNames[] = {"Unknown",     "Texture", "Weapon",   "Robot", "Powerup",        "Door",
+                                 "Player ship", "Sound",   "Megacell", "Files", "Generic objects"};
 #ifndef RELEASE
 int Network_up = 1;
 int Stand_alone = 0;
@@ -1237,7 +1237,7 @@ int mng_LoadNetPages(int show_progress) {
   char tablename[TABLE_NAME_LEN];
   float start_time;
   int n_pages = 0;
-  int total_bytes;
+  int total_bytes = 0;
   int current_byte;
   float progress;
   int int_progress = 0;

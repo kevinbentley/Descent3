@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -197,47 +212,47 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_029 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -409,8 +424,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -576,49 +591,53 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 0
-const char **Door_names = NULL;
-int *Door_handles = NULL;
+static const char **Door_names = NULL;
+static int *Door_handles = NULL;
 
 #define NUM_OBJECT_NAMES 10
-const char *Object_names[NUM_OBJECT_NAMES] = {"BlueVirusSpark", "RedVirusSpark", "RSwitch-12", "RSwitch-11", "RSwitch-22",
-                                        "RSwitch-21",     "BSwitch-22",    "BSwitch-21", "BSwitch-12", "BSwitch-11"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {
+    "BlueVirusSpark", "RedVirusSpark", "RSwitch-12", "RSwitch-11", "RSwitch-22",
+    "RSwitch-21",     "BSwitch-22",    "BSwitch-21", "BSwitch-12", "BSwitch-11"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 10
-const char *Room_names[NUM_ROOM_NAMES] = {"BlueSpark", "BlueAccess-1", "RedSpark",  "RedAccess-1", "Wind-2",
-                                    "Wind-1",    "RZapper-1",    "RZapper-2", "BZapper-2",   "BZapper-1"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"BlueSpark", "BlueAccess-1", "RedSpark",  "RedAccess-1",
+                                                       "Wind-2",    "Wind-1",       "RZapper-1", "RZapper-2",
+                                                       "BZapper-2", "BZapper-1"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 12
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"BStatic-4", "BStatic-3", "BStatic-2", "BStatic-1", "Static-4", "Static-3",
-                                          "Static-2",  "Static-1",  "BZapper-2", "BZapper-1", "Zapper-2", "Zapper-1"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {"BStatic-4", "BStatic-3", "BStatic-2", "BStatic-1",
+                                                             "Static-4",  "Static-3",  "Static-2",  "Static-1",
+                                                             "BZapper-2", "BZapper-1", "Zapper-2",  "Zapper-1"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 5
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbPlasma21", "Lightning", "expMissilePlasmic1", "AmbSwitch31", "AmbSwitch11"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbPlasma21", "Lightning", "expMissilePlasmic1",
+                                                         "AmbSwitch31", "AmbSwitch11"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 0
-const char **Texture_names = NULL;
-int *Texture_indexes = NULL;
+static const char **Texture_names = NULL;
+static int *Texture_indexes = NULL;
 
 #define NUM_PATH_NAMES 0
-const char **Path_names = NULL;
-int *Path_indexes = NULL;
+static const char **Path_names = NULL;
+static int *Path_indexes = NULL;
 
 #define NUM_MATCEN_NAMES 0
-const char **Matcen_names = NULL;
-int *Matcen_indexes = NULL;
+static const char **Matcen_names = NULL;
+static int *Matcen_indexes = NULL;
 
 #define NUM_GOAL_NAMES 0
-const char **Goal_names = NULL;
-int *Goal_indexes = NULL;
+static const char **Goal_names = NULL;
+static int *Goal_indexes = NULL;
 
 #define NUM_MESSAGE_NAMES 0
-const char **Message_names = NULL;
-const char **Message_strings = NULL;
+static const char **Message_names = NULL;
+static const char **Message_strings = NULL;
 
 // ===============
 // InitializeDLL()

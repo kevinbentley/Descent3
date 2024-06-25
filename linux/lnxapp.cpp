@@ -110,7 +110,7 @@ static uint32_t LinuxAppFlags = 0;
 static bool LinuxAppSetAtExit = false;
 static bool LinuxAppDontCallShutdown = false;
 
-void LnxAppShutdown() {
+static void LnxAppShutdown(void) {
   if (LinuxAppDontCallShutdown)
     return;
   LinuxAppDontCallShutdown = true;

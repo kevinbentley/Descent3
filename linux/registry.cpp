@@ -56,7 +56,7 @@
 #include "mono.h"
 
 // Convert a string that represents a hex value into an int
-int hextoi(char *p) {
+static int hextoi(char *p) {
   int value = 0;
   while ((p) && (*p) && isalnum(*p)) {
     *p = toupper(*p);
@@ -74,7 +74,7 @@ int hextoi(char *p) {
 
 // Removes whitespace from the start of the given string.
 // Returns a pointer to the first non-white character
-char *SkipWhite(char *p) {
+static char *SkipWhite(char *p) {
   while (isspace(*p))
     p++;
   return p;
@@ -82,7 +82,7 @@ char *SkipWhite(char *p) {
 
 // Parses a quoted string
 // Returns true if got string ok, else false
-char *ParseString(char *p, char *buf, int bufsize, char sdelim, char edelim) {
+static char *ParseString(char *p, char *buf, int bufsize, char sdelim, char edelim) {
   char *save_p;
 
   p = SkipWhite(p);
@@ -116,7 +116,7 @@ char *ParseString(char *p, char *buf, int bufsize, char sdelim, char edelim) {
 }
 
 // Parses a sequence of non-space characters
-char *ParseToken(char *p, char *buf, int bufsize) {
+static char *ParseToken(char *p, char *buf, int bufsize) {
   char *save_p;
   p = SkipWhite(p);
   save_p = p;

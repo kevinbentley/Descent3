@@ -101,6 +101,7 @@ struct multi_api {
   int *netgame;
   int *netplayers;
   int *ships;
+  // TODO: be an actual function declaration
   int *fp[200]; // function pointers
   int *vp[200]; // variable pointers
 };

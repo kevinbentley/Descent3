@@ -514,7 +514,7 @@ static inline UISnazzyTextItem *GadgetLargeText(const char *text) {
 
 //////////////////////////////////////////////////////////////////////////////
 //	DATA
-static const char *Preloaded_bitmap_list[] = {
+static const char *const Preloaded_bitmap_list[] = {
     NEWUI_LRGBTN_FILE, // common buttons
     NEWUI_LRGBTNLIT_FILE,   NEWUI_LBTN_FILE,        NEWUI_LBTNLIT_FILE,     NEWUI_BTN_FILE,
     NEWUI_BTNLIT_FILE,      NEWUI_LCHKBTN_FILE,     NEWUI_LCHKBTNLIT_FILE,  NEWUI_CHKBTN_FILE,

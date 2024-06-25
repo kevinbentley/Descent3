@@ -34,8 +34,6 @@ struct bms_bumpmap {
   uint8_t flags, pad;
 };
 
-extern bms_bumpmap GameBumpmaps[MAX_BUMPMAPS];
-
 // Sets all the bumpmaps to unused
 void bump_InitBumpmaps();
 

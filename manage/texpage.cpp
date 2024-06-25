@@ -303,8 +303,6 @@
 // Declare this here because it's too big to put on the stack on the Mac
 static mngs_texture_page texpage1;
 
-extern char *TablefileNameOverride;
-
 #define TEXPAGE_VERSION 7
 // Given an open file pointer and a texture handle, writes that texture page out
 void mng_WriteTexturePage(CFILE *outfile, mngs_texture_page *texpage) {

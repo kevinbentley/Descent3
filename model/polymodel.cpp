@@ -681,6 +681,9 @@ static void FreeAllModels();
 static void SetModelAnglesAndPosTimed(poly_model *po, float *normalized_time, uint32_t subobj_flags);
 static void BuildModelAngleMatrix(matrix *mat, angle ang, vector *axis);
 
+// gets the filename from a path, plus appends our .pof extension
+static void ChangePolyModelName(const char *src, char *dest);
+
 int findtextbmpname = 0;
 int findtextname = 0;
 
@@ -2232,7 +2235,6 @@ poly_model *GetPolymodelPointer(int polynum) {
   return (&Poly_models[polynum]);
 }
 
-// MTS: only used in this file.
 // gets the filename from a path
 void ChangePolyModelName(const char *src, char *dest) {
   int limit;
@@ -3094,7 +3096,7 @@ int InitModels() {
   return 1;
 }
 
-// MTS: used only in this file.
+// FIXME: MTS: used only in this file.
 // Given an actual keyframe number, returns the normalized (0 to 1) position of that
 // keyframe
 // Handle is an index into the Poly_models array
@@ -3131,7 +3133,7 @@ void RemapPolyModels() {
   }
 }
 
-// MTS: not used?
+// TODO: MTS: unused?
 // Returns the total number of faces in a model
 int CountFacesInPolymodel(poly_model *pm) {
   int i;

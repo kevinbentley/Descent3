@@ -62,7 +62,7 @@ struct tWaveFile {
 static char taunt_LoadWaveFile(char *filename, tWaveFile *wave);
 
 static int TauntLastError = TAUNTIMPERR_NOERROR;
-bool Audio_taunts_enabled = true;
+static bool Audio_taunts_enabled = true;
 static float Audio_taunt_delay_time = 5.0f;
 
 // taunt_Enable

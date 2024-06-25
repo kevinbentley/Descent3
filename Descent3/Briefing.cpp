@@ -234,7 +234,7 @@ static tBriefingTag HotTags[] = {
     {"#PLEVELNUM#", TAG_PLEVELNUM, -1},
     {"#NLEVELNUM#", TAG_NLEVELNUM, -1},
 };
-static const int NumHotTags = sizeof(HotTags) / sizeof(tBriefingTag);
+static constexpr int NumHotTags = sizeof(HotTags) / sizeof(tBriefingTag);
 
 static int osb_xoff = 0, osb_yoff = 0;
 static int current_screen = -1;

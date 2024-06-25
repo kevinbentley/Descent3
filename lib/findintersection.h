@@ -415,9 +415,6 @@ extern int fvi_moveobj;
 
 bool PolyCollideObject(object *obj);
 
-bool BBoxPlaneIntersection(bool fast_exit, vector *collision_point, vector *collision_normal, object *obj,
-                           vector *new_pos, int nv, vector **vertex_ptr_list, vector *face_normal, matrix *orient);
-
 extern uint32_t check_point_to_face(vector *colp, vector *face_normal, int nv, vector **vertex_ptr_list);
 
 extern int check_vector_to_sphere_1(vector *intp, float *col_dist, const vector *p0, const vector *p1,

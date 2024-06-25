@@ -198,9 +198,9 @@ static tUIWindowNode *UIWindowTail = NULL;
 static UIWindow *UIWindowFocus = NULL;
 static int UI_cursor_show = 0;
 float UIFrameTime = 0.0f;
-bool ui_MousePoll(bool buttons);
-bool ui_KeyPoll();
-void ui_UpdateWindows();
+static bool ui_MousePoll(bool buttons);
+static bool ui_KeyPoll();
+static void ui_UpdateWindows();
 //////////////////////////////////////////////////////////////////////////////
 //	FUNCTIONS
 //	call this function to initialize the UI system. pass a surface where all UI will occur

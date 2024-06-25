@@ -144,8 +144,6 @@
 #define SOUNDPAGE_COMMAND_IMPORT_VOLUME 13
 #define SOUNDPAGE_VERSION 1
 
-extern char *TablefileNameOverride;
-
 // Given an open file pointer and a sound_page struct, writes that sound page out
 void mng_WriteSoundPage(CFILE *outfile, mngs_sound_page *soundpage) {
   int i;

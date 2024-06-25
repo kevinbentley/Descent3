@@ -1029,10 +1029,9 @@ char Base_directory[_MAX_PATH];
 extern int Min_allowed_frametime;
 
 extern bool Render_powerup_sparkles;
-extern int Use_file_xfer;
 
-static const float kDefaultMouselookSensitivity = 9.102f;
-static const float kAnglesPerDegree = 65536.0f / 360.0f;
+static constexpr float kDefaultMouselookSensitivity = 9.102f;
+static constexpr float kAnglesPerDegree = 65536.0f / 360.0f;
 float Mouselook_sensitivity = kAnglesPerDegree * kDefaultMouselookSensitivity;
 float Mouse_sensitivity = 1.0f;
 
@@ -1395,7 +1394,7 @@ struct tTempFileInfo {
 };
 static const tTempFileInfo temp_file_wildcards[] = {{"d3s*.tmp"}, {"d3m*.tmp"}, {"d3o*.tmp"},
                                                     {"d3c*.tmp"}, {"d3t*.tmp"}, {"d3i*.tmp"}};
-static const int num_temp_file_wildcards = sizeof(temp_file_wildcards) / sizeof(tTempFileInfo);
+static constexpr int num_temp_file_wildcards = sizeof(temp_file_wildcards) / sizeof(tTempFileInfo);
 
 /*
         I/O systems initialization

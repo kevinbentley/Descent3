@@ -72,18 +72,32 @@ struct path_entry {
 
 #define MAX_PATHS 100
 
-path_entry paths[MAX_PATHS];
-int N_paths = 0;
+static path_entry paths[MAX_PATHS];
+static int N_paths = 0;
 #define MAX_EXTENSIONS 100
-ext_entry extensions[MAX_EXTENSIONS];
-int N_extensions;
-std::shared_ptr<library> Libraries;
-int lib_handle = 0;
+static ext_entry extensions[MAX_EXTENSIONS];
+static int N_extensions;
+static std::shared_ptr<library> Libraries;
+static int lib_handle = 0;
 
 // Structure thrown on disk error
-cfile_error cfe;
+static cfile_error cfe;
 // The message for unexpected end of file
-const char *eof_error = "Unexpected end of file";
+static const char *eof_error = "Unexpected end of file";
+
+// Generates a cfile error
+static void ThrowCFileError(int type, CFILE *file, const char *msg);
+
+static void cf_Close();
+
+// searches through the open HOG files, and opens a file if it finds it in any of the libs
+static CFILE *open_file_in_lib(const char *filename);
+
+static FILE *open_file_in_directory_case_sensitive(const char *directory, const char *filename, const char *mode,
+                                                   char *new_filename);
+
+// look for the file in the specified directory
+static CFILE *open_file_in_directory(const char *filename, const char *mode, const char *directory);
 
 // Generates a cfile error
 void ThrowCFileError(int type, CFILE *file, const char *msg) {
@@ -92,11 +106,6 @@ void ThrowCFileError(int type, CFILE *file, const char *msg) {
   cfe.file = file;
   throw &cfe;
 }
-
-static void cf_Close();
-
-// searches through the open HOG files, and opens a file if it finds it in any of the libs
-static CFILE *open_file_in_lib(const char *filename);
 
 // Opens a HOG file.  Future calls to cfopen(), etc. will look in this HOG.
 // Parameters:  libname - the path & filename of the HOG file
@@ -254,6 +263,7 @@ int cf_SetSearchPath(const char *path, ...) {
   return 1;
 }
 
+// TODO: MTS: unused?
 /**
  * Removes all search paths that have been added by cf_SetSearchPath
  */
@@ -267,6 +277,10 @@ void cf_ClearAllSearchPaths() {
  * @param filename
  * @param libhandle
  * @return
+ *
+ * Works just like cfopen, except it assumes "rb" mode and forces the file to be
+ * opened from the given library.  Returns the CFILE handle or \c NULL if file
+ * couldn't be found or open.
  */
 CFILE *cf_OpenFileInLibrary(const char *filename, int libhandle) {
   if (libhandle <= 0)
@@ -463,9 +477,6 @@ void CFindFiles::Close() {
   globfree(&ffres);
 }
 
-static FILE *open_file_in_directory_case_sensitive(const char *directory, const char *filename, const char *mode,
-                                                   char *new_filename);
-
 bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname, char *new_filename) {
   bool use_dir = false;
   char dir_to_use[_MAX_PATH];
@@ -619,9 +630,6 @@ FILE *open_file_in_directory_case_sensitive(const char *directory, const char *f
   return nullptr;
 }
 #endif
-
-// look for the file in the specified directory
-static CFILE *open_file_in_directory(const char *filename, const char *mode, const char *directory);
 
 // look for the file in the specified directory
 CFILE *open_file_in_directory(const char *filename, const char *mode, const char *directory) {
@@ -1125,7 +1133,7 @@ void cf_Rewind(CFILE *fp) {
   fp->position = 0;
 }
 
-// Calculates a 32-bit CRC for the specified file. a return code of -1 means file note found
+// Calculates a 32-bit CRC for the specified file. a return code of -1 means file not found
 #define CRC32_POLYNOMIAL 0xEDB88320L
 #define CRC_BUFFER_SIZE 5000
 
@@ -1189,10 +1197,10 @@ uint32_t cf_GetfileCRC(char *src) {
   return crc;
 }
 
-char cfile_search_wildcard[256];
-std::shared_ptr<library> cfile_search_library;
-int cfile_search_curr_index = 0;
-bool cfile_search_ispattern = false;
+static char cfile_search_wildcard[256];
+static std::shared_ptr<library> cfile_search_library;
+static int cfile_search_curr_index = 0;
+static bool cfile_search_ispattern = false;
 //	the following cf_LibraryFind function are similar to the ddio_Find functions as they look
 //	for files that match the wildcard passed in, however, this is to be used for hog files.
 bool cf_LibraryFindFirst(int handle, const char *wildcard, char *buffer) {

@@ -441,7 +441,6 @@ void mng_WriteLightingChunk(light_info *lighting_info, CFILE *outfile);
 void mng_ReadLightingChunk(light_info *lighting_info, CFILE *infile);
 
 extern bool Running_editor; // in init.cpp
-extern char *TablefileNameOverride;
 
 // Sets a page structure to default values
 void mng_InitGenericPage(mngs_generic_page *genericpage) {

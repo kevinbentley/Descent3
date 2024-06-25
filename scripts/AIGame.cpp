@@ -44,8 +44,8 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 
 static int String_table_size = 0;
 static char **String_table = NULL;
-static const char *_Error_string = "!!ERROR MISSING STRING!!";
-static const char *_Empty_string = "";
+static const char *const _Error_string = "!!ERROR MISSING STRING!!";
+static const char *const _Empty_string = "";
 const char *GetStringFromTable(int index) {
   if ((index < 0) || (index >= String_table_size))
     return _Error_string;
@@ -1665,7 +1665,7 @@ static tThiefItems ThiefableItems[] = {
     {6, THIEFABLEITEM_ACCESSORY, 1.00f, 0.60f, 1.00f, TXT_WEAP_RAPIDFIRE},       // RapidFire
     {7, THIEFABLEITEM_ACCESSORY, 1.00f, 0.60f, 1.00f, TXT_WEAP_QUADLASERS},      // Quads
 };
-static int numThiefableItems = sizeof(ThiefableItems) / sizeof(tThiefItems);
+static constexpr int numThiefableItems = sizeof(ThiefableItems) / sizeof(tThiefItems);
 
 struct inv_item {
   uint16_t id;
@@ -1766,7 +1766,7 @@ static tSuperThiefItems SuperThiefableItems[] = {
     {19, -1, THIEFABLEITEM_SECONDARY, .2f, TXT_WEAP_BLACKSHARK, "", ""},                           // Black Shark
 };
 
-static int numSuperThiefableItems = sizeof(SuperThiefableItems) / sizeof(tSuperThiefItems);
+static constexpr int numSuperThiefableItems = sizeof(SuperThiefableItems) / sizeof(tSuperThiefItems);
 
 #define SUPERTHIEF_MELEE_DIST 50.0f
 

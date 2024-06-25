@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -875,152 +890,152 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_125 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_139 = 0;
-int ScriptActionCtr_138 = 0;
-int ScriptActionCtr_137 = 0;
-int ScriptActionCtr_136 = 0;
-int ScriptActionCtr_135 = 0;
-int ScriptActionCtr_134 = 0;
-int ScriptActionCtr_133 = 0;
-int ScriptActionCtr_132 = 0;
-int ScriptActionCtr_131 = 0;
-int ScriptActionCtr_130 = 0;
-int ScriptActionCtr_129 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_140 = 0;
-int ScriptActionCtr_141 = 0;
-int ScriptActionCtr_142 = 0;
-int ScriptActionCtr_143 = 0;
-int ScriptActionCtr_144 = 0;
-int ScriptActionCtr_145 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_139 = 0;
+static int ScriptActionCtr_138 = 0;
+static int ScriptActionCtr_137 = 0;
+static int ScriptActionCtr_136 = 0;
+static int ScriptActionCtr_135 = 0;
+static int ScriptActionCtr_134 = 0;
+static int ScriptActionCtr_133 = 0;
+static int ScriptActionCtr_132 = 0;
+static int ScriptActionCtr_131 = 0;
+static int ScriptActionCtr_130 = 0;
+static int ScriptActionCtr_129 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_140 = 0;
+static int ScriptActionCtr_141 = 0;
+static int ScriptActionCtr_142 = 0;
+static int ScriptActionCtr_143 = 0;
+static int ScriptActionCtr_144 = 0;
+static int ScriptActionCtr_145 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1517,8 +1532,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1684,118 +1699,118 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 0
-const char **Door_names = NULL;
-int *Door_handles = NULL;
+static const char **Door_names = NULL;
+static int *Door_handles = NULL;
 
 #define NUM_OBJECT_NAMES 104
-const char *Object_names[NUM_OBJECT_NAMES] = {"RedFlame-2",
-                                        "RedFlame-1",
-                                        "BlueFlame-2",
-                                        "BlueFlame-1",
-                                        "RedSwitch-2",
-                                        "RedSwitch-1",
-                                        "BlueSwitch-2",
-                                        "BlueSwitch-1",
-                                        "MiniReactorBlue-2",
-                                        "MiniReactorBlue-1",
-                                        "WarningLightBlue",
-                                        "ACB-12",
-                                        "ACB-11",
-                                        "ACB-10",
-                                        "ACB-9",
-                                        "ACB-8",
-                                        "ACB-7",
-                                        "ACB-6",
-                                        "ACB-5",
-                                        "ACB-4",
-                                        "ACB-3",
-                                        "ACB-2",
-                                        "ACB-1",
-                                        "MiniReactorWhite-2",
-                                        "MiniReactorWhite-1",
-                                        "WarningLightWhite",
-                                        "ACW-12",
-                                        "ACW-11",
-                                        "ACW-10",
-                                        "ACW-9",
-                                        "ACW-8",
-                                        "ACW-7",
-                                        "ACW-6",
-                                        "ACW-5",
-                                        "ACW-4",
-                                        "ACW-3",
-                                        "ACW-2",
-                                        "ACW-1",
-                                        "RedKey",
-                                        "BlueKey",
-                                        "MiniReactorRed-2",
-                                        "MiniReactorRed-1",
-                                        "ReactorSmoke",
-                                        "MiniLightRed-2",
-                                        "MiniLightRed-1",
-                                        "ACS-12",
-                                        "ACS-11",
-                                        "ACS-10",
-                                        "ACS-9",
-                                        "ACS-8",
-                                        "ACS-7",
-                                        "ACS-6",
-                                        "ACS-5",
-                                        "ACS-4",
-                                        "ACS-3",
-                                        "ACS-2",
-                                        "ACS-1",
-                                        "ACR-12",
-                                        "ACR-11",
-                                        "ACR-10",
-                                        "ACR-9",
-                                        "ACR-8",
-                                        "ACR-7",
-                                        "ACR-6",
-                                        "ACR-5",
-                                        "ACR-4",
-                                        "ACR-3",
-                                        "ACR-2",
-                                        "ACR-1",
-                                        "RNode-1",
-                                        "Reactor",
-                                        "RNode-2",
-                                        "RNode-3",
-                                        "RNode-4",
-                                        "BaseThing",
-                                        "Flames-11",
-                                        "Flames-15",
-                                        "Flames-45",
-                                        "Flames-35",
-                                        "Flames-25",
-                                        "Flames-14",
-                                        "Flames-44",
-                                        "Flames-34",
-                                        "Flames-24",
-                                        "Flames-13",
-                                        "Flames-23",
-                                        "Flames-33",
-                                        "Flames-43",
-                                        "Flames-12",
-                                        "Flames-42",
-                                        "Flames-32",
-                                        "Flames-22",
-                                        "Flames-41",
-                                        "Flames-31",
-                                        "Flames-21",
-                                        "RedDoor-2",
-                                        "RedDoor-1",
-                                        "BlueDoor",
-                                        "FOV",
-                                        "RNode-5",
-                                        "RNode-6",
-                                        "RNode-7",
-                                        "RNode-8",
-                                        "Reflector"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"RedFlame-2",
+                                                           "RedFlame-1",
+                                                           "BlueFlame-2",
+                                                           "BlueFlame-1",
+                                                           "RedSwitch-2",
+                                                           "RedSwitch-1",
+                                                           "BlueSwitch-2",
+                                                           "BlueSwitch-1",
+                                                           "MiniReactorBlue-2",
+                                                           "MiniReactorBlue-1",
+                                                           "WarningLightBlue",
+                                                           "ACB-12",
+                                                           "ACB-11",
+                                                           "ACB-10",
+                                                           "ACB-9",
+                                                           "ACB-8",
+                                                           "ACB-7",
+                                                           "ACB-6",
+                                                           "ACB-5",
+                                                           "ACB-4",
+                                                           "ACB-3",
+                                                           "ACB-2",
+                                                           "ACB-1",
+                                                           "MiniReactorWhite-2",
+                                                           "MiniReactorWhite-1",
+                                                           "WarningLightWhite",
+                                                           "ACW-12",
+                                                           "ACW-11",
+                                                           "ACW-10",
+                                                           "ACW-9",
+                                                           "ACW-8",
+                                                           "ACW-7",
+                                                           "ACW-6",
+                                                           "ACW-5",
+                                                           "ACW-4",
+                                                           "ACW-3",
+                                                           "ACW-2",
+                                                           "ACW-1",
+                                                           "RedKey",
+                                                           "BlueKey",
+                                                           "MiniReactorRed-2",
+                                                           "MiniReactorRed-1",
+                                                           "ReactorSmoke",
+                                                           "MiniLightRed-2",
+                                                           "MiniLightRed-1",
+                                                           "ACS-12",
+                                                           "ACS-11",
+                                                           "ACS-10",
+                                                           "ACS-9",
+                                                           "ACS-8",
+                                                           "ACS-7",
+                                                           "ACS-6",
+                                                           "ACS-5",
+                                                           "ACS-4",
+                                                           "ACS-3",
+                                                           "ACS-2",
+                                                           "ACS-1",
+                                                           "ACR-12",
+                                                           "ACR-11",
+                                                           "ACR-10",
+                                                           "ACR-9",
+                                                           "ACR-8",
+                                                           "ACR-7",
+                                                           "ACR-6",
+                                                           "ACR-5",
+                                                           "ACR-4",
+                                                           "ACR-3",
+                                                           "ACR-2",
+                                                           "ACR-1",
+                                                           "RNode-1",
+                                                           "Reactor",
+                                                           "RNode-2",
+                                                           "RNode-3",
+                                                           "RNode-4",
+                                                           "BaseThing",
+                                                           "Flames-11",
+                                                           "Flames-15",
+                                                           "Flames-45",
+                                                           "Flames-35",
+                                                           "Flames-25",
+                                                           "Flames-14",
+                                                           "Flames-44",
+                                                           "Flames-34",
+                                                           "Flames-24",
+                                                           "Flames-13",
+                                                           "Flames-23",
+                                                           "Flames-33",
+                                                           "Flames-43",
+                                                           "Flames-12",
+                                                           "Flames-42",
+                                                           "Flames-32",
+                                                           "Flames-22",
+                                                           "Flames-41",
+                                                           "Flames-31",
+                                                           "Flames-21",
+                                                           "RedDoor-2",
+                                                           "RedDoor-1",
+                                                           "BlueDoor",
+                                                           "FOV",
+                                                           "RNode-5",
+                                                           "RNode-6",
+                                                           "RNode-7",
+                                                           "RNode-8",
+                                                           "Reflector"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 82
-const char *Room_names[NUM_ROOM_NAMES] = {
+static const char *const Room_names[NUM_ROOM_NAMES] = {
     "MainStop",     "OutStop-4",   "OutStop-3",   "OutStop-2",   "OutStop-1",   "SpeederStop-2", "SpeederStop-1",
     "Standard-8",   "Standard-7",  "Standard-6",  "Standard-5",  "Standard-4",  "Standard-3",    "Standard-2",
     "Standard-1",   "InnerDown-8", "InnerDown-7", "InnerDown-6", "InnerDown-5", "InnerDown-4",   "InnerDown-3",
@@ -1808,10 +1823,10 @@ const char *Room_names[NUM_ROOM_NAMES] = {
     "Flames-25",    "Flames-35",   "Flames-45",   "Flames-12",   "Flames-22",   "Flames-32",     "Flames-42",
     "Flames-14",    "Flames-24",   "Flames-34",   "Flames-44",   "Flames-11",   "Flames-21",     "Flames-31",
     "Flames-41",    "Flames-13",   "Flames-23",   "Flames-33",   "Flames-43"};
-int Room_indexes[NUM_ROOM_NAMES];
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 58
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "StartMini-4",     "StartMini-3",     "StartMini-2",     "StartMini-1",     "StartMain-1",     "StartMain-2",
     "StartEscape-1",   "StartSpeed-2",    "StartSpeed-1",    "StartInUp-2",     "StartInUp-1",     "StartOffMain-2",
     "StartOffMain-1",  "StartIn-4",       "StartIn-3",       "StartIn-2",       "StartIn-1",       "StartOut-4",
@@ -1822,44 +1837,44 @@ const char *Trigger_names[NUM_TRIGGER_NAMES] = {
     "StopOut-1",       "StopIn-4",        "StopIn-3",        "StopIn-2",        "StopIn-1",        "StopInUp-2",
     "StopInUp-1",      "StopStandard-8",  "StopStandard-7",  "StopStandard-6",  "StopStandard-5",  "StopStandard-4",
     "StopStandard-3",  "StopStandard-2",  "StopStandard-1",  "EndLevel"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 9
-const char *Sound_names[NUM_SOUND_NAMES] = {"LevSecAccelStart",  "LevSecAccelRelease", "AmbSwitch11", "PupC1",
-                                      "AmbSirenBRedAcrop", "wallofire1",         "HitEnergy",   "Lightning",
-                                      "Forcefield bounce"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {
+    "LevSecAccelStart", "LevSecAccelRelease", "AmbSwitch11",      "PupC1", "AmbSirenBRedAcrop", "wallofire1",
+    "HitEnergy",        "Lightning",          "Forcefield bounce"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 1
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect5"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect5"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 2
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCam", "IntroShip"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"IntroCam", "IntroShip"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 0
-const char **Matcen_names = NULL;
-int *Matcen_indexes = NULL;
+static const char **Matcen_names = NULL;
+static int *Matcen_indexes = NULL;
 
 #define NUM_GOAL_NAMES 8
-const char *Goal_names[NUM_GOAL_NAMES] = {"Destroy Red Key Forcefield Generators",
-                                    "Destroy Blue Key Forcefield Generators",
-                                    "Acquire the Red Key",
-                                    "Acquire the Blue Key",
-                                    "Destroy Reactor Forcefield Generators",
-                                    "Destroy the Reactor",
-                                    "Escape the Research Center",
-                                    "Destroy the Research Center"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Destroy Red Key Forcefield Generators",
+                                                       "Destroy Blue Key Forcefield Generators",
+                                                       "Acquire the Red Key",
+                                                       "Acquire the Blue Key",
+                                                       "Destroy Reactor Forcefield Generators",
+                                                       "Destroy the Reactor",
+                                                       "Escape the Research Center",
+                                                       "Destroy the Research Center"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 11
-const char *Message_names[NUM_MESSAGE_NAMES] = {"FlameDeactivated", "RedKeyFF",  "BlueKeyFF",        "NameRedKey",
-                                          "NameBlueKey",      "ReactorFF", "ReactorDestroyed", "RedDoor",
-                                          "BlueDoor",         "IntroCam",  "ReactorPrimed"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {
+    "FlameDeactivated", "RedKeyFF", "BlueKeyFF", "NameRedKey", "NameBlueKey",  "ReactorFF",
+    "ReactorDestroyed", "RedDoor",  "BlueDoor",  "IntroCam",   "ReactorPrimed"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

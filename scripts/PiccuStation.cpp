@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -521,108 +536,108 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_098 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -992,8 +1007,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1159,142 +1174,146 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 3
-const char *Door_names[NUM_DOOR_NAMES] = {"KeyDoor", "RadioDoor", "MatcenDoor"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"KeyDoor", "RadioDoor", "MatcenDoor"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 80
-const char *Object_names[NUM_OBJECT_NAMES] = {"AlienVirusStand",
-                                        "BigPipeKey2",
-                                        "DatlinkCenter",
-                                        "ComputerPole2",
-                                        "ComputerPole1",
-                                        "GiantPipeRoom",
-                                        "LavaPlane",
-                                        "YellowBlueTurbine",
-                                        "FirstBigMachine",
-                                        "PlayerShip",
-                                        "Virus",
-                                        "Virushouse",
-                                        "RescueShip1",
-                                        "RescueShip2",
-                                        "RescueShip3",
-                                        "GoodieRoomSwitch",
-                                        "FirstOutsideDoorSw",
-                                        "OutdoorKillTank",
-                                        "KeyCard2",
-                                        "SecurityDoor",
-                                        "KeyCard1",
-                                        "RadioDoorSwitch2",
-                                        "RadioCam",
-                                        "RadioDoorSwitch1",
-                                        "RadioToggle4",
-                                        "RadioToggle3",
-                                        "RadioToggle2",
-                                        "RadioToggle1",
-                                        "MatcenSwitch2",
-                                        "MatcenCam",
-                                        "MatcenSwitch1",
-                                        "BunkBed1",
-                                        "Exp1",
-                                        "Exp2",
-                                        "Exp3",
-                                        "Exp4",
-                                        "Exp5",
-                                        "Exp6",
-                                        "Exp7",
-                                        "Exp8",
-                                        "UFODestroy4",
-                                        "UFOSmoke4",
-                                        "UFODestroy3",
-                                        "UFOSmoke3",
-                                        "UFODestroy2",
-                                        "UFOSmoke2",
-                                        "UFODestroy1",
-                                        "UFOSmoke1",
-                                        "VirusTerminal",
-                                        "VirusCamTarget",
-                                        "DontAttackTail",
-                                        "BunkBed5",
-                                        "Lava7",
-                                        "Lava5",
-                                        "Lava3",
-                                        "Lava1",
-                                        "SBlackSmall",
-                                        "BottomSpewer",
-                                        "SWhite2",
-                                        "SWhite1",
-                                        "SBlackGravity4",
-                                        "SBlackGravity3",
-                                        "SBlackGravity2",
-                                        "SBlackGravity1",
-                                        "SWhiteGravity2",
-                                        "SWhiteGravity1",
-                                        "BunkBed12",
-                                        "BunkBed11",
-                                        "BunkBed10",
-                                        "BunkBed9",
-                                        "BunkBed8",
-                                        "BunkBed7",
-                                        "BunkBed6",
-                                        "BunkBed4",
-                                        "BunkBed3",
-                                        "BunkBed2",
-                                        "DStringer1",
-                                        "DTubbs3",
-                                        "DTubbs2",
-                                        "DTubbs1"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"AlienVirusStand",
+                                                           "BigPipeKey2",
+                                                           "DatlinkCenter",
+                                                           "ComputerPole2",
+                                                           "ComputerPole1",
+                                                           "GiantPipeRoom",
+                                                           "LavaPlane",
+                                                           "YellowBlueTurbine",
+                                                           "FirstBigMachine",
+                                                           "PlayerShip",
+                                                           "Virus",
+                                                           "Virushouse",
+                                                           "RescueShip1",
+                                                           "RescueShip2",
+                                                           "RescueShip3",
+                                                           "GoodieRoomSwitch",
+                                                           "FirstOutsideDoorSw",
+                                                           "OutdoorKillTank",
+                                                           "KeyCard2",
+                                                           "SecurityDoor",
+                                                           "KeyCard1",
+                                                           "RadioDoorSwitch2",
+                                                           "RadioCam",
+                                                           "RadioDoorSwitch1",
+                                                           "RadioToggle4",
+                                                           "RadioToggle3",
+                                                           "RadioToggle2",
+                                                           "RadioToggle1",
+                                                           "MatcenSwitch2",
+                                                           "MatcenCam",
+                                                           "MatcenSwitch1",
+                                                           "BunkBed1",
+                                                           "Exp1",
+                                                           "Exp2",
+                                                           "Exp3",
+                                                           "Exp4",
+                                                           "Exp5",
+                                                           "Exp6",
+                                                           "Exp7",
+                                                           "Exp8",
+                                                           "UFODestroy4",
+                                                           "UFOSmoke4",
+                                                           "UFODestroy3",
+                                                           "UFOSmoke3",
+                                                           "UFODestroy2",
+                                                           "UFOSmoke2",
+                                                           "UFODestroy1",
+                                                           "UFOSmoke1",
+                                                           "VirusTerminal",
+                                                           "VirusCamTarget",
+                                                           "DontAttackTail",
+                                                           "BunkBed5",
+                                                           "Lava7",
+                                                           "Lava5",
+                                                           "Lava3",
+                                                           "Lava1",
+                                                           "SBlackSmall",
+                                                           "BottomSpewer",
+                                                           "SWhite2",
+                                                           "SWhite1",
+                                                           "SBlackGravity4",
+                                                           "SBlackGravity3",
+                                                           "SBlackGravity2",
+                                                           "SBlackGravity1",
+                                                           "SWhiteGravity2",
+                                                           "SWhiteGravity1",
+                                                           "BunkBed12",
+                                                           "BunkBed11",
+                                                           "BunkBed10",
+                                                           "BunkBed9",
+                                                           "BunkBed8",
+                                                           "BunkBed7",
+                                                           "BunkBed6",
+                                                           "BunkBed4",
+                                                           "BunkBed3",
+                                                           "BunkBed2",
+                                                           "DStringer1",
+                                                           "DTubbs3",
+                                                           "DTubbs2",
+                                                           "DTubbs1"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 13
-const char *Room_names[NUM_ROOM_NAMES] = {"GoodiePortalRoom", "FirstOutdoorPortal",
-                                    "ReturnInsideRoom", "RadioRoom",
-                                    "RadioArmory",      "Alien1",
-                                    "Alien2",           "Alien3",
-                                    "Alien4",           "Alien5",
-                                    "Alien6",           "Alien7",
-                                    "VirusRoom"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"GoodiePortalRoom", "FirstOutdoorPortal",
+                                                       "ReturnInsideRoom", "RadioRoom",
+                                                       "RadioArmory",      "Alien1",
+                                                       "Alien2",           "Alien3",
+                                                       "Alien4",           "Alien5",
+                                                       "Alien6",           "Alien7",
+                                                       "VirusRoom"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 39
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
     "Waypoint8",   "Waypoint7",   "Waypoint6",   "Waypoint5",     "Waypoint4",      "Waypoint2",      "Waypoint1",
     "VirusEnter",  "CuplinkCam2", "CuplinkCam3", "CuplinkCam1",   "Exit4",          "Exit3",          "Exit2",
     "Exit1",       "Voice10",     "Voice9",      "Voice8",        "Voice7",         "Voice-Computer", "Voice5",
     "Voice6",      "Voice3",      "Voice2",      "Voice1",        "Music-Alien",    "Music-Ancient",  "Music-2Out2",
     "Music-2Out1", "Music-Cave2", "Music-Cave1", "Music-2InPt22", "Music-2InPart2", "Music-2In2",     "Music-2In",
     "Music-1Out2", "Music-1Out",  "Music-1In",   "Music-2InDat"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 10
-const char *Sound_names[NUM_SOUND_NAMES] = {"AmbDroneP", "AmbDroneE", "AmbDroneD",   "AmbDroneX", "AmbLavaLoop1",
-                                      "AmbDroneN", "AmbDroneK", "AmbSwitch31", "PupC1",     "AmbVirusSwitch"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"AmbDroneP",    "AmbDroneE",     "AmbDroneD", "AmbDroneX",
+                                                         "AmbLavaLoop1", "AmbDroneN",     "AmbDroneK", "AmbSwitch31",
+                                                         "PupC1",        "AmbVirusSwitch"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 5
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"Reddataup", "Ready1", "Notready", "Staticscrolling", "Online"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"Reddataup", "Ready1", "Notready", "Staticscrolling",
+                                                             "Online"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 9
-const char *Path_names[NUM_PATH_NAMES] = {"IntroCam", "IntroShip", "VirusCam", "CupLinkCam", "Rescuer3",
-                                    "Rescuer2", "Rescuer1",  "EndCam",   "EndLevelCam"};
-int Path_indexes[NUM_PATH_NAMES];
+static const char *const Path_names[NUM_PATH_NAMES] = {"IntroCam", "IntroShip", "VirusCam", "CupLinkCam", "Rescuer3",
+                                                       "Rescuer2", "Rescuer1",  "EndCam",   "EndLevelCam"};
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 2
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"DatlinkMatcen", "TwoSwitchMatcen"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {"DatlinkMatcen", "TwoSwitchMatcen"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 3
-const char *Goal_names[NUM_GOAL_NAMES] = {"Activate Datlink", "Acquire the alien virus", "Retrieve the Alien Virus"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static const char *const Goal_names[NUM_GOAL_NAMES] = {"Activate Datlink", "Acquire the alien virus",
+                                                       "Retrieve the Alien Virus"};
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 16
-const char *Message_names[NUM_MESSAGE_NAMES] = {"IntroMessage",    "ForceFieldDeactivated", "2KeyCards",     "1KeyCard",
-                                          "RadioRoomUnlock", "RadioRoomFirst",        "All4Radio",     "All4Radio2",
-                                          "TwoSwitchUnlock", "TwoSwitchFirst",        "AlienCuplinks", "HeresVirus",
-                                          "Virus",           "DestroyThese",          "EndLevel",      "PowerCupLink"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {
+    "IntroMessage",    "ForceFieldDeactivated", "2KeyCards",     "1KeyCard",
+    "RadioRoomUnlock", "RadioRoomFirst",        "All4Radio",     "All4Radio2",
+    "TwoSwitchUnlock", "TwoSwitchFirst",        "AlienCuplinks", "HeresVirus",
+    "Virus",           "DestroyThese",          "EndLevel",      "PowerCupLink"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

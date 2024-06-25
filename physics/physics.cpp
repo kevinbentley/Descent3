@@ -71,7 +71,7 @@ struct sim_loop_info {
   fvi_info hit_info;      // Hit information returned by FVI
 };
 
-sim_loop_info sim_loop_record[MAX_PLAYER_SIM_LOOPS];
+static sim_loop_info sim_loop_record[MAX_PLAYER_SIM_LOOPS];
 #endif
 
 #ifdef _DEBUG
@@ -81,6 +81,7 @@ int Physics_player_verbose = 0;
 #define PHYSICS_GROUND_TOLERANCE 0.0001f
 #define DAMP_ANG 1.0f // chrishack -- this is probably too tight and should be an int not a float
 #define MAX_OBJECT_VEL 100000.0f
+// TODO: MTS: remove as the following two aren't used.
 int Physics_cheat_flag = 0;
 extern char BounceCheat;
 

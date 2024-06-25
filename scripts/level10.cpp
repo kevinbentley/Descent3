@@ -48,6 +48,21 @@ DLLEXPORT int STDCALL SaveRestoreState(void *file_ptr, uint8_t saving_state);
 }
 #endif
 
+// ===================
+// Function Prototypes
+// ===================
+
+static void ClearGlobalActionCtrs(void);
+static void SaveGlobalActionCtrs(void *file_ptr);
+static void RestoreGlobalActionCtrs(void *file_ptr);
+static void InitMessageList(void);
+static void ClearMessageList(void);
+static int AddMessageToList(char *name, char *msg);
+static void RemoveTrailingWhitespace(char *s);
+static char *SkipInitialWhitespace(char *s);
+static int ReadMessageFile(const char *filename);
+static const char *GetMessage(const char *name);
+
 // =================
 // Script ID Numbers
 // =================
@@ -575,155 +590,155 @@ public:
 
 #define MAX_ACTION_CTR_VALUE 100000
 
-int ScriptActionCtr_000 = 0;
-int ScriptActionCtr_050 = 0;
-int ScriptActionCtr_051 = 0;
-int ScriptActionCtr_052 = 0;
-int ScriptActionCtr_148 = 0;
-int ScriptActionCtr_039 = 0;
-int ScriptActionCtr_040 = 0;
-int ScriptActionCtr_021 = 0;
-int ScriptActionCtr_048 = 0;
-int ScriptActionCtr_042 = 0;
-int ScriptActionCtr_043 = 0;
-int ScriptActionCtr_002 = 0;
-int ScriptActionCtr_095 = 0;
-int ScriptActionCtr_096 = 0;
-int ScriptActionCtr_090 = 0;
-int ScriptActionCtr_091 = 0;
-int ScriptActionCtr_092 = 0;
-int ScriptActionCtr_093 = 0;
-int ScriptActionCtr_121 = 0;
-int ScriptActionCtr_094 = 0;
-int ScriptActionCtr_143 = 0;
-int ScriptActionCtr_144 = 0;
-int ScriptActionCtr_145 = 0;
-int ScriptActionCtr_146 = 0;
-int ScriptActionCtr_061 = 0;
-int ScriptActionCtr_018 = 0;
-int ScriptActionCtr_122 = 0;
-int ScriptActionCtr_019 = 0;
-int ScriptActionCtr_020 = 0;
-int ScriptActionCtr_125 = 0;
-int ScriptActionCtr_086 = 0;
-int ScriptActionCtr_123 = 0;
-int ScriptActionCtr_087 = 0;
-int ScriptActionCtr_098 = 0;
-int ScriptActionCtr_088 = 0;
-int ScriptActionCtr_124 = 0;
-int ScriptActionCtr_089 = 0;
-int ScriptActionCtr_097 = 0;
-int ScriptActionCtr_003 = 0;
-int ScriptActionCtr_099 = 0;
-int ScriptActionCtr_100 = 0;
-int ScriptActionCtr_032 = 0;
-int ScriptActionCtr_073 = 0;
-int ScriptActionCtr_033 = 0;
-int ScriptActionCtr_120 = 0;
-int ScriptActionCtr_034 = 0;
-int ScriptActionCtr_035 = 0;
-int ScriptActionCtr_045 = 0;
-int ScriptActionCtr_022 = 0;
-int ScriptActionCtr_023 = 0;
-int ScriptActionCtr_024 = 0;
-int ScriptActionCtr_025 = 0;
-int ScriptActionCtr_026 = 0;
-int ScriptActionCtr_027 = 0;
-int ScriptActionCtr_028 = 0;
-int ScriptActionCtr_029 = 0;
-int ScriptActionCtr_030 = 0;
-int ScriptActionCtr_031 = 0;
-int ScriptActionCtr_059 = 0;
-int ScriptActionCtr_001 = 0;
-int ScriptActionCtr_105 = 0;
-int ScriptActionCtr_047 = 0;
-int ScriptActionCtr_005 = 0;
-int ScriptActionCtr_014 = 0;
-int ScriptActionCtr_060 = 0;
-int ScriptActionCtr_041 = 0;
-int ScriptActionCtr_063 = 0;
-int ScriptActionCtr_062 = 0;
-int ScriptActionCtr_004 = 0;
-int ScriptActionCtr_012 = 0;
-int ScriptActionCtr_036 = 0;
-int ScriptActionCtr_011 = 0;
-int ScriptActionCtr_010 = 0;
-int ScriptActionCtr_006 = 0;
-int ScriptActionCtr_044 = 0;
-int ScriptActionCtr_049 = 0;
-int ScriptActionCtr_053 = 0;
-int ScriptActionCtr_054 = 0;
-int ScriptActionCtr_055 = 0;
-int ScriptActionCtr_056 = 0;
-int ScriptActionCtr_057 = 0;
-int ScriptActionCtr_058 = 0;
-int ScriptActionCtr_007 = 0;
-int ScriptActionCtr_008 = 0;
-int ScriptActionCtr_013 = 0;
-int ScriptActionCtr_037 = 0;
-int ScriptActionCtr_015 = 0;
-int ScriptActionCtr_016 = 0;
-int ScriptActionCtr_017 = 0;
-int ScriptActionCtr_065 = 0;
-int ScriptActionCtr_066 = 0;
-int ScriptActionCtr_067 = 0;
-int ScriptActionCtr_068 = 0;
-int ScriptActionCtr_069 = 0;
-int ScriptActionCtr_070 = 0;
-int ScriptActionCtr_071 = 0;
-int ScriptActionCtr_038 = 0;
-int ScriptActionCtr_009 = 0;
-int ScriptActionCtr_072 = 0;
-int ScriptActionCtr_075 = 0;
-int ScriptActionCtr_074 = 0;
-int ScriptActionCtr_085 = 0;
-int ScriptActionCtr_084 = 0;
-int ScriptActionCtr_083 = 0;
-int ScriptActionCtr_082 = 0;
-int ScriptActionCtr_081 = 0;
-int ScriptActionCtr_080 = 0;
-int ScriptActionCtr_079 = 0;
-int ScriptActionCtr_078 = 0;
-int ScriptActionCtr_077 = 0;
-int ScriptActionCtr_076 = 0;
-int ScriptActionCtr_102 = 0;
-int ScriptActionCtr_103 = 0;
-int ScriptActionCtr_104 = 0;
-int ScriptActionCtr_106 = 0;
-int ScriptActionCtr_107 = 0;
-int ScriptActionCtr_108 = 0;
-int ScriptActionCtr_109 = 0;
-int ScriptActionCtr_110 = 0;
-int ScriptActionCtr_126 = 0;
-int ScriptActionCtr_127 = 0;
-int ScriptActionCtr_128 = 0;
-int ScriptActionCtr_129 = 0;
-int ScriptActionCtr_111 = 0;
-int ScriptActionCtr_130 = 0;
-int ScriptActionCtr_112 = 0;
-int ScriptActionCtr_131 = 0;
-int ScriptActionCtr_132 = 0;
-int ScriptActionCtr_133 = 0;
-int ScriptActionCtr_134 = 0;
-int ScriptActionCtr_113 = 0;
-int ScriptActionCtr_135 = 0;
-int ScriptActionCtr_136 = 0;
-int ScriptActionCtr_114 = 0;
-int ScriptActionCtr_137 = 0;
-int ScriptActionCtr_115 = 0;
-int ScriptActionCtr_138 = 0;
-int ScriptActionCtr_139 = 0;
-int ScriptActionCtr_140 = 0;
-int ScriptActionCtr_116 = 0;
-int ScriptActionCtr_141 = 0;
-int ScriptActionCtr_142 = 0;
-int ScriptActionCtr_046 = 0;
-int ScriptActionCtr_064 = 0;
-int ScriptActionCtr_101 = 0;
-int ScriptActionCtr_118 = 0;
-int ScriptActionCtr_117 = 0;
-int ScriptActionCtr_119 = 0;
-int ScriptActionCtr_147 = 0;
+static int ScriptActionCtr_000 = 0;
+static int ScriptActionCtr_050 = 0;
+static int ScriptActionCtr_051 = 0;
+static int ScriptActionCtr_052 = 0;
+static int ScriptActionCtr_148 = 0;
+static int ScriptActionCtr_039 = 0;
+static int ScriptActionCtr_040 = 0;
+static int ScriptActionCtr_021 = 0;
+static int ScriptActionCtr_048 = 0;
+static int ScriptActionCtr_042 = 0;
+static int ScriptActionCtr_043 = 0;
+static int ScriptActionCtr_002 = 0;
+static int ScriptActionCtr_095 = 0;
+static int ScriptActionCtr_096 = 0;
+static int ScriptActionCtr_090 = 0;
+static int ScriptActionCtr_091 = 0;
+static int ScriptActionCtr_092 = 0;
+static int ScriptActionCtr_093 = 0;
+static int ScriptActionCtr_121 = 0;
+static int ScriptActionCtr_094 = 0;
+static int ScriptActionCtr_143 = 0;
+static int ScriptActionCtr_144 = 0;
+static int ScriptActionCtr_145 = 0;
+static int ScriptActionCtr_146 = 0;
+static int ScriptActionCtr_061 = 0;
+static int ScriptActionCtr_018 = 0;
+static int ScriptActionCtr_122 = 0;
+static int ScriptActionCtr_019 = 0;
+static int ScriptActionCtr_020 = 0;
+static int ScriptActionCtr_125 = 0;
+static int ScriptActionCtr_086 = 0;
+static int ScriptActionCtr_123 = 0;
+static int ScriptActionCtr_087 = 0;
+static int ScriptActionCtr_098 = 0;
+static int ScriptActionCtr_088 = 0;
+static int ScriptActionCtr_124 = 0;
+static int ScriptActionCtr_089 = 0;
+static int ScriptActionCtr_097 = 0;
+static int ScriptActionCtr_003 = 0;
+static int ScriptActionCtr_099 = 0;
+static int ScriptActionCtr_100 = 0;
+static int ScriptActionCtr_032 = 0;
+static int ScriptActionCtr_073 = 0;
+static int ScriptActionCtr_033 = 0;
+static int ScriptActionCtr_120 = 0;
+static int ScriptActionCtr_034 = 0;
+static int ScriptActionCtr_035 = 0;
+static int ScriptActionCtr_045 = 0;
+static int ScriptActionCtr_022 = 0;
+static int ScriptActionCtr_023 = 0;
+static int ScriptActionCtr_024 = 0;
+static int ScriptActionCtr_025 = 0;
+static int ScriptActionCtr_026 = 0;
+static int ScriptActionCtr_027 = 0;
+static int ScriptActionCtr_028 = 0;
+static int ScriptActionCtr_029 = 0;
+static int ScriptActionCtr_030 = 0;
+static int ScriptActionCtr_031 = 0;
+static int ScriptActionCtr_059 = 0;
+static int ScriptActionCtr_001 = 0;
+static int ScriptActionCtr_105 = 0;
+static int ScriptActionCtr_047 = 0;
+static int ScriptActionCtr_005 = 0;
+static int ScriptActionCtr_014 = 0;
+static int ScriptActionCtr_060 = 0;
+static int ScriptActionCtr_041 = 0;
+static int ScriptActionCtr_063 = 0;
+static int ScriptActionCtr_062 = 0;
+static int ScriptActionCtr_004 = 0;
+static int ScriptActionCtr_012 = 0;
+static int ScriptActionCtr_036 = 0;
+static int ScriptActionCtr_011 = 0;
+static int ScriptActionCtr_010 = 0;
+static int ScriptActionCtr_006 = 0;
+static int ScriptActionCtr_044 = 0;
+static int ScriptActionCtr_049 = 0;
+static int ScriptActionCtr_053 = 0;
+static int ScriptActionCtr_054 = 0;
+static int ScriptActionCtr_055 = 0;
+static int ScriptActionCtr_056 = 0;
+static int ScriptActionCtr_057 = 0;
+static int ScriptActionCtr_058 = 0;
+static int ScriptActionCtr_007 = 0;
+static int ScriptActionCtr_008 = 0;
+static int ScriptActionCtr_013 = 0;
+static int ScriptActionCtr_037 = 0;
+static int ScriptActionCtr_015 = 0;
+static int ScriptActionCtr_016 = 0;
+static int ScriptActionCtr_017 = 0;
+static int ScriptActionCtr_065 = 0;
+static int ScriptActionCtr_066 = 0;
+static int ScriptActionCtr_067 = 0;
+static int ScriptActionCtr_068 = 0;
+static int ScriptActionCtr_069 = 0;
+static int ScriptActionCtr_070 = 0;
+static int ScriptActionCtr_071 = 0;
+static int ScriptActionCtr_038 = 0;
+static int ScriptActionCtr_009 = 0;
+static int ScriptActionCtr_072 = 0;
+static int ScriptActionCtr_075 = 0;
+static int ScriptActionCtr_074 = 0;
+static int ScriptActionCtr_085 = 0;
+static int ScriptActionCtr_084 = 0;
+static int ScriptActionCtr_083 = 0;
+static int ScriptActionCtr_082 = 0;
+static int ScriptActionCtr_081 = 0;
+static int ScriptActionCtr_080 = 0;
+static int ScriptActionCtr_079 = 0;
+static int ScriptActionCtr_078 = 0;
+static int ScriptActionCtr_077 = 0;
+static int ScriptActionCtr_076 = 0;
+static int ScriptActionCtr_102 = 0;
+static int ScriptActionCtr_103 = 0;
+static int ScriptActionCtr_104 = 0;
+static int ScriptActionCtr_106 = 0;
+static int ScriptActionCtr_107 = 0;
+static int ScriptActionCtr_108 = 0;
+static int ScriptActionCtr_109 = 0;
+static int ScriptActionCtr_110 = 0;
+static int ScriptActionCtr_126 = 0;
+static int ScriptActionCtr_127 = 0;
+static int ScriptActionCtr_128 = 0;
+static int ScriptActionCtr_129 = 0;
+static int ScriptActionCtr_111 = 0;
+static int ScriptActionCtr_130 = 0;
+static int ScriptActionCtr_112 = 0;
+static int ScriptActionCtr_131 = 0;
+static int ScriptActionCtr_132 = 0;
+static int ScriptActionCtr_133 = 0;
+static int ScriptActionCtr_134 = 0;
+static int ScriptActionCtr_113 = 0;
+static int ScriptActionCtr_135 = 0;
+static int ScriptActionCtr_136 = 0;
+static int ScriptActionCtr_114 = 0;
+static int ScriptActionCtr_137 = 0;
+static int ScriptActionCtr_115 = 0;
+static int ScriptActionCtr_138 = 0;
+static int ScriptActionCtr_139 = 0;
+static int ScriptActionCtr_140 = 0;
+static int ScriptActionCtr_116 = 0;
+static int ScriptActionCtr_141 = 0;
+static int ScriptActionCtr_142 = 0;
+static int ScriptActionCtr_046 = 0;
+static int ScriptActionCtr_064 = 0;
+static int ScriptActionCtr_101 = 0;
+static int ScriptActionCtr_118 = 0;
+static int ScriptActionCtr_117 = 0;
+static int ScriptActionCtr_119 = 0;
+static int ScriptActionCtr_147 = 0;
 
 // ========================================
 // Function to Clear Global Action Counters
@@ -1259,8 +1274,8 @@ struct tScriptMessage {
 };
 
 // Global storage for level script messages
-tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
-int num_messages;
+static tScriptMessage *message_list[MAX_SCRIPT_MESSAGES];
+static int num_messages;
 
 // ======================
 // Message File Functions
@@ -1426,157 +1441,157 @@ const char *GetMessage(const char *name) {
 //======================
 
 #define NUM_DOOR_NAMES 2
-const char *Door_names[NUM_DOOR_NAMES] = {"Datavault Door", "Base Access Door"};
-int Door_handles[NUM_DOOR_NAMES];
+static const char *const Door_names[NUM_DOOR_NAMES] = {"Datavault Door", "Base Access Door"};
+static int Door_handles[NUM_DOOR_NAMES];
 
 #define NUM_OBJECT_NAMES 111
-const char *Object_names[NUM_OBJECT_NAMES] = {"Memory Plasma Blob",
-                                        "Vault HangTurr1",
-                                        "Vault HangTurr2",
-                                        "Vault Turr3",
-                                        "Vault Turr4",
-                                        "Hanger Swatter1",
-                                        "Hanger Swatter2",
-                                        "Hanger Swatter3",
-                                        "Hanger Swatter4",
-                                        "HoodReinforcementA",
-                                        "HoodReinforcementB",
-                                        "HoodAmbushGT",
-                                        "HoodAmbushCB",
-                                        "HoodAmbushDV",
-                                        "CanyonAmbushA",
-                                        "CanyonAmbushB",
-                                        "CanyonAmbushC",
-                                        "PitAmbushA",
-                                        "PitAmbushB",
-                                        "PitAmbushC",
-                                        "PrepRoomTurret1",
-                                        "MemPlasmaTurret1",
-                                        "MemPlasmaTurret2",
-                                        "MemPlasmaTurret3",
-                                        "MemPlasmaTurret4",
-                                        "CorridorTurret1",
-                                        "CorridorTurret2",
-                                        "Substation1Turret1",
-                                        "AuxillaryTurret1",
-                                        "AuxillaryTurret2",
-                                        "AuxillaryTurret3",
-                                        "ControlTurret1",
-                                        "ControlTurret2",
-                                        "InitializationHub",
-                                        "DataUplinkCenter",
-                                        "TankerLandPoint",
-                                        "Nano Cooker Spew",
-                                        "Memory Spew",
-                                        "Interface Spew",
-                                        "Interface Dongle",
-                                        "Fuel Tanker",
-                                        "Hood Patrol1",
-                                        "SkyPatrol2",
-                                        "TrappedMega",
-                                        "DVPatrolA",
-                                        "DVPatrolB",
-                                        "DVGuard",
-                                        "DVGuardBeacon",
-                                        "HoodAmbushDVDest",
-                                        "BigGunCam",
-                                        "BigGunTargetCam",
-                                        "JuggGuard",
-                                        "JuggAlertBeacon",
-                                        "HoodReinforceADest",
-                                        "CanyonGuard",
-                                        "CmdBaseGuard",
-                                        "BaseAmbushA",
-                                        "BaseAmbushB",
-                                        "CmdBaseBeacon",
-                                        "HoodAmbushCBDest",
-                                        "TankPatrol",
-                                        "D1 Patrol Leader",
-                                        "D1 Ground Guard",
-                                        "MineGuardBeacon",
-                                        "Hanger Guard",
-                                        "HangarGuardBeacon",
-                                        "HoodReinforceBDest",
-                                        "Interface Power Sw",
-                                        "Foyer Matcen1 Sw",
-                                        "Prep Matcen1 Sw",
-                                        "Memory Plasma Swit",
-                                        "Aux Matcen1 Sw",
-                                        "HD Matcen1 Sw",
-                                        "Uplink Plasma Swit",
-                                        "HD Matcen2 Sw",
-                                        "Aux Matcen2 Sw",
-                                        "Foyer Matcen2 Sw",
-                                        "Prep Matcen2 Sw",
-                                        "CrashedCargoShip",
-                                        "Vault Key",
-                                        "Hanger Door Switch",
-                                        "Hanger Data Link",
-                                        "MemPlasmaDataArm",
-                                        "UplinkControlDataA",
-                                        "UplinkCenterDataAr",
-                                        "Prep Room DataArm",
-                                        "PrepInitCamA",
-                                        "PrepInitCamB",
-                                        "PrepInitCamC",
-                                        "PrepInitCamD",
-                                        "Nano Plasma Switch",
-                                        "Interface Switch",
-                                        "Waypoint2Cam",
-                                        "Uplink Upper Cam",
-                                        "Uplink Lower Cam",
-                                        "UplinkCamA",
-                                        "UplinkCamB",
-                                        "UplinkCamC",
-                                        "UplinkCamD",
-                                        "Hanger Wall Cam",
-                                        "Prep Room Cam",
-                                        "Mem Plasma Cam",
-                                        "Corridor Cam",
-                                        "Substation 1 Cam",
-                                        "Auxillary Cam",
-                                        "Control Cam",
-                                        "Camera Monitor",
-                                        "Crashed Ship Log",
-                                        "Meteor1",
-                                        "Meteor1Explosion",
-                                        "A Door FoyerMatcen"};
-int Object_handles[NUM_OBJECT_NAMES];
+static const char *const Object_names[NUM_OBJECT_NAMES] = {"Memory Plasma Blob",
+                                                           "Vault HangTurr1",
+                                                           "Vault HangTurr2",
+                                                           "Vault Turr3",
+                                                           "Vault Turr4",
+                                                           "Hanger Swatter1",
+                                                           "Hanger Swatter2",
+                                                           "Hanger Swatter3",
+                                                           "Hanger Swatter4",
+                                                           "HoodReinforcementA",
+                                                           "HoodReinforcementB",
+                                                           "HoodAmbushGT",
+                                                           "HoodAmbushCB",
+                                                           "HoodAmbushDV",
+                                                           "CanyonAmbushA",
+                                                           "CanyonAmbushB",
+                                                           "CanyonAmbushC",
+                                                           "PitAmbushA",
+                                                           "PitAmbushB",
+                                                           "PitAmbushC",
+                                                           "PrepRoomTurret1",
+                                                           "MemPlasmaTurret1",
+                                                           "MemPlasmaTurret2",
+                                                           "MemPlasmaTurret3",
+                                                           "MemPlasmaTurret4",
+                                                           "CorridorTurret1",
+                                                           "CorridorTurret2",
+                                                           "Substation1Turret1",
+                                                           "AuxillaryTurret1",
+                                                           "AuxillaryTurret2",
+                                                           "AuxillaryTurret3",
+                                                           "ControlTurret1",
+                                                           "ControlTurret2",
+                                                           "InitializationHub",
+                                                           "DataUplinkCenter",
+                                                           "TankerLandPoint",
+                                                           "Nano Cooker Spew",
+                                                           "Memory Spew",
+                                                           "Interface Spew",
+                                                           "Interface Dongle",
+                                                           "Fuel Tanker",
+                                                           "Hood Patrol1",
+                                                           "SkyPatrol2",
+                                                           "TrappedMega",
+                                                           "DVPatrolA",
+                                                           "DVPatrolB",
+                                                           "DVGuard",
+                                                           "DVGuardBeacon",
+                                                           "HoodAmbushDVDest",
+                                                           "BigGunCam",
+                                                           "BigGunTargetCam",
+                                                           "JuggGuard",
+                                                           "JuggAlertBeacon",
+                                                           "HoodReinforceADest",
+                                                           "CanyonGuard",
+                                                           "CmdBaseGuard",
+                                                           "BaseAmbushA",
+                                                           "BaseAmbushB",
+                                                           "CmdBaseBeacon",
+                                                           "HoodAmbushCBDest",
+                                                           "TankPatrol",
+                                                           "D1 Patrol Leader",
+                                                           "D1 Ground Guard",
+                                                           "MineGuardBeacon",
+                                                           "Hanger Guard",
+                                                           "HangarGuardBeacon",
+                                                           "HoodReinforceBDest",
+                                                           "Interface Power Sw",
+                                                           "Foyer Matcen1 Sw",
+                                                           "Prep Matcen1 Sw",
+                                                           "Memory Plasma Swit",
+                                                           "Aux Matcen1 Sw",
+                                                           "HD Matcen1 Sw",
+                                                           "Uplink Plasma Swit",
+                                                           "HD Matcen2 Sw",
+                                                           "Aux Matcen2 Sw",
+                                                           "Foyer Matcen2 Sw",
+                                                           "Prep Matcen2 Sw",
+                                                           "CrashedCargoShip",
+                                                           "Vault Key",
+                                                           "Hanger Door Switch",
+                                                           "Hanger Data Link",
+                                                           "MemPlasmaDataArm",
+                                                           "UplinkControlDataA",
+                                                           "UplinkCenterDataAr",
+                                                           "Prep Room DataArm",
+                                                           "PrepInitCamA",
+                                                           "PrepInitCamB",
+                                                           "PrepInitCamC",
+                                                           "PrepInitCamD",
+                                                           "Nano Plasma Switch",
+                                                           "Interface Switch",
+                                                           "Waypoint2Cam",
+                                                           "Uplink Upper Cam",
+                                                           "Uplink Lower Cam",
+                                                           "UplinkCamA",
+                                                           "UplinkCamB",
+                                                           "UplinkCamC",
+                                                           "UplinkCamD",
+                                                           "Hanger Wall Cam",
+                                                           "Prep Room Cam",
+                                                           "Mem Plasma Cam",
+                                                           "Corridor Cam",
+                                                           "Substation 1 Cam",
+                                                           "Auxillary Cam",
+                                                           "Control Cam",
+                                                           "Camera Monitor",
+                                                           "Crashed Ship Log",
+                                                           "Meteor1",
+                                                           "Meteor1Explosion",
+                                                           "A Door FoyerMatcen"};
+static int Object_handles[NUM_OBJECT_NAMES];
 
 #define NUM_ROOM_NAMES 19
-const char *Room_names[NUM_ROOM_NAMES] = {"Hanger Portal",      "Foyer",
-                                    "DataStow Room",      "Interface Obs Acce",
-                                    "Main Hall",          "Main Hanger",
-                                    "Prep Room",          "Mem Plasma Room",
-                                    "Mem Plasma Room 2",  "Maintenance Room",
-                                    "Mem Plasma Doorway", "Differential Room",
-                                    "Corridor Cam Room",  "Substation1",
-                                    "Workstation Access", "Auxillary Control",
-                                    "Interface Control",  "Data Uplink Room",
-                                    "Control Door Room"};
-int Room_indexes[NUM_ROOM_NAMES];
+static const char *const Room_names[NUM_ROOM_NAMES] = {"Hanger Portal",      "Foyer",
+                                                       "DataStow Room",      "Interface Obs Acce",
+                                                       "Main Hall",          "Main Hanger",
+                                                       "Prep Room",          "Mem Plasma Room",
+                                                       "Mem Plasma Room 2",  "Maintenance Room",
+                                                       "Mem Plasma Doorway", "Differential Room",
+                                                       "Corridor Cam Room",  "Substation1",
+                                                       "Workstation Access", "Auxillary Control",
+                                                       "Interface Control",  "Data Uplink Room",
+                                                       "Control Door Room"};
+static int Room_indexes[NUM_ROOM_NAMES];
 
 #define NUM_TRIGGER_NAMES 12
-const char *Trigger_names[NUM_TRIGGER_NAMES] = {"MMainHub-2",    "MRightArm-2",   "MRightArm-1",   "MLowerEnd-2",
-                                          "MLowerEnd-1",   "MMidSection-4", "MMidSection-3", "MMidSection-2",
-                                          "MMidSection-1", "MMainHub-1",    "MOutside-2",    "MOutside1"};
-int Trigger_indexes[NUM_TRIGGER_NAMES];
-int Trigger_faces[NUM_TRIGGER_NAMES];
-int Trigger_rooms[NUM_TRIGGER_NAMES];
+static const char *const Trigger_names[NUM_TRIGGER_NAMES] = {
+    "MMainHub-2",    "MRightArm-2",   "MRightArm-1",   "MLowerEnd-2", "MLowerEnd-1", "MMidSection-4",
+    "MMidSection-3", "MMidSection-2", "MMidSection-1", "MMainHub-1",  "MOutside-2",  "MOutside1"};
+static int Trigger_indexes[NUM_TRIGGER_NAMES];
+static int Trigger_faces[NUM_TRIGGER_NAMES];
+static int Trigger_rooms[NUM_TRIGGER_NAMES];
 
 #define NUM_SOUND_NAMES 9
-const char *Sound_names[NUM_SOUND_NAMES] = {"PlayerSpotted",     "BaseAlertedSiren",   "AmbSwitch11",
-                                      "Lev10Laser",        "AmbSwitch31",        "Powerup pickup",
-                                      "MemPlasmaChargeOn", "MemPlasmaChargeOff", "HudMessage"};
-int Sound_indexes[NUM_SOUND_NAMES];
+static const char *const Sound_names[NUM_SOUND_NAMES] = {"PlayerSpotted",     "BaseAlertedSiren",   "AmbSwitch11",
+                                                         "Lev10Laser",        "AmbSwitch31",        "Powerup pickup",
+                                                         "MemPlasmaChargeOn", "MemPlasmaChargeOff", "HudMessage"};
+static int Sound_indexes[NUM_SOUND_NAMES];
 
 #define NUM_TEXTURE_NAMES 6
-const char *Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect7", "FunkyEffect4", "FunkyEffect3",
-                                          "FunkyEffect2", "FunkyEffect5", "Lightning3"};
-int Texture_indexes[NUM_TEXTURE_NAMES];
+static const char *const Texture_names[NUM_TEXTURE_NAMES] = {"FunkyEffect7", "FunkyEffect4", "FunkyEffect3",
+                                                             "FunkyEffect2", "FunkyEffect5", "Lightning3"};
+static int Texture_indexes[NUM_TEXTURE_NAMES];
 
 #define NUM_PATH_NAMES 28
-const char *Path_names[NUM_PATH_NAMES] = {
+static const char *const Path_names[NUM_PATH_NAMES] = {
     "LandingCamPathA",    "LandingCamPathB",    "NewPlayerIntroCamPath", "NewPlayerIntroPath",
     "IntroLandingPath",   "IntroLandingPathB",  "Space Patrol",          "SkyPatrol2",
     "DVPatrolA",          "DVPatrolB",          "DVGuardPath",           "Jugg Alerted Path",
@@ -1584,92 +1599,92 @@ const char *Path_names[NUM_PATH_NAMES] = {
     "TankPatrol",         "D1PatrolPath",       "D1 Ground Path A",      "D1 Ground Path B",
     "D1 Ground Path C",   "Hanger Patrol Path", "Hanger Patrol Path 2",  "PrepInitCam",
     "PlayerInitPath",     "NewUplinkCamPath",   "UplinkPlayerPath",      "Meteor1"};
-int Path_indexes[NUM_PATH_NAMES];
+static int Path_indexes[NUM_PATH_NAMES];
 
 #define NUM_MATCEN_NAMES 20
-const char *Matcen_names[NUM_MATCEN_NAMES] = {"Central Matcen", "MemPlasmaMatcen",    "Foyer Matcen1",    "Foyer Matcen2",
-                                        "HD Matcen1",     "HD Matcen2",         "Aux Matcen1",      "Aux Matcen2",
-                                        "Prep Matcen1",   "Prep Matcen2",       "Nano Matcen1",     "Nano Matcen2",
-                                        "Nano Matcen3",   "StorageRoomXMatcen", "BigRoomXMatcen1",  "FoyerXMatcen",
-                                        "FoyerXMatcen2",  "MainHallXMatcen1",   "MainHallXMatcen2", "Temp Bolt"};
-int Matcen_indexes[NUM_MATCEN_NAMES];
+static const char *const Matcen_names[NUM_MATCEN_NAMES] = {
+    "Central Matcen", "MemPlasmaMatcen", "Foyer Matcen1",    "Foyer Matcen2",      "HD Matcen1",
+    "HD Matcen2",     "Aux Matcen1",     "Aux Matcen2",      "Prep Matcen1",       "Prep Matcen2",
+    "Nano Matcen1",   "Nano Matcen2",    "Nano Matcen3",     "StorageRoomXMatcen", "BigRoomXMatcen1",
+    "FoyerXMatcen",   "FoyerXMatcen2",   "MainHallXMatcen1", "MainHallXMatcen2",   "Temp Bolt"};
+static int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 13
-const char *Goal_names[NUM_GOAL_NAMES] = {
+static const char *const Goal_names[NUM_GOAL_NAMES] = {
     "Enable Uplink Control Power",     "Enable Memory Plasma Generation", "Activate Uplink Plasma Supply",
     "Obtain a Data Vault Key",         "Enter through the Data Vault",    "Infiltrate the Lunar Command Center",
     "Acquire a Data Interface",        "Initialize Data Interface",       "Disable Nano Plasma Defenses",
     "Activate Uplink Docking Control", "Connect to Data Uplink",          "Acquire Memory Plasma Charge",
     "Upload Virus Information"};
-int Goal_indexes[NUM_GOAL_NAMES];
+static int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 65
-const char *Message_names[NUM_MESSAGE_NAMES] = {"Empty",
-                                          "IntroText",
-                                          "ZMegaTrap",
-                                          "ZDVSpotted",
-                                          "ZDVAlerted",
-                                          "ZTurretHit",
-                                          "CannonHitPlayer",
-                                          "JuggSawPlayer",
-                                          "JuggAlertedBase",
-                                          "JuggAlertWarning",
-                                          "ZCanyonRun",
-                                          "ZCanyonAmbush",
-                                          "ZCBNoticed",
-                                          "ZCBAlerted",
-                                          "D1GuardSpotted",
-                                          "HangerGuardSpotted",
-                                          "GuardTowerAlertedHG",
-                                          "GuardTowerAlertedGG",
-                                          "BaseAlertStatus",
-                                          "BaseAlertDisplay",
-                                          "VaultKeyAcquired",
-                                          "InterfaceAcquired",
-                                          "HangerDoorUnlocked",
-                                          "HangerMsgGame",
-                                          "HangerMsgHUD",
-                                          "MemPlasmaGame",
-                                          "MemPlasmaHUD",
-                                          "UplinkControlGame",
-                                          "UplinkControlHUD",
-                                          "UplinkCenterGame",
-                                          "UplinkCenterHUD",
-                                          "InterfacePrepInstrGame",
-                                          "InterfacePrepInstHUD",
-                                          "InterfaceInitialized",
-                                          "InitInterfaceCin",
-                                          "InterfacePrepDenied",
-                                          "UplinkPlasmaOff",
-                                          "UplinkPlasmaOn",
-                                          "MemPlasmaOff",
-                                          "MemPlasmaOn",
-                                          "NanoPlasmaDefOff",
-                                          "NanoPlasmaDefOn",
-                                          "MatcenActivated",
-                                          "MatcenDeactivated",
-                                          "InterfacePowerOff",
-                                          "InterfacePowerOn",
-                                          "DataUplinkActivated",
-                                          "InterfaceHasNoPower",
-                                          "UplinkDocking",
-                                          "UplinkErrorNoChg",
-                                          "UplinkErrorNoPlasma",
-                                          "UplinkErrorNotAct",
-                                          "UplinkErrorNoInit",
-                                          "UplinkErrorNoInt",
-                                          "UplinkErrorNano",
-                                          "MemPlasmaObtained",
-                                          "MemPlasmaLost",
-                                          "UploadingVirus",
-                                          "ZCamSpotted",
-                                          "ZGotCamMonitor",
-                                          "ZCamMonitorOff",
-                                          "ZCamMonitorOn",
-                                          "CrashedShipGame",
-                                          "CrashedShipHud",
-                                          "NoEntry"};
-const char *Message_strings[NUM_MESSAGE_NAMES];
+static const char *const Message_names[NUM_MESSAGE_NAMES] = {"Empty",
+                                                             "IntroText",
+                                                             "ZMegaTrap",
+                                                             "ZDVSpotted",
+                                                             "ZDVAlerted",
+                                                             "ZTurretHit",
+                                                             "CannonHitPlayer",
+                                                             "JuggSawPlayer",
+                                                             "JuggAlertedBase",
+                                                             "JuggAlertWarning",
+                                                             "ZCanyonRun",
+                                                             "ZCanyonAmbush",
+                                                             "ZCBNoticed",
+                                                             "ZCBAlerted",
+                                                             "D1GuardSpotted",
+                                                             "HangerGuardSpotted",
+                                                             "GuardTowerAlertedHG",
+                                                             "GuardTowerAlertedGG",
+                                                             "BaseAlertStatus",
+                                                             "BaseAlertDisplay",
+                                                             "VaultKeyAcquired",
+                                                             "InterfaceAcquired",
+                                                             "HangerDoorUnlocked",
+                                                             "HangerMsgGame",
+                                                             "HangerMsgHUD",
+                                                             "MemPlasmaGame",
+                                                             "MemPlasmaHUD",
+                                                             "UplinkControlGame",
+                                                             "UplinkControlHUD",
+                                                             "UplinkCenterGame",
+                                                             "UplinkCenterHUD",
+                                                             "InterfacePrepInstrGame",
+                                                             "InterfacePrepInstHUD",
+                                                             "InterfaceInitialized",
+                                                             "InitInterfaceCin",
+                                                             "InterfacePrepDenied",
+                                                             "UplinkPlasmaOff",
+                                                             "UplinkPlasmaOn",
+                                                             "MemPlasmaOff",
+                                                             "MemPlasmaOn",
+                                                             "NanoPlasmaDefOff",
+                                                             "NanoPlasmaDefOn",
+                                                             "MatcenActivated",
+                                                             "MatcenDeactivated",
+                                                             "InterfacePowerOff",
+                                                             "InterfacePowerOn",
+                                                             "DataUplinkActivated",
+                                                             "InterfaceHasNoPower",
+                                                             "UplinkDocking",
+                                                             "UplinkErrorNoChg",
+                                                             "UplinkErrorNoPlasma",
+                                                             "UplinkErrorNotAct",
+                                                             "UplinkErrorNoInit",
+                                                             "UplinkErrorNoInt",
+                                                             "UplinkErrorNano",
+                                                             "MemPlasmaObtained",
+                                                             "MemPlasmaLost",
+                                                             "UploadingVirus",
+                                                             "ZCamSpotted",
+                                                             "ZGotCamMonitor",
+                                                             "ZCamMonitorOff",
+                                                             "ZCamMonitorOn",
+                                                             "CrashedShipGame",
+                                                             "CrashedShipHud",
+                                                             "NoEntry"};
+static const char *Message_strings[NUM_MESSAGE_NAMES];
 
 // ===============
 // InitializeDLL()

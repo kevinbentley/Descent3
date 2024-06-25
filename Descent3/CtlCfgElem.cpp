@@ -536,7 +536,7 @@ UIBitmapItem *cfg_element::m_xbtn_bmp_lit = NULL;
 UIBitmapItem *cfg_element::m_xbtn_bmp = NULL;
 int16_t cfg_element::m_count = 0;
 
-// MTS: unused?
+// TODO: MTS: unused?
 bool key_cfg_element(uint8_t *element, uint8_t *flags);
 
 //////////////////////////////////////////////////////////////////////////////

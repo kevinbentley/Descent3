@@ -297,6 +297,7 @@
 #include "marker.h"
 #include "d3music.h"
 #include "weather.h"
+#include "PHYSICS.H"
 
 // function prototypes.
 
@@ -997,8 +998,6 @@ void SGSVisEffects(CFILE *fp) {
   }
 }
 
-extern int Physics_NumLinked;
-extern int PhysicsLinkList[MAX_OBJECTS];
 extern char MarkerMessages[MAX_PLAYERS * 2][MAX_MARKER_MESSAGE_LENGTH];
 extern int Marker_message;
 void InsureSaveGame(CFILE *fp) { cf_WriteInt(fp, 0xF00D4B0B); }

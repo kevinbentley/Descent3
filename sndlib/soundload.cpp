@@ -246,6 +246,21 @@
 #include "../Descent3/sounds.h"
 #endif
 
+
+/// Allocs a sound file for use, returns -1 if error, else index on success.
+static int AllocSoundFile();
+
+/// Searches thru all sounds for a specific name, returns -1 if not found
+/// or index of sound with name.
+static int FindSoundFileName(const char *name);
+
+/// Gets the filename from a path, plus appends our .wav extension.
+static void ChangeSoundFileName(const char *src, char *dest);
+
+/// Goes thru every entity that could possible have a sound index (ie objects, robots, etc)
+/// and changes the old index to the new index.
+static void RemapAllSoundObjects(int old_index, int new_index);
+
 int Num_sounds = 0;
 int Num_sound_files = 0;
 
@@ -334,6 +349,7 @@ void FreeSoundFile(int n) {
   Num_sound_files--;
 }
 
+// FIXME: MTS: unused?
 // Gets next sound file from n that has actually been alloced
 int GetNextSoundFile(int n) {
   int i;
@@ -355,6 +371,7 @@ int GetNextSoundFile(int n) {
   return n;
 }
 
+// FIXME: MTS: unused?
 // Gets previous sound file from n that has actually been alloced
 int GetPrevSoundFile(int n) {
   int i;
@@ -512,6 +529,7 @@ void FreeSound(int n) {
   Num_sounds--;
 }
 
+// FIXME: MTS: unused?
 // Gets next sound from n that has actually been alloced
 int GetNextSound(int n) {
   int i;
@@ -533,6 +551,7 @@ int GetNextSound(int n) {
   return n;
 }
 
+// FIXME: MTS: unused?
 // Gets previous sound from n that has actually been alloced
 int GetPrevSound(int n) {
   int i;
@@ -568,6 +587,7 @@ int FindSoundName(const char *name) {
   return -1;
 }
 
+// FIXME: MTS: unused?
 // Given a filename, loads the sound.
 int LoadSound(char *filename) {
   int sound_handle;

@@ -341,9 +341,6 @@ static inline float POLY_DEPTH(int model_num) { return Poly_models[model_num].ma
 // returns -1 if something is wrong
 int LoadPolyModel(const char *filename, int pageable);
 
-// gets the filename from a path, plus appends our .pof extension
-void ChangePolyModelName(const char *src, char *dest);
-
 // Searches thru all polymodels for a specific name, returns -1 if not found
 // or index of polymodel with name
 int FindPolyModelName(const char *name);
