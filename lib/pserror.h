@@ -164,11 +164,9 @@ void Int3MessageBox(const char *file, int line);
 #define MBOX_YESNO 2
 #define MBOX_YESNOCANCEL 3
 #define MBOX_ABORTRETRYIGNORE 4
-#if (defined(EDITOR) || defined(NEWEDITOR) || defined(_DEBUG))
 //	prints out a standard OS messagebox
 void OutrageMessageBox(const char *str, ...);
 int OutrageMessageBox(int type, const char *str, ...);
-#endif
 // Sets the title for future OutrageMessageBox() dialogs
 void SetMessageBoxTitle(const char *title);
 // Write a block of text to the system clipboard
