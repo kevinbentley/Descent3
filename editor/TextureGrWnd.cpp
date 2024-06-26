@@ -598,14 +598,15 @@ extern float Just_returned_time;
 int Successive_count = 0;
 
 HWND save_wnd;
-oeWin32Application *app;
+oeLnxApplication *app;
 
 void CTextureGrWnd::TexGrStartOpenGL() {
   if (DoOpenGL) {
-    app = (oeWin32Application *)Descent;
+    app = (oeLnxApplication *)Descent;
     StateLimited = 1;
-    save_wnd = (HWND)app->m_hWnd;
-    app->m_hWnd = (HWnd)m_hWnd;
+    // TODO - hwnd from SDL windows
+    // save_wnd = (HWND)app->m_hWnd;
+    // app->m_hWnd = (HWnd)m_hWnd;
     // rend_SetOpenGLWindowState (1,Descent,NULL); // LGT: not defined anymore
     rend_ClearScreen(0);
     StateLimited = 1;
@@ -617,7 +618,8 @@ void CTextureGrWnd::TexGrStartOpenGL() {
 void CTextureGrWnd::TexGrStopOpenGL() {
   if (DoOpenGL) {
     // rend_SetOpenGLWindowState (0,Descent,NULL); // LGT: not defined anymore
-    app->m_hWnd = (HWnd)save_wnd;
+    // TODO - hwnd from SDL windows
+    // app->m_hWnd = (HWnd)save_wnd;
   }
 }
 
@@ -784,18 +786,18 @@ void CTextureGrWnd::OnPaint() {
 
     if (DoOpenGL) {
       HWND save_wnd;
-      oeWin32Application *app;
+      oeLnxApplication *app;
 
-      app = (oeWin32Application *)Descent;
+      app = (oeLnxApplication *)Descent;
 
-      save_wnd = (HWND)app->m_hWnd;
-      app->m_hWnd = (HWnd)m_hWnd;
+      // save_wnd = (HWND)app->m_hWnd;
+      // app->m_hWnd = (HWnd)m_hWnd;
       // rend_SetOpenGLWindowState (1,Descent,NULL);  // LGT: not defined anymore
 
       rend_Flip();
 
       // rend_SetOpenGLWindowState (0,Descent,NULL);  // LGT: not defined anymore
-      app->m_hWnd = (HWnd)save_wnd;
+      // app->m_hWnd = (HWnd)save_wnd;
     } else {
       m_grScreen->flip();
       m_grViewport->clear();

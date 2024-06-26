@@ -23,9 +23,8 @@
 #include <cstdint>
 
 #include "SystemInterfaces.h"
-#if defined(__LINUX__)
 #include "lnxdsound.h"
-#endif
+
 // Call this function to provide hooks into your memory management.
 typedef void *(mve_cb_alloc)(unsigned size);
 typedef void(mve_cb_free)(void *p);

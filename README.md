@@ -92,6 +92,9 @@ The milestone needs testing on all platforms. Please report issues when found.
     - D3 Open Source compiles level scripts in their own hogfiles. Make sure you copy and overwrite `d3-{platform}.hog`.
 
 ## Building
+#### Prerequisites
+This project depends on [`vcpkg`](https://github.com/microsoft/vcpkg), a cross-platform dependency-management system developed by Microsoft. When building for Windows, vcpkg is already installed and configured when using the Developer Tools Command Prompt. For Android, Linux or Mac (or non-standard-Windows) configurations, you will need to install vcpkg locally by cloning https://github.com/microsoft/vcpkg and setting your `VCPKG_ROOT` env var to the repository location.
+
 #### Building - Windows
 1. Make sure that you have Git and Visual Studio 2022 with the “Desktop development with C++” workload. If you don’t already have those installed or you aren’t sure, then open an elevated Command Prompt and run:
 
@@ -146,7 +149,7 @@ Run these commands:
 
 ```sh
 sudo apt update
-sudo apt install -y --no-install-recommends git ninja-build cmake g++ libsdl2-dev zlib1g-dev
+sudo apt install -y --no-install-recommends git ninja-build cmake g++
 git clone https://github.com/DescentDevelopers/Descent3
 cd Descent3
 cmake --preset linux -D ENABLE_LOGGER=[ON|OFF]
@@ -160,7 +163,7 @@ Run these commands:
 
 ```sh
 sudo dnf update --refresh
-sudo dnf install -y git ninja-build cmake gcc-c++ SDL2-devel zlib-devel
+sudo dnf install -y git ninja-build cmake gcc-c++
 git clone https://github.com/DescentDevelopers/Descent3
 cd Descent3
 cmake --preset linux -D ENABLE_LOGGER=[ON|OFF]

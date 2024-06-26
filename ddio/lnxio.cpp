@@ -62,6 +62,10 @@
 #include <mach-o/dyld.h>
 #endif
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include "application.h"
 #include "ddio.h"
 #include "pserror.h"
@@ -103,12 +107,7 @@ void ddio_DebugMessage(unsigned err, char *fmt, ...) {
 }
 
 bool ddio_GetBinaryPath(char *exec_path, size_t len) {
-#ifndef MACOSX
-  if (realpath("/proc/self/exe", exec_path) == NULL) {
-   perror("realpath");
-   return false;
-  }
-#else
+#ifdef MACOSX
   if (exec_path == NULL || len == 0) {
    fprintf(stderr, "Invalid arguments\n");
    return false;
@@ -119,6 +118,20 @@ bool ddio_GetBinaryPath(char *exec_path, size_t len) {
    fprintf(stderr, "Buffer too small; need size %u\n", size);
    return false;
   }
+#elif defined(__LINUX__)
+  if (realpath("/proc/self/exe", exec_path) == NULL) {
+   perror("realpath");
+   return false;
+  }
+#else
+  if (GetModuleFileName(NULL, exec_path, len) == 0) {
+  DWORD error = GetLastError();
+  Error("GetModuleFileName failed!");
+  return false;
+  }
+  exec_path[len - 1] = '\0';
+  return true;
+
 #endif
  exec_path[len - 1] = '\0';
  return true;

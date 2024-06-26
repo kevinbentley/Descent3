@@ -31,8 +31,6 @@
 #elif defined(__LINUX__)
 #include <unistd.h>
 #define GLFUNCCALL
-#else
-#define GLFUNCCALL
 #endif
 
 // ryan's adds. 04/18/2000.

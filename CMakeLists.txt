@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.20)  # For using CMAKE_<LANG>_BYTE_ORDER
 
+if (NOT DEFINED ENV{VCPKG_ROOT})
+  message(FATAL_ERROR "
+    Please set an environment variable VCPKG_ROOT
+    For example:
+    export VCPKG_ROOT=/path/to/vcpkg
+    ")
+endif()
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE})
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+if(CMAKE_TOOLCHAIN_FILE STREQUAL VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+  # prevent endless recursion
+  unset(VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+endif()
+
 # set default cmake build type to Debug (None Debug Release RelWithDebInfo MinSizeRel)
 if(NOT CMAKE_BUILD_TYPE AND NOT DEFINED ENV{CMAKE_BUILD_TYPE})
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "default build type")
@@ -93,12 +107,12 @@ install(
 if(UNIX)
   add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-Wno-multichar;${BITS};${EXTRA_CXX_FLAGS}>")
   add_compile_options("$<$<COMPILE_LANGUAGE:C>:${BITS}>")
+endif()
 
-  if(NOT HOST_TOOLS_ONLY)
-    find_package(SDL2 REQUIRED)
-    # Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
-    message("SDL2 Include Dir is ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS}")
-  endif()
+if (NOT HOST_TOOLS_ONLY)
+  find_package(SDL2 REQUIRED)
+  # Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
+  message("SDL2 Include Dir is ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS}")
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -182,12 +196,12 @@ if(NOT HOST_TOOLS_ONLY)
   add_subdirectory(d3music)
   add_subdirectory(ddebug)
 
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_subdirectory(dd_grwin32)
     add_subdirectory(win32)
-  else()
-    add_subdirectory(linux)
   endif()
+
+  add_subdirectory(linux)
 
   add_subdirectory(ddio)
   add_subdirectory(dd_video)
