@@ -93,11 +93,12 @@ install(
 if(UNIX)
   add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-Wno-multichar;${BITS};${EXTRA_CXX_FLAGS}>")
   add_compile_options("$<$<COMPILE_LANGUAGE:C>:${BITS}>")
-
-  find_package(SDL2 REQUIRED)
-  # Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
-  message("SDL2 Include Dir is ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS}")
 endif()
+
+find_package(SDL2 REQUIRED)
+# Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
+message("SDL2 Include Dir is ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS}")
+
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   message("Building for Linux")
@@ -178,12 +179,12 @@ add_subdirectory(czip)
 add_subdirectory(d3music)
 add_subdirectory(ddebug)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
   add_subdirectory(dd_grwin32)
   add_subdirectory(win32)
-else()
-  add_subdirectory(linux)
 endif()
+
+add_subdirectory(linux)
 
 add_subdirectory(ddio)
 add_subdirectory(dd_video)

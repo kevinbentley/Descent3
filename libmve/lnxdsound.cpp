@@ -19,9 +19,12 @@
 #include <assert.h>
 #include <errno.h>
 #include <sys/types.h>
+#ifdef __LINUX__
 #include <sys/time.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
+#include <sched.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -33,7 +36,6 @@
 #include "SDL.h"
 #include "SDL_audio.h"
 
-#include <sched.h>
 
 #define FRAGMENT_LENGTH (LnxBuffers[0]->bps >> 4)
 #define FREQUENCY_SHIFT (14)

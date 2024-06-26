@@ -559,60 +559,25 @@ set(SOURCE
     WorldTexturesDialog.cpp
     WorldWeaponsDialog.cpp
     editor.rc
+    ../Descent3/loki_utils.c
+    ../Descent3/sdlmain.cpp
 )
 
-# Editor only works in Windows
-set(PLATFORM_LIBS dd_grwin32 win32 wsock32.lib winmm.lib
-    ${DSOUND_LIBRARY} ${DINPUT_LIBRARY} ${DXGUID_LIBRARY} ${DDRAW_LIBRARY})
-set(PLATFORM_SOURCES ../descent3/winmain.cpp)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO /SUBSYSTEM:WINDOWS /NODEFAULTLIB:LIBC")
+# Editor only works in Windows, because of MFC and DirectX dependencies
+set(PLATFORM_LIBS linux wsock32.lib winmm.lib dd_grwin32 win32 SDL2::SDL2)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO /NODEFAULTLIB:LIBC")
 
+add_executable(Descent3Editor WIN32 ${HEADERS} ${SOURCE})
 
-add_executable(Descent3Editor ${HEADERS} ${SOURCE} ${PLATFORM_SOURCES})
 target_include_directories(Descent3Editor PRIVATE ../lib ../ ../manage/ ${PROJECT_BINARY_DIR}/lib)
+target_compile_definitions(Descent3Editor PUBLIC _AFXDLL EDITOR)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD} /Zc:forScope-")
 
-if(MSVC)
-    target_compile_definitions(Descent3Editor PUBLIC _CRT_SECURE_NO_WARNINGS _AFXDLL EDITOR)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD} /Zc:forScope-")
-endif()
+target_link_libraries(Descent3Editor PRIVATE
+  2dlib AudioEncode bitmap cfile czip d3music dd_video ddebug ddio libmve libacm
+  fix grtext manage mem misc model module movie stream_audio
+  music networking physics renderer rtperformance sndlib ui unzip vecmat md5
+  ${PLATFORM_LIBS})
 
-# Link libraries
-target_link_libraries(Descent3Editor
-    2dlib
-    AudioEncode
-    bitmap
-    cfile
-    czip
-    d3music
-    dd_video
-    ddio
-    ddebug
-    libmve
-    libacm
-    fix
-    grtext
-    manage
-    mem
-    misc
-    model
-    module
-    movie
-    stream_audio
-    music
-    networking
-    physics
-    renderer
-    rtperformance
-    sndlib
-    ui
-    unzip
-    vecmat
-    md5
-    ${PLATFORM_LIBS}
-)
-
-if (WIN32)
-    set_target_properties(Descent3Editor PROPERTIES WIN32_EXECUTABLE ON)
-endif()
-
+add_dependencies(Descent3Editor get_git_hash)
 install(TARGETS Descent3Editor RUNTIME)

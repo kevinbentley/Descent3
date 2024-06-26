@@ -31,7 +31,7 @@ const char *loki_getdatapath(void) { return basepath; }
 
 const char *loki_getprefpath(void) { return prefpath; }
 
-void loki_initialize(int argc, char **argv, char *desc) {
+void loki_initialize() {
   basepath = SDL_GetBasePath();
   if (basepath == NULL) {
     fprintf(stderr, "ERROR: Couldn't find game directory!\n");

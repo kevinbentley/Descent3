@@ -101,18 +101,18 @@ void con_raw_Puts(int window, const char *str);
 
 Console_Commands commands[Console_total] = {
     {
-        .con_Create = con_null_Create,
-        .con_Destroy = con_null_Destroy,
-        .con_Defer = con_null_Defer,
-        .con_Input = con_null_Input,
-        .con_Puts = con_null_Puts,
+        con_null_Create,
+        con_null_Destroy,
+        con_null_Defer,
+        con_null_Input,
+        con_null_Puts,
     },
     {
-        .con_Create = con_raw_Create,
-        .con_Destroy = con_raw_Destroy,
-        .con_Defer = con_raw_Defer,
-        .con_Input = con_raw_Input,
-        .con_Puts = con_raw_Puts,
+        con_raw_Create,
+        con_raw_Destroy,
+        con_raw_Defer,
+        con_raw_Input,
+        con_raw_Puts,
     },
 };
 

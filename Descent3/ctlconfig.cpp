@@ -1126,12 +1126,6 @@ int weapon_select_dialog(int wpn, bool is_secondary) {
   return retval;
 }
 void joystick_calibration() {
-#if defined(WIN32)
-  extern bool Win32JoystickCalibrate();
-  if (!Win32JoystickCalibrate()) {
-    DoMessageBox(TXT_ERROR, TXT_CALIBJOYSTICKFAIL, MB_OK);
-  }
-#endif
 }
 void joystick_settings_dialog() {
   newuiTiledWindow wnd;

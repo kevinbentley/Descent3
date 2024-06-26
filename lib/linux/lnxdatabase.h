@@ -31,6 +31,7 @@
 class CRegistry;
 
 #include "Macros.h"
+#include "appdatabase.h"
 
 /* oeLnxAppDatabase
        to get info about the application from a managed database (or a custom info file)

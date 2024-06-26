@@ -42,10 +42,16 @@
  */
 
 #include <string.h>
-#include <unistd.h>
 #include <stdio.h>
-#include <pwd.h>
 #include <sys/types.h>
+
+#ifdef __LINUX__
+#include <unistd.h>
+#include <pwd.h>
+#else
+#include <windows.h>
+#include <Lmcons.h>
+#endif
 
 #include "appdatabase.h"
 #include "linux/lnxdatabase.h"
@@ -64,13 +70,14 @@ oeLnxAppDatabase::oeLnxAppDatabase() {
   // then close the database
 
   char *prefPath = (char *)loki_getprefpath();
-  size_t fileLen = strlen(prefPath) + strlen(REGISTRY_FILENAME) + 2;
-  char fileName[fileLen];
+  const size_t fileLen = strlen(prefPath) + strlen(REGISTRY_FILENAME) + 2;
+  char* fileName = new char[fileLen];
   snprintf(fileName, fileLen, "%s/%s", prefPath, REGISTRY_FILENAME);
 
   database = new CRegistry(fileName);
   database->Import();
   create_record("Version");
+  delete [] fileName;
 }
 
 oeLnxAppDatabase::oeLnxAppDatabase(oeLnxAppDatabase *parent) {
@@ -208,6 +215,7 @@ bool oeLnxAppDatabase::write(const char *label, int entry) {
 
 // get the current user's name from the os
 void oeLnxAppDatabase::get_user_name(char *buffer, size_t *size) {
+#ifdef __LINUX__
   struct passwd *pwuid = getpwuid(geteuid());
 
   if ((pwuid != NULL) && (pwuid->pw_name != NULL)) {
@@ -219,4 +227,9 @@ void oeLnxAppDatabase::get_user_name(char *buffer, size_t *size) {
     buffer[(*size) - 1] = '\0';
     *size = strlen(buffer);
   }
+#else
+DWORD unamelen = 0;
+GetUserName(buffer, &unamelen);
+*size = static_cast<size_t>(unamelen);
+#endif
 }

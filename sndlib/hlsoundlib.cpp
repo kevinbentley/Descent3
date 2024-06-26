@@ -464,11 +464,7 @@
 #include "voice.h"
 #include "descent.h"
 
-#if defined(WIN32)
-#include "ds3dlib.h"
-#elif defined(__LINUX__)
 #include "sdlsound.h"
-#endif
 
 hlsSystem Sound_system;
 char Sound_quality = SQT_NORMAL;
@@ -528,11 +524,7 @@ int hlsSystem::InitSoundLib(oeApplication *sos, char mixer_type, char quality, b
 
   // Create and initialize the low-level sound library
   if (m_ll_sound_ptr == NULL)
-#if defined(WIN32)
-    m_ll_sound_ptr = new win_llsSystem;
-#elif defined(__LINUX__)
     m_ll_sound_ptr = new lnxsound;
-#endif
   ASSERT(m_ll_sound_ptr);
   if (m_ll_sound_ptr == NULL)
     return 0;
