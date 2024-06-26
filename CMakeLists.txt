@@ -90,6 +90,9 @@ install(
   DESTINATION ${CMAKE_INSTALL_DOCDIR}
 )
 
+add_compile_options("$<$<CONFIG:Debug>:-fsanitize=address>")
+add_link_options("$<$<CONFIG:Debug>:-fsanitize=address>")
+
 if(UNIX)
   add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-Wno-multichar;${BITS};${EXTRA_CXX_FLAGS}>")
   add_compile_options("$<$<COMPILE_LANGUAGE:C>:${BITS}>")
