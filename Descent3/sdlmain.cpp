@@ -26,7 +26,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <csignal>
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include <SDL.h>
 
@@ -40,6 +43,7 @@
 #include "ddio.h"
 #include "osiris_dll.h"
 #include "loki_utils.h"
+
 
 #include "log.h"
 
@@ -139,10 +143,13 @@ void just_exit(void) {
 #endif
 
   SDL_Quit();
+#if defined(__LINUX__) || defined(ANDROID)
   sync(); // just in case.
+#endif
   _exit(0);
 }
 
+#if defined(__LINUX__) || defined(ANDROID)
 void fatal_signal_handler(int signum) {
   switch (signum) {
   case SIGHUP:
@@ -174,7 +181,7 @@ void fatal_signal_handler(int signum) {
 
 void safe_signal_handler(int signum) {}
 
-void install_signal_handlers(void) {
+void install_signal_handlers() {
   struct sigaction sact, fact;
 
   memset(&sact, 0, sizeof(sact));
@@ -209,6 +216,9 @@ void install_signal_handlers(void) {
   if (sigaction(SIGTRAP, &fact, NULL))
     fprintf(stderr, "SIG: Unable to install SIGTRAP\n");
 }
+#else
+void install_signal_handlers() {}
+#endif
 //	---------------------------------------------------------------------------
 //	Define our operating system specific extensions to the gameos system
 //	---------------------------------------------------------------------------
@@ -242,13 +252,18 @@ oeD3LnxDatabase::oeD3LnxDatabase() : oeLnxAppDatabase() {
   char netpath[_MAX_PATH];
 
   // put directories into database
+
+#ifdef EDITOR
+  create_record("D3Edit");
+#else
   create_record("Descent3");
+#endif
 
   char *dir = getenv("D3_LOCAL");
   char *netdir = getenv("D3_DIR");
 
   if (!dir)
-    strcpy(path, loki_getdatapath()); //"/usr/local/games/descent3");
+    strcpy(path, loki_getdatapath());
   else
     strcpy(path, dir);
 
@@ -262,7 +277,7 @@ oeD3LnxDatabase::oeD3LnxDatabase() : oeLnxAppDatabase() {
   Database = this;
 }
 
-static void register_d3_args(void) {
+static void register_d3_args() {
   loki_register_stdoptions();
 
   for (int i = 0; i < sizeof(d3ArgTable) / sizeof(d3ArgTable[0]); i++) {
@@ -281,7 +296,6 @@ int SDLCALL d3SDLEventFilter(void *userdata, SDL_Event *event) {
   case SDL_KEYUP:
   case SDL_KEYDOWN:
     return (sdlKeyFilter(event));
-
   case SDL_JOYBALLMOTION:
   case SDL_MOUSEMOTION:
     return (sdlMouseMotionFilter(event));
@@ -343,8 +357,15 @@ static void check_beta() {
 //		creates all the OS objects and then runs Descent 3.
 //		this is all this function should do.
 //	---------------------------------------------------------------------------
+#ifdef WIN32
+int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR szCmdLine, int nCmdShow) {
+  strupr(szCmdLine);
+  GatherArgs(szCmdLine);
+#else
 int main(int argc, char *argv[]) {
   __orig_pwd = getcwd(NULL, 0);
+  GatherArgs(argv);
+#endif
 
   /* Setup the logging system */
   InitLog();
@@ -417,7 +438,6 @@ int main(int argc, char *argv[]) {
   // if (getenv("SDL_VIDEO_YUV_HWACCEL") == NULL)
   //    putenv("SDL_VIDEO_YUV_HWACCEL=0");
 
-  GatherArgs(argv);
 
   snprintf(game_version_buffer, sizeof(game_version_buffer), "%d.%d.%d%s %s", D3_MAJORVER, D3_MINORVER, D3_BUILD,
            D3_GIT_HASH, GAME_VERS_EXT);
@@ -431,6 +451,8 @@ int main(int argc, char *argv[]) {
 
 #if defined(__APPLE__) && defined(__MACH__)
            "macOS",
+#elif defined(WIN32)
+           "Windows",
 #else
            "Linux",
 #endif
@@ -447,7 +469,7 @@ int main(int argc, char *argv[]) {
   game_version += 2; // skip those first newlines for loki_initialize.
 
   register_d3_args();
-  loki_initialize(argc, argv, game_version_buffer);
+  loki_initialize();
 
   int x;
 
@@ -590,6 +612,7 @@ int main(int argc, char *argv[]) {
     }
 
     bool run_d3 = true;
+#if defined(__LINUX__) || defined(ANDROID)
     if (flags & APPFLAG_USESERVICE) {
       run_d3 = false;
       pid_t np = fork();
@@ -603,6 +626,7 @@ int main(int argc, char *argv[]) {
         printf("Successfully forked process [new sid=%d pid=%d]\n", np, pp);
       }
     }
+#endif
 
     if (run_d3) {
       oeD3LnxApp d3(flags);

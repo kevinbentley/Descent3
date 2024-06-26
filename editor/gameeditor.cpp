@@ -736,7 +736,7 @@ void EditorToGame() {
   /*	Create a new window and display it.  Initialize a new GameOS Object and use this
           for our game
   */
-  tWin32AppInfo app_info;
+  tLnxAppInfo app_info;
   bool paged = true;
   char subsystem[8];
   ddio_init_info io_info;
@@ -821,12 +821,13 @@ void EditorToGame() {
   //	create window and start game.
   if (PROGRAM(windowed)) {
     flags = OEAPP_WINDOWED;
-    Descent = new oeWin32Application("D3 Game Window", flags, app_info.hinst);
+    Descent = new oeLnxApplication(flags);
     Descent->init();
     set_size = true;
     Descent->get_info(&app_info);
-    hGameWnd = app_info.hwnd;
-    SetForegroundWindow((HWND)hGameWnd);
+    // TODO: retrieve hwnd from SDL window handle
+    // hGameWnd = app_info.hwnd;
+    // SetForegroundWindow((HWND)hGameWnd);
     Saved_editor_app->defer();
     Descent->defer();
 
@@ -841,12 +842,13 @@ void EditorToGame() {
     theApp.main_frame->SetMenu(NULL);
 
     flags = OEAPP_FULLSCREEN;
-    Descent = new oeWin32Application("D3 Game Window Debug", flags, app_info.hinst);
+    Descent = new oeLnxApplication(flags);
     Descent->init();
     set_size = true;
     Descent->get_info(&app_info);
-    hGameWnd = app_info.hwnd;
-    SetForegroundWindow((HWND)hGameWnd);
+    // TODO: get hwnd from SDL Window
+    // hGameWnd = app_info.hwnd;
+    // SetForegroundWindow((HWND)hGameWnd);
     Saved_editor_app->defer();
     Descent->defer();
 
@@ -892,7 +894,7 @@ void EditorToGame() {
 
   //	maybe we should CLEAR HERE
   if (set_size) {
-    ((oeWin32Application *)Descent)->set_sizepos(0, 0, 640, 480);
+    ((oeLnxApplication *)Descent)->set_sizepos(0, 0, 640, 480);
   }
 
   Just_returned_from_game = 1;

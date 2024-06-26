@@ -440,7 +440,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h"
 #endif
 #include "descent.h"

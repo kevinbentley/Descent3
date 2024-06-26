@@ -52,7 +52,9 @@
 #ifndef __LNXVIDEOMODE_H__
 #define __LNXVIDEOMODE_H__
 
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h"
+#endif
 #include <SDL.h>
 
 #define MODE_OK 0

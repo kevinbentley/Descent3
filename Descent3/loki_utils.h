@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-void loki_initialize(int argc, char **argv, char *desc);
+void loki_initialize();
 const char *loki_getdatapath(void);
 const char *loki_getprefpath(void);
 

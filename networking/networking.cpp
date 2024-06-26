@@ -294,7 +294,7 @@ typedef int socklen_t;
 #endif
 #include <stdlib.h>
 #include <string.h>
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #if !MACOSX
 #include <netinet/in.h>
 #endif
@@ -519,7 +519,7 @@ struct reliable_socket {
 
 static reliable_socket reliable_sockets[MAXRELIABLESOCKETS];
 //*******************************
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <fcntl.h>
 #endif
 
@@ -2069,7 +2069,7 @@ static async_dns_lookup *lastaslu = NULL;
 #define CDECLCALL
 #endif
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 int CDECLCALL gethostbynameworker(void *parm);
 #include "SDL.h"
 #include "SDL_thread.h"
@@ -2123,7 +2123,7 @@ int nw_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
       lastaslu->abort = true;
 
       // rcg06212000 join the thread.
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
       SDL_WaitThread(lastaslu->threadId, NULL);
       free(lastaslu);
 #endif
@@ -2153,7 +2153,7 @@ int nw_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
 
 #ifdef WIN32
     _beginthread(gethostbynameworker, 0, newaslu);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
     // rcg06192000 use SDL threads.
     /*
             nw_LoadThreadLibrary();
@@ -2196,7 +2196,7 @@ int nw_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
       lastaslu->abort = true;
 
       // rcg06212000 join the thread.
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
       SDL_WaitThread(lastaslu->threadId, NULL);
 #endif
     } // if
@@ -2206,7 +2206,7 @@ int nw_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
       return -1;
     if (aslu.done) {
       // rcg06212000 join the thread.
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
       SDL_WaitThread(aslu.threadId, NULL);
 #endif
 
@@ -2215,7 +2215,7 @@ int nw_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
       return 1;
     } else if (aslu.error) {
       // rcg06212000 join the thread.
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
       SDL_WaitThread(aslu.threadId, NULL);
 #else
       mem_free(lastaslu);
@@ -2230,14 +2230,14 @@ int nw_Asyncgethostbyname(uint32_t *ip, int command, char *hostname) {
 }
 
 // This is the worker thread which does the lookup.
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 int CDECLCALL gethostbynameworker(void *parm)
 #else
 void CDECLCALL gethostbynameworker(void *parm)
 #endif
 {
   // rcg06192000 nope.
-  //	#ifdef __LINUX__
+  //	#if defined(__LINUX__) || defined(ANDROID)
   //	dpthread_detach(dpthread_self());
   //	#endif
 
@@ -2249,7 +2249,7 @@ void CDECLCALL gethostbynameworker(void *parm)
 
   if (he == NULL) {
     lookup->error = true;
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
     return 0;
 #else
     return;
@@ -2267,11 +2267,11 @@ void CDECLCALL gethostbynameworker(void *parm)
   }
 
 // rcg06252000 don't free this, 'cause we need the threadId.
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
   mem_free(lookup);
 #endif
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   return 0;
 #endif
 }

@@ -813,7 +813,7 @@ BOOL CEditorApp::OnIdle(LONG lCount) {
 
 // Save current editor settings to the registry
 void SaveEditorSettings() {
-  oeWin32AppDatabase Editor_database((oeWin32AppDatabase *)Database);
+  oeLnxAppDatabase Editor_database((oeLnxAppDatabase *)Database);
   bool res;
   int speed;
 
@@ -874,7 +874,7 @@ void SaveEditorSettings() {
 
 // Load editor settings from the registry
 void LoadEditorSettings() {
-  oeWin32AppDatabase Editor_database((oeWin32AppDatabase *)Database);
+  oeLnxAppDatabase Editor_database((oeLnxAppDatabase *)Database);
   bool res;
   int speed = (int)((Slew_key_speed - 0.5) / 0.5);
 

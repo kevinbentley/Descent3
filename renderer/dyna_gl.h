@@ -28,10 +28,8 @@
 
 #if defined(WIN32)
 #define GLFUNCCALL __stdcall
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 #include <unistd.h>
-#define GLFUNCCALL
-#else
 #define GLFUNCCALL
 #endif
 
@@ -219,7 +217,7 @@ DYNAEXTERN(glBlitFramebufferEXT_fp, dglBlitFramebufferEXT);
 #ifdef DECLARE_OPENGL
 static module OpenGLDLLInst;
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 static void *__SDL_mod_GetSymbol(const char *funcStr) {
   void *retVal = NULL;
 
@@ -242,13 +240,13 @@ static void *__SDL_mod_GetSymbol(const char *funcStr) {
 
 #endif
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 extern char *__orig_pwd;
 extern char loadedLibrary[_MAX_PATH];
 #endif
 module *LoadOpenGLDLL(const char *dllname) {
   mprintf(0, "Loading OpenGL dll...\n");
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   char *tmp = getcwd(NULL, 0);
   chdir(__orig_pwd);
   int rc = SDL_GL_LoadLibrary(dllname[0] ? dllname : NULL);
@@ -499,7 +497,7 @@ module *LoadOpenGLDLL(const char *dllname) {
   dwglGetProcAddress = (wglGetProcAddress_fp)mod_GetSymbol(&OpenGLDLLInst, "wglGetProcAddress", 255);
   if (!dwglGetProcAddress)
     goto dll_error;
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 
   // bk000614 - have to fix globals
   extern glAlphaFunc_fp dglAlphaFunc;

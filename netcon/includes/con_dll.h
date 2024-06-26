@@ -267,7 +267,7 @@
 #include "ship.h"
 #include "pstypes.h"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include <string.h>
 #include "linux_fix.h"
 #endif
@@ -827,7 +827,7 @@ typedef void(DLLFUNCCALL DLLAVCall_fp)(int eventnum);
 typedef void(DLLFUNCCALL DLLAVClose_fp)();
 typedef void(DLLFUNCCALL DLLAVGetVersion_fp)(int *version);
 typedef void(DLLFUNCCALL DLLRunCheck_fp)(char *d3_path);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 typedef void DLLFUNCCALL(DLLAVInit_fp)(int *ptr);
 typedef void DLLFUNCCALL(DLLAVCall_fp)(int eventnum);
 typedef void DLLFUNCCALL(DLLAVClose_fp)();

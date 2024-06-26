@@ -55,6 +55,10 @@
 #include "registry.h"
 #include "mono.h"
 
+#if defined(_WIN32)
+#define strcasecmp stricmp
+#endif
+
 // Convert a string that represents a hex value into an int
 int hextoi(char *p) {
   int value = 0;

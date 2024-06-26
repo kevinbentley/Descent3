@@ -826,7 +826,7 @@ int msn_ExtractZipFile(char *zipfilename, char *mn3name) {
   return 1;
 }
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 char *_strlwr(char *string) {
   char *ptr = string;
   while (*ptr) {

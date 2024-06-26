@@ -1112,9 +1112,10 @@ void SetScreenMode(int sm, bool force_res_change) {
   //	HACK!!! In editor, to get things working fine, reassert window handle attached to game screen
   //	is the topmost window, since in the editor, if we're fullscreen the parent window is still
   //	the editor window, the screen would belong to the editor window.
-  tWin32AppInfo appinfo;
+  tLnxAppInfo appinfo;
   Descent->get_info(&appinfo);
-  ddvid_SetVideoHandle(hGameWnd);
+  // LGT - Disabled: not using ddvid
+  // ddvid_SetVideoHandle(hGameWnd);
 #endif
 }
 

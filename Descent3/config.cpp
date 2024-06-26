@@ -679,7 +679,7 @@ struct video_menu {
     sheet->AddLongRadioButton("1600x1200");
     *resolution = iTemp;
 
-#if !defined(__LINUX__)
+#if !defined(__LINUX__) && !defined(ANDROID)
     // renderer bit depth
     switch (Render_preferred_bitdepth) {
     case 16:
@@ -708,7 +708,7 @@ struct video_menu {
 
     sheet->NewGroup(TXT_MONITOR, 0, 180);
     vsync = sheet->AddLongCheckBox(TXT_CFG_VSYNCENABLED, (Render_preferred_state.vsync_on != 0));
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
     sheet->AddText("");
     sheet->AddLongButton(TXT_AUTO_GAMMA, IDV_AUTOGAMMA);
 #endif
@@ -723,7 +723,7 @@ struct video_menu {
       Render_preferred_state.mipping = (*mipmapping) ? 1 : 0;
     if (vsync)
       Render_preferred_state.vsync_on = (*vsync) ? 1 : 0;
-#if !defined(__LINUX__)
+#if !defined(__LINUX__) && !defined(ANDROID)
     if (bitdepth)
       Render_preferred_bitdepth = (*bitdepth) == 1 ? 32 : 16;
 #endif
@@ -753,7 +753,7 @@ struct video_menu {
 
   // process
   void process(int res) {
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
     switch (res) {
     case IDV_AUTOGAMMA:
       config_gamma();

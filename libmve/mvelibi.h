@@ -25,7 +25,7 @@
 #pragma pack(1);
 #elif _MSC_VER
 #pragma pack(1)
-#elif __LINUX__
+#elif __LINUX__ || ANDROID
 #pragma pack(1)
 #else
 #error No platform defined
@@ -290,7 +290,7 @@ struct marg_idcode {
 #pragma pack();
 #elif _MSC_VER
 #pragma pack()
-#elif __LINUX__
+#elif __LINUX__ || ANDROID
 #pragma pack()
 #else
 #error No platform defined

@@ -189,7 +189,7 @@ static inline void INADDR_GET_SUN_SUNB(struct in_addr *st, uint8_t *s_b1, uint8_
   *s_b4 = st->S_un.S_un_b.s_b4;
 }
 
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 // Linux includes/defines
 
 #include <sys/types.h>
@@ -490,7 +490,7 @@ struct async_dns_lookup {
   bool abort;      // read only to worker thread. If this is set, don't fill in the struct.
 
   // rcg06212000 added to let us join the thread at completion...
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   SDL_Thread *threadId;
 #endif
 };
@@ -500,7 +500,7 @@ struct async_dns_lookup {
 #else
 #define CDECLCALL
 #endif
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 // rcg06192000 used to return void *.
 int CDECLCALL gethostbynameworker(void *parm);
 #else

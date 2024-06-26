@@ -1,6 +1,6 @@
 set(CPPS
   debug.cpp
-  $<$<PLATFORM_ID:Darwin,Linux>:
+  $<$<PLATFORM_ID:Darwin,Linux,Android>:
     lnxdebug.cpp
     lnxmono.cpp
   >

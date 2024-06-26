@@ -338,7 +338,7 @@
     if (DLLDebugBreak_callback_resume)                                                                                 \
       DLLDebugBreak_callback_resume();                                                                                 \
   } while (0)
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
 // For some reason Linux doesn't like the \ continuation character, so I have to uglify this
 #define DLLmprintf(...) DLLDebug_ConsolePrintf(__VA_ARGS__)
 #ifdef DEBUG_BREAK

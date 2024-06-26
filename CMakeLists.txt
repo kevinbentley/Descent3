@@ -1,5 +1,35 @@
 cmake_minimum_required(VERSION 3.20)  # For using CMAKE_<LANG>_BYTE_ORDER
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+  if (ANDROID_ABI MATCHES "arm64-v8a")
+    set(VCPKG_TARGET_TRIPLET "arm64-android" CACHE STRING "" FORCE)
+  elseif(ANDROID_ABI MATCHES "armeabi-v7a")
+    set(VCPKG_TARGET_TRIPLET "arm-android" CACHE STRING "" FORCE)
+  elseif(ANDROID_ABI MATCHES "x86_64")
+    set(VCPKG_TARGET_TRIPLET "x64-android" CACHE STRING "" FORCE)
+  elseif(ANDROID_ABI MATCHES "x86")
+    set(VCPKG_TARGET_TRIPLET "x86-android" CACHE STRING "" FORCE)
+  else()
+    message(FATAL_ERROR "ANDROID_ABI not set or not recognized")
+  endif()
+
+  set(ENV{ANDROID_NDK_HOME} ${CMAKE_ANDROID_NDK})
+endif()
+
+if (NOT DEFINED ENV{VCPKG_ROOT})
+  message(FATAL_ERROR "
+    Please set an environment variable VCPKG_ROOT
+    For example:
+    export VCPKG_ROOT=/path/to/vcpkg
+    ")
+endif()
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE})
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+if(CMAKE_TOOLCHAIN_FILE STREQUAL VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+  # prevent endless recursion
+  unset(VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+endif()
+
 # set default cmake build type to Debug (None Debug Release RelWithDebInfo MinSizeRel)
 if(NOT CMAKE_BUILD_TYPE AND NOT DEFINED ENV{CMAKE_BUILD_TYPE})
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "default build type")
@@ -93,7 +123,9 @@ install(
 if(UNIX)
   add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-Wno-multichar;${BITS};${EXTRA_CXX_FLAGS}>")
   add_compile_options("$<$<COMPILE_LANGUAGE:C>:${BITS}>")
+endif()
 
+if (NOT HOST_TOOLS_ONLY)
   find_package(SDL2 REQUIRED)
   # Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
   message("SDL2 Include Dir is ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS}")
@@ -106,6 +138,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   message("Building for MAC OSX")
   add_compile_definitions(__LINUX__ MACOSX=1 _USE_OGL_ACTIVE_TEXTURES PRIMARY_HOG=\"d3-osx.hog\")
+  set(PLATFORM_INCLUDES "lib/linux" ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+  message("Building for Android")
+  add_compile_definitions(_USE_OGL_ACTIVE_TEXTURES PRIMARY_HOG=\"d3-android.hog\")
   set(PLATFORM_INCLUDES "lib/linux" ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   # Windows.h defines to avoid as many issues as possible.
@@ -168,55 +204,57 @@ include_directories(
   ${PLATFORM_INCLUDES}
 )
 
-add_subdirectory(third_party)
-
-add_subdirectory(2dlib)
-add_subdirectory(AudioEncode)
-add_subdirectory(bitmap)
-add_subdirectory(cfile)
-add_subdirectory(czip)
-add_subdirectory(d3music)
-add_subdirectory(ddebug)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_subdirectory(dd_grwin32)
-  add_subdirectory(win32)
-else()
-  add_subdirectory(linux)
-endif()
-
-add_subdirectory(ddio)
-add_subdirectory(dd_video)
-add_subdirectory(fix)
-add_subdirectory(manage)
-add_subdirectory(grtext)
-add_subdirectory(mem)
-add_subdirectory(misc)
-add_subdirectory(model)
-add_subdirectory(module)
-add_subdirectory(movie)
-add_subdirectory(music)
-add_subdirectory(networking)
-add_subdirectory(physics)
-add_subdirectory(renderer)
-add_subdirectory(rtperformance)
-add_subdirectory(sndlib)
-add_subdirectory(stream_audio)
-add_subdirectory(ui)
-add_subdirectory(unzip)
-add_subdirectory(vecmat)
-add_subdirectory(libmve)
-add_subdirectory(md5)
-add_subdirectory(libacm)
-
-
-if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_subdirectory(editor)
-endif()
-
-add_subdirectory(Descent3)
-
 add_subdirectory(tools)
-add_subdirectory(netcon)
-add_subdirectory(netgames)
-add_subdirectory(scripts)
+if(NOT HOST_TOOLS_ONLY)
+  add_subdirectory(third_party)
+
+  add_subdirectory(2dlib)
+  add_subdirectory(AudioEncode)
+  add_subdirectory(bitmap)
+  add_subdirectory(cfile)
+  add_subdirectory(czip)
+  add_subdirectory(d3music)
+  add_subdirectory(ddebug)
+
+  if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_subdirectory(dd_grwin32)
+    add_subdirectory(win32)
+  endif()
+
+  add_subdirectory(linux)
+
+  add_subdirectory(ddio)
+  add_subdirectory(dd_video)
+  add_subdirectory(fix)
+  add_subdirectory(manage)
+  add_subdirectory(grtext)
+  add_subdirectory(mem)
+  add_subdirectory(misc)
+  add_subdirectory(model)
+  add_subdirectory(module)
+  add_subdirectory(movie)
+  add_subdirectory(music)
+  add_subdirectory(networking)
+  add_subdirectory(physics)
+  add_subdirectory(renderer)
+  add_subdirectory(rtperformance)
+  add_subdirectory(sndlib)
+  add_subdirectory(stream_audio)
+  add_subdirectory(ui)
+  add_subdirectory(unzip)
+  add_subdirectory(vecmat)
+  add_subdirectory(libmve)
+  add_subdirectory(md5)
+  add_subdirectory(libacm)
+
+
+  if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_subdirectory(editor)
+  endif()
+
+  add_subdirectory(Descent3)
+
+  add_subdirectory(netcon)
+  add_subdirectory(netgames)
+  add_subdirectory(scripts)
+endif()

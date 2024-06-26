@@ -187,7 +187,7 @@
 #ifndef NEWUI_H
 #define NEWUI_H
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h" //fix some of the stricmp's
 #endif
 

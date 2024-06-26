@@ -63,7 +63,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 // sorry, I'm lazy, I guess we could copy the defines
 // that we need to transalte winsock->linux into this header...but no need to now
 #include "inetgetfile.h"
@@ -75,14 +75,14 @@
 
 #include "CFtp.h"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 void *FTPObjThread(void *obj)
 #else
 void FTPObjThread(void *obj)
 #endif
 {
   ((CFtpGet *)obj)->WorkerThread();
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
   return NULL;
 #endif
 }
@@ -199,7 +199,7 @@ CFtpGet::CFtpGet(char *URL, char *localfile, char *Username, char *Password) {
     m_State = FTP_STATE_INTERNAL_ERROR;
     return;
   }
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(ANDROID)
   pthread_t thread;
   if (!inet_LoadThreadLib()) {
     m_State = FTP_STATE_INTERNAL_ERROR;
@@ -216,7 +216,7 @@ CFtpGet::CFtpGet(char *URL, char *localfile, char *Username, char *Password) {
 CFtpGet::~CFtpGet() {
   if (m_ListenSock != INVALID_SOCKET) {
     shutdown(m_ListenSock, 2);
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
     closesocket(m_ListenSock);
 #else
     close(m_ListenSock);
@@ -224,7 +224,7 @@ CFtpGet::~CFtpGet() {
   }
   if (m_DataSock != INVALID_SOCKET) {
     shutdown(m_DataSock, 2);
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
     closesocket(m_DataSock);
 #else
     close(m_DataSock);
@@ -232,7 +232,7 @@ CFtpGet::~CFtpGet() {
   }
   if (m_ControlSock != INVALID_SOCKET) {
     shutdown(m_ControlSock, 2);
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
     closesocket(m_ControlSock);
 #else
     close(m_ControlSock);
@@ -317,7 +317,7 @@ uint32_t CFtpGet::GetFile() {
 
   m_DataSock = accept(m_ListenSock, NULL, NULL); //(SOCKADDR *)&sockaddr,&iAddrLength);
                                                  // Close the listen socket
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(ANDROID)
   closesocket(m_ListenSock);
 #else
   close(m_ListenSock);
@@ -388,7 +388,7 @@ uint32_t CFtpGet::IssuePort() {
   // Tell the server which port to use for data.
   nReplyCode = SendFTPCommand(szCommandString);
   if (nReplyCode != 200) {
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
     // I don't know if this is just Linux or do to a bug I fixed while porting to linux
     // for some reason I kept getting reply 250 here and have to read again to get the
     // "200 PORT Command OK" or whatever
@@ -485,7 +485,7 @@ uint32_t CFtpGet::ReadFTPServerReply() {
 
     if (iBytesRead == SOCKET_ERROR) {
       int iWinsockErr = WSAGetLastError();
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
       if (0 == iWinsockErr) {
         continue;
       }
@@ -531,7 +531,7 @@ uint32_t CFtpGet::ReadDataChannel() {
       return 0;
     nBytesRecv = recv(m_DataSock, (char *)&sDataBuffer, sizeof(sDataBuffer), 0);
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
     if (nBytesRecv == -1) {
       int iWinsockErr = WSAGetLastError();
       if (iWinsockErr == 0) {

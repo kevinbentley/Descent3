@@ -24,7 +24,7 @@
 
 #include "osiris_common.h"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_lib.h"
 #endif
 

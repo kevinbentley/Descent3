@@ -107,7 +107,7 @@
 #ifndef __MULTI_EXTERNAL_H_
 #define __MULTI_EXTERNAL_H_
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include <cstring>
 #include <cstdint>
 typedef uintptr_t DWORD;

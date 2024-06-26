@@ -19,7 +19,9 @@
 #ifndef LNXAPP_H
 #define LNXAPP_H
 
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h"
+#endif
 
 // if no-display/input specifier is given, it will use defaults
 #define APPFLAG_USESERVICE 0x00000100     // console (run no output/input)

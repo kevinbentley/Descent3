@@ -92,7 +92,7 @@ struct game_api {
   tOSIRISModuleInit *osiris_functions;
 };
 // The exported DLL function call prototypes
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 typedef void DLLFUNCCALL (*DLLGameCall_fp)(int eventnum, dllinfo *data);
 typedef void DLLFUNCCALL (*DLLGameInit_fp)(int *api_func, uint8_t *all_ok, int num_teams_to_use);
 typedef void DLLFUNCCALL (*DLLGameClose_fp)();

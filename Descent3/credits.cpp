@@ -94,7 +94,7 @@
 #include <math.h>
 #include "psrand.h"
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h"
 #endif
 

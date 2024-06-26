@@ -50,7 +50,7 @@
 #ifndef __BRIEFPARSE_H_
 #define __BRIEFPARSE_H_
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #include "linux_fix.h" //for stricmp
 #endif
 

@@ -26,8 +26,8 @@
 #define USE_RTP
 #endif
 
-#if defined(__LINUX__)
-// #if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
+// #if defined(__LINUX__) || defined(ANDROID)
 #ifdef USE_RTP
 #undef USE_RTP // no rtp for now
 #endif
@@ -35,7 +35,7 @@
 
 // use INT64 for 64bit integers
 #ifdef USE_RTP
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(ANDROID)
 #define INT64 int64_t
 #else
 #define INT64 signed __int64
