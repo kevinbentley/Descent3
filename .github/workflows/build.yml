@@ -46,6 +46,8 @@ jobs:
             cc: clang
             cxx: clang++
             name: Linux-x64-clang
+          - runner: ubuntu-latest
+            name: Android
         build_type:
           - Debug
           - Release
@@ -62,7 +64,7 @@ jobs:
           brew bundle install
 
       - name: Install Linux dependencies
-        if: ${{ matrix.os.preset == 'linux' }}
+        if: ${{ matrix.os.preset == 'linux' || matrix.os.name == 'Android' }}
         run: |
           sudo apt update
           sudo apt install -y --no-install-recommends \
@@ -81,23 +83,38 @@ jobs:
         with:
           vcpkgJsonGlob: vcpkg.json
 
+      - uses: actions/setup-java@v4
+        if: ${{ matrix.os.name == 'Android' }}
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build APK
+        if: ${{ matrix.os.name == 'Android' }}
+        run: ./gradlew build
+
       - name: Configure CMake
+        if: ${{ matrix.os.name != 'Android' }}
         env:
           CC: ${{ matrix.os.cc }}
           CXX: ${{ matrix.os.cxx }}
         run: cmake --preset ${{ matrix.os.preset }} -DBUILD_TESTING=ON -DENABLE_LOGGER=ON -DFORCE_PORTABLE_INSTALL=ON -DBUILD_EDITOR=ON
 
       - name: Build ${{ matrix.build_type }}
+        if: ${{ matrix.os.name != 'Android' }}
         run: cmake --build --preset ${{ matrix.os.preset }} --config ${{ matrix.build_type }} --verbose
 
       - name: Run ${{ matrix.build_type }} Unittests
+        if: ${{ matrix.os.name != 'Android' }}
         run: ctest --preset ${{ matrix.os.preset }} -C ${{ matrix.build_type }}
 
       - name: Local install
+        if: ${{ matrix.os.name != 'Android' }}
         # There no cmake install presets so install in traditional way
         run: cmake --install builds/${{ matrix.os.preset }}/ --config ${{ matrix.build_type }}
 
       - name: Upload Artifacts
+        if: ${{ matrix.os.name != 'Android' }}
         uses: actions/upload-artifact@v4
         with:
           name: Descent3_${{ matrix.build_type }}_${{ matrix.os.name }}
