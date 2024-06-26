@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.20)  # For using CMAKE_<LANG>_BYTE_ORDER
 
+if (NOT DEFINED ENV{VCPKG_ROOT})
+  message(FATAL_ERROR "
+    Please set an environment variable VCPKG_ROOT
+    For example:
+    export VCPKG_ROOT=/path/to/vcpkg
+    ")
+endif()
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE})
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+if(CMAKE_TOOLCHAIN_FILE STREQUAL VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+  # prevent endless recursion
+  unset(VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+endif()
+
 # set default cmake build type to Debug (None Debug Release RelWithDebInfo MinSizeRel)
 if(NOT CMAKE_BUILD_TYPE AND NOT DEFINED ENV{CMAKE_BUILD_TYPE})
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "default build type")

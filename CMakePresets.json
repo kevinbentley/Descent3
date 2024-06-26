@@ -21,8 +21,7 @@
 			"architecture": {
 				"strategy": "external",
 				"value": "x64"
-			},
-			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+			}
 		},
 		{
 			"name": "mac",

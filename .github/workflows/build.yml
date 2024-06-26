@@ -66,22 +66,25 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y --no-install-recommends \
-            ninja-build cmake g++ libgtest-dev libsdl2-dev zlib1g-dev libspdlog-dev
+            ninja-build cmake g++ libspdlog-dev
 
       - name: Install Windows dependencies
         if: ${{ matrix.os.runner == 'windows-latest' }}
         run: choco install ninja
-      
+
       - uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.os.runner == 'windows-latest' }}
         with:
            arch: win64
 
+      - uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: vcpkg.json
+
       - name: Configure CMake
         env:
           CC: ${{ matrix.os.cc }}
           CXX: ${{ matrix.os.cxx }}
-          VCPKG_ROOT: C:/vcpkg
         run: cmake --preset ${{ matrix.os.preset }} -DBUILD_TESTING=ON -DENABLE_LOGGER=ON -DFORCE_PORTABLE_INSTALL=ON -DBUILD_EDITOR=ON
 
       - name: Build ${{ matrix.build_type }}
