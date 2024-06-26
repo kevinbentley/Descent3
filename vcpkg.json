@@ -5,7 +5,14 @@
     "zlib",
     {
       "name": "sdl2",
-      "version>=": "2.30.3"
+      "version>=": "2.30.3",
+      "features": ["x11","wayland"],
+      "platform": "linux"
+    },
+    {
+      "name": "sdl2",
+      "version>=": "2.30.3",
+      "platform": "!linux"
     }
   ],
   "overrides": [
