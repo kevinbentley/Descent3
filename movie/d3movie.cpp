@@ -283,7 +283,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   // open movie file.
   int hFile = open(real_name.string().c_str(), O_RDONLY | O_BINARY);
   if (hFile == -1) {
-    mprintf(0, "MOVIE: Unable to open %s\n", real_name);
+    mprintf(0, "MOVIE: Unable to open %s\n", real_name.string().c_str());
     return MVELIB_FILE_ERROR;
   }
 
@@ -505,7 +505,7 @@ intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app
   int hfile = open(real_name.string().c_str(), O_RDONLY | O_BINARY);
 
   if (hfile == -1) {
-    mprintf(1, "MOVIE: Unable to open %s\n", real_name);
+    mprintf(1, "MOVIE: Unable to open %s\n", real_name.string().c_str());
     *fhandle = -1;
     return 0;
   }
