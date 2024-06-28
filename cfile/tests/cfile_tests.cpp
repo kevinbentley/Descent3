@@ -21,6 +21,54 @@
 #include <gtest/gtest.h>
 #include "cfile.h"
 
+TEST(D3, CFileIO) {
+  int lib_handle = cf_OpenLibrary("testdir/test.hog");
+  CFILE *file_handle = cfopen("lowercase.txt", "rb");
+  char buf[5];
+  cf_ReadString(buf, 5, file_handle);
+  EXPECT_STREQ(buf, "TEST");
+  cf_Rewind(file_handle);
+
+  EXPECT_EQ(cf_ReadByte(file_handle), 84);
+  cf_Rewind(file_handle);
+
+  EXPECT_EQ(cf_ReadShort(file_handle), 17748);
+  cf_Rewind(file_handle);
+
+  EXPECT_EQ(cf_ReadInt(file_handle), 1414743380);
+  cf_Rewind(file_handle);
+
+  cf_CloseLibrary(lib_handle);
+}
+
+TEST(D3, CFileLibrary) {
+  // First pass - without search path in "testdir" (i.e. not search actual files in directory)
+  // Second pass - with search path (files in directory goes first)
+  for (int i = 0; i < 2; i++) {
+    if (i != 0) {
+      EXPECT_EQ(cf_SetSearchPath("testdir"), true);
+    }
+
+    int lib_handle = cf_OpenLibrary("testdir/test.hog");
+    EXPECT_NE(lib_handle, 0);
+
+    CFILE *file_handle = cf_OpenFileInLibrary("lowercase.txt", lib_handle);
+    EXPECT_NE(file_handle, nullptr);
+    file_handle = cfopen("lowercase.txt", "rb");
+    EXPECT_NE(file_handle, nullptr);
+    // Length in hog is 4, in directory is 0
+    EXPECT_EQ(cfilelength(file_handle), i == 0 ? 4 : 0);
+    EXPECT_EQ(cf_CalculateFileCRC(file_handle), i == 0 ? 4008350648 : 0);
+
+    cf_ClearAllSearchPaths();
+    cf_CloseLibrary(lib_handle);
+  }
+
+  // Try to search on non-initialized paths and files
+  CFILE *file_handle = cfopen("lowercase.txt", "rb");
+  EXPECT_EQ(file_handle, nullptr);
+}
+
 #ifdef __LINUX__
 
 TEST(D3, CFileCaseSensitiveSearch) {
