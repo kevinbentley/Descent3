@@ -238,7 +238,6 @@ CFILE *cf_OpenFileInLibrary(const std::filesystem::path &filename, int libhandle
   if (libhandle <= 0)
     return nullptr;
 
-  CFILE *cfile;
   std::shared_ptr<library> lib = Libraries;
 
   // find the library that we want to use
@@ -291,7 +290,7 @@ CFILE *cf_OpenFileInLibrary(const std::filesystem::path &filename, int libhandle
       return nullptr;
     }
   }
-  cfile = (CFILE *)mem_malloc(sizeof(*cfile));
+  CFILE *cfile = (CFILE *)mem_malloc(sizeof(*cfile));
   if (!cfile)
     Error("Out of memory in cf_OpenFileInLibrary()");
   cfile->name = lib->entries[i]->name;
@@ -593,6 +592,7 @@ CFILE *open_file_in_directory(const std::filesystem::path &filename, const char 
   FILE *fp;
   CFILE *cfile;
   std::filesystem::path path;
+  char using_filename[_MAX_PATH];
   char tmode[3] = "rb";
   if (std::filesystem::is_directory(directory)) {
     // Make a full path
@@ -606,72 +606,42 @@ CFILE *open_file_in_directory(const std::filesystem::path &filename, const char 
   // try to open file
   fp = fopen(path.u8string().c_str(), tmode);
 
+  if (!fp) {
 #ifdef __LINUX__
-  // for Filesystems with case sensitive files we'll check for different versions of the filename
-  // with different case's.
-  if (fp) {
-    // found the file, open it
-    cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-    if (!cfile)
-      Error("Out of memory in open_file_in_directory()");
-    cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(filename.u8string().c_str()) + 1)); // TODO
-    if (!cfile->name)
-      Error("Out of memory in open_file_in_directory()");
-    strcpy(cfile->name, filename.u8string().c_str()); // TODO
-    cfile->file = fp;
-    cfile->lib_handle = -1;
-    cfile->size = ddio_GetFileLength(fp);
-    cfile->lib_offset = 0; // 0 means on disk, not in HOG
-    cfile->position = 0;
-    cfile->flags = 0;
-    return cfile;
-  } else {
+    // For filesystems with case-sensitive files we'll check for different versions of the filename
+    // with different cases.
+
     // try different cases of the filename
-    char using_filename[_MAX_PATH];
     fp = open_file_in_directory_case_sensitive(directory, filename, tmode, using_filename);
     if (!fp) {
       // no dice
       return nullptr;
-    } else {
-      // found a version of the file!
-      mprintf(0, "CFILE: Unable to find %s, but using %s instead\n", filename.u8string().c_str(), using_filename);
-      cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-      if (!cfile)
-        Error("Out of memory in open_file_in_directory()");
-      cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(using_filename) + 1));
-      if (!cfile->name)
-        Error("Out of memory in open_file_in_directory()");
-      strcpy(cfile->name, using_filename);
-      cfile->file = fp;
-      cfile->lib_handle = -1;
-      cfile->size = ddio_GetFileLength(fp);
-      cfile->lib_offset = 0; // 0 means on disk, not in HOG
-      cfile->position = 0;
-      cfile->flags = 0;
-      return cfile;
     }
-  }
 #else
-  if (!fp) // didn't get file
-    return NULL;
-  else { // got file
-    cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-    if (!cfile)
-      Error("Out of memory in open_file_in_directory()");
-    cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(filename.u8string().c_str()) + 1));
-    if (!cfile->name)
-      Error("Out of memory in open_file_in_directory()");
-    strcpy(cfile->name, filename.u8string().c_str());
-    cfile->file = fp;
-    cfile->lib_handle = -1;
-    cfile->size = ddio_GetFileLength(fp);
-    cfile->lib_offset = 0; // 0 means on disk, not in HOG
-    cfile->position = 0;
-    cfile->flags = 0;
-    return cfile;
-  }
+    // We on incase-sensitive filesystem, no file means no file.
+    return nullptr;
 #endif
+  } else {
+    strcpy(using_filename, filename.u8string().c_str());
+  }
+
+  // found the file, open it
+  cfile = (CFILE *)mem_malloc(sizeof(*cfile));
+  if (!cfile)
+    Error("Out of memory in open_file_in_directory()");
+  cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(using_filename) + 1));
+  if (!cfile->name)
+    Error("Out of memory in open_file_in_directory()");
+  strcpy(cfile->name, using_filename);
+  cfile->file = fp;
+  cfile->lib_handle = -1;
+  cfile->size = ddio_GetFileLength(fp);
+  cfile->lib_offset = 0; // 0 means on disk, not in HOG
+  cfile->position = 0;
+  cfile->flags = 0;
+  return cfile;
 }
+
 // Opens a file for reading or writing
 // If a path is specified, will try to open the file only in that path.
 // If no path is specified, will look through search directories and library files.
