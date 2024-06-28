@@ -43,12 +43,12 @@ TEST(D3, CFileCaseSensitiveSearch) {
     std::string file_uc = item.filename();
     std::transform(file_uc.begin(), file_uc.end(), file_uc.begin(), ::toupper);
 
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory.u8string().c_str(), file_lc.c_str(), filename), true);
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory.u8string().c_str(), file_uc.c_str(), filename), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory, file_lc, filename), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory, file_uc, filename), true);
     EXPECT_EQ(std::filesystem::path(filename), file);
 
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(nullptr, (directory / file_lc).u8string().c_str(), filename), true);
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(nullptr, (directory / file_uc).u8string().c_str(), filename), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(std::filesystem::path(), directory / file_lc, filename), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(std::filesystem::path(), directory / file_uc, filename), true);
     EXPECT_EQ(std::filesystem::path(filename), file);
 
   }

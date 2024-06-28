@@ -113,8 +113,7 @@ int cf_OpenLibrary(const std::filesystem::path &libname) {
   }
 
   char t_out[_MAX_PATH];
-  if (!cf_FindRealFileNameCaseInsenstive(resolve_dir.empty() ? nullptr : resolve_dir.u8string().c_str(),
-                                         resolve_name.u8string().c_str(), t_out)) {
+  if (!cf_FindRealFileNameCaseInsenstive(resolve_dir, resolve_name, t_out)) {
     return 0; // CF_NO_FILE
   }
   // re-assemble
@@ -437,38 +436,33 @@ static FILE *open_file_in_directory_case_sensitive(const std::filesystem::path &
                                                    const std::filesystem::path &filename, const char *mode,
                                                    char *new_filename);
 
-bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname, char *new_filename) {
+bool cf_FindRealFileNameCaseInsenstive(const std::filesystem::path &directory, const std::filesystem::path &fname, char *new_filename) {
   bool use_dir = false;
-  char dir_to_use[_MAX_PATH];
-  char file_to_use[_MAX_PATH];
+  std::filesystem::path dir_to_use, file_to_use;
+  std::filesystem::path real_dir;
+  char real_file[_MAX_PATH];
 
-  char *real_dir, *real_file;
-
-  if (directory && strlen(directory) > 0) {
+  if (!directory.empty()) {
     // there is a directory for this path
     use_dir = true;
-    real_dir = (char *)directory;
-    real_file = (char *)fname;
+    real_dir = directory;
+    strcpy(real_file, fname.u8string().c_str());
   } else {
     // there may be a directory in the path (*sigh*)
-    char t_ext[256];
-    char t_dir[_MAX_PATH];
-    char t_filename[_MAX_PATH];
-
-    ddio_SplitPath(fname, t_dir, t_filename, t_ext);
-    if (strlen(t_dir) > 0) {
+    std::filesystem::path t_dir = fname.parent_path();
+    if (!t_dir.empty()) {
       use_dir = true;
-      strcpy(dir_to_use, t_dir);
-      real_dir = (char *)dir_to_use;
-      strcpy(file_to_use, t_filename);
-      strcat(file_to_use, t_ext);
-      real_file = (char *)file_to_use;
+      dir_to_use = t_dir;
+      real_dir = dir_to_use;
+      file_to_use = fname.filename();
+      strncpy(real_file, file_to_use.u8string().c_str(), strlen(file_to_use.u8string().c_str()));
 
-      mprintf(1, "CFILE: Found directory \"%s\" in filename, new filename is \"%s\"\n", real_dir, real_file);
+      mprintf(1, "CFILE: Found directory \"%s\" in filename, new filename is \"%s\"\n",
+              real_dir.u8string().c_str(), real_file);
     } else {
       use_dir = false;
-      real_dir = nullptr;
-      real_file = (char *)fname;
+      // real_dir = nullptr;
+      strncpy(real_file, fname.u8string().c_str(), strlen(fname.u8string().c_str()));
     }
   }
 
@@ -481,7 +475,7 @@ bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname,
   int iterations = 1;
   bool found_match = false;
 
-  if ((real_file[0] >= 'a' && real_file[0] <= 'z') || (real_file[0] >= 'A' && real_file[0] <= 'Z')) {
+  if (isalpha(real_file[0])) {
     // alpha first letter...we need to do 2 iterations
     iterations = 2;
   }
@@ -539,7 +533,7 @@ bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname,
     char *wpattern;
     char fullpath[_MAX_PATH];
     if (use_dir) {
-      ddio_MakePath(fullpath, real_dir, wildcard_pattern, NULL);
+      ddio_MakePath(fullpath, real_dir.u8string().c_str(), wildcard_pattern, NULL);
       wpattern = fullpath;
     } else {
       wpattern = wildcard_pattern;
@@ -573,7 +567,7 @@ FILE *open_file_in_directory_case_sensitive(const std::filesystem::path &directo
                                             const std::filesystem::path &filename, const char *mode,
                                             char *new_filename) {
   std::filesystem::path t_dir = filename.parent_path();
-  if (cf_FindRealFileNameCaseInsenstive(directory.u8string().c_str(), filename.u8string().c_str(), new_filename)) {
+  if (cf_FindRealFileNameCaseInsenstive(directory, filename, new_filename)) {
     // we have a file, open it open and use it
     std::filesystem::path full_path;
     // if we had a directory as part of the file name, put it back in

@@ -161,7 +161,7 @@ void cf_CloseLibrary(int handle);
 //              filename: the fixed case name to map to reality
 //              new_filename: buffer to store mapped name, must be at least _MAX_PATH bytes
 // Returns: false if error, true if translated
-bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *filename, char *new_filename);
+bool cf_FindRealFileNameCaseInsenstive(const std::filesystem::path &directory, const std::filesystem::path &fname, char *new_filename);
 #endif
 
 /**
