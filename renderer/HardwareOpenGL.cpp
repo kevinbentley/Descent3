@@ -50,7 +50,6 @@
 #include "win/arb_extensions.h"
 #endif
 
-int FindArg(const char *);
 void rend_SetLightingState(light_state state);
 
 // General renderer states

@@ -117,6 +117,7 @@
 #ifndef DDIO_COMMON_H
 #define DDIO_COMMON_H
 
+#include <filesystem>
 #include "application.h"
 #include "pstypes.h"
 
@@ -421,5 +422,12 @@ extern volatile uint8_t DDIO_key_state[];
 #define KEY_WORLD95 0xF7
 
 #define KEY_CMD 0xE0 // DAJ mac command key
+
+// ----------------------------------------------------------------------------
+//	Filesystem-related functions
+// ----------------------------------------------------------------------------
+
+// Helper function for ddio_FindRealPath()
+std::filesystem::path ddio_FindRealPathImplementation(std::filesystem::path relative_path, std::filesystem::path starting_dir);
 
 #endif

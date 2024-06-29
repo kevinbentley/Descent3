@@ -1023,8 +1023,21 @@ static bool Graphics_init = false;
 static bool Title_bitmap_init = false;
 uint8_t Use_motion_blur = 0;
 
-// The "root" directory of the D3 file tree
-char Base_directory[_MAX_PATH];
+// The "root" directories of the D3 file tree
+//
+// Directories that come first override directories that come later. For
+// example, if Base_directories[0] / "d3_linux.hog" exists and
+// Base_directories[1] / "d3_linux.hog" also exists, then the one in
+// Base_directories[0] will get used. The one in Base_directories[1] will be
+// ignored. This allows you to write code like this:
+//
+// for (auto directory : Base_directories) {
+//  if(file_we_need_is_in(directory)) {
+//    use_file_thats_in(directory);
+//    break;
+//  }
+// }
+std::vector<std::filesystem::path> Base_directories;
 
 extern int Min_allowed_frametime;
 
@@ -1403,12 +1416,13 @@ static const int num_temp_file_wildcards = sizeof(temp_file_wildcards) / sizeof(
 void InitIOSystems(bool editor) {
   ddio_init_info io_info;
 
-  // Set the base directory
+  // Set the writable base directory
+  char writable_base_directory[_MAX_PATH];
   int dirarg = FindArg("-setdir");
   int exedirarg = FindArg("-useexedir");
   if (dirarg) {
-    strncpy(Base_directory, GameArgs[dirarg + 1], sizeof(Base_directory) - 1);
-    Base_directory[sizeof(Base_directory) - 1] = '\0';
+    strncpy(writable_base_directory, GameArgs[dirarg + 1], sizeof(writable_base_directory) - 1);
+    writable_base_directory[sizeof(writable_base_directory) - 1] = '\0';
   } else if (exedirarg) {
     char exec_path[_MAX_PATH];
     memset(exec_path, 0, sizeof(exec_path));
@@ -1418,15 +1432,29 @@ void InitIOSystems(bool editor) {
     } else {
        std::filesystem::path executablePath(exec_path);
        std::string baseDirectoryString = executablePath.parent_path().string();
-       strncpy(Base_directory, baseDirectoryString.c_str(), sizeof(Base_directory) - 1);
-       Base_directory[sizeof(Base_directory) - 1] = '\0';
-       mprintf(0, "Using working directory of %s\n", Base_directory);
+       strncpy(writable_base_directory, baseDirectoryString.c_str(), sizeof(writable_base_directory) - 1);
+       writable_base_directory[sizeof(writable_base_directory) - 1] = '\0';
+       mprintf(0, "Using working directory of %s\n", writable_base_directory);
       }
     } else {
-       ddio_GetWorkingDir(Base_directory, sizeof(Base_directory));
-      }
+       ddio_GetWorkingDir(writable_base_directory, sizeof(writable_base_directory));
+    }
 
-  ddio_SetWorkingDir(Base_directory);
+  ddio_SetWorkingDir(writable_base_directory);
+  Base_directories.insert(Base_directories.begin(), (std::filesystem::path)writable_base_directory);
+
+  // Set any additional base directories
+  auto additionaldirarg = 0;
+  while (0 != (additionaldirarg = FindArg("-additionaldir", additionaldirarg))) {
+    const auto dir_to_add = GetArg(additionaldirarg + 1);
+    if (dir_to_add == NULL) {
+      mprintf(0, "-additionaldir was at the end of the argument list. It should never be at the end of the argument list.\n");
+      break;
+    } else {
+      Base_directories.insert(Base_directories.begin(), std::filesystem::path(dir_to_add));
+      additionaldirarg += 2;
+    }
+  }
 
   Descent->set_defer_handler(D3DeferHandler);
 
@@ -1480,42 +1508,36 @@ void InitIOSystems(bool editor) {
   // Init hogfiles
   INIT_MESSAGE(("Checking for HOG files."));
   int d3_hid = -1, extra_hid = -1, sys_hid = -1, extra13_hid = -1;
-  char fullname[_MAX_PATH];
+  std::filesystem::path hog_name;
 
 #ifdef DEMO
   // DAJ	d3_hid = cf_OpenLibrary("d3demo.hog");
-  ddio_MakePath(fullname, LocalD3Dir, "d3demo.hog", NULL);
+  hog_name = "d3demo.hog";
 #else
-  ddio_MakePath(fullname, LocalD3Dir, "d3.hog", NULL);
+  hog_name = "d3.hog";
 #endif
-  d3_hid = cf_OpenLibrary(fullname);
+  d3_hid = cf_OpenLibrary(hog_name);
 
   // JC: Steam release uses extra1.hog instead of extra.hog, so try loading it first
   // Open this file if it's present for stuff we might add later
-  ddio_MakePath(fullname, LocalD3Dir, "extra1.hog", NULL);
-  extra_hid = cf_OpenLibrary(fullname);
+  extra_hid = cf_OpenLibrary("extra1.hog");
   if (extra_hid == 0) {
-    ddio_MakePath(fullname, LocalD3Dir, "extra.hog", NULL);
-    extra_hid = cf_OpenLibrary(fullname);
+    extra_hid = cf_OpenLibrary("extra.hog");
   }
 
   // JC: Steam release uses extra.hog instead of merc.hog, so try loading it last (so we don't conflict with the above)
   // Open mercenary hog if it exists
-  ddio_MakePath(fullname, LocalD3Dir, "merc.hog", NULL);
-  merc_hid = cf_OpenLibrary(fullname);
+  merc_hid = cf_OpenLibrary("merc.hog");
   if (merc_hid == 0) {
-    ddio_MakePath(fullname, LocalD3Dir, "extra.hog", NULL);
-    merc_hid = cf_OpenLibrary(fullname);
+    merc_hid = cf_OpenLibrary("extra.hog");
   }
 
   // Open this for extra 1.3 code (Black Pyro, etc)
-  ddio_MakePath(fullname, LocalD3Dir, "extra13.hog", NULL);
-  extra13_hid = cf_OpenLibrary(fullname);
+  extra13_hid = cf_OpenLibrary("extra13.hog");
 
   // last library opened is the first to be searched for dynamic libs, so put
   // this one at the end to find our newly build script libraries first
-  ddio_MakePath(fullname, LocalD3Dir, PRIMARY_HOG, NULL);
-  sys_hid = cf_OpenLibrary(fullname);
+  sys_hid = cf_OpenLibrary(PRIMARY_HOG);
 
   // Check to see if there is a -mission command line option
   // if there is, attempt to open that hog/mn3 so it can override such
@@ -1989,7 +2011,7 @@ void SetupTempDirectory(void) {
     strcpy(Descent3_temp_directory, GameArgs[t_arg + 1]);
   } else {
     // initialize it to custom/cache
-    ddio_MakePath(Descent3_temp_directory, Base_directory, "custom", "cache", NULL);
+    ddio_MakePath(Descent3_temp_directory, GetWritableBaseDirectory().string().c_str(), "custom", "cache", NULL);
   }
 
   // verify that temp directory exists
@@ -2052,7 +2074,7 @@ void SetupTempDirectory(void) {
     exit(1);
   }
   // restore working dir
-  ddio_SetWorkingDir(Base_directory);
+  ddio_SetWorkingDir(GetWritableBaseDirectory().string().c_str());
 }
 
 void DeleteTempFiles(void) {
@@ -2072,7 +2094,7 @@ void DeleteTempFiles(void) {
   }
 
   // restore directory
-  ddio_SetWorkingDir(Base_directory);
+  ddio_SetWorkingDir(GetWritableBaseDirectory().string().c_str());
 }
 
 /*

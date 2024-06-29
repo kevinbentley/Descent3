@@ -293,7 +293,7 @@ void WriteAmbientData() {
   CFILE *ofile;
 
 #ifndef NEWEDITOR
-  ddio_MakePath(filename, Base_directory, "data", "misc", AMBIENT_FILE_NAME, NULL);
+  ddio_MakePath(filename, GetWritableBaseDirectory().string().c_str(), "data", "misc", AMBIENT_FILE_NAME, NULL);
 #else
   ddio_MakePath(filename, D3HogDir, "data", "misc", AMBIENT_FILE_NAME, NULL);
 #endif

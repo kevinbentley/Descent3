@@ -483,7 +483,6 @@ void Descent3() {
 
       // Show the intro movie
       if (!FindArg("-nointro")) {
-        char intropath[_MAX_PATH * 2];
         // Intros to be played
         const std::vector<const char *> intros = {
             "dolby1.mv8",
@@ -491,10 +490,7 @@ void Descent3() {
         };
 
         for (auto const &intro : intros) {
-          ddio_MakePath(intropath, Base_directory, "movies", intro, nullptr);
-          if (cfexist(intropath)) {
-            PlayMovie(intropath);
-          }
+          PlayMovie(intro);
         }
       }
 
@@ -713,3 +709,7 @@ void D3DebugResumeHandler() {
 #endif
 
 void RenderBlankScreen();
+
+std::filesystem::path GetWritableBaseDirectory() {
+  return Base_directories.back();
+}

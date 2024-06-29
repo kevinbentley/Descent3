@@ -773,3 +773,27 @@ bool ddio_CheckProcess(int pid) {
 int ddio_GetPID() {
   return getpid();
 }
+
+// Helper function for ddio_FindRealPath()
+std::filesystem::path ddio_FindRealPathImplementation(std::filesystem::path relative_path, std::filesystem::path starting_dir) {
+  auto return_value = starting_dir;
+  for (auto component : relative_path) {
+    if (!std::filesystem::exists(return_value) || component == "." || component == "..") {
+      return_value /= component;
+    } else {
+      bool component_found = false;
+      for (auto entry : std::filesystem::directory_iterator(return_value)) {
+        auto entry_name = entry.path().filename();
+        auto difference = strcasecmp(entry_name.c_str(), component.c_str());
+        if (difference == 0) {
+          component_found = true;
+          return_value /= entry_name;
+        }
+      }
+      if (!component_found) {
+        return_value /= component;
+      }
+    }
+  }
+  return return_value;
+}

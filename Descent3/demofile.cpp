@@ -358,7 +358,7 @@ void DemoToggleRecording() {
     if (stricmp(szfile + (strlen(szfile) - 4), ".dem") != 0) {
       strcat(szfile, ".dem");
     }
-    ddio_MakePath(Demo_fname, Base_directory, "demo", szfile, NULL);
+    ddio_MakePath(Demo_fname, GetWritableBaseDirectory().string().c_str(), "demo", szfile, NULL);
     mprintf(0, "Saving demo to file: %s\n", Demo_fname);
     // Try to create the file
     Demo_cfp = cfopen(Demo_fname, "wb");
@@ -1423,7 +1423,7 @@ bool LoadDemoDialog() {
 
   char file[_MAX_PATH * 2];
 
-  ddio_MakePath(file, Base_directory, "demo", NULL);
+  ddio_MakePath(file, GetWritableBaseDirectory().string().c_str(), "demo", NULL);
 
   if (DoPathFileDialog(false, file, TXT_VIEWDEMO, "*.dem", PFDF_FILEMUSTEXIST)) {
     strcpy(Demo_fname, file);
@@ -1674,35 +1674,6 @@ void DemoReadPlayerInfo(void) {
     Render_FOV = cf_ReadFloat(Demo_cfp);
   } else {
     cf_ReadFloat(Demo_cfp);
-  }
-}
-
-void DemoPlayAutoDemo(void) {
-  char wcard_fname[_MAX_PATH * 2];
-  char auto_fname[_MAX_PATH * 2];
-  int idx = 0;
-  ddio_MakePath(wcard_fname, Base_directory, "demo", "*.dem", NULL);
-  if (ddio_FindFileStart(wcard_fname, auto_fname)) {
-    // Get to the next demo file we are scheduled to do.
-    while (idx < Demo_auto_idx) {
-      if (!ddio_FindNextFile(auto_fname)) {
-        Demo_auto_idx = 0;
-        ddio_FindFileClose();
-        // A little recursion to go back to the start
-        DemoPlayAutoDemo();
-        return;
-      }
-      idx++;
-    }
-    // Now we should have the proper filename
-    if (DemoPlaybackFile(auto_fname)) {
-      Demo_auto_play = true;
-    } else {
-      Demo_auto_play = false;
-    }
-  } else {
-    // No demo files are available, sorry!
-    Demo_auto_play = false;
   }
 }
 

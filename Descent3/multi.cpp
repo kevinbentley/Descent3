@@ -8096,23 +8096,23 @@ char *GetFileNameFromPlayerAndID(int16_t playernum, int16_t id) {
     break;
   case NETFILE_ID_SHIP_TEX:
     if (NetPlayers[playernum].ship_logo[0])
-      ddio_MakePath(rval, Base_directory, "custom", "graphics", NetPlayers[playernum].ship_logo, NULL);
+      ddio_MakePath(rval, GetWritableBaseDirectory().string().c_str(), "custom", "graphics", NetPlayers[playernum].ship_logo, NULL);
     break;
   case NETFILE_ID_VOICE_TAUNT1:
     if (NetPlayers[playernum].voice_taunt1[0])
-      ddio_MakePath(rval, Base_directory, "custom", "sounds", NetPlayers[playernum].voice_taunt1, NULL);
+      ddio_MakePath(rval, GetWritableBaseDirectory().string().c_str(), "custom", "sounds", NetPlayers[playernum].voice_taunt1, NULL);
     break;
   case NETFILE_ID_VOICE_TAUNT2:
     if (NetPlayers[playernum].voice_taunt2[0])
-      ddio_MakePath(rval, Base_directory, "custom", "sounds", NetPlayers[playernum].voice_taunt2, NULL);
+      ddio_MakePath(rval, GetWritableBaseDirectory().string().c_str(), "custom", "sounds", NetPlayers[playernum].voice_taunt2, NULL);
     break;
   case NETFILE_ID_VOICE_TAUNT3:
     if (NetPlayers[playernum].voice_taunt3[0])
-      ddio_MakePath(rval, Base_directory, "custom", "sounds", NetPlayers[playernum].voice_taunt3, NULL);
+      ddio_MakePath(rval, GetWritableBaseDirectory().string().c_str(), "custom", "sounds", NetPlayers[playernum].voice_taunt3, NULL);
     break;
   case NETFILE_ID_VOICE_TAUNT4:
     if (NetPlayers[playernum].voice_taunt4[0])
-      ddio_MakePath(rval, Base_directory, "custom", "sounds", NetPlayers[playernum].voice_taunt4, NULL);
+      ddio_MakePath(rval, GetWritableBaseDirectory().string().c_str(), "custom", "sounds", NetPlayers[playernum].voice_taunt4, NULL);
     break;
   default:
     mprintf(0, "Unknown id (%d) passed to GetFileNameFromPlayerAndID()\n", id);

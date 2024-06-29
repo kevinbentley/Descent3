@@ -97,6 +97,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <filesystem>
 
 #include "pstypes.h"
 
@@ -143,24 +144,15 @@ enum CFileExitStatus {
 bool cf_IsFileInHog(const char *filename, const char *hogname);
 
 // Opens a HOG file.  Future calls to cfopen(), etc. will look in this HOG.
-// Parameters:  libname - the path & filename of the HOG file
-// NOTE:	libname must be valid for the entire execution of the program.  Therefore, it should either
-//			be a fully-specified path name, or the current directory must not change.
+// Parameters:  libname - path to the HOG file, relative to one of the Base_directories.
+// NOTE:	libname must be valid for the entire execution of the program.  Therefore, Base_directories
+// 			must not change.
 // Returns: 0 if error, else library handle that can be used to close the library
-int cf_OpenLibrary(const char *libname);
+int cf_OpenLibrary(std::filesystem::path libname);
 
 // Closes a library file.
 // Parameters:  handle: the handle returned by cf_OpenLibrary()
 void cf_CloseLibrary(int handle);
-
-#ifdef __LINUX__
-// Maps fixed case file name to actual case on disk
-// Parameters:  directory: optional directory to search within (can be NULL)
-//              filename: the fixed case name to map to reality
-//              new_filename: buffer to store mapped name, must be at least _MAX_PATH bytes
-// Returns: false if error, true if translated
-bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *filename, char *new_filename);
-#endif
 
 // Specify a directory to look in for files
 // Variable arguments is a NULL-terminated list of extensions

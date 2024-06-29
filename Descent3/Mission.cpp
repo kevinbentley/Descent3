@@ -921,7 +921,7 @@ bool LoadMission(const char *mssn) {
 
   if (IS_MN3_FILE(mssn)) {
     strcpy(mission, mssn);
-    ddio_MakePath(pathname, D3MissionsDir, mission, NULL);
+    ddio_MakePath(pathname, "missions", mission, NULL);
   } else {
     strcpy(mission, mssn);
     strcpy(pathname, mssn);
@@ -1650,9 +1650,7 @@ void DoMissionMovie(const char *movie) {
   return;
 #endif
   if (movie && *movie) {
-    char mpath[_MAX_PATH];
-    ddio_MakePath(mpath, LocalD3Dir, "movies", movie, NULL);
-    PlayMovie(mpath);
+    PlayMovie(movie);
   }
   // PlayMovie(movie);
 }
@@ -1840,11 +1838,11 @@ bool mn3_Open(const char *mn3file) {
   char voice_hog[_MAX_PATH*2];
   if ((stricmp(filename, "d3") == 0) || (stricmp(filename, "training") == 0)) {
     // Open audio hog file
-    ddio_MakePath(voice_hog, D3MissionsDir, "d3voice1.hog", nullptr); // Audio for levels 1-4
+    ddio_MakePath(voice_hog, "missions", "d3voice1.hog", nullptr); // Audio for levels 1-4
     Mission_voice_hog_handle = cf_OpenLibrary(voice_hog);
   } else if (stricmp(filename, "d3_2") == 0) {
     // Open audio hog file
-    ddio_MakePath(voice_hog, D3MissionsDir, "d3voice2.hog", nullptr); // Audio for levels 5-17
+    ddio_MakePath(voice_hog, "missions", "d3voice2.hog", nullptr); // Audio for levels 5-17
     Mission_voice_hog_handle = cf_OpenLibrary(voice_hog);
   }
   strcat(filename, ".gam");
@@ -1860,7 +1858,7 @@ bool mn3_GetInfo(const char *mn3file, tMissionInfo *msn) {
   char pathname[_MAX_PATH];
   char filename[PSFILENAME_LEN + 1];
 
-  ddio_MakePath(pathname, D3MissionsDir, mn3file, nullptr);
+  ddio_MakePath(pathname, "missions", mn3file, NULL);
   handle = cf_OpenLibrary(pathname);
   if (handle == 0) {
     mprintf(0, "MISSION: MN3 failed to open.\n");

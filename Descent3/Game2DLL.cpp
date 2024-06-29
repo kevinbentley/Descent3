@@ -581,7 +581,7 @@ bool InitGameModule(const char *name, module *mod) {
   char dll_name[_MAX_PATH * 2];
   char tmp_dll_name[_MAX_PATH * 2];
   // Make the hog filename
-  ddio_MakePath(lib_name, Base_directory, "netgames", name, NULL);
+  ddio_MakePath(lib_name, "netgames", name, NULL);
   strcat(lib_name, ".d3m");
 // Make the dll filename
 #if defined(WIN32)
@@ -592,8 +592,7 @@ bool InitGameModule(const char *name, module *mod) {
 
   // Open the hog file
   if (!cf_OpenLibrary(lib_name)) {
-    ddio_MakePath(tmp_dll_name, Base_directory, "netgames", name, NULL);
-    strcat(tmp_dll_name, ".d3m");
+    strncpy(tmp_dll_name, ddio_FindRealPath(lib_name).string().c_str(), sizeof(tmp_dll_name));
     Multi_game_dll_name[0] = '\0';
     goto loaddll;
   }

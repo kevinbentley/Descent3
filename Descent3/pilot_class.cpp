@@ -422,7 +422,7 @@ int pilot::flush(bool new_file) {
   char real_filename[_MAX_PATH];
 
   // open and process file
-  ddio_MakePath(real_filename, Base_directory, filename, NULL);
+  ddio_MakePath(real_filename, GetWritableBaseDirectory().string().c_str(), filename, NULL);
 
   if (new_file && cfexist(real_filename)) {
     // the file already exists, we can't write out
@@ -516,7 +516,7 @@ int pilot::read(bool skip_config, bool skip_mission_data) {
   char real_filename[_MAX_PATH];
 
   // open and process file
-  ddio_MakePath(real_filename, Base_directory, filename, NULL);
+  ddio_MakePath(real_filename, GetWritableBaseDirectory().string().c_str(), filename, NULL);
 
   if (!cfexist(real_filename)) {
     // the file already exists, we can't write out

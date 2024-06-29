@@ -264,6 +264,7 @@
  */
 ///////////////////////////////////////////////
 
+#include <filesystem>
 #include "ship.h"
 #include "pstypes.h"
 
@@ -705,6 +706,9 @@ ShowNetgameInfo_fp DLLShowNetgameInfo;
 typedef int (*CheckGetD3M_fp)(char *d3m);
 CheckGetD3M_fp DLLCheckGetD3M;
 
+typedef decltype(GetWritableBaseDirectory)* GetWritableBaseDirectory_fp;
+GetWritableBaseDirectory_fp DLLGetWritableBaseDirectory;
+
 int DLLUIClass_CurrID = 0xD0;
 
 #define MAX_NET_GAMES 100
@@ -774,7 +778,7 @@ int DLLGame_mode;
 char *DLLTracker_id;
 int *DLLNum_directplay_games;
 netgame_info *DLLNetgame;
-char *DLLLocalD3Dir;
+std::vector<std::filesystem::path> *DLLBase_directories;
 int *DLLMultiGameStarting;
 netplayer *DLLMNetPlayers;
 int MTWritingPilot, MTReadingPilot;
@@ -1003,25 +1007,25 @@ int StartMultiplayerGameMenu() {
   void *cancel_hs = DLLHotSpotCreate(main_wnd, UID_CANCEL, KEY_ESC, exit_off_text, exit_on_text, 10, cury, 180, 30,
                                      UIF_FIT | UIF_CENTER);
   // put the multiplayer dll's into the listbox
-  dllcount = 1;
+  dllcount = 0;
   char buffer[_MAX_PATH];
 
 #if (!(defined(OEM) || defined(DEMO)))
   char search[256];
-  DLLddio_MakePath(search, DLLLocalD3Dir, "netgames", "*.d3m", NULL);
-  if (DLLddio_FindFileStart(search, buffer)) {
-    dllcount = 1;
-    buffer[strlen(buffer) - 4] = '\0'; // Strip out the extention
-    strcpy(dll_text[dllcount - 1], buffer);
-    while ((DLLddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
-      buffer[strlen(buffer) - 4] = '\0'; // Strip out the extention
-      strcpy(dll_text[dllcount], buffer);
+  for (auto base_directory : *DLLBase_directories) {
+    DLLddio_MakePath(search, base_directory.string().c_str(), "netgames", "*.d3m", NULL);
+    if (DLLddio_FindFileStart(search, buffer)) {
       dllcount++;
+      buffer[strlen(buffer) - 4] = '\0'; // Strip out the extention
+      strcpy(dll_text[dllcount - 1], buffer);
+      while ((DLLddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
+        buffer[strlen(buffer) - 4] = '\0'; // Strip out the extention
+        strcpy(dll_text[dllcount], buffer);
+        dllcount++;
+      }
     }
-  } else {
-    dllcount = 0;
+    DLLddio_FindFileClose();
   }
-  DLLddio_FindFileClose();
 #else
   strcpy(dll_text[0], "Anarchy");
   strcpy(dll_text[1], "Capture The Flag");
@@ -1038,19 +1042,10 @@ int StartMultiplayerGameMenu() {
 #if (!(defined(OEM) || defined(DEMO)))
   msn_list *mi;
 
-  DLLddio_MakePath(search, DLLLocalD3Dir, "data", "levels", "*.msn", NULL);
-  // DLLmprintf((0,search));
-  if (DLLddio_FindFileStart(search, buffer)) {
-    if (DLLIsMissionMultiPlayable(buffer)) {
-      DLLmprintf(0, "Found a mission: %s\n", buffer);
-      mi = (msn_list *)DLLmem_malloc(sizeof(msn_list));
-      strcpy(mi->msn_name, DLLGetMissionName(buffer));
-      strcpy(mi->msn_file, buffer);
-      mi->ti = DLLCreateNewUITextItem(mi->msn_name, UICOL_LISTBOX_LO, -1);
-      AddMsnItem(mi);
-      DLLListAddItem(list_1, mi->ti);
-    }
-    while (DLLddio_FindNextFile(buffer)) {
+  for (auto base_directory : *DLLBase_directories) {
+    DLLddio_MakePath(search, base_directory.string().c_str(), "data", "levels", "*.msn", NULL);
+    // DLLmprintf((0,search));
+    if (DLLddio_FindFileStart(search, buffer)) {
       if (DLLIsMissionMultiPlayable(buffer)) {
         DLLmprintf(0, "Found a mission: %s\n", buffer);
         mi = (msn_list *)DLLmem_malloc(sizeof(msn_list));
@@ -1060,30 +1055,27 @@ int StartMultiplayerGameMenu() {
         AddMsnItem(mi);
         DLLListAddItem(list_1, mi->ti);
       }
+      while (DLLddio_FindNextFile(buffer)) {
+        if (DLLIsMissionMultiPlayable(buffer)) {
+          DLLmprintf(0, "Found a mission: %s\n", buffer);
+          mi = (msn_list *)DLLmem_malloc(sizeof(msn_list));
+          strcpy(mi->msn_name, DLLGetMissionName(buffer));
+          strcpy(mi->msn_file, buffer);
+          mi->ti = DLLCreateNewUITextItem(mi->msn_name, UICOL_LISTBOX_LO, -1);
+          AddMsnItem(mi);
+          DLLListAddItem(list_1, mi->ti);
+        }
+      }
     }
-  }
-  DLLddio_FindFileClose();
+    DLLddio_FindFileClose();
 
-  // char mn3_path[_MAX_PATH*2];
-  DLLddio_MakePath(search, DLLLocalD3Dir, "missions", "*.mn3", NULL);
-  // DLLmprintf(0,search);
-  if (DLLddio_FindFileStart(search, buffer)) {
-    // DLLddio_MakePath(mn3_path,DLLLocalD3Dir,"missions",buffer,NULL);
-
-    if (DLLIsMissionMultiPlayable(buffer) && (stricmp("d3_2.mn3", buffer) != 0)) {
-      DLLmprintf(0, "Found a mission: %s\n", buffer);
-      mi = (msn_list *)DLLmem_malloc(sizeof(msn_list));
-      strcpy(mi->msn_name, DLLGetMissionName(buffer));
-      strcpy(mi->msn_file, buffer);
-      mi->ti = DLLCreateNewUITextItem(mi->msn_name, UICOL_LISTBOX_LO, -1);
-      AddMsnItem(mi);
-      DLLListAddItem(list_1, mi->ti);
-    }
-    while (DLLddio_FindNextFile(buffer)) {
-      if (stricmp("d3_2.mn3", buffer) == 0)
-        continue;
+    // char mn3_path[_MAX_PATH*2];
+    DLLddio_MakePath(search, base_directory.string().c_str(), "missions", "*.mn3", NULL);
+    // DLLmprintf(0,search);
+    if (DLLddio_FindFileStart(search, buffer)) {
       // DLLddio_MakePath(mn3_path,DLLLocalD3Dir,"missions",buffer,NULL);
-      if (DLLIsMissionMultiPlayable(buffer)) {
+
+      if (DLLIsMissionMultiPlayable(buffer) && (stricmp("d3_2.mn3", buffer) != 0)) {
         DLLmprintf(0, "Found a mission: %s\n", buffer);
         mi = (msn_list *)DLLmem_malloc(sizeof(msn_list));
         strcpy(mi->msn_name, DLLGetMissionName(buffer));
@@ -1091,6 +1083,20 @@ int StartMultiplayerGameMenu() {
         mi->ti = DLLCreateNewUITextItem(mi->msn_name, UICOL_LISTBOX_LO, -1);
         AddMsnItem(mi);
         DLLListAddItem(list_1, mi->ti);
+      }
+      while (DLLddio_FindNextFile(buffer)) {
+        if (stricmp("d3_2.mn3", buffer) == 0)
+          continue;
+        // DLLddio_MakePath(mn3_path,DLLLocalD3Dir,"missions",buffer,NULL);
+        if (DLLIsMissionMultiPlayable(buffer)) {
+          DLLmprintf(0, "Found a mission: %s\n", buffer);
+          mi = (msn_list *)DLLmem_malloc(sizeof(msn_list));
+          strcpy(mi->msn_name, DLLGetMissionName(buffer));
+          strcpy(mi->msn_file, buffer);
+          mi->ti = DLLCreateNewUITextItem(mi->msn_name, UICOL_LISTBOX_LO, -1);
+          AddMsnItem(mi);
+          DLLListAddItem(list_1, mi->ti);
+        }
       }
     }
   }
@@ -1132,7 +1138,7 @@ int StartMultiplayerGameMenu() {
   DLLNewUIWindowLoadBackgroundImage(main_wnd, "multimain.ogf");
   DLLNewUIWindowOpen(main_wnd);
   char dftset[_MAX_PATH * 2];
-  DLLddio_MakePath(dftset, DLLLocalD3Dir, "custom", "settings", "default.mps", NULL);
+  DLLddio_MakePath(dftset, DLLGetWritableBaseDirectory().string().c_str(), "custom", "settings", "default.mps", NULL);
   if (DLLMultiLoadSettings(dftset)) {
     DLLEditSetText(mission_name_edit, DLLNetgame->name);
 #if (!(defined(OEM) || defined(DEMO)))

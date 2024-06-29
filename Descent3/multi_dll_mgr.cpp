@@ -519,6 +519,7 @@ void GetMultiAPI(multi_api *api) {
   api->fp[108] = (int *)ShowNetgameInfo;
   api->fp[109] = (int *)GetRankIndex;
   api->fp[110] = (int *)CheckGetD3M;
+  api->fp[111] = (int *)GetWritableBaseDirectory;
 
   // Variable pointers
   api->vp[0] = (int *)&Player_num;
@@ -526,7 +527,7 @@ void GetMultiAPI(multi_api *api) {
   api->vp[2] = (int *)&Game_is_master_tracker_game;
   api->vp[3] = (int *)&Game_mode;
   api->vp[4] = (int *)NULL; // Current_pilot; no longer a struct
-  api->vp[5] = (int *)Base_directory;
+  api->vp[5] = (int *)&Base_directories;
   api->vp[6] = (int *)&MultiDLLGameStarting;
   api->vp[7] = (int *)MTPilotinfo;
   api->vp[8] = (int *)&Num_network_games_known;
@@ -597,10 +598,10 @@ int LoadMultiDLL(const char *name) {
   if (MultiDLLHandle.handle)
     FreeMultiDLL();
 
-  ddio_MakePath(dll_path_name, Base_directory, "online", "*.tmp", NULL);
+  ddio_MakePath(dll_path_name, GetWritableBaseDirectory().string().c_str(), "online", "*.tmp", NULL);
   ddio_DeleteFile(dll_path_name);
   // Make the hog filename
-  ddio_MakePath(lib_name, Base_directory, "online", name, NULL);
+  ddio_MakePath(lib_name, "online", name, NULL);
   strcat(lib_name, ".d3c");
 // Make the dll filename
 #if defined(WIN32)
@@ -611,8 +612,9 @@ int LoadMultiDLL(const char *name) {
 
   // Open the hog file
   if (!cf_OpenLibrary(lib_name)) {
-    ddio_MakePath(tmp_dll_name, Base_directory, "online", name, NULL);
-    strcat(tmp_dll_name, ".d3c");
+    std::filesystem::path tmp_dll_path = (std::filesystem::path)"online" / name;
+    tmp_dll_path += ".d3c";
+    strncpy(tmp_dll_name, tmp_dll_path.string().c_str(), sizeof(tmp_dll_name));
     Multi_conn_dll_name[0] = 0;
     goto loaddll;
   }

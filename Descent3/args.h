@@ -28,7 +28,7 @@ void GatherArgs(const char *str);
 void GatherArgs(char **argv);
 
 // Returns index of argument sought, or 0 if not found
-int FindArg(const char *which);
+int FindArg(const char *which, int start = 1);
 int FindArgChar(const char *which, char singleCharArg);
 
 const char *GetArg(int index);

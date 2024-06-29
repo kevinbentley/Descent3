@@ -1301,31 +1301,28 @@ bool GameSequencer() {
 
 // Make sure we have the correct hogfile
 void CheckHogfile() {
-  char hogpath[_MAX_PATH * 2];
+  const char *new_mn3;
   mprintf(0, "Checking to see if we need to open another hog off of disk or CDROM\n");
 
   if (Current_mission.filename && (stricmp(Current_mission.filename, "d3.mn3") == 0) &&
       (Current_mission.cur_level > 4)) {
-    // close the mission hog file and open d3_2.mn3
-    mn3_Close();
-    ddio_MakePath(hogpath, D3MissionsDir, "d3_2.mn3", nullptr);
-    if (cfexist(hogpath)) {
-      mn3_Open(hogpath);
-      mem_free(Current_mission.filename);
-      Current_mission.filename = mem_strdup("d3_2.mn3");
-    } else {
-      SetFunctionMode(MENU_MODE);
-    }
+    new_mn3 = "d3_2.mn3";
   } else if (Current_mission.filename && (stricmp(Current_mission.filename, "d3_2.mn3") == 0) &&
              (Current_mission.cur_level <= 4)) {
-    // Part 2 of the mission is d3_2.mn3
-    // close the mission hog file and open d3.mn3
+    new_mn3 = "d3.mn3";
+  } else {
+    new_mn3 = NULL;
+  }
+
+  if (new_mn3) {
+    // close the mission hog file and open the new one
     mn3_Close();
-    ddio_MakePath(hogpath, D3MissionsDir, "d3.mn3", nullptr);
-    if (cfexist(hogpath)) {
-      mn3_Open(hogpath);
+    auto relative_path = (std::filesystem::path)"missions" / new_mn3;
+    auto absolute_path = ddio_FindRealPath(relative_path);
+    if (std::filesystem::exists(absolute_path)) {
+      mn3_Open(relative_path.string().c_str());
       mem_free(Current_mission.filename);
-      Current_mission.filename = mem_strdup("d3.mn3");
+      Current_mission.filename = mem_strdup(new_mn3);
     } else {
       SetFunctionMode(MENU_MODE);
     }
@@ -1634,35 +1631,9 @@ void StartLevel() {
 
 // Loads a level and starts everything up
 bool LoadAndStartCurrentLevel() {
-  char hogpath[_MAX_PATH * 2];
   // This is a bit redundant because we just did it in most cases, but we need to be sure that it always happens,
   // and this code is here for weird systems, like save/load and demo, etc.
-  if (Current_mission.filename && (stricmp(Current_mission.filename, "d3.mn3") == 0) &&
-      (Current_mission.cur_level > 4)) {
-    // close the mission hog file and open d3_2.mn3
-    mn3_Close();
-    ddio_MakePath(hogpath, D3MissionsDir, "d3_2.mn3", nullptr);
-    if (cfexist(hogpath)) {
-      mn3_Open(hogpath);
-      mem_free(Current_mission.filename);
-      Current_mission.filename = mem_strdup("d3_2.mn3");
-    } else {
-      SetFunctionMode(MENU_MODE);
-    }
-  } else if (Current_mission.filename && (stricmp(Current_mission.filename, "d3_2.mn3") == 0) &&
-             (Current_mission.cur_level <= 4)) {
-    // Part 2 of the mission is d3_2.mn3
-    // close the mission hog file and open d3.mn3
-    mn3_Close();
-    ddio_MakePath(hogpath, D3MissionsDir, "d3.mn3", nullptr);
-    if (cfexist(hogpath)) {
-      mn3_Open(hogpath);
-      mem_free(Current_mission.filename);
-      Current_mission.filename = mem_strdup("d3.mn3");
-    } else {
-      SetFunctionMode(MENU_MODE);
-    }
-  }
+  CheckHogfile();
 
   //	load the level. if fails, then bail out
   // ShowProgressScreen (TXT_LOADINGLEVEL);

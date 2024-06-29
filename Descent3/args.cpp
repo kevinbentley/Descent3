@@ -103,7 +103,7 @@ const char *SkipArgPrefix(const char *arg) {
   return arg;
 }
 
-int FindArg(const char *which) {
+int FindArg(const char *which, int start) {
   if (which == nullptr)
     return 0;
 
@@ -111,14 +111,18 @@ int FindArg(const char *which) {
     return strcasecmp(which, SkipArgPrefix(arg)) == 0;
   };
 
-  for (int i = 1; i <= TotalArgs; i++) {
+  for (int i = start; i <= TotalArgs; i++) {
     if (which_matches(GameArgs[i])) {
       mprintf(0, "FindArg: Found [%s] at argument index (%d).", which, i);
       return i;
     }
   }
 
-  mprintf(0, "FindArg: Did not find [%s] on command line.", which);
+  if (start == 1) {
+    mprintf(0, "FindArg: Did not find [%s] on command line.", which);
+  } else {
+    mprintf(0, "FindArg: Did not find [%s] on command line at index %i or after index %i.", which, start, start);
+  }
   return 0;
 }
 

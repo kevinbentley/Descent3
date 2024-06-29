@@ -1306,7 +1306,7 @@ void DoScreenshot() {
   count = 1;
   while (!done) {
     snprintf(str, sizeof(str), "Screenshot%.3d.png", count);
-    ddio_MakePath(filename, Base_directory, str, NULL);
+    ddio_MakePath(filename, GetWritableBaseDirectory().string().c_str(), str, NULL);
     infile = (CFILE *)cfopen(filename, "rb");
     if (infile == NULL) {
       done = 1;

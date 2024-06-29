@@ -672,7 +672,7 @@ int mng_LoadTableFiles(int show_progress) {
 // the user doesn't want network support
 int mng_InitLocalTables() {
   // Set the local table directory from the base directory
-  strcpy(LocalD3Dir, Base_directory);
+  strcpy(LocalD3Dir, GetWritableBaseDirectory().string().c_str());
   mprintf(1, "Local dir:%s\n", LocalD3Dir);
 
   // Make the CFILE system first look at our local directories.  If the goods aren't

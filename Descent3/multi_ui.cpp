@@ -374,9 +374,6 @@ void DisplayNetDLLHelp(const char *topic);
 
 #define UID_MULTILB 0x1000
 
-#define HEAT_NAME "HEAT.NET"
-#define PXO_NAME "Parallax Online"
-
 int MainMultiplayerMenu() {
 
   mprintf(0, "Entering MainMultiplayerMenu()\n");
@@ -439,115 +436,34 @@ int MainMultiplayerMenu() {
   sheet->AddButton(TXT_REALHELP, 0x20);
   sheet->AddButton(TXT_CANCEL, UID_CANCEL);
 
-  int dllcount = 1;
-  char buffer[_MAX_PATH], fname[_MAX_PATH], fext[_MAX_PATH], fdir[_MAX_PATH];
-  char search[256];
-
-  ddio_MakePath(search, Base_directory, "online", "*.d3c", NULL);
-
-  int dftidx = -1;
-  dllcount = 0;
-
-  // Put the HEAT on top.
-  if (ddio_FindFileStart(search, buffer)) {
-
-    ddio_SplitPath(buffer, fdir, fname, fext);
-
-    if (!stricmp(HEAT_NAME, fname)) {
-      lists->AddItem(fname);
-      dllcount++;
-    }
-    if (!stricmp(sznetgame, fname)) {
-      dftidx = 0;
-    }
-
-    while ((ddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
-      ddio_SplitPath(buffer, fdir, fname, fext);
-      if (!stricmp(HEAT_NAME, fname)) {
-        lists->AddItem(fname);
-        dllcount++;
-      }
-      if (!stricmp(sznetgame, fname)) {
-        dftidx = 0;
-      }
-    }
-  }
-
-  // Put the PXO next.
-  if (ddio_FindFileStart(search, buffer)) {
-
-    ddio_SplitPath(buffer, fdir, fname, fext);
-
-    if (!stricmp(PXO_NAME, fname)) {
-      lists->AddItem(fname);
-      dllcount++;
-    }
-    if (!stricmp(sznetgame, fname)) {
-      dftidx = 1;
-    }
-
-    while ((ddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
-      ddio_SplitPath(buffer, fdir, fname, fext);
-      if (!stricmp(PXO_NAME, fname)) {
-        lists->AddItem(fname);
-        dllcount++;
-      }
-      if (!stricmp(sznetgame, fname)) {
-        dftidx = 1;
-      }
-    }
-  }
-
-  if (ddio_FindFileStart(search, buffer)) {
-
-    ddio_SplitPath(buffer, fdir, fname, fext);
-
-    for (j = 0; j < strlen(fname); j++) {
-      if (fname[j] == '~') {
-        fname[j] = '/';
-      }
-    }
-
-    if ((stricmp(HEAT_NAME, fname) != 0) && (stricmp(PXO_NAME, fname) != 0)) {
-      lists->AddItem(fname);
-      if (!stricmp(sznetgame, fname)) {
-        dftidx = dllcount;
-      }
-      dllcount++;
-    }
-
-    uint32_t len;
-    while ((ddio_FindNextFile(buffer)) && (dllcount < MAX_DLLS)) {
-      ddio_SplitPath(buffer, fdir, fname, fext);
-      len = strlen(fname);
-
-      for (j = 0; j < len; j++) {
-        if (fname[j] == '~') {
-          fname[j] = '/';
+  int dllcount = 0;
+  char fname[_MAX_PATH];
+  for (auto base_directory : Base_directories) {
+    auto online_dir = ddio_FindRealPath("online", {base_directory});
+    if (std::filesystem::exists(online_dir)) {
+      for (auto entry : std::filesystem::directory_iterator(online_dir)) {
+        auto path = entry.path();
+        if (stricmp(path.extension().string().c_str(), ".d3c") == 0) {
+          strncpy(fname, path.stem().string().c_str(), sizeof(fname));
+          fname[sizeof(fname) - 1] = '\0';
+          for (j = 0; j < strlen(fname); j++) {
+            if (fname[j] == '~') {
+              fname[j] = '/';
+            }
+          }
+          lists->AddItem(fname);
+          dllcount++;
         }
       }
-
-      if ((stricmp(HEAT_NAME, fname) != 0) && (stricmp(PXO_NAME, fname) != 0)) {
-        lists->AddItem(fname);
-        if (!stricmp(sznetgame, fname)) {
-          dftidx = dllcount;
-        }
-        dllcount++;
-      }
     }
-  } else {
-    dllcount = 0;
   }
-  ddio_FindFileClose();
 
   if (dllcount == 0) {
     DoMessageBox(TXT_MULTIPLAYER, TXT_MULTINOFILES, MSGBOX_OK, UICOL_WINDOW_TITLE, UICOL_TEXT_NORMAL);
     exit_menu = 1;
     menu_wnd.Destroy();
     return 0;
-  }
-
-  if (dftidx != -1) {
+  } else {
     lists->SetCurrentItem(sznetgame); //>SetCurrentIndex(dftidx);
   }
 
@@ -1066,7 +982,7 @@ void DoMultiAllowed(void) {
 void MultiDoConfigSave(void) {
   char file[_MAX_PATH * 2];
 
-  ddio_MakePath(file, Base_directory, "custom", "settings", NULL);
+  ddio_MakePath(file, GetWritableBaseDirectory().string().c_str(), "custom", "settings", NULL);
   if (DoPathFileDialog(true, file, TXT_MULTISAVESET, "*.mps", 0)) {
     if (stricmp(file + (strlen(file) - 4), ".mps") != 0)
       strcat(file, ".mps");
@@ -1077,7 +993,7 @@ void MultiDoConfigSave(void) {
 void MultiDoConfigLoad(void) {
   char file[_MAX_PATH * 2];
 
-  ddio_MakePath(file, Base_directory, "custom", "settings", NULL);
+  ddio_MakePath(file, GetWritableBaseDirectory().string().c_str(), "custom", "settings", NULL);
   if (DoPathFileDialog(false, file, TXT_MULTILOADSET, "*.mps", PFDF_FILEMUSTEXIST))
     MultiLoadSettings(file);
 }

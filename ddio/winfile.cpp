@@ -146,6 +146,7 @@
 #include "ddio_win.h"
 #include "pserror.h"
 #include "mem.h"
+#include "descent.h"
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <io.h>
@@ -571,4 +572,9 @@ bool ddio_CheckProcess(int pid) {
 
 int ddio_GetPID() {
   return GetCurrentProcessId();
+}
+
+// Helper function for ddio_FindRealPath()
+std::filesystem::path ddio_FindRealPathImplementation(std::filesystem::path relative_path, std::filesystem::path starting_dir) {
+  return starting_dir / relative_path;
 }

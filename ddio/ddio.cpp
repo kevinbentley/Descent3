@@ -88,6 +88,7 @@
  * $NoKeywords: $
  */
 #include "ddio.h"
+#include "descent.h"
 #include "joystick.h"
 #include "pserror.h"
 #include <stdlib.h>
@@ -141,4 +142,37 @@ void ddio_Frame() {
   ddio_InternalKeyFrame();
   ddio_InternalMouseFrame();
   ddio_InternalJoyFrame();
+}
+
+/**
+ * Tries to find a relative path inside each of the starting_dirs.
+ *
+ * @param relative_path A relative path that we’ll hopefully find in
+ *                      starting_dir. You don’t have to get the capitalization
+ *                      of relative_path correct, even on macOS and Linux.
+ *
+ * @param starting_dirs Places to look for relative_path. The capitalization of
+ *                      the starting_dirs must be correct, or else this
+ *                      function will fail on case-sensitive filesystems. By
+ *                      default, starting_dirs is {} which means “use
+ *                      Base_directories as the starting_dirs”.
+ *
+ * @return An absolute path that’s inside starting_dir.
+ */
+std::filesystem::path ddio_FindRealPath(std::filesystem::path relative_path, std::vector<std::filesystem::path> starting_dirs) {
+  ASSERT(("realative_path should be a relative path.", relative_path.is_relative()));
+  if (starting_dirs.empty()) {
+    starting_dirs = Base_directories;
+  }
+
+  std::filesystem::path return_value;
+  for (auto starting_dir : starting_dirs) {
+    ASSERT(("starting_dir should be an absolute path.", starting_dir.is_absolute()));
+    return_value = ddio_FindRealPathImplementation(relative_path, starting_dir);
+    ASSERT(("return_value should be an absolute path.", return_value.is_absolute()));
+    if (std::filesystem::exists(return_value)) {
+      return return_value;
+    }
+  }
+  return return_value;
 }
