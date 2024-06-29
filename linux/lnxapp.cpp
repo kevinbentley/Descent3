@@ -206,6 +206,10 @@ void oeLnxApplication::delay(float secs) {
 //	Function to get the flags
 int oeLnxApplication::flags() const { return m_Flags; }
 
+void oeLnxApplication::set_flags(int newflags) {
+  m_Flags = newflags;
+}
+
 //	Sizes the displayable region of the app (the window)
 void oeLnxApplication::set_sizepos(int x, int y, int w, int h) {
   m_X = x;

@@ -160,6 +160,7 @@ private:
 
 private:
   int defer_block(); // real defer code.
+  void change_window();					// Adjusts the window based on style
 
 public:
   //	Creates the window handle
@@ -214,6 +215,8 @@ public:
 
   // detect if application can handle what we want of it.
   static bool GetSystemSpecs(const char *fname);
+
+  virtual void set_flags(int newflags);
 
 public:
   HWnd m_hWnd{}; // handles created by the system

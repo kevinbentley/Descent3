@@ -1,27 +1,32 @@
 set(HEADERS
-  dyna_gl.h
   HardwareInternal.h
+  RendererConfig.h
+  dyna_gl.h
+  gl_local.h
+  gl_mesh.h
+  gl_shader.h
 )
 set(CPPS
-  HardwareClipper.cpp
-  HardwareDraw.cpp
-  HardwareGlobalVars.cpp
-  HardwareInstance.cpp
-  HardwareOpenGL.cpp
-  HardwareBaseGPU.cpp
-  HardwarePoints.cpp
-  HardwareSetup.cpp
-  HardwareTransforms.cpp
+  clipper.cpp
+  draw.cpp
+  gl.c
+  gl_draw.cpp
+  gl_framebuffer.cpp
+  gl_image.cpp
+  gl_init.cpp
+  gl_main.cpp
+  gl_mesh.cpp
+  gl_shader.cpp
+  gl_shadersource.cpp
+  globalvars.cpp
+  instance.cpp
+  points.cpp
+  setup.cpp
+  transforms.cpp
+  $<$<PLATFORM_ID:Windows>:
+    wgl.c
+  >
 )
-
-if(UNIX)
-  set(CPPS ${CPPS} lnxscreenmode.cpp)
-endif()
-
-# These are excluded.
-#opengl.cpp
-#renderer.cpp
-#Direct3D.cpp
 
 add_library(renderer STATIC ${HEADERS} ${CPPS})
 target_link_libraries(renderer PRIVATE

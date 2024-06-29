@@ -98,6 +98,10 @@ public:
   virtual void delay(float secs) = 0;
   //	set a function to run when deferring to OS.
   virtual void set_defer_handler(void (*func)(bool)) = 0;
+  //  changes the flags and applies changes to the window.
+	virtual void set_flags(int newflags) = 0;
+  //  moves the window
+	virtual void set_sizepos(int x, int y, int w, int h) = 0;
 
 public:
   //	checks if the application is active

@@ -1,4 +1,4 @@
-/*
+/* 
 * Descent 3 
 * Copyright (C) 2024 Parallax Software
 *
@@ -15,32 +15,13 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef __RENDERER_CONFIG_H__
+#define __RENDERER_CONFIG_H__
 
-#include "3d.h"
-#include "HardwareInternal.h"
-#include <float.h>
+// use this to toggle "Hardware T&L" vs. "Software"
+//#define USE_SOFTWARE_TNL
 
-vector View_position;
-float View_zoom;
+// JEFF: I PUT THIS IN TO MAKE THINGS A LITTLE BRIGHTER SO I CAN SEE WHILE TESTING
+//#define BRIGHTNESS_HACK 1.6f
 
-float Far_clip_z = FLT_MAX; // set to a really really far distance initially
-
-uint8_t Clip_custom = 0;
-float Clip_plane_distance = 0;
-vector Clip_plane;
-
-matrix Unscaled_matrix; // before scaling
-matrix View_matrix;
-
-vector Matrix_scale; // how the matrix is scaled, window_scale * zoom
-
-int Window_width;  // the actual width
-int Window_height; // the actual height
-
-float Window_w2; // width/2
-float Window_h2; // height/2
-
-float gTransformViewPort[4][4];
-float gTransformProjection[4][4];
-float gTransformModelView[4][4];
-float gTransformFull[4][4];
+#endif

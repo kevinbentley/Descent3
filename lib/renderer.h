@@ -1,5 +1,5 @@
 /*
-* Descent 3 
+* Descent 3
 * Copyright (C) 2024 Parallax Software
 *
 * This program is free software: you can redistribute it and/or modify
@@ -317,10 +317,12 @@ extern int Triangles_drawn;
 
 // Is this hardware or software rendered?
 enum renderer_type {
-  RENDERER_OPENGL = 2,
-  RENDERER_DIRECT3D = 3,
-  RENDERER_GLIDE = 4,
-  RENDERER_NONE = 5,
+  RENDERER_SOFTWARE_8BIT,
+  RENDERER_SOFTWARE_16BIT,
+  RENDERER_OPENGL,
+  RENDERER_DIRECT3D,
+  RENDERER_GLIDE,
+  RENDERER_NONE,
 };
 
 extern renderer_type Renderer_type;
@@ -413,7 +415,7 @@ enum texture_type {
 #define AT_SATURATE_TEXTURE_VERTEX 14  // Texture * vertex saturation
 #define AT_LIGHTMAP_BLEND_VERTEX 15    //	Like AT_LIGHTMAP_BLEND, but take vertex alpha into account
 #define AT_LIGHTMAP_BLEND_CONSTANT 16  // Like AT_LIGHTMAP_BLEND, but take constant alpha into account
-#define AT_SPECULAR 32
+#define AT_SPECULAR 32 // Forces texturing on, but replaces color with diffuse color. Alpha is texture * vertex
 #define AT_LIGHTMAP_BLEND_SATURATE 33 // Light lightmap blend, but add instead of multiply
 
 #define LFB_LOCK_READ 0
@@ -442,6 +444,7 @@ struct rendering_state {
 
   float cur_fog_start, cur_fog_end;
   float cur_near_z, cur_far_z;
+  float depth_const_a, depth_const_b;
   float gamma_value;
 
   int cur_alpha;
@@ -452,16 +455,51 @@ struct rendering_state {
 
   int clip_x1, clip_x2, clip_y1, clip_y2;
   int screen_width, screen_height;
+  int view_width, view_height;
+};
 
+// [ISB] Legacy compatible rendering_state for dlls.
+struct DLLrendering_state {
+  int8_t initted;
+
+  int8_t cur_bilinear_state;
+  int8_t cur_zbuffer_state;
+  int8_t cur_fog_state;
+  int8_t cur_mip_state;
+
+  texture_type cur_texture_type;
+  color_model cur_color_model;
+  light_state cur_light_state;
+  int8_t cur_alpha_type;
+
+  wrap_type cur_wrap_type;
+
+  float cur_fog_start, cur_fog_end;
+  float cur_near_z, cur_far_z;
+  float gamma_value;
+
+  int cur_alpha;
+  ddgr_color cur_color;
+  ddgr_color cur_fog_color;
+
+  int8_t cur_texture_quality; // 0-none, 1-linear, 2-perspective
+
+  int clip_x1, clip_x2, clip_y1, clip_y2;
+  int screen_width, screen_height;
 };
 
 struct renderer_preferred_state {
   uint8_t mipping;
   uint8_t filtering;
   float gamma;
+  bool antialised;
   uint8_t bit_depth;
+
   int width, height;
+  int window_width, window_height; // Size of the game window, may != width/height.
+
   uint8_t vsync_on;
+  bool fullscreen; // Informs the window system that fullscreen should be used.
 };
 
 struct renderer_lfb {
@@ -516,6 +554,9 @@ void rend_Close();
 // NOTE: scripts are expecting the old prototype that has a zvalue (which is ignored) before color
 void rend_DrawScaledBitmap(int x1, int y1, int x2, int y2, int bm, float u0, float v0, float u1, float v1,
                            int color = -1, float *alphas = NULL);
+
+void rend_DrawScaledBitmapWithZ(int x1, int y1, int x2, int y2, int bm, float u0, float v0, float u1, float v1,
+                                float zval, int color, float *alphas = nullptr);
 
 // Sets the state of bilinear filtering for our textures
 void rend_SetFiltering(int8_t state);
@@ -632,11 +673,18 @@ void rend_SetGammaValue(float val);
 // Fills in the passed in pointer with the current rendering state
 void rend_GetRenderState(rendering_state *rstate);
 
+// Fills in the passed in pointer with the current rendering state
+// Uses legacy structure for compatibiltity with current DLLs.
+void rend_DLLGetRenderState(DLLrendering_state *rstate);
+
 // Draws a simple bitmap at the specified x,y location
 void rend_DrawSimpleBitmap(int bm_handle, int x, int y);
 
 // Gets OpenGL ready to work in a window
 int rend_InitOpenGLWindow(oeApplication *app, renderer_preferred_state *pref_state);
+
+// Changes the resolution of the renderer
+void rend_SetResolution(int width, int height);
 
 // Shuts down OpenGL in a window
 void rend_CloseOpenGLWindow();
@@ -680,9 +728,20 @@ void rend_CopyBitmapToFramebuffer(int bm_handle, int x, int y);
 // Gets a renderer ready for a framebuffer copy, or stops a framebuffer copy
 void rend_SetFrameBufferCopyState(bool state);
 
+void rend_UpdateCommon(float *projection, float *modelview);
+
+// These are temporary, used to test shader code.
+// Use the test shader.
+void rend_UseShaderTest(void);
+
+// Revert to non-shader rendering
+void rend_EndShaderTest(void);
+
+#if defined(DD_ACCESS_RING)
 #if defined(WIN32)
 // returns the direct draw object
 void *rend_RetrieveDirectDrawObj(void **frontsurf, void **backsurf);
+#endif
 #endif
 
 #endif

@@ -76,6 +76,7 @@ public:
   void set_sizepos(int x, int y, int w, int h);
 
   virtual int flags(void) const;
+  virtual void set_flags(int newflags);
 
   unsigned m_Flags;
   int m_X, m_Y, m_W, m_H;   // window dimensions.
