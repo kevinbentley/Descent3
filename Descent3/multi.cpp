@@ -6418,7 +6418,6 @@ int MultiGetShipChecksum(int ship_index);
 // Starts multiplayer-specific stuff for a new level
 // Anything not specific to multiplayer should be in StartNewLevel()
 bool MultiStartNewLevel(int level) {
-  int i;
   Time_last_taunt_request = 0;
 
   // Figure the ships into the checksum
@@ -6432,7 +6431,7 @@ bool MultiStartNewLevel(int level) {
 
 #ifndef RELEASE
   // Clear our packet tracking
-  for (i = 0; i < 255; i++)
+  for (int i = 0; i < 255; i++)
     Multi_packet_tracking[i] = 0;
 
 #endif
@@ -6446,13 +6445,13 @@ bool MultiStartNewLevel(int level) {
   memset(Multi_additional_shields, 0, MAX_SHIELD_REQUEST_TYPES * 4);
   Multi_requested_damage_amount = 0;
 
-  for (i = 0; i < MAX_OBJECTS; i++) {
+  for (int i = 0; i < MAX_OBJECTS; i++) {
     Server_object_list[i] = 65535;
     Local_object_list[i] = 65535;
     Objects[i].generic_nonvis_flags = 0;
   }
 
-  for (i = 0; i < MAX_SPEW_EFFECTS; i++)
+  for (int i = 0; i < MAX_SPEW_EFFECTS; i++)
     Server_spew_list[i] = 65535;
 
   // SCRIPT POINT!!!
@@ -6461,7 +6460,7 @@ bool MultiStartNewLevel(int level) {
   Num_broke_glass = 0;
 
   // Fill in player object numbers
-  for (i = 0; i < MAX_PLAYERS; i++) {
+  for (int i = 0; i < MAX_PLAYERS; i++) {
     if (Players[i].start_roomnum != -1) {
       int objnum = Players[i].objnum;
 

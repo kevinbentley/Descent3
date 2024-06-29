@@ -547,7 +547,7 @@ struct t_dstat {
   int kills[2], deaths[2], suicides[2];
 };
 
-struct PInfo;
+class PInfo;
 
 struct player_record {
   slot_state state;                 // state of this slot

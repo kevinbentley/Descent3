@@ -1410,7 +1410,7 @@ void SaveStatsToFile(char *filename) {
   player_record *pr, *dpr;
   tPInfoStat stat;
   tPlayerStat *st;
-  int count, length, p;
+  int count, p;
 
   // sort the stats
   DMFCBase->GetSortedPlayerSlots(sortedslots, MAX_PLAYER_RECORDS);
@@ -1497,8 +1497,7 @@ void SaveStatsToFile(char *filename) {
                pr->dstats.suicides[DSTAT_OVERALL]);
       memcpy(&buffer[69], tempbuffer, strlen(tempbuffer));
 
-      int pos;
-      pos = 69 + strlen(tempbuffer) + 1;
+      size_t pos = 69 + strlen(tempbuffer) + 1;
       if (pos < BUFSIZE)
         buffer[pos] = '\0';
 
@@ -1521,7 +1520,7 @@ void SaveStatsToFile(char *filename) {
       // Write out header
       snprintf(buffer, sizeof(buffer), "%d) %s%s", count, (pr->state == STATE_INGAME) ? "" : "*", pr->callsign);
       DLLcf_WriteString(file, buffer);
-      length = strlen(buffer);
+      size_t length = strlen(buffer);
       memset(buffer, '=', length);
       buffer[length] = '\0';
       DLLcf_WriteString(file, buffer);
@@ -1537,7 +1536,6 @@ void SaveStatsToFile(char *filename) {
         if (stat.slot != p) {
           memset(buffer, ' ', BUFSIZE);
           dpr = DMFCBase->GetPlayerRecord(stat.slot);
-          int pos;
 
           if (dpr) {
             snprintf(tempbuffer, sizeof(tempbuffer), "%s", dpr->callsign);
@@ -1549,7 +1547,7 @@ void SaveStatsToFile(char *filename) {
             snprintf(tempbuffer, sizeof(tempbuffer), "%d", stat.deaths);
             memcpy(&buffer[40], tempbuffer, strlen(tempbuffer));
 
-            pos = 40 + strlen(tempbuffer) + 1;
+            size_t pos = 40 + strlen(tempbuffer) + 1;
             if (pos < BUFSIZE)
               buffer[pos] = '\0';
 
@@ -1560,7 +1558,6 @@ void SaveStatsToFile(char *filename) {
 
         while (DMFCBase->FindPInfoStatNext(&stat)) {
           if (stat.slot != p) {
-            int pos;
             memset(buffer, ' ', BUFSIZE);
             dpr = DMFCBase->GetPlayerRecord(stat.slot);
 
@@ -1574,7 +1571,7 @@ void SaveStatsToFile(char *filename) {
               snprintf(tempbuffer, sizeof(tempbuffer), "%d", stat.deaths);
               memcpy(&buffer[40], tempbuffer, strlen(tempbuffer));
 
-              pos = 40 + strlen(tempbuffer) + 1;
+              size_t pos = 40 + strlen(tempbuffer) + 1;
               if (pos < BUFSIZE)
                 buffer[pos] = '\0';
 
@@ -1918,13 +1915,13 @@ void OnGetTokenString(char *src, char *dest, int dest_size) {
 void OnPrintScores(int level) {
   char buffer[256];
   char name[70];
-  int t, i;
-  int pos[6];
-  int len[6];
+  size_t t;
+  size_t pos[6];
+  size_t len[6];
 
   netplayer *dNetPlayers = DMFCBase->GetNetPlayers();
 
-  for (i = 0; i < NUM_TEAMS; i++) {
+  for (int i = 0; i < NUM_TEAMS; i++) {
     snprintf(buffer, sizeof(buffer), "%s:%d\n", DMFCBase->GetTeamString(i), TeamScore[i]);
     DPrintf(buffer);
   }
@@ -1967,7 +1964,7 @@ void OnPrintScores(int level) {
 
   DMFCBase->GetSortedPlayerSlots(sortedplayers, MAX_PLAYER_RECORDS);
 
-  for (i = 0; i < pcount; i++) {
+  for (int i = 0; i < pcount; i++) {
     slot = sortedplayers[i];
     pr = DMFCBase->GetPlayerRecord(slot);
     if ((pr) && (pr->state != STATE_EMPTY)) {

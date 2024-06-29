@@ -7151,9 +7151,9 @@ void CDallasMainDlg::FillActionMenu(CMenu *action_menu, int command_offset) {
     // Detach and add this submenu to the action menu
     ColumnizePopupMenu(&category_submenu);
     if (actions_added == 0)
-      action_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)category_submenu.Detach(), m_FunctionCategories[j]);
+      action_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)category_submenu.Detach(), m_FunctionCategories[j]);
     else
-      action_menu->AppendMenu(MF_POPUP, (uint32_t)category_submenu.Detach(), m_FunctionCategories[j]);
+      action_menu->AppendMenu(MF_POPUP, (UINT_PTR)category_submenu.Detach(), m_FunctionCategories[j]);
   }
 }
 
@@ -7209,9 +7209,9 @@ void CDallasMainDlg::FillQueryMenu(CMenu *query_menu, int command_offset, int va
     // Detach and add this submenu to the action menu
     ColumnizePopupMenu(&category_submenu);
     if (queries_added == 0)
-      query_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)category_submenu.Detach(), m_FunctionCategories[j]);
+      query_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)category_submenu.Detach(), m_FunctionCategories[j]);
     else
-      query_menu->AppendMenu(MF_POPUP, (uint32_t)category_submenu.Detach(), m_FunctionCategories[j]);
+      query_menu->AppendMenu(MF_POPUP, (UINT_PTR)category_submenu.Detach(), m_FunctionCategories[j]);
   }
 }
 
@@ -11836,44 +11836,44 @@ void CDallasMainDlg::FillObjectMenu(CMenu *object_menu, int command_offset, bool
   // Add the powerup submenu
   ColumnizePopupMenu(&powerup_submenu);
   if (powerups_added == 0)
-    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)powerup_submenu.Detach(), "Powerup");
+    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)powerup_submenu.Detach(), "Powerup");
   else
-    object_menu->AppendMenu(MF_POPUP, (uint32_t)powerup_submenu.Detach(), "Powerup");
+    object_menu->AppendMenu(MF_POPUP, (UINT_PTR)powerup_submenu.Detach(), "Powerup");
 
   // Add the robot submenu
   ColumnizePopupMenu(&robot_submenu);
   if (robots_added == 0)
-    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)robot_submenu.Detach(), "Robot");
+    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)robot_submenu.Detach(), "Robot");
   else
-    object_menu->AppendMenu(MF_POPUP, (uint32_t)robot_submenu.Detach(), "Robot");
+    object_menu->AppendMenu(MF_POPUP, (UINT_PTR)robot_submenu.Detach(), "Robot");
 
   // Add the clutter submenu
   ColumnizePopupMenu(&clutter_submenu);
   if (clutter_added == 0)
-    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)clutter_submenu.Detach(), "Clutter");
+    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)clutter_submenu.Detach(), "Clutter");
   else
-    object_menu->AppendMenu(MF_POPUP, (uint32_t)clutter_submenu.Detach(), "Clutter");
+    object_menu->AppendMenu(MF_POPUP, (UINT_PTR)clutter_submenu.Detach(), "Clutter");
 
   // Add the building submenu
   ColumnizePopupMenu(&building_submenu);
   if (buildings_added == 0)
-    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)building_submenu.Detach(), "Building");
+    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)building_submenu.Detach(), "Building");
   else
-    object_menu->AppendMenu(MF_POPUP, (uint32_t)building_submenu.Detach(), "Building");
+    object_menu->AppendMenu(MF_POPUP, (UINT_PTR)building_submenu.Detach(), "Building");
 
   // Add the door submenu
   ColumnizePopupMenu(&door_submenu);
   if (doors_added == 0)
-    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)door_submenu.Detach(), "Door");
+    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)door_submenu.Detach(), "Door");
   else
-    object_menu->AppendMenu(MF_POPUP, (uint32_t)door_submenu.Detach(), "Door");
+    object_menu->AppendMenu(MF_POPUP, (UINT_PTR)door_submenu.Detach(), "Door");
 
   // Add the other submenu
   ColumnizePopupMenu(&other_submenu);
   if (!show_other || others_added == 0)
-    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)other_submenu.Detach(), "Other");
+    object_menu->AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)other_submenu.Detach(), "Other");
   else
-    object_menu->AppendMenu(MF_POPUP, (uint32_t)other_submenu.Detach(), "Other");
+    object_menu->AppendMenu(MF_POPUP, (UINT_PTR)other_submenu.Detach(), "Other");
 }
 
 // Fills up the given menu with the named objects of the specified type
@@ -12096,15 +12096,15 @@ int CDallasMainDlg::FillLiteralMenu(CMenu *literal_menu, int command_offset, int
       if (j == ENUM_PARAMETER_TYPE) {
         ColumnizePopupMenu(&enum_submenu);
         if (types_added > 0)
-          literal_menu->AppendMenu(MF_POPUP, (uint32_t)enum_submenu.Detach(), param_menu_item[j].name);
+          literal_menu->AppendMenu(MF_POPUP, (UINT_PTR)enum_submenu.Detach(), param_menu_item[j].name);
         else
-          literal_menu->AppendMenu(MF_GRAYED | MF_POPUP, (uint32_t)enum_submenu.Detach(), param_menu_item[j].name);
+          literal_menu->AppendMenu(MF_GRAYED | MF_POPUP, (UINT_PTR)enum_submenu.Detach(), param_menu_item[j].name);
       } else if (j == FLAG_PARAMETER_TYPE) {
         ColumnizePopupMenu(&flag_submenu);
         if (flag_types_added > 0)
-          literal_menu->AppendMenu(MF_POPUP, (uint32_t)flag_submenu.Detach(), param_menu_item[j].name);
+          literal_menu->AppendMenu(MF_POPUP, (UINT_PTR)flag_submenu.Detach(), param_menu_item[j].name);
         else
-          literal_menu->AppendMenu(MF_GRAYED | MF_POPUP, (uint32_t)flag_submenu.Detach(), param_menu_item[j].name);
+          literal_menu->AppendMenu(MF_GRAYED | MF_POPUP, (UINT_PTR)flag_submenu.Detach(), param_menu_item[j].name);
       } else
         literal_menu->AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, command_offset + param_menu_item[j].type,
                                  param_menu_item[j].name);
@@ -12147,9 +12147,9 @@ void CDallasMainDlg::FillConditionMenu(CMenu *condition_menu, int command_offset
   condition_menu->AppendMenu(MF_SEPARATOR, 0, "");
 
   ColumnizePopupMenu(&qbin_submenu);
-  condition_menu->AppendMenu(MF_POPUP, (uint32_t)qbin_submenu.Detach(), "Binary Statement with Query");
+  condition_menu->AppendMenu(MF_POPUP, (UINT_PTR)qbin_submenu.Detach(), "Binary Statement with Query");
   ColumnizePopupMenu(&qcomp_submenu);
-  condition_menu->AppendMenu(MF_POPUP, (uint32_t)qcomp_submenu.Detach(), "Comparison Statement with Query");
+  condition_menu->AppendMenu(MF_POPUP, (UINT_PTR)qcomp_submenu.Detach(), "Comparison Statement with Query");
 }
 
 // Creates the Popup menu for the Script Header node
@@ -12176,15 +12176,15 @@ void CDallasMainDlg::DisplayScriptOwnerNodeMenu(POINT *point) {
   object_submenu.CreatePopupMenu();
   FillObjectMenu(&object_submenu, ASSIGN_OBJECT_ID_RANGE_START, TRUE);
   ColumnizePopupMenu(&object_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)object_submenu.Detach(), "Object");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)object_submenu.Detach(), "Object");
 
   trigger_submenu.CreatePopupMenu();
   triggers_added = FillTriggerMenu(&trigger_submenu, ASSIGN_TRIGGER_ID_RANGE_START);
   ColumnizePopupMenu(&trigger_submenu);
   if (triggers_added == 0)
-    main_menu.AppendMenu(MF_POPUP | MF_GRAYED, (uint32_t)trigger_submenu.Detach(), "Trigger");
+    main_menu.AppendMenu(MF_POPUP | MF_GRAYED, (UINT_PTR)trigger_submenu.Detach(), "Trigger");
   else
-    main_menu.AppendMenu(MF_POPUP, (uint32_t)trigger_submenu.Detach(), "Trigger");
+    main_menu.AppendMenu(MF_POPUP, (UINT_PTR)trigger_submenu.Detach(), "Trigger");
 
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, ASSIGN_LEVEL_ID, "Level");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
@@ -12245,17 +12245,17 @@ void CDallasMainDlg::DisplayLogicalOperatorNodeMenu(POINT *point) {
 
   main_menu.CreatePopupMenu();
   ColumnizePopupMenu(&insert_logop_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)insert_logop_submenu.Detach(), "Insert Logical Operator");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)insert_logop_submenu.Detach(), "Insert Logical Operator");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   ColumnizePopupMenu(&condition_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)condition_submenu.Detach(), "Add a New Condition");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)condition_submenu.Detach(), "Add a New Condition");
   ColumnizePopupMenu(&add_logop_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)add_logop_submenu.Detach(), "Add Logical Operator");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)add_logop_submenu.Detach(), "Add Logical Operator");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   ColumnizePopupMenu(&replace_condition_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_condition_submenu.Detach(), "Replace with a Condition");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_condition_submenu.Detach(), "Replace with a Condition");
   ColumnizePopupMenu(&replace_logop_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_logop_submenu.Detach(), "Replace with a New Logical Operator");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_logop_submenu.Detach(), "Replace with a New Logical Operator");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, DELETE_ALL_ID, "Delete this Operator");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
@@ -12283,12 +12283,12 @@ void CDallasMainDlg::DisplayConditionalStatementNodeMenu(POINT *point) {
 
   main_menu.CreatePopupMenu();
   ColumnizePopupMenu(&log_op_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)log_op_submenu.Detach(), "Insert Logical Operator");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)log_op_submenu.Detach(), "Insert Logical Operator");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   ColumnizePopupMenu(&replace_condition_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_condition_submenu.Detach(), "Replace with a New Condition");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_condition_submenu.Detach(), "Replace with a New Condition");
   ColumnizePopupMenu(&replace_logop_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_logop_submenu.Detach(), "Replace with a Logical Operator");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_logop_submenu.Detach(), "Replace with a Logical Operator");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, DELETE_ALL_ID, "Delete this Condition");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
@@ -12312,9 +12312,9 @@ void CDallasMainDlg::DisplayExpressionNodeMenu(POINT *point, int valid_return_ty
 
   main_menu.CreatePopupMenu();
   ColumnizePopupMenu(&replace_with_query_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_with_query_submenu.Detach(), "Replace with Query");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_with_query_submenu.Detach(), "Replace with Query");
   ColumnizePopupMenu(&replace_with_literal_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_with_literal_submenu.Detach(), "Replace with Literal");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_with_literal_submenu.Detach(), "Replace with Literal");
 
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, CANCEL_COMMAND_ID, "Cancel");
@@ -12356,13 +12356,13 @@ void CDallasMainDlg::DisplayActionStatementNodeMenu(POINT *point) {
 
   main_menu.CreatePopupMenu();
   ColumnizePopupMenu(&insert_actions_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)insert_actions_submenu.Detach(), "Insert a New Action");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)insert_actions_submenu.Detach(), "Insert a New Action");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, ADD_IF_THEN_CLAUSE_ID, "Insert a Nested IF-THEN Clause");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, ADD_IF_THEN_ELSE_CLAUSE_ID,
                        "Insert a Nested IF-THEN-ELSE Clause");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   ColumnizePopupMenu(&replace_actions_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_actions_submenu.Detach(), "Replace with a Different Action");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_actions_submenu.Detach(), "Replace with a Different Action");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, DELETE_ALL_ID, "Delete");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
@@ -12405,19 +12405,19 @@ void CDallasMainDlg::DisplayActionHeaderNodeMenu(POINT *point, int level_type, i
   main_menu.CreatePopupMenu();
   ColumnizePopupMenu(&select_extimes_submenu);
   if (level_type == TOP_LEVEL)
-    main_menu.AppendMenu(MF_POPUP, (uint32_t)select_extimes_submenu.Detach(), "Select Max Times to Execute");
+    main_menu.AppendMenu(MF_POPUP, (UINT_PTR)select_extimes_submenu.Detach(), "Select Max Times to Execute");
   else
-    main_menu.AppendMenu(MF_GRAYED | MF_POPUP, (uint32_t)select_extimes_submenu.Detach(),
+    main_menu.AppendMenu(MF_GRAYED | MF_POPUP, (UINT_PTR)select_extimes_submenu.Detach(),
                          "Select Max Times to Execute");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   if (level_type == TOP_LEVEL)
-    main_menu.AppendMenu(MF_POPUP, (uint32_t)select_chain_submenu.Detach(), "Select Script Chaining Option");
+    main_menu.AppendMenu(MF_POPUP, (UINT_PTR)select_chain_submenu.Detach(), "Select Script Chaining Option");
   else
-    main_menu.AppendMenu(MF_GRAYED | MF_POPUP, (uint32_t)select_chain_submenu.Detach(),
+    main_menu.AppendMenu(MF_GRAYED | MF_POPUP, (UINT_PTR)select_chain_submenu.Detach(),
                          "Select Script Chaining Option");
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   ColumnizePopupMenu(&add_actions_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)add_actions_submenu.Detach(), "Add a New Action");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)add_actions_submenu.Detach(), "Add a New Action");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, ADD_IF_THEN_CLAUSE_ID, "Add a Nested IF-THEN Clause");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, ADD_IF_THEN_ELSE_CLAUSE_ID,
                        "Add a Nested IF-THEN-ELSE Clause");
@@ -12599,9 +12599,9 @@ void CDallasMainDlg::DisplayParameterNodeMenu(POINT *point, int param_type, char
 
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   ColumnizePopupMenu(&replace_with_query_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_with_query_submenu.Detach(), "Replace with Query");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_with_query_submenu.Detach(), "Replace with Query");
   ColumnizePopupMenu(&replace_with_literal_submenu);
-  main_menu.AppendMenu(MF_POPUP, (uint32_t)replace_with_literal_submenu.Detach(), "Replace with Literal");
+  main_menu.AppendMenu(MF_POPUP, (UINT_PTR)replace_with_literal_submenu.Detach(), "Replace with Literal");
 
   main_menu.AppendMenu(MF_SEPARATOR, 0, "");
   main_menu.AppendMenu(MF_ENABLED | MF_UNCHECKED | MF_STRING, CANCEL_COMMAND_ID, "Cancel");

@@ -313,7 +313,7 @@ inline void MultiAddString(const char *str, uint8_t *data, int *count) {
 
   MultiAddByte((uint8_t)len, data, count);
   memcpy(&data[*count], str, len);
-  *count += len;
+  *count += static_cast<int>(len);
 }
 
 inline uint8_t MultiGetUbyte(uint8_t *data, int *count) {

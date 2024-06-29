@@ -1559,7 +1559,6 @@ void aLightningCreateGunpoints(int gunpoint1, int gunpoint2, int objhandle, floa
                                int numtiles, int texture_id, float slidetime, int timesdrawn, int red, int green,
                                int blue, bool autotile) {
   msafe_struct mstruct;
-  int type;
 
   mstruct.objhandle = objhandle;
   MSafe_GetValue(MSAFE_OBJECT_POS, &mstruct);
@@ -6653,7 +6652,7 @@ Parameters:
 $$END
 */
 int qPlayerClosest(int objhandle, int varnum) {
-  vector objpos, playerpos;
+  vector objpos;
   float closest_dist = FLT_MAX;
   int closest_player = OBJECT_HANDLE_NONE;
   msafe_struct mstruct;
