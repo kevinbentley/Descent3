@@ -297,9 +297,13 @@
  *
  * $NoKeywords: $
  */
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+#include <filesystem>
+
 #include "cfile.h"
 #include "texture.h"
 #include "bitmap.h"
@@ -312,10 +316,6 @@
 #include "bumpmap.h"
 #include "mem.h"
 #include "psrand.h"
-
-#include "Macros.h"
-
-#include <algorithm>
 
 #define BM_FILETYPE_TGA 1
 #define BM_FILETYPE_PCX 2
@@ -1080,7 +1080,7 @@ int bm_MakeBitmapResident(int handle) {
 }
 // Saves a bitmap to a file.  Saves the bitmap as an OUTRAGE_COMPRESSED_OGF.
 // Returns -1 if something is wrong.
-int bm_SaveFileBitmap(const char *filename, int handle) {
+int bm_SaveFileBitmap(const std::filesystem::path& filename, int handle) {
   int ret;
   CFILE *fp;
   if (!GameBitmaps[handle].used) {

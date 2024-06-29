@@ -154,8 +154,11 @@
  * $NoKeywords: $
  */
 
-#include <stdlib.h>
-#include <string.h>
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
+#include <filesystem>
+
 #include "pstypes.h"
 #include "pserror.h"
 #include "bitmap.h"
@@ -164,9 +167,6 @@
 #include "mono.h"
 #include "ddio.h"
 #include "gametexture.h"
-#include "texture.h"
-#include <string.h>
-#include "ctype.h"
 #include "mem.h"
 #include "game.h"
 
@@ -239,18 +239,18 @@ void FreeVClip(int num) {
 // Saves a given video clip to a file
 // Returns 1 if everything ok, 0 otherwise
 // "num" is index into GameVClip array
-int SaveVClip(const char *filename, int num) {
+int SaveVClip(const std::filesystem::path& filename, int num) {
   CFILE *outfile;
   vclip *vc = &GameVClips[num];
 
   ASSERT(vc->used);
-  ASSERT(filename != NULL);
+  ASSERT(!filename.empty());
 
   PageInVClip(num);
 
   outfile = (CFILE *)cfopen(filename, "wb");
   if (!outfile) {
-    mprintf(0, "Couldn't save vclip %s!\n", filename);
+    mprintf(0, "Couldn't save vclip %s!\n", filename.u8string().c_str());
     return 0;
   }
 
@@ -267,7 +267,7 @@ int SaveVClip(const char *filename, int num) {
   // Now save each frame of this vclip
   for (int i = 0; i < vc->num_frames; i++) {
     if (bm_SaveBitmap(outfile, vc->frames[i]) != 1) {
-      mprintf(0, "Couldn't save frame %d of vclip %s!\n", i, filename);
+      mprintf(0, "Couldn't save frame %d of vclip %s!\n", i, filename.u8string().c_str());
       Int3();
       cfclose(outfile);
       return 0;
