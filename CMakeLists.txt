@@ -91,8 +91,7 @@ install(
 )
 
 if(UNIX)
-  add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-Wno-multichar;${BITS};${EXTRA_CXX_FLAGS}>")
-  add_compile_options("$<$<COMPILE_LANGUAGE:C>:${BITS}>")
+  add_compile_options("-Wno-multichar;-Wall")
 
   find_package(SDL2 REQUIRED)
   # Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
