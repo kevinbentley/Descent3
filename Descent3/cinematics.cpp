@@ -75,21 +75,17 @@ void SetMovieProperties(int x, int y, int w, int h, renderer_type type) {
   mve_SetRenderProperties(x, y, w, h, type, kHiColorEnabled);
 }
 
-bool PlayMovie(const char *moviename) {
+bool PlayMovie(const std::filesystem::path &moviename) {
   if (!Cinematic_lib_init)
     return false;
 
   // get in the right directory
-  char filename[_MAX_PATH];
-  strncpy(filename, moviename, sizeof(filename) - 1);
-  filename[sizeof(filename) - 1] = 0;
-
+  std::filesystem::path filename = moviename;
   // check extension
-  const char *extension = strrchr(filename, '.');
-  if (extension == NULL || (stricmp(extension, ".mve") != 0 && stricmp(extension, ".mv8") != 0)) {
+  std::filesystem::path extension = moviename.extension();
+  if (stricmp(extension.u8string().c_str(), ".mve") != 0 && stricmp(extension.u8string().c_str(), ".mv8") != 0) {
     // we need an extension
-    strncat(filename, ".mve", sizeof(filename) - strlen(filename) - 1);
-    filename[sizeof(filename) - 1] = 0;
+    filename.replace_extension(extension.u8string() + ".mve");
   }
 
   // shutdown sound.
@@ -110,7 +106,7 @@ bool PlayMovie(const char *moviename) {
 
   SetMovieProperties(0, 0, Max_window_w, Max_window_h, Renderer_type);
 
-  int mveerr = mve_PlayMovie(filename, Descent);
+  int mveerr = mve_PlayMovie(filename.u8string().c_str(), Descent);
 
   // Shutdown the subtitle system
   SubtCloseSubtitles();

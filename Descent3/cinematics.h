@@ -1,5 +1,5 @@
 /*
-* Descent 3 
+* Descent 3
 * Copyright (C) 2024 Parallax Software
 *
 * This program is free software: you can redistribute it and/or modify
@@ -55,6 +55,7 @@
 #include "bitmap.h"
 
 #include <cstdint>
+#include <filesystem>
 
 //	Movie Cinematic
 struct tCinematic {
@@ -65,7 +66,7 @@ struct tCinematic {
 
 bool InitCinematics();
 void SetMovieProperties(int x, int y, int w, int h, renderer_type type);
-bool PlayMovie(const char *moviename);
+bool PlayMovie(const std::filesystem::path &moviename);
 tCinematic *StartMovie(const char *moviename, bool looping = false);
 bool FrameMovie(tCinematic *mve, int x, int y, bool sequence = true);
 void EndMovie(tCinematic *mve);

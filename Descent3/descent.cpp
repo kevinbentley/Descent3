@@ -383,6 +383,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <filesystem>
 #include <vector>
 
 #include "pserror.h"
@@ -483,15 +484,14 @@ void Descent3() {
 
       // Show the intro movie
       if (!FindArg("-nointro")) {
-        char intropath[_MAX_PATH * 2];
         // Intros to be played
-        const std::vector<const char *> intros = {
+        const std::vector<std::filesystem::path> intros = {
             "dolby1.mv8",
             "intro.mve",
         };
 
         for (auto const &intro : intros) {
-          ddio_MakePath(intropath, Base_directory, "movies", intro, nullptr);
+          std::filesystem::path intropath = std::filesystem::path(Base_directory) / "movies" / intro;
           if (cfexist(intropath)) {
             PlayMovie(intropath);
           }

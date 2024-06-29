@@ -35,11 +35,13 @@
 #ifndef __SUBTITLES_H_
 #define __SUBTITLES_H_
 
+#include <filesystem>
+
 // draw the subtitles for this frame
 void SubtDrawSubtitles(int frame_num);
 // Shutsdown the subtitle system
 void SubtCloseSubtitles();
 // Initializes the subtitles for a given movie file
-void SubtInitSubtitles(const char *filename);
+void SubtInitSubtitles(const std::filesystem::path &filename);
 
 #endif
