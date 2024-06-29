@@ -218,7 +218,8 @@ void CAmbientSoundPattern::OnASPNewElement() {
 
     ase *new_sounds = (ase *)mem_malloc(sizeof(*new_sounds) * (asp->num_sounds + 1));
 
-    for (int s = 0; s < asp->num_sounds; s++)
+    int s;
+    for (s = 0; s < asp->num_sounds; s++)
       new_sounds[s] = asp->sounds[s];
 
     mem_free(asp->sounds);
@@ -255,7 +256,8 @@ void CAmbientSoundPattern::OnASPDeleteElement() {
                           Sounds[asp->sounds[m_current_element].handle].name, asp->name) == IDYES) {
       new_sounds = (ase *)mem_malloc(sizeof(*new_sounds) * (asp->num_sounds - 1));
 
-      for (int s = 0; s < m_current_element; s++)
+      int s;
+      for (s = 0; s < m_current_element; s++)
         new_sounds[s] = asp->sounds[s];
 
       for (; s < asp->num_sounds - 1; s++)

@@ -346,7 +346,7 @@ group *CopyGroup(int nrooms, int *roomnums, int attachroom, int attachface) {
     // Get memory for triggers
     g->triggers = (trigger *)mem_malloc(sizeof(*g->triggers) * n_triggers);
 
-    for (t = 0; t < Num_triggers; t++)
+    for (int t = 0; t < Num_triggers; t++)
       if (room_xlate[Triggers[t].roomnum] != -1) {
         g->triggers[trignum] = Triggers[t];
         g->triggers[trignum].roomnum = room_xlate[Triggers[t].roomnum];

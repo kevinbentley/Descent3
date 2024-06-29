@@ -2963,7 +2963,8 @@ void CMainFrame::OnTerrainView() { SetViewMode(VM_TERRAIN); }
 
 void CMainFrame::OnMineView() {
   // Make sure there's a room to switch to
-  for (int roomnum = 0; roomnum <= Highest_room_index; roomnum++)
+  int roomnum;
+  for (roomnum = 0; roomnum <= Highest_room_index; roomnum++)
     if (Rooms[roomnum].used && !(Rooms[roomnum].flags & RF_EXTERNAL))
       break;
 

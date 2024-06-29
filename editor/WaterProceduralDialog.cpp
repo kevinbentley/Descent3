@@ -150,7 +150,7 @@ void CWaterProceduralDialog::UpdateDialog() {
   CComboBox *combo;
   combo = (CComboBox *)GetDlgItem(IDC_PROC_COPY_LIST);
   combo->ResetContent();
-  for (i = 0; i < MAX_TEXTURES; i++) {
+  for (int i = 0; i < MAX_TEXTURES; i++) {
     if (!GameTextures[i].used)
       continue;
     if (i == D3EditState.texdlg_texture)

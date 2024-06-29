@@ -591,7 +591,8 @@ void CAnimStatesDialog::UpdateDialog() {
   CheckDlgButton(IDC_GOTO_ROLLING_CHECK, m_anim[mc].elem[AS_GOTO_ALERT_ROLLING].used ? 1 : 0);
   CheckDlgButton(IDC_GOTO_JUMPING_CHECK, m_anim[mc].elem[AS_GOTO_ALERT_JUMPING].used ? 1 : 0);
 
-  for (int i = 0; i < max_states; i++) {
+  int i;
+  for (i = 0; i < max_states; i++) {
     ebox = (CEdit *)GetDlgItem(control_froms[i]);
     itoa(m_anim[mc].elem[i].from, str, 10);
     ebox->SetWindowText(str);

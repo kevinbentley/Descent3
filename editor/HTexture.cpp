@@ -588,7 +588,8 @@ int HTextureGetLeftVertexForFace(int roomnum, int facenum) {
 
   // find the center point of this face
   vm_MakeZero(&avg_vert);
-  for (int i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
+  int i;
+  for (i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
     avg_vert += Rooms[roomnum].verts[Rooms[roomnum].faces[facenum].face_verts[i]];
 
   avg_vert /= i;
@@ -641,7 +642,8 @@ int HTextureGetTopVertexForFace(int roomnum, int facenum) {
 
   // find the center point of this face
   vm_MakeZero(&avg_vert);
-  for (int i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
+  int i;
+  for (i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
     avg_vert += Rooms[roomnum].verts[Rooms[roomnum].faces[facenum].face_verts[i]];
 
   avg_vert /= i;
@@ -695,7 +697,8 @@ int HTextureGetRightVertexForFace(int roomnum, int facenum) {
 
   // find the center point of this face
   vm_MakeZero(&avg_vert);
-  for (int i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
+  int i;
+  for (i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
     avg_vert += Rooms[roomnum].verts[Rooms[roomnum].faces[facenum].face_verts[i]];
 
   avg_vert /= i;
@@ -748,7 +751,8 @@ int HTextureGetBottomVertexForFace(int roomnum, int facenum) {
 
   // find the center point of this face
   vm_MakeZero(&avg_vert);
-  for (int i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
+  int i;
+  for (i = 0; i < Rooms[roomnum].faces[facenum].num_verts; i++)
     avg_vert += Rooms[roomnum].verts[Rooms[roomnum].faces[facenum].face_verts[i]];
 
   avg_vert /= i;
