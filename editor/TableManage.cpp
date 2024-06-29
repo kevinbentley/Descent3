@@ -223,7 +223,7 @@ bool GenericPageList::SaveTable(char *table_filename) {
     return FALSE;
 
   // First make sure we can open the table file and the temp table file
-  infile = cfopen(m_TableFilename, "rb");
+  infile = cfopen(m_TableFilename.GetBuffer(0), "rb");
   if (!infile) {
     mprintf(0, "Couldn't open table file to replace generic!\n");
     return FALSE;

@@ -485,10 +485,12 @@ void CWorldWeaponsDialog::OnAddWeapon() {
   mprintf(0, "Making a copy of this bitmap/anim locally...\n");
 
   if (!anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[Weapons[weapon_handle].hud_image_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[Weapons[weapon_handle].hud_image_handle].name);
     bm_SaveFileBitmap(filename, Weapons[weapon_handle].hud_image_handle);
   } else {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[Weapons[weapon_handle].hud_image_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameVClips[Weapons[weapon_handle].hud_image_handle].name);
     SaveVClip(filename, Weapons[weapon_handle].hud_image_handle);
   }
 
@@ -536,17 +538,17 @@ void CWorldWeaponsDialog::OnAddWeapon() {
 
   if (!model) {
     if (!anim) {
-      sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[Weapons[weapon_handle].fire_image_handle].name);
+      sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+        GameBitmaps[Weapons[weapon_handle].fire_image_handle].name);
       bm_SaveFileBitmap(filename, Weapons[weapon_handle].fire_image_handle);
     } else {
-      sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[Weapons[weapon_handle].fire_image_handle].name);
+      sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+        GameVClips[Weapons[weapon_handle].fire_image_handle].name);
       SaveVClip(filename, Weapons[weapon_handle].fire_image_handle);
     }
   } else {
-    char destname[100];
-    sprintf(destname, "%s\\%s", LocalModelsDir, Poly_models[Weapons[weapon_handle].fire_image_handle].name);
-    if (stricmp(destname, filename)) // only copy if they are different
-      cf_CopyFile(destname, filename);
+    std::filesystem::path destname = LocalModelsDir / Poly_models[Weapons[weapon_handle].fire_image_handle].name;
+    cf_CopyFile(destname, filename);
   }
 
   mng_AllocTrackLock(cur_name, PAGETYPE_WEAPON);
@@ -659,29 +661,27 @@ void CWorldWeaponsDialog::OnCheckinWeapon() {
         OutrageMessageBox(ErrorString);
       else {
         // Save this weapon anim/image to the network for all
-
-        char destname[100], srcname[100];
-
+        std::filesystem::path srcname, destname;
         if (Weapons[n].flags & WF_HUD_ANIMATED) {
-          sprintf(srcname, "%s\\%s", LocalManageGraphicsDir, GameVClips[Weapons[n].hud_image_handle].name);
-          sprintf(destname, "%s\\%s", ManageGraphicsDir, GameVClips[Weapons[n].hud_image_handle].name);
+          srcname = LocalManageGraphicsDir / GameVClips[Weapons[n].hud_image_handle].name;
+          destname = ManageGraphicsDir / GameVClips[Weapons[n].hud_image_handle].name;
         } else {
-          sprintf(srcname, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[Weapons[n].hud_image_handle].name);
-          sprintf(destname, "%s\\%s", ManageGraphicsDir, GameBitmaps[Weapons[n].hud_image_handle].name);
+          srcname = LocalManageGraphicsDir / GameBitmaps[Weapons[n].hud_image_handle].name;
+          destname = ManageGraphicsDir / GameBitmaps[Weapons[n].hud_image_handle].name;
         }
 
         cf_CopyFile(destname, srcname);
 
         if (Weapons[n].flags & WF_IMAGE_BITMAP) {
-          sprintf(srcname, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[Weapons[n].fire_image_handle].name);
-          sprintf(destname, "%s\\%s", ManageGraphicsDir, GameBitmaps[Weapons[n].fire_image_handle].name);
+          srcname = LocalManageGraphicsDir / GameBitmaps[Weapons[n].fire_image_handle].name;
+          destname = ManageGraphicsDir, GameBitmaps[Weapons[n].fire_image_handle].name;
 
         } else if (Weapons[n].flags & WF_IMAGE_VCLIP) {
-          sprintf(srcname, "%s\\%s", LocalManageGraphicsDir, GameVClips[Weapons[n].fire_image_handle].name);
-          sprintf(destname, "%s\\%s", ManageGraphicsDir, GameVClips[Weapons[n].fire_image_handle].name);
+          srcname = LocalManageGraphicsDir / GameVClips[Weapons[n].fire_image_handle].name;
+          destname = ManageGraphicsDir / GameVClips[Weapons[n].fire_image_handle].name;
         } else {
-          sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Weapons[n].fire_image_handle].name);
-          sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Weapons[n].fire_image_handle].name);
+          srcname = LocalModelsDir / Poly_models[Weapons[n].fire_image_handle].name;
+          destname = NetModelsDir / Poly_models[Weapons[n].fire_image_handle].name;
         }
 
         cf_CopyFile(destname, srcname);
@@ -781,7 +781,7 @@ void CWorldWeaponsDialog::OnPrevWeapon() {
 }
 
 void CWorldWeaponsDialog::OnLoadWeaponAnim() {
-  char filename[255], curname[255];
+  char filename[255];
   int bm_handle;
   int anim = 0;
 
@@ -809,12 +809,13 @@ void CWorldWeaponsDialog::OnLoadWeaponAnim() {
 
   mprintf(0, "Making a copy of this bitmap/anim locally...\n");
 
+  std::filesystem::path curname;
   if (anim) {
-    sprintf(curname, "%s\\%s", LocalManageGraphicsDir, GameVClips[Weapons[n].hud_image_handle].name);
+    curname = LocalManageGraphicsDir / GameVClips[Weapons[n].hud_image_handle].name;
     SaveVClip(curname, Weapons[n].hud_image_handle);
 
   } else {
-    sprintf(curname, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[Weapons[n].hud_image_handle].name);
+    curname = LocalManageGraphicsDir / GameBitmaps[Weapons[n].hud_image_handle].name;
     bm_SaveFileBitmap(curname, Weapons[n].hud_image_handle);
   }
 
@@ -941,7 +942,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
   SendDlgItemMessage(IDC_WEAPON_PULLDOWN, CB_SELECTSTRING, 0, (LPARAM)(LPCTSTR)Weapons[n].name);
 
   SendDlgItemMessage(IDC_FIRE_SOUND_PULLDOWN, CB_RESETCONTENT, 0, 0);
-  for (i = 0; i < MAX_SOUNDS; i++) {
+  for (int i = 0; i < MAX_SOUNDS; i++) {
     if (Sounds[i].used)
       SendDlgItemMessage(IDC_FIRE_SOUND_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sounds[i].name);
   }
@@ -953,7 +954,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
     SendDlgItemMessage(IDC_FIRE_SOUND_PULLDOWN, CB_SELECTSTRING, 0, (LPARAM)(LPCTSTR) "\0");
 
   SendDlgItemMessage(IDC_WEAPON_BOUNCE_SOUND_COMBO, CB_RESETCONTENT, 0, 0);
-  for (i = 0; i < MAX_SOUNDS; i++) {
+  for (int i = 0; i < MAX_SOUNDS; i++) {
     if (Sounds[i].used)
       SendDlgItemMessage(IDC_WEAPON_BOUNCE_SOUND_COMBO, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sounds[i].name);
   }
@@ -965,7 +966,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
     SendDlgItemMessage(IDC_WEAPON_BOUNCE_SOUND_COMBO, CB_SELECTSTRING, 0, (LPARAM)(LPCTSTR) "\0");
 
   SendDlgItemMessage(IDC_WEAPON_WALL_SOUND_PULLDOWN, CB_RESETCONTENT, 0, 0);
-  for (i = 0; i < MAX_SOUNDS; i++) {
+  for (int i = 0; i < MAX_SOUNDS; i++) {
     if (Sounds[i].used)
       SendDlgItemMessage(IDC_WEAPON_WALL_SOUND_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sounds[i].name);
   }
@@ -979,7 +980,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
   SendDlgItemMessage(IDC_SMOKE_PULLDOWN, CB_RESETCONTENT, 0, 0);
 
   if (Weapons[n].flags & WF_SMOKE) {
-    for (i = 0; i < MAX_TEXTURES; i++) {
+    for (int i = 0; i < MAX_TEXTURES; i++) {
       if (GameTextures[i].used)
         SendDlgItemMessage(IDC_SMOKE_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)GameTextures[i].name);
     }
@@ -994,7 +995,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
   // Do scorch pulldown
   SendDlgItemMessage(IDC_SCORCH_PULLDOWN, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(IDC_SCORCH_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
-  for (i = 0; i < MAX_TEXTURES; i++) {
+  for (int i = 0; i < MAX_TEXTURES; i++) {
     if (GameTextures[i].used)
       SendDlgItemMessage(IDC_SCORCH_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)GameTextures[i].name);
   }
@@ -1008,7 +1009,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
   // Do icon pulldown
   SendDlgItemMessage(IDC_SMALLIMG_PULLDOWN, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(IDC_SMALLIMG_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
-  for (i = 0; i < MAX_TEXTURES; i++) {
+  for (int i = 0; i < MAX_TEXTURES; i++) {
     if (GameTextures[i].used)
       SendDlgItemMessage(IDC_SMALLIMG_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)GameTextures[i].name);
   }
@@ -1020,7 +1021,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
     SendDlgItemMessage(IDC_SMALLIMG_PULLDOWN, CB_SELECTSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
 
   SendDlgItemMessage(IDC_EXPLODE_PULLDOWN, CB_RESETCONTENT, 0, 0);
-  for (i = 0; i < MAX_TEXTURES; i++) {
+  for (int i = 0; i < MAX_TEXTURES; i++) {
     if (GameTextures[i].used)
       SendDlgItemMessage(IDC_EXPLODE_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)GameTextures[i].name);
   }
@@ -1035,7 +1036,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
 
   // Do particle handle
   SendDlgItemMessage(IDC_PARTICLE_PULLDOWN, CB_RESETCONTENT, 0, 0);
-  for (i = 0; i < MAX_TEXTURES; i++) {
+  for (int i = 0; i < MAX_TEXTURES; i++) {
     if (GameTextures[i].used)
       SendDlgItemMessage(IDC_PARTICLE_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)GameTextures[i].name);
   }
@@ -1051,7 +1052,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
   // Do spawn handles
   SendDlgItemMessage(IDC_WEAPON_SPAWN_PULLDOWN, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(IDC_SPAWN2_PULLDOWN, CB_RESETCONTENT, 0, 0);
-  for (i = 0; i < MAX_WEAPONS; i++) {
+  for (int i = 0; i < MAX_WEAPONS; i++) {
     if (Weapons[i].used) {
       SendDlgItemMessage(IDC_WEAPON_SPAWN_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Weapons[i].name);
       SendDlgItemMessage(IDC_SPAWN2_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Weapons[i].name);
@@ -1076,7 +1077,7 @@ void CWorldWeaponsDialog::UpdateDialog() {
 
   // Do spawn robot stuff
   SendDlgItemMessage(IDC_SPAWN_ROBOT_PULLDOWN, CB_RESETCONTENT, 0, 0);
-  for (i = 0; i < MAX_OBJECT_IDS; i++) {
+  for (int i = 0; i < MAX_OBJECT_IDS; i++) {
     if (Object_info[i].type == OBJ_ROBOT)
       SendDlgItemMessage(IDC_SPAWN_ROBOT_PULLDOWN, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Object_info[i].name);
   }
@@ -1412,17 +1413,17 @@ void CWorldWeaponsDialog::OnLoadWeaponDischarge() {
 
   if (!model) {
     if (!anim) {
-      sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[Weapons[n].fire_image_handle].name);
+      sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+        GameBitmaps[Weapons[n].fire_image_handle].name);
       bm_SaveFileBitmap(filename, Weapons[n].fire_image_handle);
     } else {
-      sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[Weapons[n].fire_image_handle].name);
+      sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+        GameVClips[Weapons[n].fire_image_handle].name);
       SaveVClip(filename, Weapons[n].fire_image_handle);
     }
   } else {
-    char destname[100];
-    sprintf(destname, "%s\\%s", LocalModelsDir, Poly_models[Weapons[n].fire_image_handle].name);
-    if (stricmp(destname, filename)) // only copy if they are different
-      cf_CopyFile(destname, filename);
+    std::filesystem::path destname = LocalModelsDir / Poly_models[Weapons[n].fire_image_handle].name;
+    cf_CopyFile(destname, filename);
   }
 
   UpdateDialog();

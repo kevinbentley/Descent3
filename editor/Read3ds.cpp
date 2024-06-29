@@ -374,7 +374,7 @@ skip_combine:;
     strcpy(rp->name, roomname);
 
     // Save it out to disk (locally)
-    ddio_MakePath(name, LocalRoomsDir, roomname, NULL);
+    ddio_MakePath(name, LocalRoomsDir.u8string().c_str(), roomname, NULL);
     SaveRoom(ROOMNUM(rp), name);
   }
 

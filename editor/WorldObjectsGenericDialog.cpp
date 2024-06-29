@@ -19,6 +19,8 @@
 // WorldObjectsGenericDialog.cpp : implementation file
 //
 
+#include <filesystem>
+
 #include "mfc_compatibility.h"
 #include "editor.h"
 #include "WorldObjectsGenericDialog.h"
@@ -722,10 +724,8 @@ retry_name:
   // Finally, save a local copy of the model/anim and alloc a tracklock
   mprintf(0, "Making a copy of this model locally...\n");
 
-  char destname[100];
-  sprintf(destname, "%s\\%s", LocalModelsDir, Poly_models[Object_info[object_handle].render_handle].name);
-  if (stricmp(destname, filename)) // only copy if they are different
-    cf_CopyFile(destname, filename);
+  std::filesystem::path destname = LocalModelsDir / Poly_models[Object_info[object_handle].render_handle].name;
+  cf_CopyFile(destname, filename);
 
   mng_AllocTrackLock(cur_name, PAGETYPE_GENERIC);
 
@@ -798,21 +798,19 @@ void CWorldObjectsGenericDialog::OnGenericCheckIn() {
       else {
         // Save this object anim/model to the network for all
 
-        char destname[100], srcname[100];
-
-        sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Object_info[m_current].render_handle].name);
-        sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Object_info[m_current].render_handle].name);
+        std::filesystem::path srcname = LocalModelsDir / Poly_models[Object_info[m_current].render_handle].name;
+        std::filesystem::path destname = NetModelsDir / Poly_models[Object_info[m_current].render_handle].name;
         cf_CopyFile(destname, srcname);
 
         if (Object_info[m_current].med_render_handle != -1) {
-          sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Object_info[m_current].med_render_handle].name);
-          sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Object_info[m_current].med_render_handle].name);
+          srcname = LocalModelsDir / Poly_models[Object_info[m_current].med_render_handle].name;
+          destname = NetModelsDir / Poly_models[Object_info[m_current].med_render_handle].name;
           cf_CopyFile(destname, srcname);
         }
 
         if (Object_info[m_current].lo_render_handle != -1) {
-          sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Object_info[m_current].lo_render_handle].name);
-          sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Object_info[m_current].lo_render_handle].name);
+          srcname = LocalModelsDir / Poly_models[Object_info[m_current].lo_render_handle].name;
+          destname = NetModelsDir / Poly_models[Object_info[m_current].lo_render_handle].name;
           cf_CopyFile(destname, srcname);
         }
 
@@ -1048,7 +1046,7 @@ void CWorldObjectsGenericDialog::OnGenericChangeModel() {
   }
   // Finally, save a local copy of the model
 
-  sprintf(curname, "%s\\%s", LocalModelsDir, Poly_models[img_handle].name);
+  sprintf(curname, "%s\\%s", LocalModelsDir.u8string().c_str(), Poly_models[img_handle].name);
   cf_CopyFile(curname, filename);
 
   UpdateDialog();

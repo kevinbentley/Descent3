@@ -19,6 +19,8 @@
 // MegacellDialog.cpp : implementation file
 //
 
+#include  <filesystem>
+
 #include "stdafx.h"
 #include "editor.h"
 #include "MegacellDialog.h"
@@ -1071,19 +1073,19 @@ void CMegacellDialog::CheckinTexture(int n, int tracklock_num) {
       else {
         // Save this textures bitmap to the network for all
 
-        char fname[255];
+        std::filesystem::path fname;
 
         if (GameTextures[n].flags & TF_ANIMATED) {
-          sprintf(fname, "%s\\%s", ManageGraphicsDir, GameVClips[GameTextures[n].bm_handle].name);
+          fname = ManageGraphicsDir / GameVClips[GameTextures[n].bm_handle].name;
           SaveVClip(fname, GameTextures[n].bm_handle);
 
-          sprintf(fname, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[n].bm_handle].name);
+          fname = LocalManageGraphicsDir / GameVClips[GameTextures[n].bm_handle].name;
           SaveVClip(fname, GameTextures[n].bm_handle);
         } else {
-          sprintf(fname, "%s\\%s", ManageGraphicsDir, GameBitmaps[GameTextures[n].bm_handle].name);
+          fname = ManageGraphicsDir / GameBitmaps[GameTextures[n].bm_handle].name;
           bm_SaveFileBitmap(fname, GameTextures[n].bm_handle);
 
-          sprintf(fname, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[n].bm_handle].name);
+          fname = LocalManageGraphicsDir /  GameBitmaps[GameTextures[n].bm_handle].name;
           bm_SaveFileBitmap(fname, GameTextures[n].bm_handle);
         }
 
@@ -1198,7 +1200,8 @@ void CMegacellDialog::OnImportTiny() {
       strcpy(GameBitmaps[bm_handle].name, filename);
 
       // Save this textures image locally
-      sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+      sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+        GameBitmaps[GameTextures[tex_handle].bm_handle].name);
       mprintf(0, "Saving bitmap %s from megacell!\n", GameBitmaps[bm_handle].name);
       bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
 
@@ -1323,7 +1326,8 @@ void CMegacellDialog::OnImportSky() {
       strcpy(GameBitmaps[bm_handle].name, filename);
 
       // Save this textures image locally
-      sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+      sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+        GameBitmaps[GameTextures[tex_handle].bm_handle].name);
       mprintf(0, "Saving bitmap %s from megacell!\n", GameBitmaps[bm_handle].name);
       bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
 
@@ -1444,7 +1448,8 @@ void CMegacellDialog::OnImportSkyBand() {
     strcpy(GameBitmaps[bm_handle].name, filename);
 
     // Save this textures image locally
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[GameTextures[tex_handle].bm_handle].name);
     mprintf(0, "Saving bitmap %s from megacell!\n", GameBitmaps[bm_handle].name);
     bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
 
