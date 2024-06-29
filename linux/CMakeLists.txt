@@ -19,4 +19,5 @@ target_include_directories(linux PUBLIC
 )
 target_link_libraries(linux PRIVATE
   ddio
+  misc
 )

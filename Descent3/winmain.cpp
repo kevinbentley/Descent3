@@ -109,7 +109,6 @@ static int m_resource_language = 0;
 #define VENDOR_NEXGEN 5
 #define VENDOR_UNKNOWN 6
 
-int no_debug_dialog = 0;
 
 //	---------------------------------------------------------------------------
 //	Define our operating system specific extensions to the gameos system

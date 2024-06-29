@@ -7,6 +7,7 @@ set_target_properties(Direct_TCP_IP PROPERTIES OUTPUT_NAME "Direct TCP~IP")
 target_link_libraries(Direct_TCP_IP PRIVATE
   ddio
   inetfile
+  misc
   $<$<PLATFORM_ID:Windows>:ws2_32>
 )
 

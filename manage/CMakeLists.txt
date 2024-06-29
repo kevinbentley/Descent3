@@ -26,6 +26,7 @@ target_link_libraries(manage PRIVATE
   cfile
   ddio
   mem
+  misc
   sndlib
   stream_audio
 )

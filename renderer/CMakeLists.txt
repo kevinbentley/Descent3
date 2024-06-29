@@ -28,4 +28,5 @@ target_link_libraries(renderer PRIVATE
   bitmap
   ddio
   mem
+  misc
 )

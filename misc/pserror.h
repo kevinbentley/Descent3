@@ -151,6 +151,9 @@
 #include <assert.h>
 #include "debug.h"
 #include "mono.h"
+
+extern int no_debug_dialog;
+
 //	initializes error handler.
 bool error_Init(bool debugger, bool mono_debug, const char *app_title);
 //	exits the application and prints out a standard error message

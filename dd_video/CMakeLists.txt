@@ -14,4 +14,7 @@ target_link_libraries(dd_video PRIVATE
   $<$<PLATFORM_ID:Linux,Darwin>:
     linux
   >
+  $<$<PLATFORM_ID:Windows>:
+    misc
+  >
 )

@@ -114,7 +114,7 @@ bool error_Init(bool debugger, bool mono_debug, const char *app_title) {
   return true;
 }
 
-extern int no_debug_dialog;
+int no_debug_dialog = 0;
 
 //	exits the application and prints out a standard error message
 void Error(const char *fmt, ...) {

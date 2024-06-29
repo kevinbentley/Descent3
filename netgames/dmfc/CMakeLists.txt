@@ -28,3 +28,6 @@ set(CPPS
 add_definitions(-DOUTRAGE_VERSION)
 
 add_library(dmfc STATIC ${HEADERS} ${CPPS})
+target_link_libraries(dmfc PRIVATE
+  misc
+)

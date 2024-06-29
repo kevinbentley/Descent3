@@ -16,6 +16,7 @@ target_link_libraries(bitmap PRIVATE
   ddebug
   ddio
   mem
+  misc
   stb
 )
 target_include_directories(bitmap PUBLIC

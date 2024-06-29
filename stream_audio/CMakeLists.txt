@@ -8,6 +8,7 @@ target_link_libraries(stream_audio PRIVATE
   ddio
   libacm
   mem
+  misc
   sndlib
 )
 target_include_directories(stream_audio PUBLIC

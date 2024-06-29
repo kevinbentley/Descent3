@@ -197,6 +197,7 @@
 #include "debug.h"
 #include "mem.h"
 #include "mono.h"
+#include "pserror.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1151,8 +1152,6 @@ extern char *Debug_DumpInfo();
 const int NumCodeBytes = 16;   // Number of code bytes to record.
 const int MaxStackDump = 2048; // Maximum number of DWORDS in stack dumps.
 const int StackColumns = 8;    // Number of columns in stack dump.
-
-extern int no_debug_dialog;
 
 int __cdecl RecordExceptionInfo(PEXCEPTION_POINTERS data, const char *Message) {
   static int BeenHere;

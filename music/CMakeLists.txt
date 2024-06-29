@@ -10,6 +10,7 @@ target_link_libraries(music
   cfile
   ddio
   mem
+  misc
   sndlib
   stream_audio
 )

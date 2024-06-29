@@ -7,4 +7,5 @@ target_link_libraries(movie PRIVATE
   ddio
   libmve
   mem
+  misc
 )

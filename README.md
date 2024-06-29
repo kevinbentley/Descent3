@@ -93,7 +93,7 @@ The milestone needs testing on all platforms. Please report issues when found.
 
 ## Building
 #### Building - Windows
-1. Make sure that you have Git and Visual Studio 2022 with the “Desktop development with C++” workload. If you don’t already have those installed or you aren’t sure, then open an elevated Command Prompt and run:
+1. Make sure that you have Git and Visual Studio 2022 with the “Desktop development with C++” workload and the “C++ MFC for latest v143 build tools (x86 & x64)” component. If you don’t already have those installed or you aren’t sure, then open an elevated Command Prompt and run:
 
     <!--
     The following code block specifies the full path to the Visual Studio Installer because the Visual Studio Installer doesn’t add itself to the user’s Path. The installer is guaranteed to be in a specific location on 64-bit systems [1]. The installer will be in a different location on 32-bit systems [2], but Visual Studio 2022 doesn’t support 32-bit systems [3] so we can ignore that detail.
@@ -110,7 +110,8 @@ The milestone needs testing on all platforms. Please report issues when found.
         --passive^
         --channelId VisualStudio.17.Release^
         --productId Microsoft.VisualStudio.Product.Community^
-        --add Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended
+        --add Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended^
+        --add Microsoft.VisualStudio.Component.VC.ATLMFC
     ```
 
 2. Open a “x86 Native Tools Command Prompt” and run:
@@ -118,7 +119,7 @@ The milestone needs testing on all platforms. Please report issues when found.
     ```batch
     git clone https://github.com/DescentDevelopers/Descent3
     cd Descent3
-    cmake --preset win32 -D ENABLE_LOGGER=[ON|OFF]
+    cmake --preset win32 -D ENABLE_LOGGER=[ON|OFF] -D BUILD_EDITOR=[ON|OFF]
     cmake --build --preset win32 --config [Debug|Release]
     ```
 
