@@ -128,7 +128,9 @@
 #ifndef _DESCENT_H
 #define _DESCENT_H
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <filesystem>
+
 #include "application.h"
 
 // The name of this product
@@ -180,6 +182,9 @@ extern bool Descent_overrided_intro;
 
 // The "root" directory of the D3 file tree
 extern char Base_directory[];
+
+// Variable to preserve current path. TODO: redundant?
+extern std::filesystem::path orig_pwd;
 
 //	---------------------------------------------------------------------------
 //	Globals

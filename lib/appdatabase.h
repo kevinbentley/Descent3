@@ -100,9 +100,9 @@ public:
                 Win32				Samir		Win32Database.h			06/97
 */
 
-#if defined(WIN32)
-#include "win\Win32Database.h"
-#elif defined(__LINUX__)
+#if defined(DX_APP)
+#include "win\win32database.h"
+#else
 #include "linux/lnxdatabase.h"
 #endif
 

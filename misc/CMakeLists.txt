@@ -10,10 +10,7 @@ set(CPPS
 add_library(misc STATIC ${CPPS})
 target_link_libraries(misc PRIVATE
   ddebug
-  # For SDL_Assert()
-  $<$<PLATFORM_ID:Darwin,Linux>:
-    SDL2::SDL2
-  >
+  SDL2::SDL2
 )
 target_include_directories(misc PUBLIC
   $<BUILD_INTERFACE:

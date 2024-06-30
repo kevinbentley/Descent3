@@ -4,17 +4,9 @@ set(CPPS
   soundload.cpp
   ddsoundload.cpp
   ssl_lib.cpp
-  $<$<PLATFORM_ID:Windows>:
-    ds3dlib.cpp
-    ds3dgeometry.cpp
-    dsound3d.cpp
-    eax.cpp
-  >
-  $<$<PLATFORM_ID:Darwin,Linux>:
-    mixer.cpp
-    sdlgeometry.cpp
-    sdlsound.cpp
-  >
+  mixer.cpp
+  sdlgeometry.cpp
+  sdlsound.cpp
 )
 
 add_library(sndlib STATIC ${CPPS})
@@ -24,6 +16,7 @@ target_link_libraries(sndlib PRIVATE
   mem
   misc
   stream_audio
+  SDL2::SDL2
 )
 target_include_directories(sndlib PUBLIC
   $<BUILD_INTERFACE:

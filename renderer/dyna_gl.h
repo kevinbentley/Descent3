@@ -18,20 +18,21 @@
 
 #pragma once
 
+#include <filesystem>
+
 #if defined(WIN32)
-#include <GL/gl.h>
+#include <gl/GL.h>
 #else
-#include "SDL_opengl.h"
+#include <SDL_opengl.h>
 #endif
 
+#include "descent.h"
 #include "module.h"
 
 #if defined(WIN32)
 #define GLFUNCCALL __stdcall
 #elif defined(__LINUX__)
 #include <unistd.h>
-#define GLFUNCCALL
-#else
 #define GLFUNCCALL
 #endif
 
@@ -219,18 +220,17 @@ DYNAEXTERN(glBlitFramebufferEXT_fp, dglBlitFramebufferEXT);
 #ifdef DECLARE_OPENGL
 static module OpenGLDLLInst;
 
-#ifdef __LINUX__
 static void *__SDL_mod_GetSymbol(const char *funcStr) {
   void *retVal = NULL;
 
-  mprintf(0, "Looking up GL function [%s]...", funcStr);
+  mprintf(0, "Looking up GL function [%s]... ", funcStr);
 
   retVal = SDL_GL_GetProcAddress(funcStr);
 
   if (retVal == NULL)
     fprintf(stderr, " Could not find GL symbol [%s]!\n\n", funcStr);
   else {
-    mprintf(0, "Found at (%p).", retVal);
+    mprintf(0, "Found at (%p).\n", retVal);
   } // else
 
   return (retVal);
@@ -240,20 +240,16 @@ static void *__SDL_mod_GetSymbol(const char *funcStr) {
 #define mod_GetSymbol(x, funcStr, y) __SDL_mod_GetSymbol(funcStr)
 /****************** WARNING: NASTY HACK! ***********************/
 
-#endif
-
-#ifdef __LINUX__
-extern char *__orig_pwd;
 extern char loadedLibrary[_MAX_PATH];
-#endif
+
 module *LoadOpenGLDLL(const char *dllname) {
   mprintf(0, "Loading OpenGL dll...\n");
-#ifdef __LINUX__
-  char *tmp = getcwd(NULL, 0);
-  chdir(__orig_pwd);
-  int rc = SDL_GL_LoadLibrary(dllname[0] ? dllname : NULL);
-  chdir(tmp);
-  free(tmp);
+
+  std::filesystem::path tmp = std::filesystem::current_path();
+  std::filesystem::current_path(orig_pwd);
+  int rc = SDL_GL_LoadLibrary(dllname[0] ? dllname : nullptr);
+  std::filesystem::current_path(tmp);
+
   if (rc < 0) {
     const char *sdlErr = SDL_GetError();
     mprintf(0, "OpenGL: Couldn't open library [%s].\n", dllname[0] ? dllname : "system default");
@@ -263,13 +259,6 @@ module *LoadOpenGLDLL(const char *dllname) {
 
   strcpy(loadedLibrary, dllname);
 
-#else
-  if (!mod_LoadModule(&OpenGLDLLInst, dllname, MODF_LAZY | MODF_GLOBAL)) {
-    int err = mod_GetLastError();
-    mprintf(0, "Couldn't open module called %s\n", dllname);
-    return NULL;
-  }
-#endif
 
   dglAlphaFunc = (glAlphaFunc_fp)mod_GetSymbol(&OpenGLDLLInst, "glAlphaFunc", 255);
   if (!dglAlphaFunc)

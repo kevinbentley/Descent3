@@ -268,35 +268,30 @@ set(CPPS
   voice.cpp
   weapon.cpp
   WeaponFire.cpp
-  weather.cpp)
+  weather.cpp
+  loki_utils.c
+  sdlmain.cpp)
 
 if(WIN32)
-  set(PLATFORM_LIBS dd_grwin32 win32 wsock32.lib winmm.lib
-    ${DSOUND_LIBRARY} ${DINPUT_LIBRARY} ${DXGUID_LIBRARY} ${DDRAW_LIBRARY})
-  set(PLATFORM_CPPS winmain.cpp)
+  set(PLATFORM_LIBS wsock32.lib winmm.lib)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO /NODEFAULTLIB:LIBC")
 endif()
 
 if(UNIX AND NOT APPLE)
-  set(PLATFORM_LIBS linux SDL2::SDL2 m ${CMAKE_DL_LIBS})
-  set(PLATFORM_CPPS loki_utils.c lnxmain.cpp)
+  set(PLATFORM_LIBS m ${CMAKE_DL_LIBS})
 endif()
 
 if(APPLE)
-  set(PLATFORM_LIBS linux SDL2::SDL2)
-  set(PLATFORM_CPPS loki_utils.c lnxmain.cpp)
+  set(PLATFORM_LIBS)
   set(CMAKE_EXE_LINKER_FLAGS "-framework IOKit -framework Cocoa -framework OpenGL -framework Carbon")
 endif()
 
 file(GLOB_RECURSE INCS "../lib/*.h")
 
-add_executable(Descent3
-  WIN32
-  ${HEADERS} ${CPPS} ${PLATFORM_CPPS} ${INCS}
-)
-target_link_libraries(Descent3
+add_executable(Descent3 WIN32 ${HEADERS} ${CPPS} ${INCS})
+target_link_libraries(Descent3 PRIVATE
   2dlib AudioEncode bitmap cfile czip d3music dd_video ddebug ddio libmve libacm
-  fix grtext manage mem misc model module movie stream_audio
+  fix grtext manage mem misc model module movie stream_audio linux SDL2::SDL2
   music networking physics renderer rtperformance sndlib ui unzip vecmat md5
   ${PLATFORM_LIBS})
 target_include_directories(Descent3 PRIVATE ${PROJECT_BINARY_DIR}/lib)

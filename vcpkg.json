@@ -1,7 +1,17 @@
 {
-  "builtin-baseline": "000d1bda1ffa95a73e0b40334fa4103d6f4d3d48",
+  "builtin-baseline": "f7423ee180c4b7f40d43402c2feb3859161ef625",
   "dependencies": [
     "gtest",
-    "zlib"
+    "zlib",
+    {
+      "name": "sdl2",
+      "version>=": "2.30.3"
+    }
+  ],
+  "overrides": [
+    {
+      "name": "sdl2",
+      "version": "2.30.3"
+    }
   ]
 }

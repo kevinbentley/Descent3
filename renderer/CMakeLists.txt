@@ -12,11 +12,8 @@ set(CPPS
   HardwarePoints.cpp
   HardwareSetup.cpp
   HardwareTransforms.cpp
+  lnxscreenmode.cpp
 )
-
-if(UNIX)
-  set(CPPS ${CPPS} lnxscreenmode.cpp)
-endif()
 
 # These are excluded.
 #opengl.cpp
@@ -25,6 +22,7 @@ endif()
 
 add_library(renderer STATIC ${HEADERS} ${CPPS})
 target_link_libraries(renderer PRIVATE
+  SDL2::SDL2
   bitmap
   ddio
   mem

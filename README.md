@@ -114,16 +114,16 @@ The milestone needs testing on all platforms. Please report issues when found.
         --add Microsoft.VisualStudio.Component.VC.ATLMFC
     ```
 
-2. Open a “x86 Native Tools Command Prompt” and run:
+2. Open a “x64 Native Tools Command Prompt” and run:
 
     ```batch
     git clone https://github.com/DescentDevelopers/Descent3
     cd Descent3
-    cmake --preset win32 -D ENABLE_LOGGER=[ON|OFF] -D BUILD_EDITOR=[ON|OFF]
-    cmake --build --preset win32 --config [Debug|Release]
+    cmake --preset win -D ENABLE_LOGGER=[ON|OFF] -D BUILD_EDITOR=[ON|OFF]
+    cmake --build --preset win --config [Debug|Release]
     ```
 
-Once CMake finishes, the built files will be put in `builds\win32\Descent3\Debug` or `builds\win32\Descent3\Release`.
+Once CMake finishes, the built files will be put in `builds\win\Descent3\Debug` or `builds\win\Descent3\Release`.
 
 #### Building - macOS
 1. Make sure that [Xcode](https://developer.apple.com/xcode) is installed.

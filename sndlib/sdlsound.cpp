@@ -99,7 +99,7 @@ int lnxsound::InitSoundLib(char mixer_type, oeApplication *sos, uint8_t max_soun
   spec.callback = StreamAudio;
   spec.userdata = &m_mixer;
 
-  sound_device = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE);
+  sound_device = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, 0);
   if (sound_device == 0) {
     strcpy(m_error_text, SDL_GetError());
     return false;
