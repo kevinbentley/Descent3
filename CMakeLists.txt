@@ -1,5 +1,25 @@
 cmake_minimum_required(VERSION 3.20)  # For using CMAKE_<LANG>_BYTE_ORDER
 
+if(NOT DEFINED USE_VCPKG OR USE_VCPKG)
+  message("NOT DEFINED USE_VCPKG OR USE_VCPKG")
+  if(DEFINED ENV{VCPKG_ROOT})
+    message("DEFINED ENV{VCPKG_ROOT}")
+    if (CMAKE_TOOLCHAIN_FILE)
+      cmake_path(ABSOLUTE_PATH CMAKE_TOOLCHAIN_FILE NORMALIZE OUTPUT_VARIABLE VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+    endif()
+
+    set(VCPKG_TOOLCHAIN_FILE "scripts/buildsystems/vcpkg.cmake")
+    cmake_path(ABSOLUTE_PATH VCPKG_TOOLCHAIN_FILE BASE_DIRECTORY $ENV{VCPKG_ROOT} NORMALIZE OUTPUT_VARIABLE CMAKE_TOOLCHAIN_FILE)
+
+    if(CMAKE_TOOLCHAIN_FILE STREQUAL VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+      # prevent endless recursion
+      unset(VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+    endif()
+  elseif(USE_VCPKG)
+    message(WARNING "USE_VCPKG=${USE_VCPKG} but ENV{VCPKG_ROOT} not set; will use system-provided libraries. Did you forget to set VCPKG_ROOT in your environment?")
+  endif()
+endif()
+
 # set default cmake build type to Debug (None Debug Release RelWithDebInfo MinSizeRel)
 if(NOT CMAKE_BUILD_TYPE AND NOT DEFINED ENV{CMAKE_BUILD_TYPE})
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "default build type")
@@ -10,7 +30,7 @@ project(Descent3
   VERSION 1.5.0
 )
 
-option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored compiler warnings/errors (GCC/Clang only; esp. useful with ninja)." OFF)
+option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored compiler warnings/errors (GCC/Clang only; esp. useful with Ninja)." OFF)
 option(FORCE_PORTABLE_INSTALL "Install all files into local directory defined by CMAKE_INSTALL_PREFIX" ON)
 option(ENABLE_LOGGER "Enable logging to the terminal" OFF)
 option(ENABLE_MEM_RTL "Enable Real-time library memory management functions (disable to verbose memory allocations)" ON)
