@@ -1292,14 +1292,14 @@ int StuffObjectIntoPacket(object *obj, uint8_t *data) {
   int count = 0;
   bool obj_is_dummy = false;
 
-  MultiAddUshort(obj - Objects, data, &count);
+  MultiAddUshort(OBJNUM(obj), data, &count);
   MultiAddByte(obj->type, data, &count);
 
   //	Send old object type if it's a dummy
   if (obj->type == OBJ_DUMMY) {
     obj_is_dummy = true;
     MultiAddByte(obj->dummy_type, data, &count);
-    ObjUnGhostObject(obj - Objects);
+    ObjUnGhostObject(OBJNUM(obj));
   }
 
   if (obj->type != OBJ_CAMERA && obj->type != OBJ_DOOR) {
@@ -1349,7 +1349,7 @@ int StuffObjectIntoPacket(object *obj, uint8_t *data) {
 
   // we need to reghost the object if what originally a ghost
   if (obj_is_dummy) {
-    ObjGhostObject(obj - Objects);
+    ObjGhostObject(OBJNUM(obj));
   }
 
   return count;
@@ -1857,14 +1857,12 @@ void MultiSendToAllExcept(int except, uint8_t *data, int size, int seq_threshold
 
 // Flushes all receive sockets so that there is no data coming from them
 void MultiFlushAllIncomingBuffers() {
-  uint8_t *data;
   network_address from_addr;
   int size;
 
-  data = &(Multi_receive_buffer[0]);
 
   // get all incoming data and throw it away
-  while ((size = nw_Receive(data, &from_addr)) > 0)
+  while ((size = nw_Receive(std::data(Multi_receive_buffer), &from_addr)) > 0)
     ;
 
   if (Netgame.local_role == LR_SERVER) {
@@ -1875,7 +1873,7 @@ void MultiFlushAllIncomingBuffers() {
 
       if ((NetPlayers[i].flags & NPF_CONNECTED) && (NetPlayers[i].reliable_socket != INVALID_SOCKET) &&
           (NetPlayers[i].reliable_socket != 0)) {
-        while ((size = nw_ReceiveReliable(NetPlayers[i].reliable_socket, data, MAX_RECEIVE_SIZE)) > 0)
+        while ((size = nw_ReceiveReliable(NetPlayers[i].reliable_socket, std::data(Multi_receive_buffer), std::size(Multi_receive_buffer))) > 0)
           ;
       }
     }
@@ -2053,7 +2051,7 @@ void MultiSendPositionalUpdates(int to_slot) {
 
     // Check for guideds
     if (Players[to_slot].guided_obj != NULL)
-      srcs[num_src_to_check++] = Players[to_slot].guided_obj - Objects;
+      srcs[num_src_to_check++] = OBJNUM(Players[to_slot].guided_obj);
 
     if (Players[to_slot].small_dll_obj != -1) {
       int objnum = Players[to_slot].small_dll_obj;
@@ -2327,7 +2325,7 @@ bool MultiIsGenericVisibleToPlayer(int test_objnum, int to_slot) {
   srcs[0] = Players[to_slot].objnum;
 
   if (Players[to_slot].guided_obj != NULL)
-    srcs[num_src_to_check++] = Players[to_slot].guided_obj - Objects;
+    srcs[num_src_to_check++] = OBJNUM(Players[to_slot].guided_obj);
 
   if (Players[to_slot].small_dll_obj != -1) {
     int objnum = Players[to_slot].small_dll_obj;

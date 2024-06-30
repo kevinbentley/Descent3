@@ -378,7 +378,7 @@ void DoorwayDeactivateAll() {
   room *rp;
 
   // Go through all rooms and deactivate doors
-  for (r = 0, rp = Rooms; r <= Highest_room_index; r++) {
+  for (r = 0, rp = std::data(Rooms); r <= Highest_room_index; r++) {
     if (rp->used && (rp->flags & RF_DOOR)) {
       if (rp->doorway_data->state != DOORWAY_STOPPED) {
         doorway *dp = rp->doorway_data;
@@ -629,7 +629,7 @@ void DoorwayRebuildActiveList() {
   Num_active_doorways = 0;
 
   // Go through all rooms and look for active doors
-  for (r = 0, rp = Rooms; r <= Highest_room_index; r++) {
+  for (r = 0, rp = std::data(Rooms); r <= Highest_room_index; r++) {
     if (rp->used && (rp->flags & RF_DOOR)) {
       ASSERT(rp->doorway_data != NULL);
       if (rp->doorway_data->state != DOORWAY_STOPPED)

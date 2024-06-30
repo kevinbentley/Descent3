@@ -598,6 +598,7 @@
  * $NoKeywords: $
  */
 
+
 #include "objinfo.h"
 #include "polymodel.h"
 #include "pserror.h"
@@ -619,12 +620,12 @@
 #include <algorithm>
 
 int Num_poly_models = 0;
-poly_model Poly_models[MAX_POLY_MODELS];
+std::array<poly_model, MAX_POLY_MODELS> Poly_models;
 
-g3Point Robot_points[MAX_POLYGON_VECS];
+std::array<g3Point, MAX_POLYGON_VECS> Robot_points;
 
 vector Interp_pos_instance_vec = {0, 0, 0};
-vector Instance_vec_stack[MAX_SUBOBJECTS];
+std::array<vector, MAX_SUBOBJECTS> Instance_vec_stack;
 int Instance_vec_cnt = 0;
 
 #ifdef _DEBUG
@@ -2055,7 +2056,7 @@ int ReadNewModelFile(int polynum, CFILE *infile) {
   if (pm->n_models > MAX_SUBOBJECTS) {
     mprintf(0, "This model has more than the max number of subobjects! (%d)\n", MAX_SUBOBJECTS);
     Int3();
-    FreePolyModel(pm - Poly_models);
+    FreePolyModel(pm - std::data(Poly_models));
     return 0;
   }
 

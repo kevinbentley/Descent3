@@ -1182,7 +1182,7 @@ void AquireElectricalTarget(object *obj) {
     fq.startroom = obj->roomnum;
     fq.p1 = &dest;
     fq.rad = .0001f;
-    fq.thisobjnum = Objects - obj;
+    fq.thisobjnum = OBJNUM(obj); // bugfix?
     fq.ignore_obj_list = NULL;
     fq.flags = FQ_CHECK_OBJS | FQ_IGNORE_POWERUPS | FQ_IGNORE_WEAPONS;
 
@@ -1213,7 +1213,7 @@ void AquireElectricalTarget(object *obj) {
 int CreateAndFireWeapon(vector *pos, vector *dir, object *parent, int weapon_num) {
   int objnum;
   object *obj;
-  int parentnum = parent - Objects;
+  int parentnum = OBJNUM(parent);
   uint8_t terrain = 0;
 
   ASSERT(Weapons[weapon_num].used);
@@ -2513,7 +2513,7 @@ void DrawPolygonalWeaponRing(object *obj) {
   int i;
   g3Point *pntlist[4];
   float inner_size = (obj->size * .8);
-  int objnum = obj - Objects;
+  int objnum = OBJNUM(obj);
   int odd = objnum % 2;
 
   int num_segments = 20;
@@ -2596,7 +2596,7 @@ void DrawWeaponObject(object *obj) {
       DrawElectricalWeapon(obj);
     } else if ((Weapons[obj->id].flags & WF_IMAGE_BITMAP) || (Weapons[obj->id].flags & WF_IMAGE_VCLIP)) {
       int bm_handle;
-      int objnum = obj - Objects;
+      int objnum = OBJNUM(obj);
       float rot_temp = Weapons[obj->id].phys_info.rotvel.z / 65536.0;
       int int_game = Gametime / rot_temp;
       float diff = Gametime - (int_game * rot_temp);
@@ -2725,7 +2725,7 @@ void DoZoomEffect(player_weapon *pw, uint8_t clear) {
     fq.startroom = obj->roomnum;
     fq.p1 = &dest;
     fq.rad = .0001f;
-    fq.thisobjnum = Objects - obj;
+    fq.thisobjnum = OBJNUM(obj); // bugfix?
     fq.ignore_obj_list = NULL;
     fq.flags = FQ_CHECK_OBJS | FQ_IGNORE_POWERUPS | FQ_IGNORE_WEAPONS;
 
@@ -3391,7 +3391,7 @@ void CreateCountermeasureFromObject(object *parent, int weapon_id) {
   ASSERT(Weapons[weapon_id].used);
 
   if (Game_mode & GM_MULTI)
-    MultiSendRequestCountermeasure(parent - Objects, weapon_id);
+    MultiSendRequestCountermeasure(OBJNUM(parent), weapon_id);
   else
     FireWeaponFromObject(parent, weapon_id, 5);
 }

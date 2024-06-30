@@ -19,6 +19,8 @@
 #ifndef PSBITMAP_H
 #define PSBITMAP_H
 
+#include <array>
+
 #include "pstypes.h"
 #include "cfile.h"
 
@@ -73,7 +75,7 @@ struct chunked_bitmap {
   int w, h;      // width and height in square bitmaps.
   int *bm_array; // array of bitmap handles.
 };
-extern bms_bitmap GameBitmaps[MAX_BITMAPS];
+extern std::array<bms_bitmap, MAX_BITMAPS> GameBitmaps;
 extern uint32_t Bitmap_memory_used;
 
 // Sets all the bitmaps to unused

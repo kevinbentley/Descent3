@@ -815,7 +815,7 @@ int LGSPlayers(CFILE *fp) {
 }
 
 extern int Physics_NumLinked;
-extern int PhysicsLinkList[MAX_OBJECTS];
+extern std::array<int, MAX_OBJECTS> PhysicsLinkList;
 
 int inreadobj = 0;
 

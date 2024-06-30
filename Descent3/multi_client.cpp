@@ -186,7 +186,7 @@ void MultiSendMyInfo() {
 
   if (Game_is_master_tracker_game) {
     MultiAddUint(MASTER_TRACKER_SIG, data, &count);
-    strcpy(Players[Player_num].tracker_id, Tracker_id);
+    strcpy(Players[Player_num].tracker_id, std::data(Tracker_id));
     len = strlen(Players[Player_num].tracker_id) + 1;
     MultiAddByte(len, data, &count);
     memcpy(&data[count], Players[Player_num].tracker_id, len);

@@ -1068,7 +1068,7 @@ void DoWallEffects(object *weapon, int surface_tmap) {
   } else if (texp->flags & TF_RUBBLE) {
     if ((ps_rand() % 4) == 0) {
       int num_rubble = (ps_rand() % 3) + 1;
-      int bm_handle = GetTextureBitmap(texp - GameTextures, 0);
+      int bm_handle = GetTextureBitmap(texp - std::data(GameTextures), 0);
       uint16_t *data = bm_data(bm_handle, 0);
 
       uint16_t color = data[(bm_w(bm_handle, 0) * (bm_h(bm_handle, 0) / 2)) + (bm_w(bm_handle, 0) / 2)];
@@ -2696,8 +2696,8 @@ void check_lg_inform(object *A, object *B) {
 
 void collide_two_objects(object *A, object *B, vector *collision_point, vector *collision_normal, fvi_info *hit_info) {
   int collision_type;
-  int a_num = A - Objects;
-  int b_num = B - Objects;
+  int a_num = OBJNUM(A);
+  int b_num = OBJNUM(B);
   uint8_t a_good = 0, b_good = 0;
   uint8_t a_hittime_good = 1, b_hittime_good = 1;
 

@@ -158,6 +158,7 @@
 
 #include "pstypes.h"
 #include <cstdint>
+#include <array>
 
 #if defined(WIN32)
 // Windows includes
@@ -403,7 +404,7 @@ void nw_FreePacket(int id);
 
 // nw_Recieve will call the above function to read data out of the socket.  It will then determine
 // which of the buffers we should use and pass to the routine which called us
-int nw_Receive(void *data, network_address *from_addr);
+int nw_Receive(uint8_t* data, network_address *from_addr);
 
 // nw_SendReliable sends the given data through the given reliable socket.
 int nw_SendReliable(uint32_t socketid, uint8_t *data, int length, bool urgent = false);

@@ -18,6 +18,7 @@
 
 // AIGame.cpp
 //
+#include <array>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1634,7 +1635,8 @@ struct tThiefItems {
   int name_idx;
 };
 
-static tThiefItems ThiefableItems[] = {
+static const std::array<tThiefItems, 27> ThiefableItems = {
+    tThiefItems
     {0, THIEFABLEITEM_PRIMARY, 0.70f, 0.50f, 0.70f, TXT_WEAP_LASERS},    // Laser
     {1, THIEFABLEITEM_PRIMARY, 0.70f, 0.50f, 0.70f, TXT_WEAP_VAUSS},     // Vauss
     {2, THIEFABLEITEM_PRIMARY, 0.70f, 0.50f, 0.70f, TXT_WEAP_MICROWAVE}, // Microwave
@@ -1665,7 +1667,7 @@ static tThiefItems ThiefableItems[] = {
     {6, THIEFABLEITEM_ACCESSORY, 1.00f, 0.60f, 1.00f, TXT_WEAP_RAPIDFIRE},       // RapidFire
     {7, THIEFABLEITEM_ACCESSORY, 1.00f, 0.60f, 1.00f, TXT_WEAP_QUADLASERS},      // Quads
 };
-static int numThiefableItems = sizeof(ThiefableItems) / sizeof(tThiefItems);
+const int numThiefableItems = std::size(ThiefableItems);
 
 struct inv_item {
   uint16_t id;

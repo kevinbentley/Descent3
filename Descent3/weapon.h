@@ -193,6 +193,8 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
+#include <array>
+
 #include "pstypes.h"
 #include "manage.h"
 #include "object.h"
@@ -325,7 +327,7 @@ struct fusion_effect {
 extern float Primary_ramp_time, Secondary_ramp_time;
 
 extern int Num_weapons;
-extern weapon Weapons[MAX_WEAPONS];
+extern std::array<weapon, MAX_WEAPONS> Weapons;
 extern const char *Static_weapon_names[];
 extern int Static_weapon_names_msg[];
 extern int Static_weapon_ckpt_names[][2];

@@ -1271,7 +1271,7 @@ void RenderObject(object *obj) {
     break;
   case RT_POLYOBJ:
 #ifdef EDITOR
-    if ((GetFunctionMode() == EDITOR_MODE) && (obj - Objects == Cur_object_index))
+    if ((GetFunctionMode() == EDITOR_MODE) && (OBJNUM(obj) == Cur_object_index))
       DrawObjectSelectionBrackets(obj, 0); // draw back brackets
 #endif
     if (obj->rtype.pobj_info.anim_frame || (Poly_models[obj->rtype.pobj_info.model_num].frame_max !=
@@ -1423,16 +1423,16 @@ void RenderObject(object *obj) {
 #ifdef NEWDEMO
   if (obj->render_type != RT_NONE)
     if (Newdemo_state == ND_STATE_RECORDING) {
-      if (!WasRecorded[obj - Objects]) {
+      if (!WasRecorded[OBJNUM(obj)]) {
         newdemo_record_RenderObject(obj);
-        WasRecorded[obj - Objects] = 1;
+        WasRecorded[OBJNUM(obj)] = 1;
       }
     }
 #endif
     //??	Max_linear_depth = mld_save;
     // Mark selected objects
 #ifdef EDITOR
-  if ((GetFunctionMode() == EDITOR_MODE) && (obj - Objects == Cur_object_index)) {
+  if ((GetFunctionMode() == EDITOR_MODE) && (OBJNUM(obj) == Cur_object_index)) {
     if (obj->render_type != RT_POLYOBJ) {
       g3Point pnt;
       g3_RotatePoint(&pnt, &obj->pos);
@@ -1446,8 +1446,8 @@ void RenderObject(object *obj) {
   if (TSearch_on) {
     if (rend_GetPixel(TSearch_x, TSearch_y) != oldcolor) {
       TSearch_found_type = TSEARCH_FOUND_OBJECT;
-      TSearch_seg = obj - Objects;
-      mprintf(0, "TR:objnum=%d\n", obj - Objects);
+      TSearch_seg = OBJNUM(obj);
+      mprintf(0, "TR:objnum=%d\n", OBJNUM(obj));
     }
   }
 #endif
@@ -1476,7 +1476,7 @@ void RenderObject_SetLightmaps(lightmap_object *lmobject) {
   RenderObjectLightmapObject = lmobject;
 }
 
-ddgr_color Player_colors[] = {
+std::array<ddgr_color, 32> Player_colors = {
     GR_RGB(255, 0, 0),     GR_RGB(0, 32, 255),   GR_RGB(0, 255, 0),   GR_RGB(255, 255, 0),   GR_RGB(32, 64, 96),
     GR_RGB(255, 0, 255),   GR_RGB(255, 128, 0),  GR_RGB(128, 128, 0), GR_RGB(0, 128, 0),     GR_RGB(0, 32, 128),
     GR_RGB(0, 128, 128),   GR_RGB(128, 0, 128),  GR_RGB(128, 0, 0),   GR_RGB(128, 128, 255), GR_RGB(255, 128, 255),
@@ -1941,7 +1941,7 @@ void DrawPowerupGlowDisk(object *obj) {
   if (Viewer_object->effect_info && Viewer_object->effect_info->type_flags & EF_DEFORM)
     return;
   light_info *li = ObjGetLightInfo(obj);
-  int objnum = obj - Objects;
+  int objnum = OBJNUM(obj);
   float size_adjust = FixSin((objnum * 5000) + (FrameCount * 600));
   size_adjust += 1.0;
   size_adjust /= 2; // now in range 0 to 1.0
@@ -1979,7 +1979,7 @@ void DrawPlayerDamageDisk(object *obj) {
     return;
   rend_SetZBias(-obj->size);
   int bm_handle;
-  int objnum = obj - Objects;
+  int objnum = OBJNUM(obj);
   float rot_temp = .25; // Higher is faster
   int int_game = Gametime / rot_temp;
   float diff = Gametime - (int_game * rot_temp);
@@ -2104,7 +2104,7 @@ void DrawPlayerTypingIndicator(object *obj) {
   fq.ignore_obj_list = NULL;
   fq.flags = FQ_CHECK_OBJS | FQ_IGNORE_POWERUPS | FQ_IGNORE_WEAPONS;
   fate = fvi_FindIntersection(&fq, &hit_data);
-  if (fate == HIT_NONE || (fate == HIT_SPHERE_2_POLY_OBJECT && hit_data.hit_object[0] == (obj - Objects))) {
+  if (fate == HIT_NONE || (fate == HIT_SPHERE_2_POLY_OBJECT && hit_data.hit_object[0] == (OBJNUM(obj)))) {
     // Draw this indicator on the hud
     g3Point pnt;
     int bmh, bmw;
@@ -2205,7 +2205,7 @@ void DrawPlayerNameOnHud(object *obj) {
   fq.ignore_obj_list = NULL;
   fq.flags = FQ_CHECK_OBJS | FQ_IGNORE_POWERUPS | FQ_IGNORE_WEAPONS;
   fate = fvi_FindIntersection(&fq, &hit_data);
-  if (fate == HIT_NONE || (fate == HIT_SPHERE_2_POLY_OBJECT && hit_data.hit_object[0] == (obj - Objects))) {
+  if (fate == HIT_NONE || (fate == HIT_SPHERE_2_POLY_OBJECT && hit_data.hit_object[0] == (OBJNUM(obj)))) {
     int half = Game_window_w / 2;
     // Draw this name on the hud
     g3Point pnt;

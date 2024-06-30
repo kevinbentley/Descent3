@@ -409,7 +409,7 @@ struct player_pos_suppress {
 
 #define PLAYER_POS_HACK_TIME 10
 
-extern player_pos_suppress Player_pos_fix[MAX_PLAYERS];
+extern std::array<player_pos_suppress, MAX_PLAYERS> Player_pos_fix;
 
 struct team {
   char name[CALLSIGN_LEN + 1];
@@ -423,8 +423,8 @@ extern int Default_ship_permission;
 extern object *Player_object;
 
 extern int Num_teams, Team_game;
-extern player Players[];
-extern team Teams[];
+extern std::array<player, MAX_PLAYERS> Players;
+extern std::array<team, MAX_TEAMS> Teams;
 extern float HudNameTan;
 extern int Current_waypoint;
 

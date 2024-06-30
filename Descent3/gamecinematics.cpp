@@ -223,7 +223,7 @@ extern int DoAI;
 extern bool Game_being_played_from_quick_play;
 #endif
 #endif
-extern uint16_t Demo_obj_map[MAX_OBJECTS];
+extern std::array<uint16_t, MAX_OBJECTS> Demo_obj_map;
 
 struct {
   // some important, pre-computed times

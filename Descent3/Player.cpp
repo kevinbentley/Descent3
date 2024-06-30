@@ -1135,7 +1135,7 @@
 
 #include <algorithm>
 
-player Players[MAX_PLAYERS];
+std::array<player, MAX_PLAYERS> Players;
 int Player_num;
 
 int Num_teams = 0;
@@ -1143,7 +1143,7 @@ int Team_game = 0;
 int Default_ship_permission = 0x01;
 float HudNameTan = -1;
 
-team Teams[MAX_TEAMS];
+std::array<team, MAX_TEAMS> Teams;
 
 static int Highest_player_start = 0;
 
@@ -2712,7 +2712,7 @@ void DeadPlayerShipHit(object *obj, int hit_room, vector *hitpt, float magnitude
     fq.p1 = &obj->pos;
     fq.startroom = hit_room;
     fq.rad = obj->size;
-    fq.thisobjnum = obj - Objects;
+    fq.thisobjnum = OBJNUM(obj);
     fq.ignore_obj_list = NULL;
     fq.flags = FQ_CHECK_OBJS | FQ_OBJ_BACKFACE | FQ_ONLY_PLAYER_OBJ;
 
@@ -3544,7 +3544,7 @@ void PlayerSwitchToObserver(int slot, int observer_mode, int piggy_objnum) {
     SetObjectControlType(obj, CT_NONE);
     Players[slot].piggy_objnum = piggy_objnum;
     Players[slot].piggy_sig = Objects[piggy_objnum].handle & HANDLE_COUNT_MASK;
-    mprintf(0, "Object %d is observing object %d!\n", obj - Objects, piggy_objnum);
+    mprintf(0, "Object %d is observing object %d!\n", OBJNUM(obj), piggy_objnum);
   }
 }
 
@@ -3795,11 +3795,11 @@ void MakeAtuoWaypointList() {
   Num_waypoints = 0;
 
   // Clear room waypoint flags
-  for (i = 0, rp = Rooms; i <= Highest_room_index; i++, rp++)
+  for (i = 0, rp = std::data(Rooms); i <= Highest_room_index; i++, rp++)
     rp->flags &= ~RF_WAYPOINT;
 
   // Look through objects for waypoints
-  for (i = 0, objp = Objects; i <= Highest_object_index; i++, objp++) {
+  for (i = 0, objp = std::data(Objects); i <= Highest_object_index; i++, objp++) {
     if (objp->type == OBJ_WAYPOINT) {
       if (Num_waypoints < MAX_WAYPOINTS) {
         Waypoints[Num_waypoints].pos = objp->pos;

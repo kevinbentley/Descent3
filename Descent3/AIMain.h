@@ -157,7 +157,7 @@
 #define AI_SOUND_SHORT_DIST 60.0f
 
 extern int AI_NumRendered;
-extern int AI_RenderedList[MAX_OBJECTS];
+extern std::array<int, MAX_OBJECTS> AI_RenderedList;
 
 extern int AI_NumHostileAlert; // A rough number of alert/hostile robots
                                // that have seen the player recently

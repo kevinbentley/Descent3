@@ -426,8 +426,8 @@
 #include "bnode.h"
 
 // Global array of rooms
-room Rooms[MAX_ROOMS + MAX_PALETTE_ROOMS];
-room_changes Room_changes[MAX_ROOM_CHANGES];
+std::array<room, MAX_ROOMS + MAX_PALETTE_ROOMS> Rooms;
+std::array<room_changes, MAX_ROOM_CHANGES> Room_changes;
 
 extern int Cur_selected_room, Cur_selected_face;
 
@@ -593,11 +593,11 @@ void InitRoom(room *rp, int nverts, int nfaces, int nportals) {
   rp->bn_info.nodes = NULL;
 
 #if (defined(EDITOR) || defined(NEWEDITOR))
-  Room_multiplier[rp - Rooms] = 1.0;
+  Room_multiplier[rp - std::data(Rooms)] = 1.0;
 
-  Room_ambience_r[rp - Rooms] = 0.0;
-  Room_ambience_g[rp - Rooms] = 0.0;
-  Room_ambience_b[rp - Rooms] = 0.0;
+  Room_ambience_r[rp - std::data(Rooms)] = 0.0;
+  Room_ambience_g[rp - std::data(Rooms)] = 0.0;
+  Room_ambience_b[rp - std::data(Rooms)] = 0.0;
 #endif
 
   rp->used = 1; // flag this room as used
@@ -710,7 +710,7 @@ void FreeAllRooms() {
   int rn;
   room *rp;
   mprintf(1, "Freeing rooms...Higest_room_index %d\n", Highest_room_index);
-  for (rn = 0, rp = Rooms; rn <= Highest_room_index; rn++, rp++) {
+  for (rn = 0, rp = std::data(Rooms); rn <= Highest_room_index; rn++, rp++) {
     if (rp->used) {
       //			mprintf(2, "rn %d\n", rn);
       FreeRoom(rp);
@@ -1193,7 +1193,7 @@ void CreateRoomObjects() {
       ObjDelete(objnum);
 
   // Now go through all rooms & create objects for external ones
-  for (r = 0, rp = Rooms; r <= Highest_room_index; r++, rp++)
+  for (r = 0, rp = std::data(Rooms); r <= Highest_room_index; r++, rp++)
     if (rp->used && (rp->flags & RF_EXTERNAL)) {
       vector pos;
       float rad;

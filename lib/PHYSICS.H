@@ -92,7 +92,7 @@ void PhysicsDoSimLinear(const object &obj, const vector &pos, const vector &forc
                         vector &movementVec, vector &movementPos, float simTime, int count);
 
 extern int Physics_NumLinked;
-extern int PhysicsLinkList[MAX_OBJECTS];
+extern std::array<int, MAX_OBJECTS> PhysicsLinkList;
 
 // Simulate a physics object for this frame
 void do_physics_sim(object *obj);

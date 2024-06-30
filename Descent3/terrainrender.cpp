@@ -994,7 +994,7 @@ int ShootRaysToObject(object *obj) {
   fq.startroom = Viewer_object->roomnum;
   fq.rad = 0.0f;
   fq.flags = FQ_NO_RELINK | FQ_EXTERNAL_ROOMS_AS_SPHERE | FQ_IGNORE_EXTERNAL_ROOMS;
-  fq.thisobjnum = Viewer_object - Objects;
+  fq.thisobjnum = OBJNUM(Viewer_object);
   fq.ignore_obj_list = NULL;
 
   for (int i = 0; i < 8; i++) {
@@ -1094,7 +1094,7 @@ void RenderTerrainRooms() {
                     continue;
     }*/
     rooms_to_render[room_count].vis_effect = 0;
-    rooms_to_render[room_count].objnum = obj - Objects;
+    rooms_to_render[room_count].objnum = OBJNUM(obj);
     rooms_to_render[room_count].dist = zdist;
     room_count++;
   }
@@ -1183,11 +1183,11 @@ void RenderAllTerrainObjects() {
       if (Num_postrenders < MAX_POSTRENDERS) {
         Postrender_list[Num_postrenders].type = PRT_OBJECT;
         Postrender_list[Num_postrenders].z = zdist;
-        Postrender_list[Num_postrenders++].objnum = obj - Objects;
+        Postrender_list[Num_postrenders++].objnum = OBJNUM(obj);
       }
     } else {
       objs_to_render[obj_count].vis_effect = 0;
-      objs_to_render[obj_count].objnum = obj - Objects;
+      objs_to_render[obj_count].objnum = OBJNUM(obj);
       objs_to_render[obj_count].dist = zdist;
       obj_count++;
     }

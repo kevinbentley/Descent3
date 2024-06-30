@@ -1198,7 +1198,7 @@
 object *Player_object = NULL; // the object that is the player
 object *Viewer_object = NULL; // which object we are seeing from
 
-static int16_t free_obj_list[MAX_OBJECTS];
+static std::array<int16_t, MAX_OBJECTS> free_obj_list;
 
 // Data for objects
 
@@ -1206,12 +1206,12 @@ static int16_t free_obj_list[MAX_OBJECTS];
 
 // info on the various types of objects
 
-object Objects[MAX_OBJECTS];
+std::array<object, MAX_OBJECTS> Objects;
 
-tPosHistory Object_position_samples[MAX_OBJECT_POS_HISTORY];
+std::array<tPosHistory, MAX_OBJECT_POS_HISTORY> Object_position_samples;
 uint8_t Object_position_head;
-int16_t Object_map_position_history[MAX_OBJECTS];
-int16_t Object_map_position_free_slots[MAX_OBJECT_POS_HISTORY];
+std::array<int16_t, MAX_OBJECTS> Object_map_position_history;
+std::array<int16_t, MAX_OBJECT_POS_HISTORY> Object_map_position_free_slots;
 uint16_t Num_free_object_position_history;
 
 int Num_objects = 0;
@@ -1222,7 +1222,7 @@ int print_object_info = 0;
 
 #ifdef EDITOR
 // This array matches the object types in object.h
-char *Object_type_names[MAX_OBJECT_TYPES] = {
+std::array<const char*, MAX_OBJECT_TYPES> Object_type_names= {
     "WALL",        // OBJ_WALL				0
     "FIREBALL",    // OBJ_FIREBALL			1
     "ROBOT",       // OBJ_ROBOT				2
@@ -1253,7 +1253,7 @@ char *Object_type_names[MAX_OBJECT_TYPES] = {
 #endif
 
 int Num_big_objects = 0;
-int16_t BigObjectList[MAX_BIG_OBJECTS]; // DAJ_MR utb int
+std::array<int16_t, MAX_BIG_OBJECTS> BigObjectList; // DAJ_MR utb int
 
 /*
  *  Local Function Prototypes
@@ -1271,7 +1271,7 @@ void DoSpecialPlayerStuff(object *obj);
 void ObjGotoNextViewer() {
   int i, start_obj = 0;
 
-  start_obj = Viewer_object - Objects; // get viewer object number
+  start_obj = OBJNUM(Viewer_object); // get viewer object number
 
   for (i = 0; i <= Highest_object_index; i++) {
 
@@ -1292,7 +1292,7 @@ void ObjGotoNextViewer() {
 void obj_goto_prev_viewer() {
   int i, start_obj = 0;
 
-  start_obj = Viewer_object - Objects; // get viewer object number
+  start_obj = OBJNUM(Viewer_object); // get viewer object number
 
   for (i = 0; i <= Highest_object_index; i++) {
 
@@ -2015,7 +2015,7 @@ void ObjDeleteDead() {
   int local_dead_player_object = -1;
 
   // Move all objects
-  objp = Objects;
+  objp = std::data(Objects);
 
   for (i = 0; i <= Highest_object_index; i++) {
     if ((objp->type != OBJ_NONE) && (objp->flags & OF_DEAD)) {
@@ -2715,7 +2715,7 @@ void ObjDoFrame(object *obj) {
 #endif
 
   default:
-    Error("Unknown control type %d in object %i, handle/type/id = %i/%i/%i", obj->control_type, obj - Objects,
+    Error("Unknown control type %d in object %i, handle/type/id = %i/%i/%i", obj->control_type, OBJNUM(obj),
           obj->handle, obj->type, obj->id);
     break;
   }
@@ -2935,7 +2935,7 @@ void ObjDoFrame(object *obj) {
 }
 
 int Max_used_objects = MAX_OBJECTS - 20;
-float Last_position_history_update[MAX_POSITION_HISTORY]; // gametime of the last position history update of the object
+std::array<float, MAX_POSITION_HISTORY> Last_position_history_update; // gametime of the last position history update of the object
 float Last_position_history_update_time = 0.0f;
 
 //--------------------------------------------------------------------
@@ -2982,7 +2982,7 @@ void ObjDoFrameAll() {
   Physics_NumLinked = 0;
 
   // Process each object
-  for (i = 0, objp = Objects; i <= Highest_object_index; i++, objp++) {
+  for (i = 0, objp = std::data(Objects); i <= Highest_object_index; i++, objp++) {
     if ((objp->type != OBJ_NONE) && (!(objp->flags & OF_DEAD))) {
       RTP_STARTINCTIME(obj_do_frm);
       ObjDoFrame(objp);
@@ -3226,7 +3226,7 @@ void ClearTransientObjects(int clear_all) {
   int objnum;
   object *objp;
 
-  for (objnum = 0, objp = Objects; objnum <= Highest_object_index; objnum++, objp++) {
+  for (objnum = 0, objp = std::data(Objects); objnum <= Highest_object_index; objnum++, objp++) {
     if (((objp->type == OBJ_WEAPON) && !(Weapons[objp->id].flags & WF_COUNTERMEASURE)) ||
         (objp->type == OBJ_FIREBALL) || (objp->type == OBJ_DEBRIS) || (objp->type == OBJ_SHARD) ||
         (objp->type == OBJ_SHOCKWAVE) || (objp->type == OBJ_PARTICLE) || (objp->type == OBJ_SPLINTER) ||

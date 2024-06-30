@@ -285,7 +285,7 @@
 
 // TODO: MTS: this is only used in this file.
 int Num_textures = 0;
-texture GameTextures[MAX_TEXTURES];
+std::array<texture, MAX_TEXTURES> GameTextures;
 
 extern bool Mem_superlow_memory_mode;
 

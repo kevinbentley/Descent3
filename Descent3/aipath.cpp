@@ -16,6 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <array>
+
 #include "aipath.h"
 #include "gamepath.h"
 #include "AIGoal.h"
@@ -33,8 +35,8 @@
 #define MAX_DYNAMIC_PATHS 50
 #define MAX_NODES 50
 
-ai_dynamic_path AIDynamicPath[MAX_DYNAMIC_PATHS];
-int AIAltPath[MAX_ROOMS];
+std::array<ai_dynamic_path, MAX_DYNAMIC_PATHS> AIDynamicPath;
+std::array<int, MAX_ROOMS> AIAltPath;
 int AIAltPathNumNodes;
 
 static void AIUpdatePathInfo(q_item **node_list, int start, int end) {

@@ -936,7 +936,7 @@ void msafe_GetValue(int type, msafe_struct *mstruct) {
   }
   case MSAFE_OBJECT_COUNT_TYPE: {
     int i, count = 0;
-    for (i = 0, objp = Objects; i <= Highest_object_index; i++, objp++) {
+    for (i = 0, objp = std::data(Objects); i <= Highest_object_index; i++, objp++) {
       if ((objp->type == mstruct->type) && (objp->id == mstruct->id))
         count++;
     }

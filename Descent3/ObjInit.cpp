@@ -734,8 +734,8 @@ int ObjInitGeneric(object *objp, bool reinit) {
   // Deal with deleted type
   if (obj_info->type == OBJ_NONE) {
     int i;
-    for (i = 0, obj_info = Object_info; i < MAX_OBJECT_IDS; i++, obj_info) { // find other object of same type
-      if (Object_info[i].type == objp->type)
+    for (i = 0, obj_info = std::data(Object_info); i < MAX_OBJECT_IDS; i++, obj_info++) { // find other object of same type
+      if (obj_info->type == objp->type)
         break;
     }
     ASSERT(i < MAX_OBJECT_IDS); // There should (in real life) always be at least one of each type
@@ -1205,7 +1205,7 @@ int ObjInit(object *objp, int type, int id, int handle, vector *pos, float creat
 void ObjReInitAll() {
   int objnum;
   object *objp;
-  for (objnum = 0, objp = Objects; objnum <= Highest_object_index; objnum++, objp++)
+  for (objnum = 0, objp = std::data(Objects); objnum <= Highest_object_index; objnum++, objp++)
     if (objp->type != OBJ_NONE)
       ObjInitTypeSpecific(objp, 1);
 }

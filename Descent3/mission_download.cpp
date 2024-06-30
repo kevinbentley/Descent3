@@ -173,8 +173,8 @@ msn_urls *msn_GetURL(network_address *net_addr) {
     start_time = timer_GetTime();
     while ((timer_GetTime() - start_time < URL_ASK_POLL_TIME) && Got_url == -1) {
       int packsize;
-      while (((packsize = nw_Receive(Multi_receive_buffer, &from_addr)) > 0) && Got_url == -1) {
-        MultiProcessBigData(Multi_receive_buffer, packsize, &from_addr);
+      while (((packsize = nw_Receive(std::data(Multi_receive_buffer), &from_addr)) > 0) && Got_url == -1) {
+        MultiProcessBigData(std::data(Multi_receive_buffer), packsize, &from_addr);
       }
     }
   }

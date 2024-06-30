@@ -309,8 +309,8 @@ static float Demo_last_pinfo;
 float Demo_frame_ofs;
 static int Demo_auto_idx = 0;
 uint32_t Demo_flags = 0;
-uint16_t Demo_obj_map[MAX_OBJECTS];
-static bool Demo_turretchanged[MAX_OBJECTS];
+std::array<uint16_t, MAX_OBJECTS> Demo_obj_map;
+static std::array<bool, MAX_OBJECTS> Demo_turretchanged;
 bool Demo_looping = false;
 bool Demo_paused = false;
 bool Demo_do_one_frame = false;
@@ -319,9 +319,11 @@ bool Demo_auto_play = false;
 static bool Demo_first_frame = true;
 bool Demo_make_movie = false;
 
+#define NUM_CAMERA_VIEWS 3
+
 #define DEMO_PINFO_UPDATE .1
 #define MAX_COOP_TURRETS 400
-extern float turret_holder[MAX_COOP_TURRETS];
+extern std::array<float, MAX_COOP_TURRETS> turret_holder;
 
 extern gs_tables *gs_Xlates;
 
@@ -543,9 +545,6 @@ void DemoWriteObjCreate(uint8_t type, uint16_t id, int roomnum, vector *pos, con
     }
   }
 }
-
-#define MAX_COOP_TURRETS 400
-extern float turret_holder[MAX_COOP_TURRETS];
 
 void DemoWriteTurretChanged(uint16_t objnum) { Demo_turretchanged[objnum] = true; }
 
@@ -840,7 +839,7 @@ int DemoReadHeader() {
 
     // Reset rearview cameras since Player_object may have changed
     extern void RestoreCameraRearviews();
-    extern int Camera_view_mode[];
+    extern std::array<int, NUM_CAMERA_VIEWS> Camera_view_mode;
     Camera_view_mode[0] = Camera_view_mode[2] = 0; //(0==CV_NONE)  Force reinitialization
     RestoreCameraRearviews();
   } catch (...) {

@@ -1691,7 +1691,6 @@
 #include "weather.h"
 #include "doorway.h"
 #include "object_lighting.h"
-#include "spew.h"
 #include "PHYSICS.H"
 #include "SmallViews.h"
 #include "demofile.h"
@@ -1713,7 +1712,7 @@ void MultiProcessShipChecksum(MD5 *md5, int ship_index);
 
 #include <algorithm>
 
-player_pos_suppress Player_pos_fix[MAX_PLAYERS];
+std::array<player_pos_suppress, MAX_PLAYERS> Player_pos_fix;
 
 // Define this if you want to have secondaries be sent as reliable packets
 //(not recommended - talk to Jason)
@@ -1724,9 +1723,9 @@ bool Multi_no_stats_saved = false;
 
 uint32_t Netgame_curr_handle = 1;
 
-uint16_t Local_object_list[MAX_OBJECTS];
-uint16_t Server_object_list[MAX_OBJECTS];
-uint16_t Server_spew_list[MAX_SPEW_EFFECTS];
+std::array<uint16_t, MAX_OBJECTS> Local_object_list;
+std::array<uint16_t, MAX_OBJECTS> Server_object_list;
+std::array<uint16_t, MAX_SPEW_EFFECTS> Server_spew_list;
 
 #ifndef RELEASE
 int Multi_packet_tracking[255];
@@ -1734,45 +1733,46 @@ int Multi_packet_tracking[255];
 
 // This is for clearing lightmapped objects on the client/server
 int Num_client_lm_objects, Num_server_lm_objects;
-uint16_t Client_lightmap_list[MAX_OBJECTS], Server_lightmap_list[MAX_OBJECTS];
+
+std::array<uint16_t, MAX_OBJECTS> Client_lightmap_list, Server_lightmap_list;
 
 // This is for breakable glass
-uint16_t Broke_glass_rooms[MAX_BROKE_GLASS], Broke_glass_faces[MAX_BROKE_GLASS];
+std::array<uint16_t, MAX_BROKE_GLASS> Broke_glass_rooms, Broke_glass_faces;
 int Num_broke_glass = 0;
 
 // This is for getting out a menu if in multiplayer
 bool Multi_bail_ui_menu = false;
 
-uint32_t Multi_generic_match_table[MAX_OBJECT_IDS];
-uint32_t Multi_weapon_match_table[MAX_WEAPONS];
-uint8_t Multi_receive_buffer[MAX_RECEIVE_SIZE];
+std::array<uint32_t, MAX_OBJECT_IDS> Multi_generic_match_table;
+std::array<uint32_t, MAX_WEAPONS> Multi_weapon_match_table;
+std::array<uint8_t, MAX_RECEIVE_SIZE> Multi_receive_buffer;
 
-uint8_t Multi_send_buffer[MAX_NET_PLAYERS][MAX_GAME_DATA_SIZE];
-int Multi_send_size[MAX_NET_PLAYERS];
+std::array<std::array<uint8_t, MAX_GAME_DATA_SIZE>, MAX_NET_PLAYERS> Multi_send_buffer;
+std::array<int, MAX_NET_PLAYERS> Multi_send_size;
 
-player_fire_packet Player_fire_packet[MAX_NET_PLAYERS];
-float Multi_last_sent_time[MAX_NET_PLAYERS][MAX_NET_PLAYERS];
+std::array<player_fire_packet, MAX_NET_PLAYERS> Player_fire_packet;
+std::array<std::array<float, MAX_NET_PLAYERS>, MAX_NET_PLAYERS> Multi_last_sent_time;
 
-uint8_t Multi_reliable_send_buffer[MAX_NET_PLAYERS][MAX_GAME_DATA_SIZE];
-int Multi_reliable_send_size[MAX_NET_PLAYERS];
-float Multi_reliable_last_send_time[MAX_NET_PLAYERS];
-uint8_t Multi_reliable_sent_position[MAX_NET_PLAYERS];
-uint8_t Multi_reliable_urgent[MAX_NET_PLAYERS];
+std::array<std::array<uint8_t, MAX_GAME_DATA_SIZE>, MAX_NET_PLAYERS> Multi_reliable_send_buffer;
+std::array<int, MAX_NET_PLAYERS> Multi_reliable_send_size;
+std::array<float, MAX_NET_PLAYERS> Multi_reliable_last_send_time;
+std::array<uint8_t, MAX_NET_PLAYERS> Multi_reliable_sent_position;
+std::array<uint8_t, MAX_NET_PLAYERS> Multi_reliable_urgent;
 
 // For keeping track of buildings that have changed
-uint8_t Multi_building_states[MAX_OBJECTS];
+std::array<uint8_t, MAX_OBJECTS> Multi_building_states;
 uint16_t Multi_num_buildings_changed = 0;
 
 // For keeping track of powerup respawn points
-powerup_respawn Powerup_respawn[MAX_RESPAWNS];
-powerup_timer Powerup_timer[MAX_RESPAWNS];
+std::array<powerup_respawn, MAX_RESPAWNS> Powerup_respawn;
+std::array<powerup_timer, MAX_RESPAWNS> Powerup_timer;
 
 // For keeping track of damage and shields
-int Multi_additional_damage_type[MAX_PLAYERS];
-float Multi_additional_damage[MAX_PLAYERS];
+std::array<int, MAX_PLAYERS> Multi_additional_damage_type;
+std::array<float, MAX_PLAYERS> Multi_additional_damage;
 int Multi_requested_damage_type = PD_NONE;
 float Multi_requested_damage_amount = 0;
-float Multi_additional_shields[MAX_SHIELD_REQUEST_TYPES];
+std::array<float, MAX_SHIELD_REQUEST_TYPES> Multi_additional_shields;
 
 int Num_powerup_respawn = 0;
 int Num_powerup_timer = 0;
@@ -1780,25 +1780,25 @@ int Num_powerup_timer = 0;
 // For level sequencing
 int Multi_next_level = -1;
 
-netplayer NetPlayers[MAX_NET_PLAYERS];
+std::array<netplayer, MAX_NET_PLAYERS> NetPlayers;
 netgame_info Netgame;
 
 int Num_network_games_known = 0;
-network_game Network_games[MAX_NETWORK_GAMES];
+std::array<network_game, MAX_NETWORK_GAMES> Network_games;
 
 int Game_is_master_tracker_game = 0;
 
-char Tracker_id[TRACKER_ID_LEN];
+std::array<char, TRACKER_ID_LEN> Tracker_id;
 
-vmt_descent3_struct MTPilotinfo[MAX_NET_PLAYERS];
+std::array<vmt_descent3_struct, MAX_NET_PLAYERS> MTPilotinfo;
 
-int16_t Multi_kills[MAX_NET_PLAYERS];
-int16_t Multi_deaths[MAX_NET_PLAYERS];
+std::array<int16_t, MAX_NET_PLAYERS> Multi_kills;
+std::array<int16_t, MAX_NET_PLAYERS> Multi_deaths;
 
 int Got_new_game_time = 0;
 
 #define MAX_COOP_TURRETS 400
-float turret_holder[MAX_COOP_TURRETS];
+std::array<float, MAX_COOP_TURRETS> turret_holder;
 
 #define DATA_CHUNK_SIZE 450
 
@@ -2152,21 +2152,17 @@ void MultiAnnounceEffect(object *obj, float size, float time) {
 // the data to process_big_data
 void MultiProcessIncoming() {
   int size, i;
-  uint8_t *data;
   network_address from_addr;
 
-  data = &(Multi_receive_buffer[0]);
-
   // get the other net players data
-  while ((size = nw_Receive(data, &from_addr)) > 0) {
-    MultiProcessBigData(data, size, &from_addr);
+  while ((size = nw_Receive(std::data(Multi_receive_buffer), &from_addr)) > 0) {
+    MultiProcessBigData(std::data(Multi_receive_buffer), size, &from_addr);
     if (ServerTimeout) {
       LastPacketReceived = timer_GetTime();
     }
   } // end while
 
   // read reliable sockets for data
-  data = &(Multi_receive_buffer[0]);
   if (Netgame.local_role == LR_SERVER) {
     for (i = 0; i < MAX_NET_PLAYERS; i++) {
       if (Player_num == i)
@@ -2175,16 +2171,18 @@ void MultiProcessIncoming() {
       if ((NetPlayers[i].flags & NPF_CONNECTED) && (NetPlayers[i].reliable_socket != INVALID_SOCKET) &&
           (NetPlayers[i].reliable_socket != 0)) {
 
-        while ((size = nw_ReceiveReliable(NetPlayers[i].reliable_socket, data, MAX_RECEIVE_SIZE)) > 0) {
-          MultiProcessBigData(data, size, &NetPlayers[i].addr);
+        while (size = nw_ReceiveReliable(NetPlayers[i].reliable_socket, std::data(Multi_receive_buffer), std::size(Multi_receive_buffer)),
+               size > 0) {
+          MultiProcessBigData(std::data(Multi_receive_buffer), size, &NetPlayers[i].addr);
         }
       }
     }
   } else {
     // if I'm not the master of the game, read reliable data from my connection with the server
     if ((NetPlayers[Player_num].reliable_socket != INVALID_SOCKET) && (NetPlayers[Player_num].reliable_socket != 0)) {
-      while ((size = nw_ReceiveReliable(NetPlayers[Player_num].reliable_socket, data, MAX_RECEIVE_SIZE)) > 0) {
-        MultiProcessBigData(data, size, &Netgame.server_address);
+      while (size = nw_ReceiveReliable(NetPlayers[Player_num].reliable_socket, std::data(Multi_receive_buffer), std::size(Multi_receive_buffer)),
+             size > 0) {
+        MultiProcessBigData(std::data(Multi_receive_buffer), size, &Netgame.server_address);
       }
     }
   }
@@ -5368,7 +5366,7 @@ void MultiSendObject(object *obj, uint8_t announce, uint8_t demo_record) {
 
   // Send server object number
   MultiAddByte(announce, data, &count);
-  MultiAddUshort(obj - Objects, data, &count);
+  MultiAddUshort(OBJNUM(obj), data, &count);
 
   // Add parent
   if (obj->parent_handle == OBJECT_HANDLE_NONE)
@@ -5770,7 +5768,7 @@ void MultiSendRemoveObject(object *obj, uint8_t playsound) {
 
   ASSERT(obj->flags & OF_CLIENT_KNOWS);
 
-  MultiAddUshort(obj - Objects, data, &count);
+  MultiAddUshort(OBJNUM(obj), data, &count);
   MultiAddByte(obj->type, data, &count);
   MultiAddByte(playsound, data, &count);
 
@@ -6337,10 +6335,10 @@ void MultiSendRequestPeerDamage(object *killer, int weapon_id, int damage_type, 
   MultiAddByte(Player_num, data, &count);
 
   // Add killer info
-  if (killer == NULL || Local_object_list[killer - Objects] == 65535 || killer == &Objects[Players[Player_num].objnum])
+  if (killer == NULL || Local_object_list[OBJNUM(killer)] == 65535 || killer == &Objects[Players[Player_num].objnum])
     MultiAddUshort(65535, data, &count);
   else
-    MultiAddUshort(Local_object_list[killer - Objects], data, &count);
+    MultiAddUshort(Local_object_list[OBJNUM(killer)], data, &count);
 
   MultiAddUbyte(weapon_id, data, &count);
   MultiAddUbyte(damage_type, data, &count);
@@ -6437,13 +6435,12 @@ bool MultiStartNewLevel(int level) {
 
 #endif
 
-  memset(Player_pos_fix, 0, sizeof(Player_pos_fix));
-
-  memset(Multi_building_states, 0, MAX_OBJECTS);
+  Player_pos_fix.fill({0, 0.0f, 0, false});
+  Multi_building_states.fill(0);
   Multi_num_buildings_changed = 0;
 
-  memset(Multi_additional_damage, 0, MAX_PLAYERS * 4);
-  memset(Multi_additional_shields, 0, MAX_SHIELD_REQUEST_TYPES * 4);
+  Multi_additional_damage.fill(0.0f);
+  Multi_additional_shields.fill(0.0f);
   Multi_requested_damage_amount = 0;
 
   for (i = 0; i < MAX_OBJECTS; i++) {
@@ -6523,7 +6520,7 @@ void MultiSendFullPacket(int slot, int flags) {
     return;
 
   MULTI_ASSERT_NOMESSAGE(NetPlayers[slot].flags & NPF_CONNECTED);
-  nw_Send(&NetPlayers[slot].addr, Multi_send_buffer[slot], Multi_send_size[slot], flags);
+  nw_Send(&NetPlayers[slot].addr, std::data(Multi_send_buffer[slot]), Multi_send_size[slot], flags);
   Multi_send_size[slot] = 0;
 }
 
@@ -6537,7 +6534,7 @@ void MultiSendFullReliablePacket(int slot, int flags) {
   // We're sending to the server
   if (slot == SERVER_PLAYER) {
     // mprintf(0,"Sending full packet of size %d to slot%d!\n",Multi_cur_send_size,slot);
-    nw_SendReliable(NetPlayers[Player_num].reliable_socket, Multi_reliable_send_buffer[Player_num],
+    nw_SendReliable(NetPlayers[Player_num].reliable_socket, std::data(Multi_reliable_send_buffer[Player_num]),
                     Multi_reliable_send_size[Player_num], false);
     Multi_reliable_send_size[Player_num] = 0;
     Multi_reliable_sent_position[Player_num] = 0;
@@ -6546,7 +6543,7 @@ void MultiSendFullReliablePacket(int slot, int flags) {
   } else // We are the server and we're sending to "slot"
   {
     MULTI_ASSERT_NOMESSAGE(NetPlayers[slot].flags & NPF_CONNECTED);
-    nw_SendReliable(NetPlayers[slot].reliable_socket, Multi_reliable_send_buffer[slot], Multi_reliable_send_size[slot],
+    nw_SendReliable(NetPlayers[slot].reliable_socket, std::data(Multi_reliable_send_buffer[slot]), Multi_reliable_send_size[slot],
                     true);
     Multi_reliable_send_size[slot] = 0;
     Multi_reliable_sent_position[slot] = 0;
@@ -6650,8 +6647,8 @@ void MultiBuildMatchTables() {
 
   mprintf(0, "Building match tables for multiplayer.\n");
 
-  memset(Multi_generic_match_table, 0, MAX_OBJECT_IDS * sizeof(int));
-  memset(Multi_weapon_match_table, 0, MAX_WEAPONS * sizeof(int));
+  Multi_generic_match_table.fill(0);
+  Multi_weapon_match_table.fill(0);
 
   // Build generic tables
   for (i = 0; i < MAX_OBJECT_IDS; i++) {
@@ -8147,7 +8144,7 @@ void MultiSendGhostObject(object *obj, bool ghost) {
 
   size_offset = START_DATA(MP_GHOST_OBJECT, data, &count, 1);
 
-  objnum = obj - Objects;
+  objnum = OBJNUM(obj);
 
   MultiAddUshort(objnum, data, &count);
   MultiAddByte((ghost) ? 1 : 0, data, &count);
@@ -8493,7 +8490,7 @@ void MultiDoAttach(uint8_t *data) {
     return;
   }
 
-  ASSERT(child >= Objects && parent >= Objects);
+  ASSERT(child >= std::data(Objects) && parent >= std::data(Objects));
   ASSERT(child->type != OBJ_NONE && parent->type != OBJ_NONE);
 
   AttachObject(parent, parent_ap, child, child_ap, f_aligned);
@@ -8540,7 +8537,7 @@ void MultiDoAttachRad(uint8_t *data) {
     return;
   }
 
-  ASSERT(child >= Objects && parent >= Objects);
+  ASSERT(child >= std::data(Objects) && parent >= std::data(Objects));
   ASSERT(child->type != OBJ_NONE && parent->type != OBJ_NONE);
 
   AttachObject(parent, parent_ap, child, rad);
@@ -9132,7 +9129,7 @@ void MultiSendBreakGlass(room *rp, int facenum) {
   int size_offset;
   size_offset = START_DATA(MP_BREAK_GLASS, data, &count);
 
-  MultiAddUshort(rp - Rooms, data, &count);
+  MultiAddUshort(rp - std::data(Rooms), data, &count);
   MultiAddUshort(facenum, data, &count);
 
   END_DATA(count, data, size_offset);

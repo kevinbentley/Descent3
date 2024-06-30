@@ -22,6 +22,8 @@
 // Filename:	Level15.cpp
 // Version:	3
 /////////////////////////////////////////////////////////////////////
+
+#include <array>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -842,7 +844,8 @@ struct tMyHandle {
   int handle;
 };
 
-tMyHandle MyObjects[] = {
+std::array<tMyHandle, 18> MyObjects = {
+    tMyHandle
     {"MatCen1Peg", -1},        {"MatCen2Peg", -1},    {"MatCen3Peg", -1},    {"MatCen4Peg", -1},
     {"MatCen5Peg", -1},        {"MatCenSwitchA", -1}, {"MatCenSwitchB", -1}, {"MatCenSwitchC", -1},
     {"MatCenSwitchD", -1},     {"MatCenSwitchE", -1}, {"MatCenSwitchF", -1}, {"MatCenSwitchG", -1},
@@ -850,20 +853,29 @@ tMyHandle MyObjects[] = {
     {"MatCen4Spewer", -1},     {"MatCen5Spewer", -1},
 };
 
-tMyHandle MyMatcens[] = {{"MatCen5", -1}, {"MatCen4", -1}, {"MatCen2", -1}, {"MatCen3", -1}, {"MatCen1", -1}};
+std::array<tMyHandle, 5> MyMatcens = {
+    tMyHandle
+    {"MatCen5", -1},
+    {"MatCen4", -1},
+    {"MatCen2", -1},
+    {"MatCen3", -1},
+    {"MatCen1", -1}};
 
-tMyHandle MyRooms[] = {{"MagicMatCenArmory", -1}};
+std::array<tMyHandle, 1> MyRooms = {{"MagicMatCenArmory", -1}};
 
 struct tMyMessage {
   const char *name;
   const char *mem;
 };
 
-tMyMessage MyMessages[] = {{"MagicMatCenSwitches", NULL}, {"MatCenSwitchDOn", NULL},  {"MatCenSwitchDOff", NULL},
-                           {"MatCenSwitchGOn", NULL},     {"MatCenSwitchGOff", NULL}, {"MatCenSwitchCOn", NULL},
-                           {"MatCenSwitchCOff", NULL},    {"MatCenSwitchEOn", NULL},  {"MatCenSwitchEOff", NULL},
-                           {"MatCenSwitchBOn", NULL},     {"MatCenSwitchBOff", NULL}, {"MatCenSwitchFOn", NULL},
-                           {"MatCenSwitchFOff", NULL},    {"MatCenSwitchAOn", NULL},  {"MatCenSwitchAOff", NULL}};
+std::array<tMyMessage,16> MyMessages = {
+        tMyMessage
+        {"MagicMatCenSwitches", NULL}, {"MatCenSwitchDOn", NULL},  {"MatCenSwitchDOff", NULL},
+        {"MatCenSwitchGOn", NULL},     {"MatCenSwitchGOff", NULL}, {"MatCenSwitchCOn", NULL},
+        {"MatCenSwitchCOff", NULL},    {"MatCenSwitchEOn", NULL},  {"MatCenSwitchEOff", NULL},
+        {"MatCenSwitchBOn", NULL},     {"MatCenSwitchBOff", NULL}, {"MatCenSwitchFOn", NULL},
+        {"MatCenSwitchFOff", NULL},    {"MatCenSwitchAOn", NULL},  {"MatCenSwitchAOff", NULL}
+    };
 
 int GetMyMatCen(int id) {
   if (MyMatcens[id].handle == -1)

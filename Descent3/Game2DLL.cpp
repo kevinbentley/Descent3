@@ -66,7 +66,7 @@
 
 void SelectNextCameraView(int window);
 #define NUM_CAMERA_VIEWS 3
-extern int Camera_view_mode[NUM_CAMERA_VIEWS];
+extern std::array<int, NUM_CAMERA_VIEWS> Camera_view_mode;
 
 //	Osiris_CreateModuleInitStruct
 //	Purpose:
@@ -74,7 +74,7 @@ extern int Camera_view_mode[NUM_CAMERA_VIEWS];
 //	to the module during initialization.
 extern void Osiris_CreateModuleInitStruct(tOSIRISModuleInit *mi);
 module GameDLLHandle = {NULL};
-extern ddgr_color Player_colors[];
+extern std::array<ddgr_color, 32> Player_colors;
 struct game_api {
   int *objs;
   int *rooms;
@@ -136,16 +136,16 @@ static void DUMMYrend_DrawScaledBitmap(int x1, int y1, int x2, int y2, int bm, f
 }
 
 void GetGameAPI(game_api *api) {
-  api->objs = (int *)Objects;
-  api->rooms = (int *)Rooms;
+  api->objs = (int *)std::data(Objects);
+  api->rooms = (int *)std::data(Rooms);
   api->terrain = (int *)Terrain_seg;
-  api->players = (int *)Players;
+  api->players = (int *)std::data(Players);
   api->netgame = (int *)&Netgame;
   api->netplayers = (int *)&NetPlayers;
   api->ships = (int *)&Ships;
   api->weapons = (int *)&Weapons;
   api->Current_mission = (int *)&Current_mission;
-  api->GameTextures = (int *)GameTextures;
+  api->GameTextures = (int *)std::data(GameTextures);
   api->GameVClips = (int *)GameVClips;
   // Fill in function pointers here.  The order here must match the order on the
   // DLL side
@@ -534,10 +534,10 @@ void GetGameAPI(game_api *api) {
   api->vp[8] = (int *)&Game_interface_mode;
   api->vp[9] = (int *)LocalD3Dir;
   api->vp[10] = (int *)&Game_is_master_tracker_game;
-  api->vp[11] = (int *)Local_object_list;
-  api->vp[12] = (int *)Server_object_list;
+  api->vp[11] = (int *)std::data(Local_object_list);
+  api->vp[12] = (int *)std::data(Server_object_list);
   api->vp[13] = (int *)&Dedicated_server;
-  api->vp[14] = (int *)Player_colors;
+  api->vp[14] = (int *)std::data(Player_colors);
   api->vp[15] = (int *)&Hud_aspect_x;
   api->vp[16] = (int *)&Hud_aspect_y;
   api->vp[17] = (int *)&Viewer_object;
@@ -550,8 +550,8 @@ void GetGameAPI(game_api *api) {
   api->vp[24] = (int *)&Multi_next_level;
   api->vp[25] = (int *)&Level_info;
   api->vp[26] = (int *)GameArgs;
-  api->vp[27] = (int *)Camera_view_mode;
-  api->vp[28] = (int *)Object_info;
+  api->vp[27] = (int *)std::data(Camera_view_mode);
+  api->vp[28] = (int *)std::data(Object_info);
 
   api->osiris_functions = &Multi_d3m_osiris_funcs;
   Osiris_CreateModuleInitStruct(&Multi_d3m_osiris_funcs);

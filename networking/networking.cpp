@@ -284,6 +284,8 @@
  *
  */
 
+#include <array>
+
 #ifdef WIN32
 #include <windows.h>
 #include <winsock.h>
@@ -460,19 +462,18 @@ struct reliable_header {
   uint16_t seq;                // sequence packet 0-65535 used for ACKing also
   uint16_t data_len;           // length of data
   float send_time;           // Time the packet was sent, if an ACK the time the packet being ACK'd was sent.
-  uint8_t data[NETBUFFERSIZE]; // Packet data
+  std::array<uint8_t, NETBUFFERSIZE> data; // Packet data
 };
 
 #define RELIABLE_PACKET_HEADER_ONLY_SIZE (sizeof(reliable_header) - NETBUFFERSIZE)
 #define MAX_PING_HISTORY 10
 
 struct reliable_net_sendbuffer {
-  uint8_t buffer[NETBUFFERSIZE];
-
+  std::array<uint8_t, NETBUFFERSIZE> buffer;
 };
 
 struct reliable_net_rcvbuffer {
-  uint8_t buffer[NETBUFFERSIZE];
+  std::array<uint8_t, NETBUFFERSIZE> buffer;
 };
 
 static SOCKET Reliable_UDP_socket = INVALID_SOCKET;
@@ -490,9 +491,9 @@ static uint32_t serverconn = 0xFFFFFFFF;
 
 struct reliable_socket {
 
-  float timesent[MAXNETBUFFERS];
-  int16_t send_len[MAXNETBUFFERS];
-  int16_t recv_len[MAXNETBUFFERS];
+  std::array<float, MAXNETBUFFERS> timesent;
+  std::array<int16_t, MAXNETBUFFERS> send_len;
+  std::array<int16_t, MAXNETBUFFERS> recv_len;
   float last_packet_received; // For a given connection, this is the last packet we received
   float last_packet_sent;
   float pings[MAX_PING_HISTORY];
@@ -504,20 +505,20 @@ struct reliable_socket {
   uint16_t status;                           // Status of this connection
   uint16_t oursequence;              // This is the next sequence number the application is expecting
   uint16_t theirsequence;            // This is the next sequence number the peer is expecting
-  uint16_t rsequence[MAXNETBUFFERS]; // This is the sequence number of the given packet
+  std::array<uint16_t, MAXNETBUFFERS> rsequence; // This is the sequence number of the given packet
 
   uint8_t ping_pos;
 
   network_address net_addr;         // A D3 network address structure
   network_protocol connection_type; // IPX, IP, modem, etc.
-  reliable_net_rcvbuffer *rbuffers[MAXNETBUFFERS];
+  std::array<reliable_net_rcvbuffer*, MAXNETBUFFERS> rbuffers;
   SOCKADDR addr;                                    // SOCKADDR of our peer
-  reliable_net_sendbuffer *sbuffers[MAXNETBUFFERS]; // This is an array of pointers for quick sorting
+  std::array<reliable_net_sendbuffer*, MAXNETBUFFERS> sbuffers; // This is an array of pointers for quick sorting
   uint16_t ssequence[MAXNETBUFFERS];          // This is the sequence number of the given packet
   uint8_t send_urgent;
 };
 
-static reliable_socket reliable_sockets[MAXRELIABLESOCKETS];
+static std::array<reliable_socket, MAXRELIABLESOCKETS> reliable_sockets;
 //*******************************
 #ifdef __LINUX__
 #include <fcntl.h>
@@ -939,7 +940,7 @@ void nw_FreePacket(int id) {
 
 // nw_Recieve will call the above function to read data out of the socket.  It will then determine
 // which of the buffers we should use and pass to the routine which called us
-int nw_Receive(void *data, network_address *from_addr) {
+int nw_Receive(uint8_t* data, network_address *from_addr) {
   // call the routine to read data out of the socket (which stuffs it into the packet buffers)
 
   if (Use_DirectPlay) {
@@ -954,7 +955,7 @@ int nw_Receive(void *data, network_address *from_addr) {
   int buffer_size;
 
   // try and get a free buffer and return its size
-  if (nw_psnet_buffer_get_next((uint8_t *)data, &buffer_size, from_addr)) {
+  if (nw_psnet_buffer_get_next(data, &buffer_size, from_addr)) {
     return buffer_size;
   }
   return 0;
@@ -999,7 +1000,7 @@ int nw_ReceiveReliable(SOCKET socketid, uint8_t *buffer, int max_len) {
 
   for (i = 0; i < MAXNETBUFFERS; i++) {
     if ((rsocket->rsequence[i] == rsocket->oursequence) && (rsocket->rbuffers[i])) {
-      memcpy(buffer, rsocket->rbuffers[i]->buffer, rsocket->recv_len[i]);
+      memcpy(buffer, std::data(rsocket->rbuffers[i]->buffer), rsocket->recv_len[i]);
       mem_free(rsocket->rbuffers[i]);
       rsocket->rbuffers[i] = NULL;
       rsocket->rsequence[i] = 0;
@@ -1009,6 +1010,8 @@ int nw_ReceiveReliable(SOCKET socketid, uint8_t *buffer, int max_len) {
                rsocket->oursequence);
 */
       rsocket->oursequence++;
+
+      assert(rsocket->recv_len[i] <= max_len);
       return rsocket->recv_len[i];
     }
   }
@@ -1138,7 +1141,7 @@ int nw_SendReliable(uint32_t socketid, uint8_t *data, int length, bool urgent) {
       network_address send_address;
       memset(&send_address, 0, sizeof(network_address));
 
-      memcpy(send_header.data, rsocket->sbuffers[pnum], rsocket->send_len[pnum]);
+      memcpy(std::data(send_header.data), rsocket->sbuffers[pnum], rsocket->send_len[pnum]);
       send_header.data_len = INTEL_SHORT(rsocket->send_len[pnum]);
       send_header.type = RNT_DATA;
       send_header.send_time = INTEL_FLOAT(timer_GetTime());
@@ -1166,7 +1169,8 @@ int nw_SendReliable(uint32_t socketid, uint8_t *data, int length, bool urgent) {
       // tack this data on the end of the previous packet
       // mprintf(0,"Appending to delayed packet...\n");
       ASSERT(rsocket->sbuffers[pnum]);
-      memcpy(rsocket->sbuffers[pnum]->buffer + rsocket->send_len[pnum], data, length);
+      assert(rsocket->send_len[pnum] + length <= NETBUFFERSIZE);
+      memcpy(&rsocket->sbuffers[pnum]->buffer.at(rsocket->send_len[pnum]), data, length);
       // int msize = mem_size(rsocket->sbuffers[pnum]);
       rsocket->send_len[pnum] += length;
       return length;
@@ -1182,7 +1186,7 @@ int nw_SendReliable(uint32_t socketid, uint8_t *data, int length, bool urgent) {
       rsocket->send_len[i] = length;
       rsocket->sbuffers[i] = (reliable_net_sendbuffer *)mem_malloc(sizeof(reliable_net_sendbuffer));
 
-      memcpy(rsocket->sbuffers[i]->buffer, data, length);
+      memcpy(std::data(rsocket->sbuffers[i]->buffer), data, length);
 
       send_header.seq = INTEL_SHORT(rsocket->theirsequence);
       rsocket->ssequence[i] = rsocket->theirsequence;
@@ -1507,7 +1511,7 @@ void nw_WorkReliable(uint8_t *data, int len, network_address *naddr) {
               else
                 rsocket->recv_len[i] = INTEL_SHORT(rcv_buff.data_len);
               rsocket->rbuffers[i] = (reliable_net_rcvbuffer *)mem_malloc(sizeof(reliable_net_rcvbuffer));
-              memcpy(rsocket->rbuffers[i]->buffer, rcv_buff.data, rsocket->recv_len[i]);
+              memcpy(std::data(rsocket->rbuffers[i]->buffer), std::data(rcv_buff.data), rsocket->recv_len[i]);
               rsocket->rsequence[i] = INTEL_SHORT(rcv_buff.seq);
               // mprintf(0,"Adding packet to receive buffer in nw_ReceiveReliable().\n");
               break;
@@ -2460,7 +2464,7 @@ int nw_DoReceiveCallbacks(void) {
   socklen_t read_len, from_len;
   network_address from_addr;
 
-  uint8_t packet_data[1500];
+  std::array<uint8_t, 1500> packet_data;
 
   nw_ReliableResend();
 
@@ -2488,7 +2492,7 @@ int nw_DoReceiveCallbacks(void) {
 #endif
     // get data off the socket and process
     from_len = sizeof(SOCKADDR_IN);
-    read_len = recvfrom(TCP_socket, (char *)packet_data, 1500, 0, (SOCKADDR *)&ip_addr, &from_len);
+    read_len = recvfrom(TCP_socket, reinterpret_cast<char*>(std::data(packet_data)), std::size(packet_data), 0, (SOCKADDR *)&ip_addr, &from_len);
 
     if (read_len == SOCKET_ERROR) {
       int x = WSAGetLastError();
@@ -2518,7 +2522,7 @@ int nw_DoReceiveCallbacks(void) {
         NetStatistics.tcp_total_bytes_rec += rlen;
       }
 
-      Netcallbacks[packet_id](packet_data + 1, rlen, &from_addr);
+      Netcallbacks[packet_id](std::data(packet_data) + 1, rlen, &from_addr);
     }
   }
 
@@ -2584,7 +2588,7 @@ void nw_ReliableResend(void) {
           // mprintf(0,"Resending reliable packet in nw_WorkReliable().\n");
           send_header.send_time = INTEL_FLOAT(timer_GetTime());
           send_header.seq = INTEL_SHORT(rsocket->ssequence[i]);
-          memcpy(send_header.data, rsocket->sbuffers[i]->buffer, rsocket->send_len[i]);
+          memcpy(std::data(send_header.data), std::data(rsocket->sbuffers[i]->buffer), rsocket->send_len[i]);
           send_header.data_len = INTEL_SHORT(rsocket->send_len[i]);
           send_header.type = RNT_DATA;
 

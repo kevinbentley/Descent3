@@ -492,11 +492,14 @@
 #ifndef MULTI_H
 #define MULTI_H
 
+#include <array>
+
 #include "pstypes.h"
 #include "vecmat_external.h"
 #include "object_external_struct.h"
 #include "object_external.h"
 #include "player_external.h"
+#include "spew.h"
 
 #if defined(__LINUX__)
 #include "linux_fix.h"
@@ -670,9 +673,9 @@ struct player_fire_packet {
 
 extern netgame_info Netgame;
 
-extern uint16_t Local_object_list[];
-extern uint16_t Server_object_list[];
-extern uint16_t Server_spew_list[];
+extern std::array<uint16_t, MAX_OBJECTS> Local_object_list;
+extern std::array<uint16_t, MAX_OBJECTS> Server_object_list;
+extern std::array<uint16_t, MAX_SPEW_EFFECTS> Server_spew_list;
 
 #define MAX_RECEIVE_SIZE 4096
 #define MAX_NETWORK_GAMES 100
@@ -708,7 +711,7 @@ static inline void MultiMatrixMakeEndianFriendly(multi_orientation *mmat) {
 }
 
 // For firing players
-extern player_fire_packet Player_fire_packet[MAX_NET_PLAYERS];
+extern std::array<player_fire_packet, MAX_NET_PLAYERS> Player_fire_packet;
 
 // For powerup respawning
 #define MAX_RESPAWNS 300
@@ -733,11 +736,11 @@ struct powerup_timer {
   float respawn_time;
 };
 
-extern powerup_timer Powerup_timer[];
-extern powerup_respawn Powerup_respawn[];
-extern network_game Network_games[];
-extern netplayer NetPlayers[MAX_NET_PLAYERS];
-extern uint8_t Multi_receive_buffer[MAX_RECEIVE_SIZE];
+extern std::array<powerup_timer, MAX_RESPAWNS> Powerup_timer;
+extern std::array<powerup_respawn, MAX_RESPAWNS> Powerup_respawn;
+extern std::array<network_game, MAX_NETWORK_GAMES> Network_games;
+extern std::array<netplayer, MAX_NET_PLAYERS> NetPlayers;
+extern std::array<uint8_t, MAX_RECEIVE_SIZE> Multi_receive_buffer;
 extern int Ok_to_join;
 extern int Num_powerup_respawn;
 extern int Num_powerup_timer;
@@ -748,31 +751,31 @@ extern bool Got_heartbeat;
 
 // This is for breakable glass
 #define MAX_BROKE_GLASS 100
-extern uint16_t Broke_glass_rooms[], Broke_glass_faces[];
+extern std::array<uint16_t, MAX_BROKE_GLASS> Broke_glass_rooms, Broke_glass_faces;
 extern int Num_broke_glass;
 
 // For keeping track of damage and shields
-extern float Multi_additional_damage[];
+extern std::array<float, MAX_NET_PLAYERS> Multi_additional_damage;
 extern int Multi_requested_damage_type;
 extern float Multi_requested_damage_amount;
-extern float Multi_additional_shields[];
+extern std::array<float, MAX_SHIELD_REQUEST_TYPES> Multi_additional_shields;
 
-extern uint8_t Multi_send_buffer[MAX_NET_PLAYERS][MAX_GAME_DATA_SIZE];
-extern int Multi_send_size[MAX_NET_PLAYERS];
-extern float Multi_last_sent_time[MAX_NET_PLAYERS][MAX_NET_PLAYERS];
-extern int Multi_additional_damage_type[MAX_NET_PLAYERS];
+extern std::array<std::array<uint8_t, MAX_GAME_DATA_SIZE>, MAX_NET_PLAYERS> Multi_send_buffer;
+extern std::array<int, MAX_NET_PLAYERS> Multi_send_size;
+extern std::array<std::array<float, MAX_NET_PLAYERS>, MAX_NET_PLAYERS> Multi_last_sent_time;
+extern std::array<int, MAX_NET_PLAYERS> Multi_additional_damage_type;
 
-extern uint8_t Multi_reliable_urgent[MAX_NET_PLAYERS];
-extern uint8_t Multi_reliable_send_buffer[MAX_NET_PLAYERS][MAX_GAME_DATA_SIZE];
-extern int Multi_reliable_send_size[MAX_NET_PLAYERS];
-extern float Multi_reliable_last_send_time[MAX_NET_PLAYERS];
-extern uint8_t Multi_reliable_sent_position[MAX_NET_PLAYERS];
+extern std::array<uint8_t, MAX_NET_PLAYERS> Multi_reliable_urgent;
+extern std::array<std::array<uint8_t, MAX_GAME_DATA_SIZE>, MAX_NET_PLAYERS> Multi_reliable_send_buffer;
+extern std::array<int, MAX_NET_PLAYERS> Multi_reliable_send_size;
+extern std::array<float, MAX_NET_PLAYERS> Multi_reliable_last_send_time;
+extern std::array<uint8_t, MAX_NET_PLAYERS> Multi_reliable_sent_position;
 extern uint32_t Multi_visible_players[];
 
 extern int Got_level_info;
 extern int Got_new_game_time;
 // For keeping track of buildings that have changed
-extern uint8_t Multi_building_states[];
+extern std::array<uint8_t, MAX_OBJECTS> Multi_building_states;
 extern uint16_t Multi_num_buildings_changed;
 
 extern bool Multi_logo_state;
@@ -784,9 +787,7 @@ extern int Num_network_games_known;
 extern int Game_is_master_tracker_game;
 
 #define TRACKER_ID_LEN 10 // Don't change this!
-extern char Tracker_id[TRACKER_ID_LEN];
-
-extern uint16_t Turrett_position_counter[MAX_OBJECTS];
+extern std::array<char, TRACKER_ID_LEN> Tracker_id;
 
 #define LOGIN_LEN 33
 #define REAL_NAME_LEN 66
@@ -824,7 +825,7 @@ struct vmt_descent3_struct {
 #pragma pack()
 #endif
 
-extern vmt_descent3_struct MTPilotinfo[MAX_NET_PLAYERS];
+extern std::array<vmt_descent3_struct, MAX_NET_PLAYERS> MTPilotinfo;
 
 // Display a menu based on what the server just told us about
 void MultiDoGuidebotMenuData(uint8_t *data);

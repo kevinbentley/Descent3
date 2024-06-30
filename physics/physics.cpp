@@ -84,7 +84,7 @@ int Physics_player_verbose = 0;
 int Physics_cheat_flag = 0;
 extern char BounceCheat;
 
-int PhysicsLinkList[MAX_OBJECTS];
+std::array<int, MAX_OBJECTS> PhysicsLinkList;
 int Physics_NumLinked = 0;
 
 // Current strength of gravity
@@ -808,7 +808,7 @@ void do_physics_sim(object *obj) {
     Players[obj->id].last_thrust_time = Gametime;
   }
 
-  //	mprintf(0, "%d Over terrain = %d\n", obj - Objects, obj->flags & OF_OVER_TERRAIN);
+  //	mprintf(0, "%d Over terrain = %d\n", OBJNUM(obj), obj->flags & OF_OVER_TERRAIN);
 
   // If the object wiggles
   if ((obj->mtype.phys_info.flags & PF_WIGGLE) && (Demo_flags != DF_PLAYBACK)) {

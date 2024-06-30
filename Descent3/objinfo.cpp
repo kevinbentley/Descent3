@@ -44,7 +44,7 @@
 #include "mem.h"
 
 // The array with information for robots, powerups, buildings, etc.
-object_info Object_info[MAX_OBJECT_IDS];
+std::array<object_info, MAX_OBJECT_IDS> Object_info;
 
 // The number of ids of each type in the list
 int Num_object_ids[MAX_OBJECT_TYPES];
@@ -118,7 +118,7 @@ int AllocObjectID(int type, bool f_anim, bool f_weapons, bool f_ai) {
   for (int i = NUM_STATIC_OBJECTS; i < MAX_OBJECT_IDS; i++) {
     if (Object_info[i].type == OBJ_NONE) {
       mprintf(1, "%d ", type);
-      memset(&Object_info[i], 0, sizeof(*Object_info));
+      memset(&Object_info[i], 0, sizeof(object_info));
 
       extern void AISetDefault(t_ai_info * ai_info_ptr);
       if (f_ai) {

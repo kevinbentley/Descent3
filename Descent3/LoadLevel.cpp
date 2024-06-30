@@ -2499,7 +2499,7 @@ int ReadRoom(CFILE *ifile, room *rp, int version) {
 
     // Check for bad normal
     if (!t) {
-      mprintf(1, "WARNING:  Room %d face %d has bad normal!\n", rp - Rooms, i);
+      mprintf(1, "WARNING:  Room %d face %d has bad normal!\n", rp - std::data(Rooms), i);
     }
   }
 
@@ -3491,8 +3491,8 @@ void ReadPlayerStarts(CFILE *infile, int fileversion) {
 void VerifyObjectList() {
   int i;
 
-  uint8_t already_listed[MAX_OBJECTS];
-  memset(already_listed, 0, MAX_OBJECTS);
+  std::array<uint8_t, MAX_OBJECTS> already_listed;
+  already_listed.fill(0);
 
   for (i = 0; i <= Highest_room_index; i++) {
     room *rp = &Rooms[i];
@@ -3789,8 +3789,8 @@ int LoadLevel(char *filename, void (*cb_fn)(const char *, int, int)) {
       } else if (ISCHUNK(CHUNK_OBJECT_HANDLES)) { // Read in any non-zero handles for deleted objects
         int handle, objnum;
 
-        uint8_t already_loaded[MAX_OBJECTS];
-        memset(already_loaded, 0, MAX_OBJECTS);
+        std::array<uint8_t, MAX_OBJECTS> already_loaded;
+        already_loaded.fill(0);
 
         // Get the number of handles in the file
         n = cf_ReadInt(ifile);
@@ -5117,7 +5117,7 @@ int SaveLevel(char *filename, bool f_save_room_AABB) {
     room *rp;
     int nrooms = 0, nverts = 0, nfaces = 0, nfaceverts = 0, nportals = 0;
     extern int CountRoomFaceVerts(room * rp);                   // TEMP: move to room.h
-    for (i = 0, rp = Rooms; i <= Highest_room_index; i++, rp++) // Count the number of faces, verts, etc. in the level
+    for (i = 0, rp = std::data(Rooms); i <= Highest_room_index; i++, rp++) // Count the number of faces, verts, etc. in the level
       if (rp->used) {
         nrooms++;
         nverts += rp->num_verts;
@@ -5143,13 +5143,13 @@ int SaveLevel(char *filename, bool f_save_room_AABB) {
     EndChunk(ofile, chunk_start_pos);
 
     // Write room wind, if any rooms have wind
-    for (i = nrooms = 0, rp = Rooms; i <= Highest_room_index; i++, rp++) // Count the number of rooms with wind
+    for (i = nrooms = 0, rp = std::data(Rooms); i <= Highest_room_index; i++, rp++) // Count the number of rooms with wind
       if ((rp->wind.x != 0.0) || (rp->wind.y != 0.0) || (rp->wind.z != 0.0))
         nrooms++;
     if (nrooms) {
       chunk_start_pos = StartChunk(ofile, CHUNK_ROOM_WIND);
       cf_WriteInt(ofile, nrooms);
-      for (i = 0, rp = Rooms; i <= Highest_room_index; i++, rp++) { // write the wind values
+      for (i = 0, rp = std::data(Rooms); i <= Highest_room_index; i++, rp++) { // write the wind values
         if ((rp->wind.x != 0.0) || (rp->wind.y != 0.0) || (rp->wind.z != 0.0)) {
           cf_WriteShort(ofile, i);
           cf_WriteVector(ofile, &rp->wind);

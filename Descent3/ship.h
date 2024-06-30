@@ -113,6 +113,8 @@
 #ifndef SHIP_H
 #define SHIP_H
 
+#include <array>
+
 #include "pstypes.h"
 #include "manage.h"
 #include "object.h"
@@ -174,7 +176,7 @@ struct ship {
 };
 
 extern int Num_ships;
-extern ship Ships[MAX_SHIPS];
+extern std::array<ship, MAX_SHIPS> Ships;
 
 extern const char *AllowedShips[];
 

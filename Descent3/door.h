@@ -97,6 +97,8 @@
 #ifndef DOOR_H
 #define DOOR_H
 
+#include <array>
+
 #ifdef NEWEDITOR /* only include tablefile header (manage stuff for NEWEDITOR) */
 #include "..\neweditor\ned_TableFile.h"
 #include "..\neweditor\ned_Door.h"
@@ -142,7 +144,7 @@ struct door {
 // The max number of predefined doors
 #define MAX_DOORS 60
 extern int Num_doors; // number of actual doors in game.
-extern door Doors[];
+extern std::array<door, MAX_DOORS> Doors;
 
 // Sets all doors to unused
 void InitDoors();

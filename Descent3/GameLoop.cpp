@@ -1016,7 +1016,7 @@ void ShrinkWindow() {
 
 #define NUM_CAMERA_VIEWS 3
 
-int Camera_view_mode[NUM_CAMERA_VIEWS];
+std::array<int, NUM_CAMERA_VIEWS> Camera_view_mode;
 
 // Selects the next mode for this view
 void SelectNextCameraView(int window) {
@@ -1384,7 +1384,7 @@ void ProcessNormalKey(int key) {
     switch (key) {
     case KEY_C: {
       // goto next player
-      int viewer_objnum = Viewer_object - Objects;
+      int viewer_objnum = OBJNUM(Viewer_object);
       int found = 0;
 
       for (int i = viewer_objnum + 1; i <= Highest_object_index && !found; i++, i %= (Highest_object_index + 1)) {
@@ -1396,7 +1396,7 @@ void ProcessNormalKey(int key) {
     } break;
     case KEY_P: {
       // goto next player
-      int viewer_objnum = Viewer_object - Objects;
+      int viewer_objnum = OBJNUM(Viewer_object);
       int found = 0;
 
       for (int i = viewer_objnum + 1; i <= Highest_object_index && !found; i++, i %= (Highest_object_index + 1)) {
@@ -1408,7 +1408,7 @@ void ProcessNormalKey(int key) {
     } break;
     case KEY_R: {
       // goto next robot
-      int viewer_objnum = Viewer_object - Objects;
+      int viewer_objnum = OBJNUM(Viewer_object);
       int found = 0;
 
       for (int i = viewer_objnum + 1; i <= Highest_object_index && !found; i++, i %= (Highest_object_index + 1)) {
@@ -2075,7 +2075,7 @@ void ProcessTestKeys(int key) {
 
   case KEY_1: {
     // goto prev viewer
-    int viewer_objnum = Viewer_object - Objects;
+    int viewer_objnum = OBJNUM(Viewer_object);
     int found = 0;
 
     for (i = viewer_objnum - 1; i >= 0 && !found; i--, i < 0 ? i = Highest_object_index : i = i) {
@@ -2098,7 +2098,7 @@ void ProcessTestKeys(int key) {
 
   case KEY_3: {
     // goto next viewer
-    int viewer_objnum = Viewer_object - Objects;
+    int viewer_objnum = OBJNUM(Viewer_object);
     int found = 0;
 
     for (i = viewer_objnum + 1; i <= Highest_object_index && !found; i++, i %= (Highest_object_index + 1)) {

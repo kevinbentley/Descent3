@@ -623,7 +623,8 @@ static void CreateBlueBlastRing(vector *pos, int index, float lifetime, float ma
 
 // If an objects size is bigger than this, we create size/threshold extra explosions
 #define EXTRA_EXPLOSION_THRESHOLD 15
-fireball Fireballs[NUM_FIREBALLS] = {
+std::array<fireball, NUM_FIREBALLS> Fireballs = {
+    fireball
     {"ExplosionAA.oaf", FT_EXPLOSION, SMALL_TEXTURE, .9f, 3.0},        //	MED_EXPLOSION2
     {"ExplosionBB.oaf", FT_EXPLOSION, SMALL_TEXTURE, .9f, 2.0},        //	SMALL_EXPLOSION2
     {"explosionCC.oaf", FT_EXPLOSION, SMALL_TEXTURE, .9f, 3.0f},       // MED_EXPLOSION
@@ -741,7 +742,7 @@ void DrawFireballObject(object *obj) {
   float time_live = Gametime - obj->creation_time;
   float size = obj->size;
 
-  int objnum = obj - Objects;
+  int objnum = OBJNUM(obj);
   int rot_angle;
   int bm_handle;
   if (Fireballs[obj->id].type == FT_BILLOW)
@@ -1048,7 +1049,7 @@ void CreateSplintersFromBody(object *obj, float explosion_mag, float lifetime) {
   vector rot_vecs[MAX_SUBOBJECTS];
   int num_splinters = 0;
   int i, t;
-  int parent_objnum = obj - Objects;
+  int parent_objnum = OBJNUM(obj);
   matrix m;
   m = obj->orient;
   vm_TransposeMatrix(&m);
@@ -1091,7 +1092,7 @@ void CreateSplintersFromBody(object *obj, float explosion_mag, float lifetime) {
     dest = center + obj->pos;
 
     // Now create splinter with that faces center position
-    int s_objnum = ObjCreate(OBJ_SPLINTER, pm - Poly_models, obj->roomnum, &dest, NULL);
+    int s_objnum = ObjCreate(OBJ_SPLINTER, pm - std::data(Poly_models), obj->roomnum, &dest, NULL);
     if (s_objnum < 0) {
       mprintf(0, "Couldn't create splinter object!\n");
       return;
@@ -1129,7 +1130,7 @@ void CreateSplintersFromBody(object *obj, float explosion_mag, float lifetime) {
       // Randomize the lifetime a little
       float mod_lifetime = lifetime;
       mod_lifetime += (((ps_rand() % 9) - 4) * .1);
-      if (((splinter_obj - Objects) % 14) == 0)
+      if ((OBJNUM(splinter_obj) % 14) == 0)
         mod_lifetime += ((ps_rand() % 3) * .5);
       splinter_obj->lifeleft = mod_lifetime;
       splinter_obj->lifetime = mod_lifetime;
@@ -1687,7 +1688,7 @@ void DoGravityFieldEffect(object *obj) {
           vis->lifeleft = Frametime;
           vis->lifetime = Frametime;
           vis->end_pos = hit_obj_ptr->pos;
-          vis->custom_handle = hit_obj_ptr - Objects;
+          vis->custom_handle = OBJNUM(hit_obj_ptr);
           vis->flags = VF_USES_LIFELEFT | VF_NO_Z_ADJUST;
           vis->size = dist;
           vis->velocity.x = 1;

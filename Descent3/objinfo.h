@@ -377,7 +377,7 @@ struct anim_entry {
 };
 
 struct anim_elem {
-  anim_entry elem[NUM_ANIMS_PER_CLASS];
+  std::array<anim_entry, NUM_ANIMS_PER_CLASS> elem;
 };
 
 #define MAX_DSPEW_TYPES 2
@@ -516,7 +516,7 @@ struct object_info {
 };
 
 // The big array of object info
-extern object_info Object_info[];
+extern std::array<object_info, MAX_OBJECT_IDS> Object_info;
 
 #endif
 

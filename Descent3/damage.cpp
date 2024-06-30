@@ -1591,7 +1591,7 @@ void BreakGlassFace(room *rp, int facenum, vector *hitpnt, vector *hitvec) {
     MultiSendBreakGlass(rp, facenum);
 
     if (Num_broke_glass != MAX_BROKE_GLASS) {
-      Broke_glass_rooms[Num_broke_glass] = rp - Rooms;
+      Broke_glass_rooms[Num_broke_glass] = rp - std::data(Rooms);
       Broke_glass_faces[Num_broke_glass] = facenum;
       Num_broke_glass++;
     }

@@ -294,6 +294,8 @@
 #ifndef POLYMODEL_H
 #define POLYMODEL_H
 
+#include <array>
+
 #include "manage.h"
 #include "pstypes.h"
 #include "vecmat.h"
@@ -311,7 +313,7 @@
 #define SOF_MONITOR_MASK 0x0ff0 // mask for monitors
 
 extern int Num_poly_models;
-extern poly_model Poly_models[];
+extern std::array<poly_model, MAX_POLY_MODELS> Poly_models;
 
 extern int Polymodel_use_effect;
 extern polymodel_effect Polymodel_effect;
@@ -326,7 +328,7 @@ extern lightmap_object *Polylighting_lightmap_object;
 
 extern vector Model_eye_position;
 extern vector Interp_pos_instance_vec;
-extern g3Point Robot_points[];
+extern std::array<g3Point, MAX_POLYGON_VECS> Robot_points;
 
 // Flag to draw an outline around the faces
 extern bool Polymodel_outline_mode;

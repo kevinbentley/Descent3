@@ -963,7 +963,7 @@ void ApplyVolumeLightToObject(vector *pos, object *obj, float light_dist, float 
   if (!obj->effect_info->dynamic_this_frame) {
     if (Num_volume_objects < MAX_VOLUME_OBJECTS) {
       Dynamic_volume_object_list[Num_volume_objects].handle = obj->handle;
-      Dynamic_volume_object_list[Num_volume_objects++].objnum = obj - Objects;
+      Dynamic_volume_object_list[Num_volume_objects++].objnum = OBJNUM(obj);
       obj->effect_info->spec_mag = -100000;
 
       obj->effect_info->dynamic_this_frame = 1;

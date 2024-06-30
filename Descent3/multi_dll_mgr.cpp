@@ -387,13 +387,13 @@ extern uint16_t PXOPort;
 void GetMultiAPI(multi_api *api) {
   // make the compiler happy
   bool (*fp_PlayerIsShipAllowed)(int, int) = PlayerIsShipAllowed;
-  api->objs = (int *)Objects;
-  api->rooms = (int *)Rooms;
+  api->objs = (int *)std::data(Objects);
+  api->rooms = (int *)std::data(Rooms);
   api->terrain = (int *)Terrain_seg;
-  api->players = (int *)Players;
+  api->players = (int *)std::data(Players);
   api->netgame = (int *)&Netgame;
   api->netplayers = (int *)&NetPlayers;
-  api->ships = (int *)Ships;
+  api->ships = (int *)std::data(Ships);
   // Fill in function pointers here.  The order here must match the order on the
   // DLL side
 
@@ -522,13 +522,13 @@ void GetMultiAPI(multi_api *api) {
 
   // Variable pointers
   api->vp[0] = (int *)&Player_num;
-  api->vp[1] = (int *)Tracker_id;
+  api->vp[1] = (int *)std::data(Tracker_id);
   api->vp[2] = (int *)&Game_is_master_tracker_game;
   api->vp[3] = (int *)&Game_mode;
   api->vp[4] = (int *)NULL; // Current_pilot; no longer a struct
   api->vp[5] = (int *)Base_directory;
   api->vp[6] = (int *)&MultiDLLGameStarting;
-  api->vp[7] = (int *)MTPilotinfo;
+  api->vp[7] = (int *)std::data(MTPilotinfo);
   api->vp[8] = (int *)&Num_network_games_known;
   api->vp[9] = (int *)&Network_games;
   api->vp[10] = (int *)&NewUIWindow_alpha;

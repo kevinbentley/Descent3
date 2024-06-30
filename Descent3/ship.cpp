@@ -115,7 +115,7 @@
 
 #define DEFAULT_SHIP_SIZE 4.0
 
-ship Ships[MAX_SHIPS];
+std::array<ship, MAX_SHIPS> Ships;
 int Num_ships = 0;
 
 // There are no static ships

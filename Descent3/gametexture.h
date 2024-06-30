@@ -190,6 +190,7 @@
 
 #ifndef GAMETEXTURE_H
 #define GAMETEXTURE_H
+#include <array>
 
 #ifdef NEWEDITOR /* only include tablefile header (manage stuff for NEWEDITOR) */
 #include "..\neweditor\ned_TableFile.h"
@@ -308,7 +309,7 @@ struct texture {
 
 };
 
-extern texture GameTextures[MAX_TEXTURES];
+extern std::array<texture, MAX_TEXTURES> GameTextures;
 extern int Num_textures;
 
 // Inits the texture system, returning 1 if successful

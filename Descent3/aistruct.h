@@ -392,6 +392,8 @@
 #ifndef AISTRUCT_H_
 #define AISTRUCT_H_
 
+#include <array>
+
 #include "pstypes.h"
 #include "vecmat.h"
 #include "aistruct_external.h"
@@ -713,17 +715,17 @@ struct ain_weapon_hit_info {
 
 #define AI_MEM_DEPTH 5
 
-struct ai_mem {
+struct [[gnu::packed]] ai_mem {
   // Computed at end of memory frame
-  float shields;
-  int16_t num_enemies;
-  int16_t num_friends;
+  float shields = 0.0f;
+  int16_t num_enemies = 0;
+  int16_t num_friends = 0;
 
   // Incremented during the memory frame
-  int16_t num_times_hit;
-  int16_t num_enemy_shots_fired;
-  int16_t num_hit_enemy;
-  int16_t num_enemy_shots_dodged;
+  int16_t num_times_hit = 0;
+  int16_t num_enemy_shots_fired = 0;
+  int16_t num_hit_enemy = 0;
+  int16_t num_enemy_shots_dodged = 0;
 };
 
 //-------------------------------------------------
@@ -822,7 +824,7 @@ struct ai_frame {
 
   // X Second memory
   float mem_time_till_next_update;
-  ai_mem memory[AI_MEM_DEPTH];
+  std::array<ai_mem, AI_MEM_DEPTH> memory;
 
   float fire_spread;
   float night_vision;
@@ -866,8 +868,8 @@ public:
     owner_handle = OBJECT_HANDLE_NONE;
   };
 
-  vector pos[MAX_NODES];
-  int roomnum[MAX_NODES];
+  std::array<vector, MAX_NODES> pos;
+  std::array<int, MAX_NODES> roomnum;
 
   int16_t num_nodes;
   int16_t use_count;
@@ -875,8 +877,8 @@ public:
   int owner_handle;
 };
 
-extern ai_dynamic_path AIDynamicPath[MAX_DYNAMIC_PATHS];
-extern int AIAltPath[MAX_ROOMS];
+extern std::array<ai_dynamic_path, MAX_DYNAMIC_PATHS> AIDynamicPath;
+extern std::array<int, MAX_ROOMS> AIAltPath;
 extern int AIAltPathNumNodes;
 
 #endif

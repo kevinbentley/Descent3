@@ -1625,7 +1625,7 @@ const char *const Ai_movement_subtype_walking_strings[MAX_AI_INIT_MOVEMENT_SUBTY
 #define AI_MAX_MELEE_RANGE 5.0f
 
 int AI_NumRendered;
-int AI_RenderedList[MAX_OBJECTS];
+std::array<int, MAX_OBJECTS> AI_RenderedList;
 
 int AI_NumHostileAlert = 0;
 
@@ -3684,7 +3684,7 @@ bool AIInit(object *obj, uint8_t ai_class, uint8_t ai_type, uint8_t ai_movement)
                     ((ai_info->flags & AIF_TEAM_MASK) == AIF_TEAM_REBEL);
 
   ai_info->mem_time_till_next_update = 3.0f + (float)ps_rand() / (float)D3_RAND_MAX * 2.0f;
-  memset(ai_info->memory, 0, sizeof(ai_mem) * AI_MEM_DEPTH);
+  ai_info->memory.fill(ai_mem{});
   for (i = 0; i < AI_MEM_DEPTH; i++) {
     ai_info->memory[0].shields = obj->shields;
   }
@@ -5990,7 +5990,7 @@ void AIDetermineTarget(object *obj) {
 // also current emotional levels should influence the percent chance of the check being successful
 void AIDoFreud(object *obj) {
   ai_frame *ai_info = obj->ai_info;
-  ai_mem *mem = ai_info->memory;
+  auto& mem = ai_info->memory;
 
   int fear_depth = (ai_info->life_preservation) * (AI_MEM_DEPTH - 1) + 1;
   int anger_depth = (ai_info->agression) * (AI_MEM_DEPTH - 1) + 1;

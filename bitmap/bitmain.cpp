@@ -297,6 +297,7 @@
  *
  * $NoKeywords: $
  */
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -321,7 +322,7 @@
 #define BM_FILETYPE_PCX 2
 #define BM_FILETYPE_IFF 3
 int Num_of_bitmaps = 0;
-bms_bitmap GameBitmaps[MAX_BITMAPS];
+std::array<bms_bitmap, MAX_BITMAPS> GameBitmaps;
 uint32_t Bitmap_memory_used = 0;
 uint8_t Bitmaps_initted = 0;
 /* modify these lines to establish data type */
@@ -583,7 +584,7 @@ int bm_FindBitmapName(const char *name) {
   bm_Node *fnode = bm_findNode(&fbmp);
   if (fnode) {
     // mprintf(0,"Hash table found bitmap %d\n",fnode->data - GameBitmaps);
-    return fnode->data - GameBitmaps;
+    return fnode->data - std::data(GameBitmaps);
   } else
     return -1;
 }

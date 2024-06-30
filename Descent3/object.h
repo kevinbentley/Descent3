@@ -650,7 +650,7 @@
 #define LRT_GOURAUD 1
 #define LRT_LIGHTMAPS 2
 
-extern char *Object_type_names[MAX_OBJECT_TYPES];
+extern std::array<const char*, MAX_OBJECT_TYPES> Object_type_names;
 
 // stuctures for different kinds of weapon simulation (for precompution)
 
@@ -686,7 +686,7 @@ extern char *Object_type_names[MAX_OBJECT_TYPES];
  *		VARIABLES
  */
 
-extern object Objects[];
+extern std::array<object, MAX_OBJECTS> Objects;
 extern int Highest_object_index; // highest objnum
 
 extern object *Player_object; // the object that is the player
@@ -694,10 +694,10 @@ extern object *Viewer_object; // which object we are seeing from
 
 #define MAX_BIG_OBJECTS 350
 extern int Num_big_objects;
-extern int16_t BigObjectList[MAX_BIG_OBJECTS]; // DAJ_MR utb int
+extern std::array<int16_t, MAX_BIG_OBJECTS> BigObjectList; // DAJ_MR utb int
 
 // Compute the object number from an object pointer
-#define OBJNUM(objp) (objp - Objects)
+#define OBJNUM(objp) (objp - std::data(Objects))
 #define OBJHANDLE(objp) ((objp) ? (objp)->handle : 0)
 
 /*
@@ -823,10 +823,10 @@ void ObjUnGhostObject(int objnum);
 struct tPosHistory {
   vector pos[MAX_POSITION_HISTORY];
 };
-extern tPosHistory Object_position_samples[MAX_OBJECT_POS_HISTORY];
+extern std::array<tPosHistory, MAX_OBJECT_POS_HISTORY> Object_position_samples;
 extern uint8_t Object_position_head;
-extern int16_t Object_map_position_history[MAX_OBJECTS];
-extern float Last_position_history_update[MAX_POSITION_HISTORY]; // last gametime the positions were updated
+extern std::array<int16_t, MAX_OBJECTS> Object_map_position_history;
+extern std::array<float, MAX_POSITION_HISTORY> Last_position_history_update; // last gametime the positions were updated
 void ObjInitPositionHistory(object *obj);
 void ObjFreePositionHistory(object *obj);
 void ObjResetPositionHistory(void);

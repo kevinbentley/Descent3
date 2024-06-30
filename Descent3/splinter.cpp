@@ -79,9 +79,9 @@ void DoSplinterFrame(object *obj) {
     SetObjectDeadFlag(obj);
   } else {
     // Create smoke for some splinters
-    if (((obj - Objects) % 8) == 0) {
+    if (((OBJNUM(obj)) % 8) == 0) {
       if (ps_rand() % 4) {
-        int type = ((obj - Objects) % 2) ? GetRandomSmallExplosion() : BLACK_SMOKE_INDEX;
+        int type = ((OBJNUM(obj)) % 2) ? GetRandomSmallExplosion() : BLACK_SMOKE_INDEX;
         CreateFireball(&obj->pos, type, obj->roomnum, VISUAL_FIREBALL);
       }
     }

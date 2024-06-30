@@ -107,6 +107,9 @@
 #define _DEMO_FILE_HEADER_
 
 #include <cstdint>
+#include <array>
+
+#include "object_external_struct.h"
 
 extern char Demo_fname[_MAX_PATH * 2];
 
@@ -117,7 +120,7 @@ extern bool Demo_restart;
 extern bool Demo_auto_play;
 extern bool Demo_make_movie;
 extern float Demo_frame_ofs;
-extern uint16_t Demo_obj_map[MAX_OBJECTS];
+extern std::array<uint16_t, MAX_OBJECTS> Demo_obj_map;
 #define DF_NONE 0
 #define DF_RECORDING 1
 #define DF_PLAYBACK 2

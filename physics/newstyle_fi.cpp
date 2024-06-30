@@ -372,7 +372,7 @@ bool PolyCollideObject(object *obj) {
   bool f_use_big_sphere = false;
   float addition;
 
-  ASSERT(obj >= Objects && obj <= &Objects[Highest_object_index]);
+  ASSERT(obj >= std::data(Objects) && obj <= &Objects[Highest_object_index]);
 
 #ifndef NED_PHYSICS
   if ((Game_mode & GM_MULTI) && !(Netgame.flags & NF_USE_ACC_WEAP) && Objects[fvi_moveobj].type == OBJ_WEAPON &&

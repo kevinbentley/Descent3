@@ -313,8 +313,8 @@ int AskToJoin(network_address *addr) {
     start_time = timer_GetTime();
     while ((timer_GetTime() - start_time < ASK_POLL_TIME) && Ok_to_join == -1) {
       int packsize;
-      while (((packsize = nw_Receive(Multi_receive_buffer, &from_addr)) > 0) && Ok_to_join == -1) {
-        MultiProcessBigData(Multi_receive_buffer, packsize, &from_addr);
+      while (((packsize = nw_Receive(std::data(Multi_receive_buffer), &from_addr)) > 0) && Ok_to_join == -1) {
+        MultiProcessBigData(std::data(Multi_receive_buffer), packsize, &from_addr);
       }
     }
   }
@@ -598,7 +598,7 @@ void MultiSendConnectionAccepted(int slotnum, SOCKET sock, network_address *addr
 int MultiPollForLevelInfo() {
   float start_time, ask_time, initial_start_time;
   int connected = 0;
-  uint8_t data[MAX_RECEIVE_SIZE];
+  std::array<uint8_t, MAX_RECEIVE_SIZE> data;
   network_address from_addr;
 
   ShowProgressScreen(TXT_MLTWAITSERVER);
@@ -622,11 +622,11 @@ int MultiPollForLevelInfo() {
     }
 
     int size;
-    while ((size = nw_ReceiveReliable(NetPlayers[Player_num].reliable_socket, data, MAX_RECEIVE_SIZE)) > 0) {
-      MultiProcessBigData(data, size, &Netgame.server_address);
+    while ((size = nw_ReceiveReliable(NetPlayers[Player_num].reliable_socket, std::data(data), MAX_RECEIVE_SIZE)) > 0) {
+      MultiProcessBigData(std::data(data), size, &Netgame.server_address);
     }
 
-    while ((size = nw_Receive(data, &from_addr)) > 0) {
+    while ((size = nw_Receive(std::data(data), &from_addr)) > 0) {
       if (data[0] == MP_HEARTBEAT) {
         mprintf(0, "Got a heart beat from the server.\n");
         Got_heartbeat = true;
@@ -924,8 +924,8 @@ int SearchForLocalGamesTCP(uint32_t ask, uint16_t port) {
   }
 
   int packsize;
-  while (((packsize = nw_Receive(Multi_receive_buffer, &from_addr)) > 0)) {
-    MultiProcessBigData(Multi_receive_buffer, packsize, &from_addr);
+  while (((packsize = nw_Receive(std::data(Multi_receive_buffer), &from_addr)) > 0)) {
+    MultiProcessBigData(std::data(Multi_receive_buffer), packsize, &from_addr);
   }
   return Num_network_games_known;
 }
@@ -953,8 +953,8 @@ int SearchForGamesPXO(uint32_t ask, uint16_t port) {
   }
 
   int packsize;
-  while (((packsize = nw_Receive(Multi_receive_buffer, &from_addr)) > 0)) {
-    MultiProcessBigData(Multi_receive_buffer, packsize, &from_addr);
+  while (((packsize = nw_Receive(std::data(Multi_receive_buffer), &from_addr)) > 0)) {
+    MultiProcessBigData(std::data(Multi_receive_buffer), packsize, &from_addr);
   }
   return Num_network_games_known;
 }

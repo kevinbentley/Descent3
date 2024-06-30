@@ -364,7 +364,7 @@
 // #include "samirlog.h"
 #define LOGFILE(_s)
 
-weapon Weapons[MAX_WEAPONS];
+std::array<weapon, MAX_WEAPONS> Weapons;
 int Num_weapons = 0;
 
 const char *Static_weapon_names[] = {

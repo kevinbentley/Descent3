@@ -187,7 +187,7 @@ struct fireball {
   int16_t bm_handle;  // The handle to the vlip
 };
 
-extern fireball Fireballs[];
+extern std::array<fireball, NUM_FIREBALLS> Fireballs;
 
 // Initalizes the explosion system
 void InitFireballs();
