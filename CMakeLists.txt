@@ -15,6 +15,7 @@ option(FORCE_PORTABLE_INSTALL "Install all files into local directory defined by
 option(ENABLE_LOGGER "Enable logging to the terminal" OFF)
 option(ENABLE_MEM_RTL "Enable Real-time library memory management functions (disable to verbose memory allocations)" ON)
 option(BUILD_TESTING "Enable testing. Requires GTest." OFF)
+option(HOST_TOOLS_ONLY "Build only the tools a build host needs, for cross-compilation to a non-native target." OFF)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   option(BUILD_EDITOR "Build internal editor" OFF)
@@ -95,10 +96,11 @@ if(UNIX)
   add_compile_options("$<$<COMPILE_LANGUAGE:C>:${BITS}>")
 endif()
 
-find_package(SDL2 REQUIRED)
-# Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
-message("SDL2 Include Dir is ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS}")
-
+if(NOT HOST_TOOLS_ONLY)
+  find_package(SDL2 REQUIRED)
+  # Some versions of the SDL2 find_package set SDL2_INCLUDE_DIR and some set a plural SDL2_INCLUDE_DIRS. Check both.
+  message("SDL2 Include Dir is ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS}")
+endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   message("Building for Linux")
@@ -169,55 +171,57 @@ include_directories(
   ${PLATFORM_INCLUDES}
 )
 
-add_subdirectory(third_party)
-
-add_subdirectory(2dlib)
-add_subdirectory(AudioEncode)
-add_subdirectory(bitmap)
-add_subdirectory(cfile)
-add_subdirectory(czip)
-add_subdirectory(d3music)
-add_subdirectory(ddebug)
-
-if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_subdirectory(dd_grwin32)
-  add_subdirectory(win32)
-endif()
-
-add_subdirectory(linux)
-
-add_subdirectory(ddio)
-add_subdirectory(dd_video)
-add_subdirectory(fix)
-add_subdirectory(manage)
-add_subdirectory(grtext)
-add_subdirectory(mem)
-add_subdirectory(misc)
-add_subdirectory(model)
-add_subdirectory(module)
-add_subdirectory(movie)
-add_subdirectory(music)
-add_subdirectory(networking)
-add_subdirectory(physics)
-add_subdirectory(renderer)
-add_subdirectory(rtperformance)
-add_subdirectory(sndlib)
-add_subdirectory(stream_audio)
-add_subdirectory(ui)
-add_subdirectory(unzip)
-add_subdirectory(vecmat)
-add_subdirectory(libmve)
-add_subdirectory(md5)
-add_subdirectory(libacm)
-
-
-if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_subdirectory(editor)
-endif()
-
-add_subdirectory(Descent3)
-
 add_subdirectory(tools)
-add_subdirectory(netcon)
-add_subdirectory(netgames)
-add_subdirectory(scripts)
+if(NOT HOST_TOOLS_ONLY)
+  add_subdirectory(third_party)
+
+  add_subdirectory(2dlib)
+  add_subdirectory(AudioEncode)
+  add_subdirectory(bitmap)
+  add_subdirectory(cfile)
+  add_subdirectory(czip)
+  add_subdirectory(d3music)
+  add_subdirectory(ddebug)
+
+  if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_subdirectory(dd_grwin32)
+    add_subdirectory(win32)
+  endif()
+
+  add_subdirectory(linux)
+
+  add_subdirectory(ddio)
+  add_subdirectory(dd_video)
+  add_subdirectory(fix)
+  add_subdirectory(manage)
+  add_subdirectory(grtext)
+  add_subdirectory(mem)
+  add_subdirectory(misc)
+  add_subdirectory(model)
+  add_subdirectory(module)
+  add_subdirectory(movie)
+  add_subdirectory(music)
+  add_subdirectory(networking)
+  add_subdirectory(physics)
+  add_subdirectory(renderer)
+  add_subdirectory(rtperformance)
+  add_subdirectory(sndlib)
+  add_subdirectory(stream_audio)
+  add_subdirectory(ui)
+  add_subdirectory(unzip)
+  add_subdirectory(vecmat)
+  add_subdirectory(libmve)
+  add_subdirectory(md5)
+  add_subdirectory(libacm)
+
+
+  if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_subdirectory(editor)
+  endif()
+
+  add_subdirectory(Descent3)
+
+  add_subdirectory(netcon)
+  add_subdirectory(netgames)
+  add_subdirectory(scripts)
+endif()

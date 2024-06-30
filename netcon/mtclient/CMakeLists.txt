@@ -17,6 +17,10 @@ target_link_libraries(Parallax_Online PRIVATE
   $<$<PLATFORM_ID:Windows>:ws2_32>
 )
 
+if (HogMaker_DIR)
+  find_package(HogMaker REQUIRED)
+endif()
+
 add_custom_target(Parallax_Online_Hog
   COMMAND $<TARGET_FILE:HogMaker>
   "$<TARGET_FILE_DIR:Descent3>/online/Parallax Online.d3c"
