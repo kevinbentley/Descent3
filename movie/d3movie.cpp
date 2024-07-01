@@ -286,13 +286,13 @@ bool mve_FindMovieFileRealName(const char *movie, char *real_name) {
   // found a directory?
   if (strlen(t_dir) > 0) {
     // map the bits (or fail)
-    if (!cf_FindRealFileNameCaseInsenstive(t_dir, t_file, t_out))
+    if (!cf_FindRealFileNameCaseInsenstive(t_file, t_out, t_dir))
       return false;
     // re-assemble
     ddio_MakePath(real_name, t_dir, t_out, NULL);
   } else {
     // just a file, map that
-    if (!cf_FindRealFileNameCaseInsenstive(std::filesystem::path(), t_file, t_out))
+    if (!cf_FindRealFileNameCaseInsenstive(t_file, t_out))
       return false;
     // re-assemble
     strcpy(real_name, t_out);

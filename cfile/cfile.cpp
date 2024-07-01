@@ -113,7 +113,7 @@ int cf_OpenLibrary(const std::filesystem::path &libname) {
   }
 
   char t_out[_MAX_PATH];
-  if (!cf_FindRealFileNameCaseInsenstive(resolve_dir, resolve_name, t_out)) {
+  if (!cf_FindRealFileNameCaseInsenstive(resolve_name, t_out, resolve_dir)) {
     return 0; // CF_NO_FILE
   }
   // re-assemble
@@ -435,7 +435,8 @@ static FILE *open_file_in_directory_case_sensitive(const std::filesystem::path &
                                                    const std::filesystem::path &filename, const char *mode,
                                                    char *new_filename);
 
-bool cf_FindRealFileNameCaseInsenstive(const std::filesystem::path &directory, const std::filesystem::path &fname, char *new_filename) {
+bool cf_FindRealFileNameCaseInsenstive(const std::filesystem::path &fname, char *new_filename,
+                                       const std::filesystem::path &directory) {
   bool use_dir = false;
   std::filesystem::path dir_to_use, file_to_use;
   std::filesystem::path real_dir;
@@ -566,7 +567,7 @@ FILE *open_file_in_directory_case_sensitive(const std::filesystem::path &directo
                                             const std::filesystem::path &filename, const char *mode,
                                             char *new_filename) {
   std::filesystem::path t_dir = filename.parent_path();
-  if (cf_FindRealFileNameCaseInsenstive(directory, filename, new_filename)) {
+  if (cf_FindRealFileNameCaseInsenstive(filename, new_filename, directory)) {
     // we have a file, open it open and use it
     std::filesystem::path full_path;
     // if we had a directory as part of the file name, put it back in

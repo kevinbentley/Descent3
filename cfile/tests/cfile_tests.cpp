@@ -79,7 +79,7 @@ TEST(D3, CFileCaseSensitiveSearch) {
   };
 
   char filename[260];
-  bool test = cf_FindRealFileNameCaseInsenstive("no-exist-dir", "no-exist-file.txt", filename);
+  bool test = cf_FindRealFileNameCaseInsenstive("no-exist-file.txt", filename, "no-exist-dir");
   EXPECT_EQ(test, false);
 
   auto cwd = std::filesystem::current_path();
@@ -91,12 +91,12 @@ TEST(D3, CFileCaseSensitiveSearch) {
     std::string file_uc = item.filename();
     std::transform(file_uc.begin(), file_uc.end(), file_uc.begin(), ::toupper);
 
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory, file_lc, filename), true);
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory, file_uc, filename), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(file_lc, filename, directory), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(file_uc, filename, directory), true);
     EXPECT_EQ(std::filesystem::path(filename), file);
 
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(std::filesystem::path(), directory / file_lc, filename), true);
-    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(std::filesystem::path(), directory / file_uc, filename), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory / file_lc, filename), true);
+    EXPECT_EQ(cf_FindRealFileNameCaseInsenstive(directory / file_uc, filename), true);
     EXPECT_EQ(std::filesystem::path(filename), file);
 
   }

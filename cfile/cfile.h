@@ -156,12 +156,16 @@ int cf_OpenLibrary(const std::filesystem::path& libname);
 void cf_CloseLibrary(int handle);
 
 #ifdef __LINUX__
-// Maps fixed case file name to actual case on disk
-// Parameters:  directory: optional directory to search within (can be NULL)
-//              filename: the fixed case name to map to reality
-//              new_filename: buffer to store mapped name, must be at least _MAX_PATH bytes
-// Returns: false if error, true if translated
-bool cf_FindRealFileNameCaseInsenstive(const std::filesystem::path &directory, const std::filesystem::path &fname, char *new_filename);
+
+/**
+ * Maps fixed case file name to actual case on disk
+ * @param fname the fixed case name to map to reality
+ * @param new_filename buffer to store mapped name, must be at least _MAX_PATH bytes
+ * @param directory optional directory to search within
+ * @return false if error, true if translated
+ */
+bool cf_FindRealFileNameCaseInsenstive(const std::filesystem::path &fname, char *new_filename,
+                                       const std::filesystem::path &directory = {});
 #endif
 
 /**
