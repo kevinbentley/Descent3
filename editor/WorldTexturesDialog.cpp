@@ -459,10 +459,12 @@ void CWorldTexturesDialog::OnWtexdlgAddnew() {
   mprintf(0, "Making a copy of this bitmap/anim locally...\n");
 
   if (!anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[GameTextures[tex_handle].bm_handle].name);
     bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
   } else {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameVClips[GameTextures[tex_handle].bm_handle].name);
     SaveVClip(filename, GameTextures[tex_handle].bm_handle);
   }
 
@@ -1091,19 +1093,19 @@ void CWorldTexturesDialog::OnCheckin() {
       else {
         // Save this textures bitmap to the network for all
 
-        char fname[255];
+        std::filesystem::path fname;
 
         if (GameTextures[n].flags & TF_ANIMATED) {
-          sprintf(fname, "%s\\%s", ManageGraphicsDir, GameVClips[GameTextures[n].bm_handle].name);
+          fname = ManageGraphicsDir / GameVClips[GameTextures[n].bm_handle].name;
           SaveVClip(fname, GameTextures[n].bm_handle);
 
-          sprintf(fname, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[n].bm_handle].name);
+          fname = LocalManageGraphicsDir / GameVClips[GameTextures[n].bm_handle].name;
           SaveVClip(fname, GameTextures[n].bm_handle);
         } else {
-          sprintf(fname, "%s\\%s", ManageGraphicsDir, GameBitmaps[GameTextures[n].bm_handle].name);
+          fname = ManageGraphicsDir / GameBitmaps[GameTextures[n].bm_handle].name;
           bm_SaveFileBitmap(fname, GameTextures[n].bm_handle);
 
-          sprintf(fname, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[n].bm_handle].name);
+          fname = LocalManageGraphicsDir / GameBitmaps[GameTextures[n].bm_handle].name;
           bm_SaveFileBitmap(fname, GameTextures[n].bm_handle);
         }
 
@@ -1162,13 +1164,13 @@ void CWorldTexturesDialog::SaveTexturesOnClose() {
 
       mng_ReplacePage(GameTextures[t].name, GameTextures[t].name, t, PAGETYPE_TEXTURE, 1);
 
-      char fname[255];
+      std::filesystem::path fname;
 
       if (GameTextures[t].flags & TF_ANIMATED) {
-        sprintf(fname, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[t].bm_handle].name);
+        fname = LocalManageGraphicsDir / GameVClips[GameTextures[t].bm_handle].name;
         SaveVClip(fname, GameTextures[t].bm_handle);
       } else {
-        sprintf(fname, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[t].bm_handle].name);
+        fname = LocalManageGraphicsDir / GameBitmaps[GameTextures[t].bm_handle].name;
         bm_SaveFileBitmap(fname, GameTextures[t].bm_handle);
       }
     }
@@ -1331,10 +1333,12 @@ void CWorldTexturesDialog::OnLoadBitmap() {
   mprintf(0, "Making a copy of this bitmap locally...\n");
 
   if (anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[n].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameVClips[GameTextures[n].bm_handle].name);
     SaveVClip(filename, GameTextures[n].bm_handle);
   } else {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[n].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[GameTextures[n].bm_handle].name);
     bm_SaveFileBitmap(filename, GameTextures[n].bm_handle);
   }
 
@@ -1688,7 +1692,8 @@ Here:
   for (i = 0; i < total; i++) {
     tex_handle = tex_list[i];
 
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[GameTextures[tex_handle].bm_handle].name);
     bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
   }
 
@@ -1842,10 +1847,12 @@ void CWorldTexturesDialog::OnAddNewSmall() {
   mprintf(0, "Making a copy of this bitmap/anim locally...\n");
 
   if (!anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[GameTextures[tex_handle].bm_handle].name);
     bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
   } else {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameVClips[GameTextures[tex_handle].bm_handle].name);
     SaveVClip(filename, GameTextures[tex_handle].bm_handle);
   }
 
@@ -1931,10 +1938,12 @@ void CWorldTexturesDialog::OnAddNewTiny() {
   mprintf(0, "Making a copy of this bitmap/anim locally...\n");
 
   if (!anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[GameTextures[tex_handle].bm_handle].name);
     bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
   } else {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameVClips[GameTextures[tex_handle].bm_handle].name);
     SaveVClip(filename, GameTextures[tex_handle].bm_handle);
   }
 
@@ -2543,10 +2552,12 @@ void CWorldTexturesDialog::OnAddNewHuge() {
   mprintf(0, "Making a copy of this bitmap/anim locally...\n");
 
   if (!anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameBitmaps[GameTextures[tex_handle].bm_handle].name);
     bm_SaveFileBitmap(filename, GameTextures[tex_handle].bm_handle);
   } else {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[GameTextures[tex_handle].bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(),
+      GameVClips[GameTextures[tex_handle].bm_handle].name);
     SaveVClip(filename, GameTextures[tex_handle].bm_handle);
   }
 

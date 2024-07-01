@@ -19,7 +19,8 @@
 #ifndef PSBITMAP_H
 #define PSBITMAP_H
 
-#include "pstypes.h"
+#include <filesystem>
+
 #include "cfile.h"
 
 #ifdef __LINUX__
@@ -107,7 +108,7 @@ int bm_FindBitmapName(const char *name);
 int bm_SaveBitmap(CFILE *fp, int handle);
 // Saves a bitmap to a file.  Saves the bitmap as an OUTRAGE_TGA_TYPE.
 // Returns -1 if something is wrong.
-int bm_SaveFileBitmap(const char *filename, int handle);
+int bm_SaveFileBitmap(const std::filesystem::path& filename, int handle);
 // given a handle to a bitmap, returns its width, or -1 if handle is invalid
 int bm_w(int handle, int miplevel);
 // given a handle to a bitmap, returns its height, or -1 if handle is invalid

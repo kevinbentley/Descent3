@@ -594,9 +594,9 @@ int menutga_alloc_file(const char *name, char *hsmap[1], int *w, int *h) {
 
 // TODO: MTS: only used in this file
 // Given a filename and a hotspotmap structure, it saves it to disk (.HSM)
-void menutga_SaveHotSpotMap(const char *filename, hotspotmap_t *hsmap, windowmap_t *wndmap) {
+void menutga_SaveHotSpotMap(const std::filesystem::path &filename, hotspotmap_t *hsmap, windowmap_t *wndmap) {
   CFILE *file;
-  mprintf(0, "Saving HotSpotMap %s ", filename);
+  mprintf(0, "Saving HotSpotMap %s ", filename.u8string().c_str());
   file = (CFILE *)cfopen(filename, "wb");
   if (!file) {
     Int3(); // get jeff!
@@ -883,7 +883,7 @@ bool menutga_ConvertTGAtoHSM(const char *fpath) {
   strcat(menu_filename, ".HSM"); // Hot Spot Map
   mprintf(0, "HSM=%s\n", menu_filename);
 
-  ddio_MakePath(path, LocalManageGraphicsDir, menu_filename, NULL);
+  std::filesystem::path save_path = LocalManageGraphicsDir / menu_filename;
 
   // now load up the tga and alloc it, then save it with the alpha hotspots
   int bm_handle;
@@ -895,7 +895,7 @@ bool menutga_ConvertTGAtoHSM(const char *fpath) {
   if (wndmap.num_of_windows == -1)
     return false; // DAJ -1FIX
   CreateWindowMap(map[0], width, height, &wndmap);
-  menutga_SaveHotSpotMap(path, &hsmap, &wndmap);
+  menutga_SaveHotSpotMap(save_path, &hsmap, &wndmap);
   ExportHotSpot("C:\\hotspot.txt", &hsmap);
   mem_free(menu_filename);
   mem_free(map[0]);

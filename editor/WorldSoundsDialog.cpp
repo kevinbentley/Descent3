@@ -117,6 +117,8 @@
 // WorldSoundsDialog.cpp : implementation file
 //
 
+#include <filesystem>
+
 #include "stdafx.h"
 
 #include "pserror.h"
@@ -248,10 +250,8 @@ void CWorldSoundsDialog::OnAddSound() {
   // Finally, save a local copy of the .wav and alloc a tracklock
   mprintf(0, "Making a copy of this sound locally...\n");
 
-  char destname[100];
-  sprintf(destname, "%s\\%s", LocalSoundsDir, SoundFiles[Sounds[sound_handle].sample_index].name);
-  if (stricmp(destname, filename)) // only copy if they are different
-    cf_CopyFile(destname, filename);
+  std::filesystem::path destname = LocalSoundsDir / SoundFiles[Sounds[sound_handle].sample_index].name;
+  cf_CopyFile(destname, filename);
 
   mng_AllocTrackLock(cur_name, PAGETYPE_SOUND);
 
@@ -300,10 +300,8 @@ void CWorldSoundsDialog::OnCheckinSound() {
       else {
         // Save this sound raw to the network for all
 
-        char destname[100], srcname[100];
-
-        sprintf(srcname, "%s\\%s", LocalSoundsDir, SoundFiles[Sounds[n].sample_index].name);
-        sprintf(destname, "%s\\%s", NetSoundsDir, SoundFiles[Sounds[n].sample_index].name);
+        std::filesystem::path srcname = LocalSoundsDir / SoundFiles[Sounds[n].sample_index].name;
+        std::filesystem::path destname = NetSoundsDir / SoundFiles[Sounds[n].sample_index].name;
 
         cf_CopyFile(destname, srcname);
 
@@ -451,7 +449,6 @@ void CWorldSoundsDialog::OnLockSound() {
 
 void CWorldSoundsDialog::OnLoadSound() {
   char filename[255];
-  char curname[255];
   int raw_handle;
   int sound_handle;
   int c = 1, finding_name = 1;
@@ -477,7 +474,7 @@ void CWorldSoundsDialog::OnLoadSound() {
 
   // Finally, save a local copy of the raw
 
-  sprintf(curname, "%s\\%s", LocalSoundsDir, SoundFiles[Sounds[sound_handle].sample_index].name);
+  std::filesystem::path  curname = LocalSoundsDir / SoundFiles[Sounds[sound_handle].sample_index].name;
   cf_CopyFile(curname, filename);
 
   UpdateDialog();

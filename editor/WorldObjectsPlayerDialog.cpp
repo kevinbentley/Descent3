@@ -121,6 +121,8 @@
  * $NoKeywords: $
  */
 
+#include <filesystem>
+
 #include "mfc_compatibility.h"
 #include "editor.h"
 #include "WorldObjectsPlayerDialog.h"
@@ -243,10 +245,8 @@ void CWorldObjectsPlayerDialog::OnAddPship() {
   // Finally, save a local copy of the model/anim and alloc a tracklock
   mprintf(0, "Making a copy of this model locally...\n");
 
-  char destname[100];
-  sprintf(destname, "%s\\%s", LocalModelsDir, Poly_models[Ships[ship_handle].model_handle].name);
-  if (stricmp(destname, filename)) // only copy if they are different
-    cf_CopyFile(destname, filename);
+  std::filesystem::path destname = LocalModelsDir / Poly_models[Ships[ship_handle].model_handle].name;
+  cf_CopyFile(destname, filename);
 
   mng_AllocTrackLock(cur_name, PAGETYPE_SHIP);
 
@@ -291,38 +291,35 @@ void CWorldObjectsPlayerDialog::OnPshipCheckin() {
         OutrageMessageBox(ErrorString);
       else {
         // Save this ship anim/model to the network for all
-
-        char destname[100], srcname[100];
-
-        sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Ships[n].model_handle].name);
-        sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Ships[n].model_handle].name);
+        std::filesystem::path srcname = LocalModelsDir / Poly_models[Ships[n].model_handle].name;
+        std::filesystem::path destname = NetModelsDir / Poly_models[Ships[n].model_handle].name;
 
         cf_CopyFile(destname, srcname);
 
         if (Ships[n].dying_model_handle != -1) {
-          sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Ships[n].dying_model_handle].name);
-          sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Ships[n].dying_model_handle].name);
+          srcname = LocalModelsDir / Poly_models[Ships[n].dying_model_handle].name;
+          destname = NetModelsDir / Poly_models[Ships[n].dying_model_handle].name;
 
           cf_CopyFile(destname, srcname);
         }
 
         if (Ships[n].med_render_handle != -1) {
-          sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Ships[n].med_render_handle].name);
-          sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Ships[n].med_render_handle].name);
+          srcname = LocalModelsDir / Poly_models[Ships[n].med_render_handle].name;
+          destname = NetModelsDir / Poly_models[Ships[n].med_render_handle].name;
 
           cf_CopyFile(destname, srcname);
         }
 
         if (Ships[n].lo_render_handle != -1) {
-          sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Ships[n].lo_render_handle].name);
-          sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Ships[n].lo_render_handle].name);
+          srcname = LocalModelsDir / Poly_models[Ships[n].lo_render_handle].name;
+          destname = NetModelsDir / Poly_models[Ships[n].lo_render_handle].name;
 
           cf_CopyFile(destname, srcname);
         }
 
         if (Ships[n].cockpit_name[0]) {
-          sprintf(srcname, "%s\\%s", LocalMiscDir, Ships[n].cockpit_name);
-          sprintf(destname, "%s\\%s", NetMiscDir, Ships[n].cockpit_name);
+          srcname = LocalMiscDir / Ships[n].cockpit_name;
+          destname = NetMiscDir / Ships[n].cockpit_name;
 
           cf_CopyFile(destname, srcname);
         }
@@ -409,7 +406,6 @@ void CWorldObjectsPlayerDialog::OnPshipDelete() {
 
 void CWorldObjectsPlayerDialog::OnPshipLoadModel() {
   char filename[255];
-  char curname[255];
   int img_handle;
   int ship_handle;
   int c = 1, finding_name = 1;
@@ -455,7 +451,7 @@ void CWorldObjectsPlayerDialog::OnPshipLoadModel() {
   }
 
   // Finally, save a local copy of the model
-  sprintf(curname, "%s\\%s", LocalModelsDir, Poly_models[img_handle].name);
+  std::filesystem::path curname = LocalModelsDir / Poly_models[img_handle].name;
   cf_CopyFile(curname, filename);
 
   UpdateDialog();
@@ -916,7 +912,6 @@ void CWorldObjectsPlayerDialog::OnPshipEditPhysics() {
 
 void CWorldObjectsPlayerDialog::OnPshipDyingModel() {
   char filename[_MAX_PATH];
-  char curname[_MAX_PATH];
   int img_handle;
   int ship_handle;
   int c = 1, finding_name = 1;
@@ -943,7 +938,7 @@ void CWorldObjectsPlayerDialog::OnPshipDyingModel() {
 
   // Finally, save a local copy of the model
 
-  sprintf(curname, "%s\\%s", LocalModelsDir, Poly_models[Ships[ship_handle].dying_model_handle].name);
+  std::filesystem::path curname = LocalModelsDir / Poly_models[Ships[ship_handle].dying_model_handle].name;
   cf_CopyFile(curname, filename);
 
   UpdateDialog();
@@ -980,7 +975,7 @@ void CWorldObjectsPlayerDialog::OnPshipCockpit() {
   sprintf(Ships[D3EditState.current_ship].cockpit_name, "%s%s", curname, ext);
 
   // Finally, save a local copy of the inf file.
-  sprintf(curname, "%s\\%s", LocalMiscDir, Ships[D3EditState.current_ship].cockpit_name);
+  sprintf(curname, "%s\\%s", LocalMiscDir.u8string().c_str(), Ships[D3EditState.current_ship].cockpit_name);
   cf_CopyFile(curname, filename);
 
   UpdateDialog();

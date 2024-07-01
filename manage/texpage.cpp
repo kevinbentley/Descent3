@@ -1,5 +1,5 @@
 /*
-* Descent 3 
+* Descent 3
 * Copyright (C) 2024 Parallax Software
 *
 * This program is free software: you can redistribute it and/or modify
@@ -257,6 +257,9 @@
  * $NoKeywords: $
  */
 
+#include <cstring>
+#include <filesystem>
+
 #include "cfile.h"
 #include "manage.h"
 #include "gametexture.h"
@@ -264,7 +267,6 @@
 #include "mono.h"
 #include "pserror.h"
 #include "texpage.h"
-#include <string.h>
 #include "vclip.h"
 #include "ddio.h"
 #include "args.h"
@@ -841,7 +843,7 @@ int mng_FindSpecificTexPage(char *name, mngs_texture_page *texpage, int offset) 
   uint8_t pagetype;
   int done = 0, found = 0;
   int first_try = 1;
-  char tablename[TABLE_NAME_LEN];
+  std::filesystem::path tablename;
 
   if (Loading_locals) {
     infile = cfopen(LocalTableFilename, "rb");
@@ -852,9 +854,9 @@ int mng_FindSpecificTexPage(char *name, mngs_texture_page *texpage, int offset) 
       int farg = FindArg("-filter");
 
       if (farg)
-        strcpy(tablename, GameArgs[farg + 1]);
+        tablename = GameArgs[farg + 1];
       else
-        ddio_MakePath(tablename, LocalTableDir, NET_TABLE, NULL);
+        tablename = LocalTableDir / NET_TABLE;
 
       infile = cfopen(tablename, "rb");
     } else {
@@ -944,13 +946,8 @@ int mng_AssignTexPageToTexture(mngs_texture_page *texpage, int n, CFILE *infile)
 // If this is a release, don't do any of this stuff
 #ifndef RELEASE
   if (Network_up) {
-    char str[200];
-    char netstr[200];
-
-    ddio_MakePath(str, LocalManageGraphicsDir, texpage->bitmap_name, NULL);
-    ddio_MakePath(netstr, ManageGraphicsDir, texpage->bitmap_name, NULL);
-
-    UpdatePrimitive(str, netstr, texpage->bitmap_name, PAGETYPE_TEXTURE, tex->name);
+    UpdatePrimitive(LocalManageGraphicsDir / texpage->bitmap_name, ManageGraphicsDir / texpage->bitmap_name,
+                    texpage->bitmap_name, PAGETYPE_TEXTURE, tex->name);
   }
 #endif
 

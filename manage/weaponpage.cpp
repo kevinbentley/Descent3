@@ -1,5 +1,5 @@
 /*
-* Descent 3 
+* Descent 3
 * Copyright (C) 2024 Parallax Software
 *
 * This program is free software: you can redistribute it and/or modify
@@ -286,6 +286,10 @@
  *
  * $NoKeywords: $
  */
+
+#include <cstring>
+#include <filesystem>
+
 #include "cfile.h"
 #include "manage.h"
 #include "weapon.h"
@@ -299,7 +303,6 @@
 #include "ddio.h"
 #include "gametexture.h"
 #include "texpage.h"
-#include <string.h>
 #include "sounds.h"
 #include "genericpage.h"
 #include "args.h"
@@ -1162,7 +1165,7 @@ int mng_FindSpecificWeaponPage(char *name, mngs_weapon_page *weaponpage) {
   uint8_t pagetype;
   int done = 0, found = 0;
   int first_try = 1;
-  char tablename[TABLE_NAME_LEN];
+  std::filesystem::path tablename;
 
   if (Loading_locals) {
     infile = cfopen(LocalTableFilename, "rb");
@@ -1173,9 +1176,9 @@ int mng_FindSpecificWeaponPage(char *name, mngs_weapon_page *weaponpage) {
       int farg = FindArg("-filter");
 
       if (farg)
-        strcpy(tablename, GameArgs[farg + 1]);
+        tablename = GameArgs[farg + 1];
       else
-        ddio_MakePath(tablename, LocalTableDir, NET_TABLE, NULL);
+        tablename = LocalTableDir / NET_TABLE;
 
       infile = cfopen(tablename, "rb");
     } else {
@@ -1246,13 +1249,13 @@ int mng_FindSpecificWeaponPage(char *name, mngs_weapon_page *weaponpage, int off
     infile = cfopen(AddOnDataTables[Loading_addon_table].AddOnTableFilename, "rb");
   } else {
     if (Network_up && Starting_editor) {
-      char tablename[TABLE_NAME_LEN];
+      std::filesystem::path tablename;
 
       int farg = FindArg("-filter");
       if (farg)
-        strcpy(tablename, GameArgs[farg + 1]);
+        tablename = GameArgs[farg + 1];
       else
-        ddio_MakePath(tablename, LocalTableDir, NET_TABLE, NULL);
+        tablename = LocalTableDir / NET_TABLE;
 
       infile = cfopen(tablename, "rb");
     } else {
@@ -1377,24 +1380,20 @@ int mng_AssignWeaponPageToWeapon(mngs_weapon_page *weaponpage, int n, CFILE *inf
 
 #ifndef RELEASE
   if (Network_up) {
-    char str[200];
-    char netstr[200];
+    std::filesystem::path str = LocalManageGraphicsDir;
+    std::filesystem::path netstr = ManageGraphicsDir;
 
-    ddio_MakePath(str, LocalManageGraphicsDir, weaponpage->hud_image_name, NULL);
-    ddio_MakePath(netstr, ManageGraphicsDir, weaponpage->hud_image_name, NULL);
-
-    UpdatePrimitive(str, netstr, weaponpage->hud_image_name, PAGETYPE_WEAPON, weaponpointer->name);
+    UpdatePrimitive(str / weaponpage->hud_image_name, netstr / weaponpage->hud_image_name, weaponpage->hud_image_name,
+                    PAGETYPE_WEAPON, weaponpointer->name);
 
     // Now copy the discharge image, depending on whether or not its a model
-    if ((weaponpage->weapon_struct.flags & WF_IMAGE_BITMAP) || (weaponpage->weapon_struct.flags & WF_IMAGE_VCLIP)) {
-      ddio_MakePath(str, LocalManageGraphicsDir, weaponpage->fire_image_name, NULL);
-      ddio_MakePath(netstr, ManageGraphicsDir, weaponpage->fire_image_name, NULL);
-    } else {
-      ddio_MakePath(str, LocalModelsDir, weaponpage->fire_image_name, NULL);
-      ddio_MakePath(netstr, NetModelsDir, weaponpage->fire_image_name, NULL);
+    if (!((weaponpage->weapon_struct.flags & WF_IMAGE_BITMAP) || (weaponpage->weapon_struct.flags & WF_IMAGE_VCLIP))) {
+      str = LocalModelsDir;
+      netstr = NetModelsDir;
     }
 
-    UpdatePrimitive(str, netstr, weaponpage->fire_image_name, PAGETYPE_WEAPON, weaponpointer->name);
+    UpdatePrimitive(str / weaponpage->fire_image_name, netstr / weaponpage->fire_image_name,
+                    weaponpage->fire_image_name, PAGETYPE_WEAPON, weaponpointer->name);
   }
 #endif
 
@@ -1479,7 +1478,8 @@ int mng_AssignWeaponPageToWeapon(mngs_weapon_page *weaponpage, int n, CFILE *inf
     img_handle = mng_GetGuaranteedWeaponPage(weaponpage->alternate_spawn_name, infile);
 
     if (img_handle < 0) {
-      mprintf(0, "Couldn't load alternate spawn weapon '%s' in AssignWeaponPage...\n", weaponpage->alternate_spawn_name);
+      mprintf(0, "Couldn't load alternate spawn weapon '%s' in AssignWeaponPage...\n",
+              weaponpage->alternate_spawn_name);
       weaponpointer->alternate_spawn_handle = -1;
     } else
       weaponpointer->alternate_spawn_handle = img_handle;
@@ -1548,8 +1548,7 @@ int mng_AssignWeaponPageToWeapon(mngs_weapon_page *weaponpage, int n, CFILE *inf
       sound_handle = mng_GetGuaranteedSoundPage(weaponpage->sound_name[i]);
 
       if (sound_handle < 0) {
-        mprintf(0, "Couldn't load sound file '%s' in AssignWeaponPage.  Weapon=%s\n",
-                weaponpage->sound_name[i],
+        mprintf(0, "Couldn't load sound file '%s' in AssignWeaponPage.  Weapon=%s\n", weaponpage->sound_name[i],
                 weaponpage->weapon_struct.name);
         weaponpointer->sounds[i] = SOUND_NONE_INDEX;
       } else

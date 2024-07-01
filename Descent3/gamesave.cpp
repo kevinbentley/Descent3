@@ -263,6 +263,9 @@
  * $NoKeywords: $
  */
 
+#include <cstring>
+#include <filesystem>
+
 #include "gamesave.h"
 #include "descent.h"
 #include "newui.h"
@@ -291,7 +294,6 @@
 #include "osiris_dll.h"
 #include "levelgoal.h"
 #include "aistruct.h"
-#include <string.h>
 #include "matcen.h"
 #include "hud.h"
 #include "marker.h"
@@ -395,11 +397,10 @@ void SaveGameDialog() {
   //	ddio_MakePath(pathname, savegame_dir, "*.sav", NULL); -unused
 
   // create savegame directory if it didn't exist before.
-  if (!ddio_DirExists(savegame_dir)) {
-    if (!ddio_CreateDir(savegame_dir)) {
-      DoMessageBox(TXT_ERROR, TXT_ERRCREATEDIR, MSGBOX_OK);
-      return;
-    }
+  std::error_code ec;
+  if (!std::filesystem::create_directories(savegame_dir, ec)) {
+    DoMessageBox(TXT_ERROR, TXT_ERRCREATEDIR, MSGBOX_OK);
+    return;
   }
 
   // open window
@@ -589,7 +590,7 @@ bool LoadGameDialog() {
   ddio_MakePath(pathname, savegame_dir, "*.sav", NULL);
 
   // create savegame directory if it didn't exist before.
-  if (!ddio_DirExists(savegame_dir)) {
+  if (!std::filesystem::is_directory(savegame_dir)) {
     DoMessageBox(TXT_ERROR, TXT_ERRNOSAVEGAMES, MSGBOX_OK);
     return false;
   }

@@ -1,20 +1,23 @@
 /*
-* Descent 3 
-* Copyright (C) 2024 Parallax Software
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Descent 3
+ * Copyright (C) 2024 Parallax Software
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <cstring>
+#include <filesystem>
 
 #include "cfile.h"
 #include "manage.h"
@@ -24,8 +27,6 @@
 #include "gamefile.h"
 #include "gamefilepage.h"
 #include "args.h"
-
-#include <string.h>
 
 // gamefilepage commands that are read/written
 // A command is followed by a byte count describing how many bytes
@@ -136,7 +137,7 @@ int mng_FindSpecificGamefilePage(char *name, mngs_gamefile_page *gamefilepage, i
   CFILE *infile;
   uint8_t pagetype;
   int done = 0, found = 0;
-  char tablename[TABLE_NAME_LEN];
+  std::filesystem::path tablename;
 
   if (Loading_locals) {
     infile = cfopen(LocalTableFilename, "rb");
@@ -147,9 +148,9 @@ int mng_FindSpecificGamefilePage(char *name, mngs_gamefile_page *gamefilepage, i
       int farg = FindArg("-filter");
 
       if (farg)
-        strcpy(tablename, GameArgs[farg + 1]);
+        tablename = GameArgs[farg + 1];
       else
-        ddio_MakePath(tablename, LocalTableDir, NET_TABLE, NULL);
+        tablename = LocalTableDir / NET_TABLE;
 
       infile = cfopen(tablename, "rb");
     } else {
@@ -226,11 +227,10 @@ int mng_AssignGamefilePageToGamefile(mngs_gamefile_page *gamefilepage, int n) {
 
 #ifndef RELEASE
   if (Network_up) {
-    char str[200];
-    char netstr[200];
-
-    ddio_MakePath(str, LocalD3Dir, "data", gamefilepointer->dir_name, gamefilepointer->name, NULL);
-    ddio_MakePath(netstr, NetD3Dir, "data", gamefilepointer->dir_name, gamefilepointer->name, NULL);
+    std::filesystem::path str =
+        std::filesystem::path(LocalD3Dir) / "data" / gamefilepointer->dir_name / gamefilepointer->name;
+    std::filesystem::path netstr =
+        std::filesystem::path(NetD3Dir) / "data" / gamefilepointer->dir_name / gamefilepointer->name;
 
     UpdatePrimitive(str, netstr, gamefilepointer->name, PAGETYPE_GAMEFILE, gamefilepointer->name);
 

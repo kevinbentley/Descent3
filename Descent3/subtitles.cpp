@@ -217,44 +217,23 @@ void SubtResetSubTitles(void) {
 }
 
 // Initializes the subtitles for a given movie file
-void SubtInitSubtitles(const char *filename) {
+void SubtInitSubtitles(const std::filesystem::path &filename) {
   // Load the subtitles
   Num_subtitles = 0;
   Movie_subtitle_init = 0;
-
-  CFILE *ifile;
-  char subtitle_file[_MAX_FNAME], subtitle_path[_MAX_PATH], *p;
 
   // need a quick out here if no subtitles.
   if (!FindArg("-subtitles"))
     return;
 
-  // find the start of the filename
-  const char *pFilenameStart = strrchr(filename, '\\');
-  if (pFilenameStart != NULL) {
-    filename = pFilenameStart + 1;
-  }
+  std::filesystem::path subtitle_path = std::filesystem::path(LocalArtDir) / "movies" / filename;
+  subtitle_path.replace_extension(MOVIE_SUBTITLE_EXTENSION);
 
-  pFilenameStart = strrchr(filename, '/');
-  if (pFilenameStart != NULL) {
-    filename = pFilenameStart + 1;
-  }
+  mprintf(0, "Looking for the subtitle file %s\n", subtitle_path.u8string().c_str());
 
-  // strip off any extension for the movie and append the subtitle text
-  strcpy(subtitle_file, filename);
-  p = strchr(subtitle_file, '.');
-  if (p) {
-    *p = '\0';
-  }
-  strcat(subtitle_file, MOVIE_SUBTITLE_EXTENSION);
-
-  ddio_MakePath(subtitle_path, LocalD3Dir, "movies", subtitle_file, NULL);
-
-  mprintf(0, "Looking for the subtitle file %s\n", subtitle_path);
-
-  ifile = cfopen(subtitle_path, "rt");
+  CFILE *ifile = cfopen(subtitle_path, "rt");
   if (!ifile) {
-    mprintf(0, "Movie: Couldn't find subtitle file %s\n", subtitle_path);
+    mprintf(0, "Movie: Couldn't find subtitle file %s\n", subtitle_path.u8string().c_str());
     return;
   }
 

@@ -763,6 +763,7 @@
 
 #include <cstdarg>
 #include <cstdio>
+#include <filesystem>
 
 #include "stdafx.h"
 #include "editor.h"
@@ -2019,11 +2020,11 @@ void CMainFrame::OnImportBitmap() {
   mprintf(0, "Making a copy of this bitmap/anim locally...\n");
 
   if (!anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(), GameBitmaps[bm_handle].name);
     bm_SaveFileBitmap(filename, bm_handle);
     bm_FreeBitmap(bm_handle);
   } else {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameVClips[bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(), GameVClips[bm_handle].name);
     SaveVClip(filename, bm_handle);
     FreeVClip(bm_handle);
   }
@@ -2963,7 +2964,8 @@ void CMainFrame::OnTerrainView() { SetViewMode(VM_TERRAIN); }
 
 void CMainFrame::OnMineView() {
   // Make sure there's a room to switch to
-  for (int roomnum = 0; roomnum <= Highest_room_index; roomnum++)
+  int roomnum;
+  for (roomnum = 0; roomnum <= Highest_room_index; roomnum++)
     if (Rooms[roomnum].used && !(Rooms[roomnum].flags & RF_EXTERNAL))
       break;
 
@@ -3187,7 +3189,7 @@ void CMainFrame::OnHotspotTga() {
   }
 
   if (!anim) {
-    sprintf(filename, "%s\\%s", LocalManageGraphicsDir, GameBitmaps[bm_handle].name);
+    sprintf(filename, "%s\\%s", LocalManageGraphicsDir.u8string().c_str(), GameBitmaps[bm_handle].name);
     bm_SaveFileBitmap(filename, bm_handle);
     bm_FreeBitmap(bm_handle);
   }

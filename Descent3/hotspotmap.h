@@ -48,6 +48,7 @@
 #ifndef __HOTSPOTMAP_H_
 #define __HOTSPOTMAP_H_
 
+#include <filesystem>
 #include "grdefs.h"
 
 // for the next two defines this is how they work when converting the alpha values into hotspots/windows
@@ -99,7 +100,7 @@ struct windowmap_t {
 // Loads a tga or ogf file into a bitmap...returns handle to bm or -1 on error, and fills in the alphamap
 int menutga_alloc_file(const char *name, char *hsmap[], int *w, int *h);
 // Given a filename and a HotSpotMap structure, it saves it to disk (.HSM)
-void menutga_SaveHotSpotMap(const char *filename, hotspotmap_t *hsmap, windowmap_t *wndmap);
+void menutga_SaveHotSpotMap(const std::filesystem::path &filename, hotspotmap_t *hsmap, windowmap_t *wndmap);
 // Given a filename and a HotSpotMap structure, it loads the hotspot map (.HSM)
 void menutga_LoadHotSpotMap(int back_bmp, const char *filename, hotspotmap_t *hsmap, windowmap_t *wndmap);
 // This function (given a filename) loads a TGA file, extracts a hotspot map, and saves the hotspot map

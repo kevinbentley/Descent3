@@ -636,6 +636,11 @@
  *
  * $NoKeywords: $
  */
+
+#include <cstring>
+#include <cstdlib>
+#include <filesystem>
+
 #include "Mission.h"
 #include "3d.h"
 #include "LoadLevel.h"
@@ -665,8 +670,6 @@
 #include "osiris_dll.h"
 #include "mission_download.h"
 #include "manage.h"
-#include <string.h>
-#include <stdlib.h>
 #include "ship.h"
 #include "BOA.h"
 #include "terrain.h"
@@ -742,10 +745,10 @@ void InitMission() {
   Current_mission.mn3_handle = 0;
   //	create add on mission directory
   ddio_MakePath(D3MissionsDir, LocalD3Dir, "missions", NULL);
-  if (!ddio_DirExists(D3MissionsDir)) {
-    if (!ddio_CreateDir(D3MissionsDir)) {
-      Error(TXT_MSN_FAILEDCREATEDIR);
-    }
+  std::error_code ec;
+  std::filesystem::create_directories(D3MissionsDir, ec);
+  if (ec) {
+    Error(TXT_MSN_FAILEDCREATEDIR);
   }
   atexit(ResetMission);
 }

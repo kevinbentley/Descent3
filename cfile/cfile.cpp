@@ -22,8 +22,11 @@
 #include <cstdarg>
 #include <cerrno>
 #include <cctype>
+#include <filesystem>
+#include <map>
 #include <memory>
 #include <vector>
+
 #ifndef __LINUX__
 // Non-Linux Build Includes
 #include <io.h>
@@ -50,7 +53,7 @@ struct library_entry {
 };
 
 struct library {
-  char name[_MAX_PATH]; // includes path + filename
+  std::filesystem::path name; // includes path + filename
   uint32_t nfiles = 0;
   std::vector<std::unique_ptr<library_entry>> entries;
   std::shared_ptr<library> next;
@@ -58,25 +61,12 @@ struct library {
   FILE *file = nullptr; // pointer to file for this lib, if no one using it
 };
 
-// entry in extension->path table
-struct ext_entry {
-  char ext[_MAX_EXT];
-  uint8_t pathnum;
-};
+// Map of paths. If value of entry is true, path is only for specific extensions
+std::map<std::filesystem::path, bool> paths;
 
-// entry in list of paths
-struct path_entry {
-  char path[_MAX_PATH];
-  uint8_t specific; // if non-zero, only for specific extensions
-};
+// Map of extensions <=> relevant paths
+std::map<std::filesystem::path, std::filesystem::path> extensions;
 
-#define MAX_PATHS 100
-
-path_entry paths[MAX_PATHS];
-int N_paths = 0;
-#define MAX_EXTENSIONS 100
-ext_entry extensions[MAX_EXTENSIONS];
-int N_extensions;
 std::shared_ptr<library> Libraries;
 int lib_handle = 0;
 
@@ -103,42 +93,38 @@ static CFILE *open_file_in_lib(const char *filename);
 // NOTE:	libname must be valid for the entire execution of the program.  Therefore, it should either
 //			be a fully-specified path name, or the current directory must not change.
 // Returns: 0 if error, else library handle that can be used to close the library
-int cf_OpenLibrary(const char *libname) {
+int cf_OpenLibrary(const std::filesystem::path &libname) {
   FILE *fp;
   int i;
   uint32_t offset;
   static int first_time = 1;
-  tHogHeader header;
-  tHogFileEntry entry;
+  tHogHeader header{};
+  tHogFileEntry entry{};
 
   // allocation library structure
   std::shared_ptr<library> lib = std::make_shared<library>();
 #ifdef __LINUX__
   // resolve library name
-  char t_dir[_MAX_PATH];
-  char t_file[_MAX_PATH];
-  char t_ext[256];
-  ddio_SplitPath(libname, t_dir, t_file, t_ext);
-  const char *resolve_dir = nullptr;
-  const char *resolve_name = libname;
-  if (strlen(t_dir) > 0) {
-    strcat(t_file, t_ext);
-    resolve_dir = t_dir;
-    resolve_name = t_file;
+  std::filesystem::path resolve_dir = libname.parent_path();
+  std::filesystem::path resolve_name = libname;
+
+  if (!resolve_dir.empty()) {
+    resolve_name = libname.filename();
   }
+
   char t_out[_MAX_PATH];
-  if (!cf_FindRealFileNameCaseInsenstive(resolve_dir, resolve_name, t_out)) {
+  if (!cf_FindRealFileNameCaseInsenstive(resolve_name, t_out, resolve_dir)) {
     return 0; // CF_NO_FILE
   }
   // re-assemble
-  if (resolve_dir != nullptr)
-    ddio_MakePath(lib->name, resolve_dir, t_out, nullptr);
+  if (!resolve_dir.empty())
+    lib->name = resolve_dir / t_out;
   else
-    strcpy(lib->name, t_out);
+    lib->name = t_out;
 #else
-  strcpy(lib->name, libname);
+  lib->name = libname;
 #endif
-  fp = fopen(lib->name, "rb");
+  fp = fopen(lib->name.u8string().c_str(), "rb");
   if (fp == nullptr) {
     return 0; // CF_NO_FILE;
   }
@@ -216,50 +202,30 @@ void cf_Close() {
     Libraries = next;
   }
 }
-// Specify a directory to look in for files
-// Parameters:	path - the directory path.  Can be relative to the current cur (the full path will be stored)
-//					ext - if NULL, look in this dir for all files.  If non-null, it is a
-// NULL-terminated
-// list of 								file extensions, & the dir will only be searched
-// for files with a matching extension Returns:		true if directory added, else false
-int cf_SetSearchPath(const char *path, ...) {
-  if (strlen(path) >= _MAX_PATH)
-    return 0;
-  if (N_paths >= MAX_PATHS)
-    return 0;
+
+bool cf_SetSearchPath(const std::filesystem::path &path, const std::vector<std::filesystem::path> &ext_list) {
+  // Don't add non-existing path into search paths
+  if (!std::filesystem::is_directory(path))
+    return false;
   // Get & store full path
-  ddio_GetFullPath(paths[N_paths].path, path);
-  // Set extenstions for this path
-  va_list exts;
-  va_start(exts, path);
-  const char *ext = va_arg(exts, const char *);
-  if (ext == nullptr)
-    paths[N_paths].specific = 0;
-  else {
-    paths[N_paths].specific = 1;
-    while (ext != nullptr) {
-      if (N_extensions >= MAX_EXTENSIONS) {
-        va_end(exts);
-        return 0;
+  paths.insert_or_assign(std::filesystem::absolute(path), !ext_list.empty());
+  // Set extensions for this path
+  if (!ext_list.empty()) {
+    for (auto const &ext : ext_list) {
+      if (!ext.empty()) {
+        extensions.insert_or_assign(ext, path);
       }
-      strncpy(extensions[N_extensions].ext, ext, _MAX_EXT);
-      extensions[N_extensions].pathnum = N_paths;
-      N_extensions++;
-      ext = va_arg(exts, const char *);
     }
   }
-  // This path successfully set
-  N_paths++;
-  va_end(exts);
-  return 1;
+  return true;
 }
 
 /**
  * Removes all search paths that have been added by cf_SetSearchPath
  */
 void cf_ClearAllSearchPaths() {
-  N_paths = 0;
-  N_extensions = 0;
+  paths.clear();
+  extensions.clear();
 }
 
 /**
@@ -268,11 +234,10 @@ void cf_ClearAllSearchPaths() {
  * @param libhandle
  * @return
  */
-CFILE *cf_OpenFileInLibrary(const char *filename, int libhandle) {
+CFILE *cf_OpenFileInLibrary(const std::filesystem::path &filename, int libhandle) {
   if (libhandle <= 0)
     return nullptr;
 
-  CFILE *cfile;
   std::shared_ptr<library> lib = Libraries;
 
   // find the library that we want to use
@@ -292,8 +257,9 @@ CFILE *cf_OpenFileInLibrary(const char *filename, int libhandle) {
 
   do {
     i = (first + last) / 2;
-    c = stricmp(filename, lib->entries[i]->name); // compare to current
-    if (c == 0) {                                 // found it
+    c = stricmp(filename.u8string().c_str(), lib->entries[i]->name); // compare to current
+    if (c == 0) {
+      // found it
       found = 1;
       break;
     }
@@ -316,14 +282,15 @@ CFILE *cf_OpenFileInLibrary(const char *filename, int libhandle) {
     fp = lib->file;
     lib->file = nullptr;
   } else {
-    fp = fopen(lib->name, "rb");
+    fp = fopen(lib->name.u8string().c_str(), "rb");
     if (!fp) {
-      mprintf(1, "Error opening library <%s> when opening file <%s>; errno=%d.", lib->name, filename, errno);
+      mprintf(1, "Error opening library <%s> when opening file <%s>; errno=%d.",
+              lib->name.u8string().c_str(), filename.u8string().c_str(), errno);
       Int3();
       return nullptr;
     }
   }
-  cfile = (CFILE *)mem_malloc(sizeof(*cfile));
+  CFILE *cfile = (CFILE *)mem_malloc(sizeof(*cfile));
   if (!cfile)
     Error("Out of memory in cf_OpenFileInLibrary()");
   cfile->name = lib->entries[i]->name;
@@ -368,9 +335,10 @@ CFILE *open_file_in_lib(const char *filename) {
         fp = lib->file;
         lib->file = nullptr;
       } else {
-        fp = fopen(lib->name, "rb");
+        fp = fopen(lib->name.u8string().c_str(), "rb");
         if (!fp) {
-          mprintf(1, "Error opening library <%s> when opening file <%s>; errno=%d.", lib->name, filename, errno);
+          mprintf(1, "Error opening library <%s> when opening file <%s>; errno=%d.", lib->name.u8string().c_str(),
+                  filename, errno);
           Int3();
           return nullptr;
         }
@@ -463,41 +431,38 @@ void CFindFiles::Close() {
   globfree(&ffres);
 }
 
-static FILE *open_file_in_directory_case_sensitive(const char *directory, const char *filename, const char *mode,
+static FILE *open_file_in_directory_case_sensitive(const std::filesystem::path &directory,
+                                                   const std::filesystem::path &filename, const char *mode,
                                                    char *new_filename);
 
-bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname, char *new_filename) {
+bool cf_FindRealFileNameCaseInsenstive(const std::filesystem::path &fname, char *new_filename,
+                                       const std::filesystem::path &directory) {
   bool use_dir = false;
-  char dir_to_use[_MAX_PATH];
-  char file_to_use[_MAX_PATH];
+  std::filesystem::path dir_to_use, file_to_use;
+  std::filesystem::path real_dir;
+  char real_file[_MAX_PATH];
 
-  char *real_dir, *real_file;
-
-  if (directory) {
+  if (!directory.empty()) {
     // there is a directory for this path
     use_dir = true;
-    real_dir = (char *)directory;
-    real_file = (char *)fname;
+    real_dir = directory;
+    strcpy(real_file, fname.u8string().c_str());
   } else {
     // there may be a directory in the path (*sigh*)
-    char t_ext[256];
-    char t_dir[_MAX_PATH];
-    char t_filename[_MAX_PATH];
-
-    ddio_SplitPath(fname, t_dir, t_filename, t_ext);
-    if (strlen(t_dir) > 0) {
+    std::filesystem::path t_dir = fname.parent_path();
+    if (!t_dir.empty()) {
       use_dir = true;
-      strcpy(dir_to_use, t_dir);
-      real_dir = (char *)dir_to_use;
-      strcpy(file_to_use, t_filename);
-      strcat(file_to_use, t_ext);
-      real_file = (char *)file_to_use;
+      dir_to_use = t_dir;
+      real_dir = dir_to_use;
+      file_to_use = fname.filename();
+      strncpy(real_file, file_to_use.u8string().c_str(), strlen(file_to_use.u8string().c_str()));
 
-      mprintf(1, "CFILE: Found directory \"%s\" in filename, new filename is \"%s\"\n", real_dir, real_file);
+      mprintf(1, "CFILE: Found directory \"%s\" in filename, new filename is \"%s\"\n",
+              real_dir.u8string().c_str(), real_file);
     } else {
       use_dir = false;
-      real_dir = nullptr;
-      real_file = (char *)fname;
+      // real_dir = nullptr;
+      strncpy(real_file, fname.u8string().c_str(), strlen(fname.u8string().c_str()));
     }
   }
 
@@ -510,7 +475,7 @@ bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname,
   int iterations = 1;
   bool found_match = false;
 
-  if ((real_file[0] >= 'a' && real_file[0] <= 'z') || (real_file[0] >= 'A' && real_file[0] <= 'Z')) {
+  if (isalpha(real_file[0])) {
     // alpha first letter...we need to do 2 iterations
     iterations = 2;
   }
@@ -568,7 +533,7 @@ bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname,
     char *wpattern;
     char fullpath[_MAX_PATH];
     if (use_dir) {
-      ddio_MakePath(fullpath, real_dir, wildcard_pattern, NULL);
+      ddio_MakePath(fullpath, real_dir.u8string().c_str(), wildcard_pattern, NULL);
       wpattern = fullpath;
     } else {
       wpattern = wildcard_pattern;
@@ -598,159 +563,132 @@ bool cf_FindRealFileNameCaseInsenstive(const char *directory, const char *fname,
   return found_match;
 }
 
-FILE *open_file_in_directory_case_sensitive(const char *directory, const char *filename, const char *mode,
+FILE *open_file_in_directory_case_sensitive(const std::filesystem::path &directory,
+                                            const std::filesystem::path &filename, const char *mode,
                                             char *new_filename) {
-  char t_dir[_MAX_PATH];
-  ddio_SplitPath(filename, t_dir, nullptr, nullptr);
-  if (cf_FindRealFileNameCaseInsenstive(directory, filename, new_filename)) {
+  std::filesystem::path t_dir = filename.parent_path();
+  if (cf_FindRealFileNameCaseInsenstive(filename, new_filename, directory)) {
     // we have a file, open it open and use it
-    char full_path[_MAX_PATH * 2];
+    std::filesystem::path full_path;
     // if we had a directory as part of the file name, put it back in
-    if (strlen(t_dir) > 0)
-      directory = t_dir;
-    if (directory != nullptr) {
-      ddio_MakePath(full_path, directory, new_filename, NULL);
+    if (!t_dir.empty()) {
+      full_path = t_dir / new_filename;
     } else {
-      strcpy(full_path, new_filename);
+      full_path = new_filename;
     }
 
-    return fopen(full_path, mode);
+    return fopen(full_path.u8string().c_str(), mode);
   }
   return nullptr;
 }
 #endif
 
 // look for the file in the specified directory
-static CFILE *open_file_in_directory(const char *filename, const char *mode, const char *directory);
+static CFILE *open_file_in_directory(const std::filesystem::path &filename, const char *mode,
+                                     const std::filesystem::path &directory);
 
 // look for the file in the specified directory
-CFILE *open_file_in_directory(const char *filename, const char *mode, const char *directory) {
+CFILE *open_file_in_directory(const std::filesystem::path &filename, const char *mode,
+                              const std::filesystem::path &directory) {
   FILE *fp;
   CFILE *cfile;
-  char path[_MAX_PATH * 2];
+  std::filesystem::path path;
+  char using_filename[_MAX_PATH];
   char tmode[3] = "rb";
-  if (directory != nullptr) {
+  if (std::filesystem::is_directory(directory)) {
     // Make a full path
-    ddio_MakePath(path, directory, filename, NULL);
+    path = directory / filename;
   } else // no directory specified, so just use filename passed
-    strcpy(path, filename);
+    path = filename;
   // set read or write mode
   tmode[0] = mode[0];
   // if mode is "w", then open in text or binary as requested.  If "r", alsway open in "rb"
   tmode[1] = (mode[0] == 'w') ? mode[1] : 'b';
   // try to open file
-  fp = fopen(path, tmode);
+  fp = fopen(path.u8string().c_str(), tmode);
 
+  if (!fp) {
 #ifdef __LINUX__
-  // for Filesystems with case sensitive files we'll check for different versions of the filename
-  // with different case's.
-  if (fp) {
-    // found the file, open it
-    cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-    if (!cfile)
-      Error("Out of memory in open_file_in_directory()");
-    cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(filename) + 1));
-    if (!cfile->name)
-      Error("Out of memory in open_file_in_directory()");
-    strcpy(cfile->name, filename);
-    cfile->file = fp;
-    cfile->lib_handle = -1;
-    cfile->size = ddio_GetFileLength(fp);
-    cfile->lib_offset = 0; // 0 means on disk, not in HOG
-    cfile->position = 0;
-    cfile->flags = 0;
-    return cfile;
-  } else {
+    // For filesystems with case-sensitive files we'll check for different versions of the filename
+    // with different cases.
+
     // try different cases of the filename
-    char using_filename[_MAX_PATH];
     fp = open_file_in_directory_case_sensitive(directory, filename, tmode, using_filename);
     if (!fp) {
       // no dice
       return nullptr;
-    } else {
-      // found a version of the file!
-      mprintf(0, "CFILE: Unable to find %s, but using %s instead\n", filename, using_filename);
-      cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-      if (!cfile)
-        Error("Out of memory in open_file_in_directory()");
-      cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(using_filename) + 1));
-      if (!cfile->name)
-        Error("Out of memory in open_file_in_directory()");
-      strcpy(cfile->name, using_filename);
-      cfile->file = fp;
-      cfile->lib_handle = -1;
-      cfile->size = ddio_GetFileLength(fp);
-      cfile->lib_offset = 0; // 0 means on disk, not in HOG
-      cfile->position = 0;
-      cfile->flags = 0;
-      return cfile;
     }
-  }
 #else
-  if (!fp) // didn't get file
-    return NULL;
-  else { // got file
-    cfile = (CFILE *)mem_malloc(sizeof(*cfile));
-    if (!cfile)
-      Error("Out of memory in open_file_in_directory()");
-    cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(filename) + 1));
-    if (!cfile->name)
-      Error("Out of memory in open_file_in_directory()");
-    strcpy(cfile->name, filename);
-    cfile->file = fp;
-    cfile->lib_handle = -1;
-    cfile->size = ddio_GetFileLength(fp);
-    cfile->lib_offset = 0; // 0 means on disk, not in HOG
-    cfile->position = 0;
-    cfile->flags = 0;
-    return cfile;
-  }
+    // We on incase-sensitive filesystem, no file means no file.
+    return nullptr;
 #endif
+  } else {
+    strcpy(using_filename, filename.u8string().c_str());
+  }
+
+  // found the file, open it
+  cfile = (CFILE *)mem_malloc(sizeof(*cfile));
+  if (!cfile)
+    Error("Out of memory in open_file_in_directory()");
+  cfile->name = (char *)mem_malloc(sizeof(char) * (strlen(using_filename) + 1));
+  if (!cfile->name)
+    Error("Out of memory in open_file_in_directory()");
+  strcpy(cfile->name, using_filename);
+  cfile->file = fp;
+  cfile->lib_handle = -1;
+  cfile->size = ddio_GetFileLength(fp);
+  cfile->lib_offset = 0; // 0 means on disk, not in HOG
+  cfile->position = 0;
+  cfile->flags = 0;
+  return cfile;
 }
+
 // Opens a file for reading or writing
 // If a path is specified, will try to open the file only in that path.
 // If no path is specified, will look through search directories and library files.
 // Parameters:	filename - the name if the file, with or without a path
 //					mode - the standard C mode string
 // Returns:		the CFile handle, or NULL if file not opened
-CFILE *cfopen(const char *filename, const char *mode) {
+CFILE *cfopen(const std::filesystem::path &filename, const char *mode) {
   CFILE *cfile;
-  char path[_MAX_PATH * 2], fname[_MAX_PATH * 2], ext[_MAX_EXT];
-  int i;
+
   // Check for valid mode
   ASSERT((mode[0] == 'r') || (mode[0] == 'w'));
   ASSERT((mode[1] == 'b') || (mode[1] == 't'));
   // get the parts of the pathname
-  ddio_SplitPath(filename, path, fname, ext);
+  std::filesystem::path path = filename.parent_path();
+  std::filesystem::path fname = filename.stem();
+  std::filesystem::path ext = filename.extension();
+
   // if there is a path specified, use it instead of the libraries, search dirs, etc.
   // if the file is writable, just open it, instead of looking in libs, etc.
-  if (strlen(path) || (mode[0] == 'w')) {                    // found a path
-    cfile = open_file_in_directory(filename, mode, nullptr); // use path specified with file
-    goto got_file;                                           // don't look in libs, etc.
+  if (!path.empty() || (mode[0] == 'w')) {
+    // use path specified with file
+    cfile = open_file_in_directory(filename, mode, std::filesystem::path());
+    goto got_file; // don't look in libs, etc.
   }
-  //@@ Don't look in current dir.  mt, 3-12-97
-  //@@	//first look in current directory
-  //@@	cfile = open_file_in_directory(filename,mode,".");	  //current dir
-  //@@	if (cfile || (mode[0] == 'w'))
-  //@@		goto got_file;
+
   // First look in the directories for this file's extension
-  for (i = 0; i < N_extensions; i++) {
-    if (!strnicmp(extensions[i].ext, ext + 1, _MAX_EXT)) { // found ext
-      cfile = open_file_in_directory(filename, mode, paths[extensions[i].pathnum].path);
-      if (cfile) // || (errno != ENOENT)) //Tempoary fix so Kevin can run the game!
+  for (auto const &entry : extensions) {
+    if (!strnicmp(entry.first.u8string().c_str(), ext.u8string().c_str(), _MAX_EXT)) {
+      // found ext
+      cfile = open_file_in_directory(filename, mode, entry.second);
+      if (cfile) {
         goto got_file;
+      }
     }
   }
+
   // Next look in the general directories
-  for (i = 0; i < N_paths; i++) {
-    if (!paths[i].specific) {
-      cfile = open_file_in_directory(filename, mode, paths[i].path);
-      if (cfile) // || (errno != ENOENT)) //Tempoary fix so Kevin can run the game!
+  for (auto const &entry : paths) {
+    if (!entry.second) {
+      cfile = open_file_in_directory(filename, mode, entry.first);
+      if (cfile)
         goto got_file;
     }
   }
   // Lastly, try the hog files
-  cfile = open_file_in_lib(filename);
+  cfile = open_file_in_lib(filename.u8string().c_str());
 got_file:;
   if (cfile) {
     if (mode[0] == 'w')
@@ -862,7 +800,7 @@ int cfeof(CFILE *cfp) { return (cfp->position >= cfp->size); }
 // Tells if the file exists
 // Returns non-zero if file exists.  Also tells if the file is on disk
 //	or in a hog -  See return values in cfile.h
-int cfexist(const char *filename) {
+int cfexist(const std::filesystem::path &filename) {
   CFILE *cfp;
   int ret;
 
@@ -870,9 +808,7 @@ int cfexist(const char *filename) {
   if (!cfp) {              // Didn't get file.  Why?
     if (errno == EACCES)   // File exists, but couldn't open it
       return CFES_ON_DISK; // so say it exists on the disk
-                           // DAJ		if (errno != ENOENT)			//Check if error is "file not
-                           // found"
-    // DAJ			Int3();						//..warn if not
+
     return CFES_NOT_FOUND; // Say we didn't find the file
   }
   ret = cfp->lib_offset ? CFES_IN_LIBRARY : CFES_ON_DISK;
@@ -1062,9 +998,9 @@ void cf_WriteDouble(CFILE *cfp, double d) {
 
 // Copies a file.  Returns TRUE if copied ok.  Returns FALSE if error opening either file.
 // Throws an exception of type (cfile_error *) if the OS returns an error on read or write
-bool cf_CopyFile(char *dest, const char *src, int copytime) {
+bool cf_CopyFile(const std::filesystem::path &dest, const std::filesystem::path &src, int copytime) {
   CFILE *infile, *outfile;
-  if (!stricmp(dest, src))
+  if (!stricmp(dest.u8string().c_str(), src.u8string().c_str()))
     return true; // don't copy files if they are the same
   infile = (CFILE *)cfopen(src, "rb");
   if (!infile)
@@ -1092,10 +1028,9 @@ bool cf_CopyFile(char *dest, const char *src, int copytime) {
     // c=cf_ReadByte (infile);
     // cf_WriteByte (outfile,c);
   }
-  int infile_lib_offset = infile->lib_offset;
   cfclose(infile);
   cfclose(outfile);
-  if (!infile_lib_offset && copytime) {
+  if (!infile->lib_offset && copytime) {
     cf_CopyFileTime(dest, src);
   }
   return true;
@@ -1103,10 +1038,12 @@ bool cf_CopyFile(char *dest, const char *src, int copytime) {
 
 // Checks to see if two files are different.
 // Returns TRUE if the files are different, or FALSE if they are the same.
-bool cf_Diff(const char *a, const char *b) { return (ddio_FileDiff(a, b)); }
+bool cf_Diff(const std::filesystem::path &a, const std::filesystem::path &b) { return (ddio_FileDiff(a, b)); }
 
 // Copies the file time from one file to another
-void cf_CopyFileTime(char *dest, const char *src) { ddio_CopyFileTime(dest, src); }
+void cf_CopyFileTime(const std::filesystem::path &dest, const std::filesystem::path &src) {
+  ddio_CopyFileTime(dest, src);
+}
 
 // Changes a files attributes (ie read/write only)
 void cf_ChangeFileAttributes(const char *name, int attr) {
@@ -1176,10 +1113,8 @@ uint32_t cf_CalculateFileCRC(CFILE *infile) {
   return crc ^ 0xffffffffl;
 }
 
-uint32_t cf_GetfileCRC(char *src) {
-  CFILE *infile;
-
-  infile = (CFILE *)cfopen(src, "rb");
+uint32_t cf_GetfileCRC(const std::filesystem::path &src) {
+  CFILE *infile = cfopen(src, "rb");
   if (!infile)
     return 0xFFFFFFFF;
 
@@ -1264,11 +1199,11 @@ void cf_LibraryFindClose() {
   cfile_search_ispattern = false;
 }
 
-bool cf_IsFileInHog(const char *filename, const char *hogname) {
+bool cf_IsFileInHog(const std::filesystem::path &filename, const std::filesystem::path &hogname) {
   std::shared_ptr<library> lib = Libraries;
 
   while (lib) {
-    if (stricmp(lib->name, hogname) == 0) {
+    if (stricmp(lib->name.u8string().c_str(), hogname.u8string().c_str()) == 0) {
       // Now look for filename
       CFILE *cf;
       cf = cf_OpenFileInLibrary(filename, lib->handle);

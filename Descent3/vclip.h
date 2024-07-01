@@ -20,7 +20,8 @@
 
 #define VCLIP_H
 
-#include "pstypes.h"
+#include <filesystem>
+
 #include "fix.h"
 #include "manage.h"
 
@@ -56,7 +57,7 @@ void FreeVClip(int num);
 // Saves a given video clip to a file
 // Returns 1 if everything ok, 0 otherwise
 // "num" is index into GameVClip array
-int SaveVClip(const char *filename, int num);
+int SaveVClip(const std::filesystem::path& filename, int num);
 
 // Allocs and loads a vclip from the file named "filename"
 // Returns -1 on error, index into GameVClip array on success

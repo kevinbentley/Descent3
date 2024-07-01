@@ -100,6 +100,11 @@
  *
  * $NoKeywords: $
  */
+
+#include <cstdlib>
+#include <cstring>
+#include <filesystem>
+
 #include "mono.h"
 #include "renderer.h"
 #include "render.h"
@@ -108,8 +113,6 @@
 #include "game.h"
 #include "cfile.h"
 #include "application.h"
-#include <stdlib.h>
-#include <string.h>
 #include "newui.h"
 #include "grtext.h"
 #include "gamefont.h"
@@ -311,7 +314,7 @@ bool DoPathFileDialog(bool save_dialog, char *path, const char *title, const cha
       if (path[0] == '\0') {
         DoMessageBox(TXT_ERROR, TXT_ERRCHOOSEFILE, MSGBOX_OK);
       } else {
-        if (ddio_DirExists(path)) {
+        if (std::filesystem::is_directory(path)) {
           char newpath[_MAX_PATH];
           char file[_MAX_PATH];
           int selection = listbox->GetCurrentIndex();
@@ -424,7 +427,7 @@ bool DoPathFileDialog(bool save_dialog, char *path, const char *title, const cha
       strcpy(c, edits[ED_FILENAME]);
 
       if (strlen(c) > 0) {
-        if (!ddio_DirExists(c)) {
+        if (!std::filesystem::is_directory(c)) {
           // the user wants a file
           if (flags & PFDF_FILEMUSTEXIST) {
             if (cfexist(c)) {
@@ -500,7 +503,7 @@ int GetFilesInPath(char **buffer, int maxcount, const char *p, const char *wildc
   char tempbuffer[_MAX_PATH];
 
   if (ddio_FindFileStart(wildcard, tempbuffer)) {
-    if (!ddio_DirExists(tempbuffer)) {
+    if (!std::filesystem::is_directory(tempbuffer)) {
       buffer[count] = mem_strdup(tempbuffer);
       count++;
     }
@@ -509,7 +512,7 @@ int GetFilesInPath(char **buffer, int maxcount, const char *p, const char *wildc
 
     while (!done) {
       if (ddio_FindNextFile(tempbuffer)) {
-        if (!ddio_DirExists(tempbuffer)) {
+        if (!std::filesystem::is_directory(tempbuffer)) {
           if (count < maxcount)
             buffer[count] = mem_strdup(tempbuffer);
           count++;
@@ -559,7 +562,7 @@ int GetDirectoriesInPath(char **buffer, int maxcount, const char *p) {
   char tempbuffer[_MAX_PATH];
 
   if (ddio_FindFileStart("*", tempbuffer)) {
-    if (ddio_DirExists(tempbuffer)) {
+    if (std::filesystem::is_directory(tempbuffer)) {
       buffer[count] = mem_strdup(tempbuffer);
       count++;
     }
@@ -568,7 +571,7 @@ int GetDirectoriesInPath(char **buffer, int maxcount, const char *p) {
 
     while (!done) {
       if (ddio_FindNextFile(tempbuffer)) {
-        if (ddio_DirExists(tempbuffer)) {
+        if (std::filesystem::is_directory(tempbuffer)) {
           if (count < maxcount)
             buffer[count] = mem_strdup(tempbuffer);
           count++;

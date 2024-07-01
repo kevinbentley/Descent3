@@ -1,5 +1,5 @@
 /*
-* Descent 3 
+* Descent 3
 * Copyright (C) 2024 Parallax Software
 *
 * This program is free software: you can redistribute it and/or modify
@@ -117,6 +117,10 @@
  *
  * $NoKeywords: $
  */
+
+#include <cstring>
+#include <filesystem>
+
 #include "cfile.h"
 #include "manage.h"
 #include "soundpage.h"
@@ -125,7 +129,7 @@
 #include "soundload.h"
 #include "ddio.h"
 #include "args.h"
-#include <string.h>
+
 // soundpage commands that are read/written
 // A command is followed by a byte count describing how many bytes
 // are in the data for the command
@@ -321,7 +325,7 @@ int mng_FindSpecificSoundPage(char *name, mngs_sound_page *soundpage, int offset
   CFILE *infile;
   uint8_t pagetype;
   int done = 0, found = 0;
-  char tablename[TABLE_NAME_LEN];
+  std::filesystem::path tablename;
   if (Loading_locals) {
     infile = cfopen(LocalTableFilename, "rb");
   } else if (Loading_addon_table != -1) {
@@ -330,9 +334,9 @@ int mng_FindSpecificSoundPage(char *name, mngs_sound_page *soundpage, int offset
     if (Network_up && Starting_editor) {
       int farg = FindArg("-filter");
       if (farg)
-        strcpy(tablename, GameArgs[farg + 1]);
+        tablename = GameArgs[farg + 1];
       else
-        ddio_MakePath(tablename, LocalTableDir, NET_TABLE, NULL);
+        tablename = LocalTableDir / NET_TABLE;
       infile = cfopen(tablename, "rb");
     } else {
       infile = NULL;
@@ -404,12 +408,8 @@ int mng_AssignSoundPageToSound(mngs_sound_page *soundpage, int n) {
 // If its a release version, don't do any of this
 #ifndef RELEASE
   if (Network_up) {
-    char str[200];
-    char netstr[200];
-
-    ddio_MakePath(str, LocalSoundsDir, soundpage->raw_name, NULL);
-    ddio_MakePath(netstr, NetSoundsDir, soundpage->raw_name, NULL);
-    UpdatePrimitive(str, netstr, soundpage->raw_name, PAGETYPE_SOUND, soundpointer->name);
+    UpdatePrimitive(LocalSoundsDir / soundpage->raw_name, NetSoundsDir / soundpage->raw_name, soundpage->raw_name,
+                    PAGETYPE_SOUND, soundpointer->name);
   }
 #endif
   // Try and load our sound raw from the disk

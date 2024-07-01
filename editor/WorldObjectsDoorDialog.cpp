@@ -112,6 +112,8 @@
  * $NoKeywords: $
  */
 
+#include <filesystem>
+
 #include "mfc_compatibility.h"
 #include "editor.h"
 #include "WorldObjectsDoorDialog.h"
@@ -308,10 +310,8 @@ void CWorldObjectsDoorDialog::OnAddDoor() {
   // Finally, save a local copy of the model/anim and alloc a tracklock
   mprintf(0, "Making a copy of this model locally...\n");
 
-  char destname[100];
-  sprintf(destname, "%s\\%s", LocalModelsDir, Poly_models[Doors[door_handle].model_handle].name);
-  if (stricmp(destname, pathname)) // only copy if they are different
-    cf_CopyFile(destname, pathname);
+  std::filesystem::path destname = LocalModelsDir / Poly_models[Doors[door_handle].model_handle].name;
+  cf_CopyFile(destname, pathname);
 
   mng_AllocTrackLock(cur_name, PAGETYPE_DOOR);
 
@@ -407,7 +407,7 @@ void CWorldObjectsDoorDialog::UpdateDialog() {
   // Update sounds lists
   SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
-  for (i = 0; i < MAX_SOUNDS; i++) {
+  for (int i = 0; i < MAX_SOUNDS; i++) {
     if (Sounds[i].used)
       SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sounds[i].name);
   }
@@ -418,7 +418,7 @@ void CWorldObjectsDoorDialog::UpdateDialog() {
 
   SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
-  for (i = 0; i < MAX_SOUNDS; i++) {
+  for (int i = 0; i < MAX_SOUNDS; i++) {
     if (Sounds[i].used)
       SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sounds[i].name);
   }
@@ -541,11 +541,8 @@ void CWorldObjectsDoorDialog::OnCheckinDoor() {
         OutrageMessageBox(ErrorString);
       else {
         // Save this door anim/model to the network for all
-
-        char destname[100], srcname[100];
-
-        sprintf(srcname, "%s\\%s", LocalModelsDir, Poly_models[Doors[n].model_handle].name);
-        sprintf(destname, "%s\\%s", NetModelsDir, Poly_models[Doors[n].model_handle].name);
+        std::filesystem::path srcname = LocalModelsDir / Poly_models[Doors[n].model_handle].name;
+        std::filesystem::path destname = NetModelsDir / Poly_models[Doors[n].model_handle].name;
 
         cf_CopyFile(destname, srcname);
 
@@ -769,7 +766,6 @@ void CWorldObjectsDoorDialog::OnDoorsOut() {
 
 void CWorldObjectsDoorDialog::OnLoadDoorModel() {
   char filename[255];
-  char curname[255];
   int img_handle;
   int door_handle;
   int c = 1, finding_name = 1;
@@ -795,8 +791,7 @@ void CWorldObjectsDoorDialog::OnLoadDoorModel() {
   Doors[door_handle].model_handle = img_handle;
 
   // Finally, save a local copy of the model
-
-  sprintf(curname, "%s\\%s", LocalModelsDir, Poly_models[Doors[door_handle].model_handle].name);
+  std::filesystem::path curname = LocalModelsDir / Poly_models[Doors[door_handle].model_handle].name;
   cf_CopyFile(curname, filename);
 
   UpdateDialog();

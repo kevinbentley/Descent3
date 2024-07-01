@@ -156,24 +156,18 @@
 //	---------------------------------------------------------------------------
 //	File operations
 
-//	creates a directory or folder on disk
-bool ddio_CreateDir(const char *path) { return (CreateDirectory(path, NULL)) ? true : false; }
-
-//	destroys a directory
-bool ddio_RemoveDir(const char *path) { return (RemoveDirectory(path)) ? true : false; }
-
 //	retrieve the current working folder where file operation will occur.
 void ddio_GetWorkingDir(char *path, int len) { GetCurrentDirectory(len, path); }
 
 bool ddio_SetWorkingDir(const char *path) { return (SetCurrentDirectory(path)) ? true : false; }
 
-bool ddio_FileDiff(const char *path1, const char *path2) {
+bool ddio_FileDiff(const std::filesystem::path &path1, const std::filesystem::path &path2) {
   struct _stat abuf, bbuf;
 
-  if (_stat(path1, &abuf))
+  if (_stat(path1.u8string().c_str(), &abuf))
     Int3(); // error getting stat info
 
-  if (_stat(path2, &bbuf))
+  if (_stat(path2.u8string().c_str(), &bbuf))
     Int3(); // error getting stat info
 
   if ((abuf.st_size != bbuf.st_size) || (abuf.st_mtime != bbuf.st_mtime))
@@ -195,18 +189,18 @@ void ddio_SplitPath(const char *srcPath, char *path, char *filename, char *ext) 
     sprintf(path, "%s%s", drivename, dirname);
 }
 
-void ddio_CopyFileTime(char *destname, const char *srcname) {
+void ddio_CopyFileTime(const std::filesystem::path &dest, const std::filesystem::path &src) {
   HANDLE desthandle, srchandle;
   FILETIME a, b, c;
   bool first_time = 1;
 
 try_again:;
 
-  desthandle = CreateFile(destname, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-  srchandle = CreateFile(srcname, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  desthandle = CreateFile(dest.u8string().c_str(), GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  srchandle = CreateFile(src.u8string().c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
   if (desthandle == INVALID_HANDLE_VALUE || srchandle == INVALID_HANDLE_VALUE) {
-    mprintf(0, "Couldn't copy file time for %s! Error=%d\n", destname, GetLastError());
+    mprintf(0, "Couldn't copy file time for %s! Error=%d\n", dest.u8string().c_str(), GetLastError());
 
     if (desthandle != INVALID_HANDLE_VALUE)
       CloseHandle(desthandle);
@@ -235,26 +229,6 @@ try_again:;
 
 // deletes a file.  Returns 1 if successful, 0 on failure
 int ddio_DeleteFile(const char *name) { return (DeleteFile(name)); }
-
-// Save/Restore the current working directory
-
-static char SavedWorkingDir[_MAX_DIR];
-
-void ddio_SaveWorkingDir(void) { GetCurrentDirectory(_MAX_DIR, SavedWorkingDir); }
-
-void ddio_RestoreWorkingDir(void) { SetCurrentDirectory(SavedWorkingDir); }
-
-// 	Checks if a directory exists (returns 1 if it does, 0 if not)
-//	This pathname is *RELATIVE* not fully qualified
-bool ddio_DirExists(const char *path) {
-  BOOL res;
-
-  ddio_SaveWorkingDir();
-  res = SetCurrentDirectory(path);
-  ddio_RestoreWorkingDir();
-
-  return (res) ? true : false;
-}
 
 // Constructs a path in the local file system's syntax
 // 	newPath: stores the constructed path

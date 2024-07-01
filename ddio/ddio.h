@@ -313,18 +313,9 @@ void ddio_MouseSetVCoords(int width, int height);
 // Gets the full path of the executable file
 bool ddio_GetBinaryPath(char *exec_path, size_t len);
 
-//	creates or destroys a directory or folder on disk
-//	This pathname is *RELATIVE* not fully qualified
-bool ddio_CreateDir(const char *path);
-bool ddio_RemoveDir(const char *path);
-
 // deletes a file.  Returns 1 if successful, 0 on failure
 //	This pathname is *RELATIVE* not fully qualified
 int ddio_DeleteFile(const char *name);
-
-// Save/Restore the current working directory
-void ddio_SaveWorkingDir(void);
-void ddio_RestoreWorkingDir(void);
 
 //	retrieve the current working folder where file operation will occur.
 //	Note ---> The path in Get/Set working directory is in the *LOCAL* file system's syntax
@@ -332,19 +323,15 @@ void ddio_RestoreWorkingDir(void);
 void ddio_GetWorkingDir(char *path, int len);
 bool ddio_SetWorkingDir(const char *path);
 
-// 	Checks if a directory exists (returns 1 if it does, 0 if not)
-//	This pathname is *RELATIVE* not fully qualified
-bool ddio_DirExists(const char *path);
-
 //  get a file length of a FILE
 int ddio_GetFileLength(FILE *filePtr);
 
 //	check if two files are different
 //	This pathname is *RELATIVE* not fully qualified
-bool ddio_FileDiff(const char *fileNameA, const char *fileNameB);
+bool ddio_FileDiff(const std::filesystem::path &path1, const std::filesystem::path &path2);
 
 //	copies one files timestamp to another
-void ddio_CopyFileTime(char *dest, const char *src);
+void ddio_CopyFileTime(const std::filesystem::path &dest, const std::filesystem::path &src);
 
 // Split a pathname into its component parts
 //	The path in splitpath is in the *LOCAL* file system's syntax

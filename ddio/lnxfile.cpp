@@ -83,24 +83,18 @@
 //	---------------------------------------------------------------------------
 //	File operations
 
-//	creates a directory or folder on disk
-bool ddio_CreateDir(const char *path) { return (mkdir(path, S_IRWXU)) ? false : true; }
-
-//	destroys a directory
-bool ddio_RemoveDir(const char *path) { return (rmdir(path)) ? false : true; }
-
 //	retrieve the current working folder where file operation will occur.
 void ddio_GetWorkingDir(char *path, int len) { getcwd(path, len); }
 
 bool ddio_SetWorkingDir(const char *path) { return (chdir(path)) ? false : true; }
 
-bool ddio_FileDiff(const char *path1, const char *path2) {
-  struct stat abuf, bbuf;
+bool ddio_FileDiff(const std::filesystem::path &path1, const std::filesystem::path &path2) {
+  struct stat abuf{}, bbuf{};
 
-  if (stat(path1, &abuf))
+  if (stat(path1.u8string().c_str(), &abuf))
     Int3(); // error getting stat info
 
-  if (stat(path2, &bbuf))
+  if (stat(path2.u8string().c_str(), &bbuf))
     Int3(); // error getting stat info
 
   if ((abuf.st_size != bbuf.st_size) || (abuf.st_mtime != bbuf.st_mtime))
@@ -200,42 +194,22 @@ void ddio_SplitPath(const char *srcPath, char *path, char *filename, char *ext) 
   }
 }
 
-void ddio_CopyFileTime(char *destname, const char *srcname) {
-  struct stat abuf;
+void ddio_CopyFileTime(const std::filesystem::path &dest, const std::filesystem::path &src) {
+  struct stat abuf{};
 
-  if (stat(srcname, &abuf))
+  if (stat(src.u8string().c_str(), &abuf))
     Int3();
 
-  struct utimbuf bbuf;
+  struct utimbuf bbuf{};
   bbuf.actime = abuf.st_atime;
   bbuf.modtime = abuf.st_mtime;
 
-  if (utime(destname, &bbuf))
+  if (utime(dest.u8string().c_str(), &bbuf))
     Int3();
 }
 
 // deletes a file.  Returns 1 if successful, 0 on failure
 int ddio_DeleteFile(const char *name) { return (!unlink(name)); }
-
-// Save/Restore the current working directory
-
-static char SavedWorkingDir[_MAX_DIR];
-
-void ddio_SaveWorkingDir(void) { ddio_GetWorkingDir(SavedWorkingDir, _MAX_DIR); }
-
-void ddio_RestoreWorkingDir(void) { ddio_SetWorkingDir(SavedWorkingDir); }
-
-// Checks if a directory exists (returns 1 if it does, 0 if not)
-// This pathname is *RELATIVE* not fully qualified
-bool ddio_DirExists(const char *path) {
-  bool res;
-
-  ddio_SaveWorkingDir();
-  res = ddio_SetWorkingDir(path);
-  ddio_RestoreWorkingDir();
-
-  return (res) ? true : false;
-}
 
 // rcg06192000 extern "C" is my add, so nettest would link.
 // extern "C"

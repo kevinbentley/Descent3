@@ -15,3 +15,7 @@ target_include_directories(cfile PUBLIC
     ${PROJECT_SOURCE_DIR}/cfile
   >
 )
+
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
