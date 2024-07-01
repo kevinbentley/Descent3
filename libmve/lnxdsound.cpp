@@ -16,26 +16,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <assert.h>
-#include <errno.h>
-#include <sys/types.h>
+#include <cassert>
 #ifdef __LINUX__
-#include <sys/time.h>
-#include <sys/fcntl.h>
-#include <unistd.h>
-#include <sched.h>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <memory.h>
-#include "lnxdsound.h"
+
+#include <SDL_audio.h>
+
 #include "args.h"
-
-#include "SDL.h"
-#include "SDL_audio.h"
-
+#include "lnxdsound.h"
 
 #define FRAGMENT_LENGTH (LnxBuffers[0]->bps >> 4)
 #define FREQUENCY_SHIFT (14)
@@ -56,9 +47,9 @@ static uint32_t LinuxSoundMixInMainBuffer(LnxSoundBuffer *dsb, int len);
 static void LinuxSoundMixBuffersIntoMain(int len);
 static void LinuxSoundThreadHandler(void *unused, Uint8 *stream, int len);
 
-static inline void enter_critical(void) { SDL_LockAudio(); }
+static inline void enter_critical() { SDL_LockAudio(); }
 
-static inline void exit_critical(void) { SDL_UnlockAudio(); }
+static inline void exit_critical() { SDL_UnlockAudio(); }
 
 ///////////////////////////////
 // LnxSound_CreateSoundBuffer
@@ -113,7 +104,7 @@ int LnxSound_CreateSoundBuffer(LnxSoundDevice *dev, LnxBufferDesc *lbdesc, LnxSo
     (*lsndb)->buffer_len = dev->bps;
     (*lsndb)->freq = dev->freq;
     (*lsndb)->bps = dev->bps;
-    (*lsndb)->buffer = NULL;
+    (*lsndb)->buffer = nullptr;
   } else {
     (*lsndb)->buffer_len = lbdesc->dwBufferBytes;
     (*lsndb)->freq = lbdesc->lpwfxFormat->nSamplesPerSec;
@@ -121,7 +112,7 @@ int LnxSound_CreateSoundBuffer(LnxSoundDevice *dev, LnxBufferDesc *lbdesc, LnxSo
     (*lsndb)->buffer = (uint8_t *)malloc((*lsndb)->buffer_len);
     if (!(*lsndb)->buffer) {
       free(*lsndb);
-      *lsndb = NULL;
+      *lsndb = nullptr;
       return -2;
     }
     memset((*lsndb)->buffer, 0, (*lsndb)->buffer_len);
@@ -197,7 +188,7 @@ int LnxSoundBuffer_Release(LnxSoundBuffer *buff) {
       ShutdownSoundSystem();
 
       LnxNumBuffers = 0;
-      LnxBuffers = NULL;
+      LnxBuffers = nullptr;
     } else {
       // wait until it is ok (our thread is in a good position)
       enter_critical();
@@ -450,7 +441,7 @@ int LnxSoundBuffer_Lock(LnxSoundBuffer *buff, uint32_t pos, uint32_t numbytes, v
     *(uint8_t **)ptr1 = buff->buffer + pos;
     *numbytes1 = numbytes;
     if (ptr2)
-      *(uint8_t **)ptr2 = NULL;
+      *(uint8_t **)ptr2 = nullptr;
     if (numbytes2)
       *numbytes2 = 0;
   } else {
@@ -513,7 +504,7 @@ static bool StartupSoundSystem(LnxSoundDevice *dev) {
   spec.samples = sampleCount;
   spec.callback = LinuxSoundThreadHandler;
 
-  if (SDL_OpenAudio(&spec, NULL) < 0) {
+  if (SDL_OpenAudio(&spec, nullptr) < 0) {
     return false;
   }
   SDL_PauseAudio(0);
@@ -521,7 +512,7 @@ static bool StartupSoundSystem(LnxSoundDevice *dev) {
 }
 
 //	Shutsdown the sound processing thread
-static void ShutdownSoundSystem(void) { SDL_CloseAudio(); }
+static void ShutdownSoundSystem() { SDL_CloseAudio(); }
 
 static inline void GetValues(const LnxSoundBuffer *dsb, uint8_t *buf, uint32_t *fl, uint32_t *fr) {
   int16_t *bufs = (int16_t *)buf;
@@ -553,7 +544,6 @@ static inline void GetValues(const LnxSoundBuffer *dsb, uint8_t *buf, uint32_t *
     *fr = *bufs;
     return;
   }
-  return;
 }
 
 static inline void SetValues(uint8_t *buf, uint32_t fl, uint32_t fr) {
@@ -584,7 +574,6 @@ static inline void SetValues(uint8_t *buf, uint32_t fl, uint32_t fr) {
     *bufs = (fl + fr) >> 1;
     return;
   }
-  return;
 }
 
 static void LinuxSoundMixWithVolume(LnxSoundBuffer *dsb, uint8_t *buf, uint32_t len) {
@@ -676,7 +665,7 @@ int DoMulDiv(int nNumber, int nNumerator, int nDenominator) {
   return ret;
 }
 
-static void *TempSoundBuffer = NULL;
+static void *TempSoundBuffer = nullptr;
 static int TempSoundBufferLen = 0;
 static uint32_t LinuxSoundMixInMainBuffer(LnxSoundBuffer *dsb, int len) {
   uint32_t i, ilen, advance = (LnxBuffers[0]->wfx.wBitsPerSample >> 3);
@@ -786,5 +775,5 @@ static void LinuxSoundThreadHandler(void *unused, Uint8 *stream, int len) {
 
   LinuxSoundMixBuffersIntoMain(len);
 
-  LnxBuffers[0]->buffer = NULL;
+  LnxBuffers[0]->buffer = nullptr;
 }

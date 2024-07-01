@@ -16,14 +16,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-
 #ifdef __LINUX__
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/uio.h>
-
-#define O_BINARY 0
+#include "lnxdsound.h"
 #endif
 
 
@@ -34,11 +29,11 @@
 #include "dsound.h"
 #endif
 
-#include <fcntl.h>
-#include <string.h>
+#include <cstring>
 
 #include "movie.h"
-#include "mvelibw.h"
+//#include "mvelibw.h"
+#include "mvelib.h"
 #include "pserror.h"
 #include "renderer.h"
 #include "application.h"
@@ -51,195 +46,18 @@
 #include "game.h"
 
 namespace {
-MovieFrameCallback_fp Movie_callback = NULL;
+MovieFrameCallback_fp Movie_callback = nullptr;
 char MovieDir[512];
 char SoundCardName[512];
 uint16_t CurrentPalette[256];
 int Movie_bm_handle = -1;
 uint32_t Movie_current_framenum = 0;
 bool Movie_looping = false;
-
-#ifndef NO_MOVIES
-
-class MovieSoundBuffer : public ISysSoundBuffer {
-private:
-  LnxSoundBuffer *m_pBuffer;
-
-public:
-  LnxSoundBuffer *GetLnxBuffer() { return m_pBuffer; }
-  MovieSoundBuffer(LnxSoundBuffer *buffer) : m_pBuffer(buffer) {}
-
-  ////////////////////////////
-  // Release
-  ////////////////////////////
-  // Releases the memory associated with a sound buffer.  This pointer is
-  // no longer valid after return.
-  //
-  // Returns:
-  //       -1 : Invalid Parameter
-  //        0 : Ok!
-  int Release() {
-    return LnxSoundBuffer_Release(m_pBuffer);
-    // m_pBuffer->Release();
-    delete this;
-    return 0;
-  }
-
-  //////////////////////////////
-  // SetVolume
-  //////////////////////////////
-  // Sets the volume of a buffer.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : Cannot set volume
-  //       -2 : Invalid parameters
-  int SetVolume(int32_t vol) { return LnxSoundBuffer_SetVolume(m_pBuffer, vol); }
-
-  ///////////////////////////
-  // SetPan
-  ///////////////////////////
-  // Sets the pan of a buffer.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : Cannot set pan
-  //       -2 : Invalid parameters
-  int SetPan(int32_t pan) { return LnxSoundBuffer_SetPan(m_pBuffer, pan); }
-
-  /////////////////////////
-  // Stop
-  /////////////////////////
-  // Stops a buffer from playing
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Stop() { return LnxSoundBuffer_Stop(m_pBuffer); }
-
-  /////////////////////////
-  // Play
-  /////////////////////////
-  // Starts a buffer playing (or changes the flags for a buffer currently
-  // playing).
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Play(uint32_t flags) {
-    uint32_t dsFlags = (flags & LNXSND_LOOPING) ? LNXSND_LOOPING : 0;
-    return LnxSoundBuffer_Play(m_pBuffer, dsFlags);
-  }
-
-  ////////////////////////////
-  // GetCaps
-  ////////////////////////////
-  // Get the capabilities of a sound buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int GetCaps(SysSoundCaps *caps) { return LnxSoundBuffer_GetCaps(m_pBuffer, (LinuxSoundCaps *)caps); }
-
-  //////////////////////////////
-  // GetStatus
-  //////////////////////////////
-  // Returns the status of a buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int GetStatus(uint32_t *status) { return LnxSoundBuffer_GetStatus(m_pBuffer, status); }
-
-  ///////////////////////////////////////
-  // GetCurrentPosition
-  ///////////////////////////////////////
-  // Returns the current play and write positions of the buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int GetCurrentPosition(uint32_t *ppos, uint32_t *wpos) {
-
-    return LnxSoundBuffer_GetCurrentPosition(m_pBuffer, ppos, wpos);
-  }
-
-  ///////////////////////////////////////
-  // SetCurrentPosition
-  ///////////////////////////////////////
-  // Sets the current play position of the buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int SetCurrentPosition(uint32_t pos) { return LnxSoundBuffer_SetCurrentPosition(m_pBuffer, pos); }
-
-  /////////////////////////
-  // Lock
-  /////////////////////////
-  // Locks the given buffer, returning pointer(s) to the buffer(s) along with
-  // available the size of the buffer(s) for writing.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Lock(uint32_t pos, uint32_t numbytes, void **ptr1, uint32_t *numbytes1, void **ptr2,
-           uint32_t *numbytes2, uint32_t flags) {
-    return LnxSoundBuffer_Lock(m_pBuffer, pos, numbytes, ptr1, numbytes1, ptr2, numbytes2, flags);
-  }
-
-  ///////////////////////////
-  // Unlock
-  ///////////////////////////
-  // Unlocks a buffer.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Unlock(void *ptr1, uint32_t num1, void *ptr2, uint32_t num2) {
-    return LnxSoundBuffer_Unlock(m_pBuffer, ptr1, num1, ptr2, num2);
-  }
-};
-class MovieSoundDevice : public ISoundDevice {
-private:
-  LnxSoundDevice m_ds;
-
-public:
-  MovieSoundDevice() {}
-
-  void SetDirectSound(LnxSoundDevice ds) { m_ds = ds; }
-
-  LnxSoundDevice GetDirectSound() { return m_ds; }
-
-  ///////////////////////////////
-  // CreateSoundBuffer
-  ///////////////////////////////
-  // Creates a sound buffer to be used with mixing and output.
-  //
-  // Returns:
-  //       -1 : Invalid Parameter
-  //       -2 : Out of memory
-  //        0 : Ok!
-  int CreateSoundBuffer(SysSoundBufferDesc *lbdesc, ISysSoundBuffer **lsndb) {
-    LnxSoundBuffer *sb = NULL;
-    int ret = LnxSound_CreateSoundBuffer(&m_ds, (LnxBufferDesc *)lbdesc, (LnxSoundBuffer **)&sb);
-    if (ret == 0) {
-      ISysSoundBuffer *p = (ISysSoundBuffer *)new MovieSoundBuffer(sb);
-      *lsndb = p;
-    } else {
-      lsndb = NULL;
-    }
-    return ret;
-  }
-};
-
-
-#endif
 } // namespace
 
 static void *CallbackAlloc(uint32_t size);
 static void CallbackFree(void *p);
-static uint32_t CallbackFileRead(int hFile, void *pBuffer, uint32_t bufferCount);
+static uint32_t CallbackFileRead(void *stream, void *pBuffer, uint32_t bufferCount);
 static void InitializePalette();
 static void CallbackSetPalette(uint8_t *pBuffer, uint32_t start, uint32_t count);
 static void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx,
@@ -247,8 +65,8 @@ static void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32
                               uint32_t hicolor);
 
 #ifndef NO_MOVIES
-static bool mve_InitSound(oeApplication *app, MovieSoundDevice &device);
-static void mve_CloseSound(MovieSoundDevice &device);
+static bool mve_InitSound();
+static void mve_CloseSound();
 #endif
 
 // sets the directory where movies are stored
@@ -315,8 +133,8 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   strcpy(real_name, pMovieName);
 #endif
   // open movie file.
-  int hFile = open(real_name, O_RDONLY | O_BINARY);
-  if (hFile == -1) {
+  FILE *hFile = fopen(real_name, "rb");
+  if (hFile == nullptr) {
     mprintf(0, "MOVIE: Unable to open %s\n", real_name);
     return MVELIB_FILE_ERROR;
   }
@@ -326,33 +144,33 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   bool highColor = (pExtension != NULL && stricmp(pExtension, ".mv8") != 0);
 
   // setup
-  MVE_rmFastMode(MVE_RM_NORMAL);
+  // MVE_rmFastMode(MVE_RM_NORMAL);
   MVE_sfCallbacks(CallbackShowFrame);
   MVE_memCallbacks(CallbackAlloc, CallbackFree);
   MVE_ioCallbacks(CallbackFileRead);
-  MVE_sfSVGA(640, 480, 480, 0, NULL, 0, 0, NULL, highColor ? 1 : 0);
+  // MVE_sfSVGA(640, 480, 480, 0, NULL, 0, 0, NULL, highColor ? 1 : 0);
   MVE_palCallbacks(CallbackSetPalette);
   InitializePalette();
   Movie_bm_handle = -1;
 
-  MovieSoundDevice soundDevice;
-  if (!mve_InitSound(pApp, soundDevice)) {
+  if (!mve_InitSound()) {
     mprintf(0, "Failed to initialize sound\n");
-    close(hFile);
+    fclose(hFile);
     return MVELIB_INIT_ERROR;
   }
 
-  int result = MVE_rmPrepMovie(hFile, -1, -1, 0);
-  if (result != 0) {
-    mprintf(0, "PrepMovie result = %d\n", result);
-    close(hFile);
-    mve_CloseSound(soundDevice);
+  MVESTREAM *mve = MVE_rmPrepMovie(hFile, -1, -1, 0);
+  if (mve == nullptr) {
+    mprintf(0, "Failed to prepMovie %s\n", pMovieName);
+    fclose(hFile);
+    mve_CloseSound();
     return MVELIB_INIT_ERROR;
   }
 
   bool aborted = false;
   Movie_current_framenum = 0;
-  while ((result = MVE_rmStepMovie()) == 0) {
+  int result;
+  while ((result = MVE_rmStepMovie(mve)) == 0) {
     // let the OS do its thing
     pApp->defer();
 
@@ -371,7 +189,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   }
 
   // close our file handle
-  close(hFile);
+  fclose(hFile);
 
   // determine the return code
   int err = MVELIB_NOERROR;
@@ -382,11 +200,10 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   }
 
   // cleanup and shutdown
-  MVE_rmEndMovie();
-  MVE_ReleaseMem();
+  MVE_rmEndMovie(mve);
 
   // reset sound
-  mve_CloseSound(soundDevice);
+  mve_CloseSound();
 
   // return out
   return err;
@@ -399,8 +216,8 @@ void *CallbackAlloc(uint32_t size) { return mem_malloc(size); }
 
 void CallbackFree(void *p) { mem_free(p); }
 
-uint32_t CallbackFileRead(int hFile, void *pBuffer, uint32_t bufferCount) {
-  uint32_t numRead = read(hFile, pBuffer, bufferCount);
+uint32_t CallbackFileRead(void *stream, void *pBuffer, uint32_t bufferCount) {
+  uint32_t numRead = fread(pBuffer, 1, bufferCount, (FILE *)stream);
   return (numRead == bufferCount) ? 1 : 0;
 }
 
@@ -440,7 +257,7 @@ int NextPow2(int n) {
 void BlitToMovieBitmap(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t hicolor,
                        bool usePow2Texture, int &texW, int &texH) {
   // get some sizes
-  int drawWidth = hicolor ? (bufw >> 1) : bufw;
+  int drawWidth = bufw;
   int drawHeight = bufh;
 
   if (usePow2Texture) {
@@ -466,10 +283,8 @@ void BlitToMovieBitmap(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t hico
     for (int y = 0; y < drawHeight; ++y) {
       for (int x = 0; x < drawWidth; ++x) {
         uint16_t col16 = *wBuf++;
-        uint32_t b = ((col16 >> 11) & 0x1F) << 3;
-        uint32_t g = ((col16 >> 5) & 0x3F) << 2;
-        uint32_t r = ((col16 >> 0) & 0x1F) << 3;
-        pPixelData[x] = OPAQUE_FLAG | GR_RGB16(r, g, b);
+        // Convert to RGB555
+        pPixelData[x] = col16 | OPAQUE_FLAG;
       }
 
       pPixelData += texW;
@@ -493,8 +308,8 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
   BlitToMovieBitmap(buf, bufw, bufh, hicolor, true, texW, texH);
 
   // calculate UVs from texture
-  int drawWidth = hicolor ? (bufw >> 1) : bufw;
-  int drawHeight = bufh;
+  unsigned int drawWidth = bufw;
+  unsigned int drawHeight = bufh;
   float u = float(drawWidth - 1) / float(texW - 1);
   float v = float(drawHeight - 1) / float(texH - 1);
 
@@ -514,7 +329,7 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
   rend_SetZBufferState(1);
 
   // call our callback
-  if (Movie_callback != NULL) {
+  if (Movie_callback != nullptr) {
     Movie_callback(dstx, dsty, Movie_current_framenum);
   }
   ++Movie_current_framenum;
@@ -523,9 +338,46 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
 
   rend_Flip();
 }
+
+// This callback is same as CallbackShowFrame() but don't flip renderer at end, so there no flickering
+void CallbackShowFrameNoFlip(unsigned char *buf, unsigned int bufw, unsigned int bufh, unsigned int sx, unsigned int sy,
+                       unsigned int w, unsigned int h, unsigned int dstx, unsigned int dsty, unsigned int hicolor) {
+  // prepare our bitmap
+  int texW, texH;
+  BlitToMovieBitmap(buf, bufw, bufh, hicolor, true, texW, texH);
+
+  // calculate UVs from texture
+  unsigned int drawWidth = bufw;
+  unsigned int drawHeight = bufh;
+  float u = float(drawWidth - 1) / float(texW - 1);
+  float v = float(drawHeight - 1) / float(texH - 1);
+
+  StartFrame(0, 0, 640, 480, false);
+
+  rend_ClearScreen(GR_BLACK);
+  rend_SetAlphaType(AT_CONSTANT);
+  rend_SetAlphaValue(255);
+  rend_SetLighting(LS_NONE);
+  rend_SetColorModel(CM_MONO);
+  rend_SetOverlayType(OT_NONE);
+  rend_SetWrapType(WT_CLAMP);
+  rend_SetFiltering(0);
+  rend_SetZBufferState(0);
+  rend_DrawScaledBitmap(dstx, dsty, dstx + drawWidth, dsty + drawHeight, Movie_bm_handle, 0.0f, 0.0f, u, v);
+  rend_SetFiltering(1);
+  rend_SetZBufferState(1);
+
+  // call our callback
+  if (Movie_callback != nullptr) {
+    Movie_callback(dstx, dsty, Movie_current_framenum);
+  }
+  ++Movie_current_framenum;
+
+  EndFrame();
+}
 #endif
 
-intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app, bool looping) {
+intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *app, bool looping) {
 #ifndef NO_MOVIES
 
   // first, find that movie..
@@ -533,24 +385,24 @@ intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app
 #ifdef __LINUX__
   if (!mve_FindMovieFileRealName(mvename, real_name)) {
     mprintf(0, "MOVIE: No such file %s\n", mvename);
-    *fhandle = -1;
+    fhandle = nullptr;
     return 0;
   }
 #else
   strcpy(real_name, mvename);
 #endif
-  int hfile = open(real_name, O_RDONLY | O_BINARY);
+  fhandle = fopen(mvename, "rb");
 
-  if (hfile == -1) {
+  if (fhandle == nullptr) {
     mprintf(1, "MOVIE: Unable to open %s\n", real_name);
-    *fhandle = -1;
     return 0;
   }
 
   // setup
-  MVE_rmFastMode(MVE_RM_NORMAL);
+  //MVE_rmFastMode(MVE_RM_NORMAL);
   MVE_memCallbacks(CallbackAlloc, CallbackFree);
   MVE_ioCallbacks(CallbackFileRead);
+  MVE_sfCallbacks(CallbackShowFrameNoFlip);
   InitializePalette();
   Movie_bm_handle = -1;
   Movie_looping = looping;
@@ -558,14 +410,20 @@ intptr_t mve_SequenceStart(const char *mvename, int *fhandle, oeApplication *app
   // let the render know we will be copying bitmaps to framebuffer (or something)
   rend_SetFrameBufferCopyState(true);
 
-  *fhandle = hfile;
-  return (intptr_t)MVE_frOpen(CallbackFileRead, hfile, NULL);
+  MVESTREAM *mve = MVE_rmPrepMovie(fhandle, -1, -1, 0);
+  if (mve == nullptr) {
+    mprintf(0, "Failed to PrepMovie %s\n", mvename);
+    fclose((FILE *)fhandle);
+    return MVELIB_INIT_ERROR;
+  }
+
+  return (intptr_t)mve;
 #else
-  return 0;
+  return nullptr;
 #endif
 }
 
-intptr_t mve_SequenceFrame(intptr_t handle, int fhandle, bool sequence, int *bm_handle) {
+intptr_t mve_SequenceFrame(intptr_t handle, void *fhandle, bool sequence, int *bm_handle) {
 #ifndef NO_MOVIES
   if (bm_handle) {
     *bm_handle = -1;
@@ -581,17 +439,8 @@ intptr_t mve_SequenceFrame(intptr_t handle, int fhandle, bool sequence, int *bm_
 reread_frame:
 
   // get the next frame of data
-  uint8_t *pBuffer = NULL;
-  err = MVE_frGet((MVE_frStream)handle, &pBuffer, &sw, &sh, &hicolor);
-
-  // refresh our palette
-  {
-    uint32_t palstart = 0;
-    uint32_t palcount = 0;
-    uint8_t *pal = NULL;
-    MVE_frPal((MVE_frStream)handle, &pal, &palstart, &palcount);
-    CallbackSetPalette(pal, palstart, palcount);
-  }
+  uint8_t *pBuffer = nullptr;
+  err = MVE_rmStepMovie((MVESTREAM *)handle);
 
   if (err == 0) {
     // blit to bitmap
@@ -606,13 +455,7 @@ reread_frame:
   }
 
   if (Movie_looping && err == MVE_ERR_EOF) {
-    MVE_frClose((MVE_frStream)handle);
-#ifdef WIN32
-    _lseek(fhandle, 0, SEEK_SET);
-#else
-    lseek(fhandle, 0, SEEK_SET);
-#endif
-    handle = (intptr_t)MVE_frOpen(CallbackFileRead, fhandle, NULL);
+    mve_reset((MVESTREAM *)handle);
     sequence = true;
     goto reread_frame;
   }
@@ -623,14 +466,12 @@ reread_frame:
 #endif
 }
 
-bool mve_SequenceClose(intptr_t hMovie, int hFile) {
+bool mve_SequenceClose(intptr_t hMovie, void *hFile) {
 #ifndef NO_MOVIES
   if (hMovie == -1)
     return false;
 
-  MVE_frClose((MVE_frStream)hMovie);
-  MVE_ReleaseMem();
-  close(hFile);
+  MVE_rmEndMovie((MVESTREAM *)hMovie);
 
   // free our bitmap
   if (Movie_bm_handle != -1) {
@@ -662,23 +503,13 @@ void mve_ClearRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
 }
 
 #ifndef NO_MOVIES
-bool mve_InitSound(oeApplication *app, MovieSoundDevice &device) {
-
-  LnxSoundDevice snddev;
-  bool use_22k_sound = false;
-  snddev.freq = use_22k_sound ? 22050 : 44100;
-  snddev.bit_depth = 16;
-  snddev.channels = 2;
-  snddev.bps = snddev.freq * snddev.channels * snddev.bit_depth / 8;
-
-  device.SetDirectSound(snddev);
-
-  MVE_sndInit(&device);
+bool mve_InitSound() {
+  MVE_sndInit(1);
 
   return true;
 }
 
-void mve_CloseSound(MovieSoundDevice &device) {
+void mve_CloseSound() {
   // TODO: close the driver out
 }
 

@@ -16,31 +16,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef WIN_SOUND_H
+#define WIN_SOUND_H
 
-#include <chrono>
+#include <windows.h>
+#include <mmsystem.h>
+
+#include "win/DirectX/dsound.h"
+
+#include "sound_interface.h"
 
 namespace D3 {
 
-static std::chrono::time_point<std::chrono::steady_clock> m_start_tstamp;
-
-/**
- * Static class for handling timers and time durations
- */
-class ChronoTimer {
+class MovieSoundDevice : ISoundDevice {
 public:
+  MovieSoundDevice(int sample_rate, uint16_t sample_size, uint8_t channels, uint32_t buf_size, bool is_compressed);
+  ~MovieSoundDevice();
 
-  /// Initialize internal timestamp
-  static void Initialize();
+  [[nodiscard]] bool IsInitialized() const { return m_lpDS != nullptr; }
 
-  /// Get time in seconds after class initialization (i.e. application start)
-  static float GetTime();
+  void Play() override;
+  void Stop() override;
+  void Lock() override;
+  void Unlock() override;
 
-  /// Get time in milliseconds after class initialization (i.e. application start)
-  static int64_t GetTimeMS();
+  using ISoundDevice::GetBuffer;
+  using ISoundDevice::IsCompressed;
 
-  /// Get time in microseconds after class initialization (i.e. application start)
-  static int64_t GetTimeUS();
+private:
+  WAVEFORMATEX m_WFE{};
+  LPDIRECTSOUND m_lpDS;
+  LPDIRECTSOUNDBUFFER m_lpDSB;
+
 };
 
-}
+} // namespace D3
+
+#endif // WIN_SOUND_H

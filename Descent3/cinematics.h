@@ -59,7 +59,7 @@
 //	Movie Cinematic
 struct tCinematic {
   intptr_t mvehandle;
-  int filehandle;
+  void *filehandle;
   chunked_bitmap frame_chunk; // used internally, don't access.
 };
 

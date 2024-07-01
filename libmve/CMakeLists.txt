@@ -1,16 +1,26 @@
-set(HEADERS
-  mvegfx.h
-  mvelibi.h
-  mvelibl.h
-  platform.h
-  snd8to16.h
-  SystemInterfaces.h)
-
 set(CPPS
-  mveasm.cpp
-  mvelibl.cpp
-  platform.cpp
-  lnxdsound.cpp)
+#  mveasm.cpp
+#  mvelibl.cpp
+#  platform.cpp
+#  lnxdsound.cpp
 
-add_library(libmve STATIC ${HEADERS} ${CPPS} ${PLATFORM_CPPS})
-target_link_libraries(libmve PRIVATE SDL2::SDL2)
+  # d2x implementation
+  decoder8.cpp
+  decoder16.cpp
+  lnx_sound.cpp
+  mve_audio.cpp
+  mvelib.cpp
+  mveplay.cpp
+
+)
+
+add_library(libmve STATIC ${CPPS})
+target_link_libraries(libmve PRIVATE
+  ddio
+  SDL2::SDL2
+)
+target_include_directories(libmve PUBLIC
+  $<BUILD_INTERFACE:
+    ${PROJECT_SOURCE_DIR}/libmve
+  >
+)

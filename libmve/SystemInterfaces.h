@@ -23,8 +23,8 @@
 
 // Max&Min values for settings
 #define LNXSND_VOLUME_MAX 0
-#define LNXSND_VOLUME_MIN -10000
-#define LNXSND_PAN_LEFT -10000
+#define LNXSND_VOLUME_MIN (-10000)
+#define LNXSND_PAN_LEFT (-10000)
 #define LNXSND_PAN_RIGHT 10000
 
 // Status/Buffer flags

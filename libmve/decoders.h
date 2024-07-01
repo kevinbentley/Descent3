@@ -1,6 +1,5 @@
 /*
- * Descent 3
- * Copyright (C) 2024 Descent Developers
+ * Copyright (C) 2002-2024 D2X Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <chrono>
-
-namespace D3 {
-
-static std::chrono::time_point<std::chrono::steady_clock> m_start_tstamp;
-
-/**
- * Static class for handling timers and time durations
+/*
+ *
+ * INTERNAL header - not to be included outside of libmve
+ *
  */
-class ChronoTimer {
-public:
 
-  /// Initialize internal timestamp
-  static void Initialize();
+#ifndef _DECODERS_H
+#define _DECODERS_H
 
-  /// Get time in seconds after class initialization (i.e. application start)
-  static float GetTime();
+extern int g_width, g_height;
+extern void *g_vBackBuf1, *g_vBackBuf2;
 
-  /// Get time in milliseconds after class initialization (i.e. application start)
-  static int64_t GetTimeMS();
+extern void decodeFrame8(unsigned char *pFrame, unsigned char *pMap, int mapRemain, unsigned char *pData,
+                         int dataRemain);
+extern void decodeFrame16(unsigned char *pFrame, unsigned char *pMap, int mapRemain, unsigned char *pData,
+                          int dataRemain);
 
-  /// Get time in microseconds after class initialization (i.e. application start)
-  static int64_t GetTimeUS();
-};
-
-}
+#endif // _DECODERS_H

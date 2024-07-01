@@ -1,6 +1,5 @@
 /*
- * Descent 3
- * Copyright (C) 2024 Descent Developers
+ * Copyright (C) 2002-2024 D2X Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <chrono>
-
-namespace D3 {
-
-static std::chrono::time_point<std::chrono::steady_clock> m_start_tstamp;
+#ifndef INCLUDED_MVE_AUDIO_H
+#define INCLUDED_MVE_AUDIO_H
 
 /**
- * Static class for handling timers and time durations
+ * Process input data and send parsed data into queue buffer
+ * @param buffer output queue buffer
+ * @param data input data
+ * @param is_compress true if input data is compressed
  */
-class ChronoTimer {
-public:
+void mveaudio_process(std::unique_ptr<std::deque<int16_t>> &buffer, unsigned char *data, bool is_compressed = true);
 
-  /// Initialize internal timestamp
-  static void Initialize();
-
-  /// Get time in seconds after class initialization (i.e. application start)
-  static float GetTime();
-
-  /// Get time in milliseconds after class initialization (i.e. application start)
-  static int64_t GetTimeMS();
-
-  /// Get time in microseconds after class initialization (i.e. application start)
-  static int64_t GetTimeUS();
-};
-
-}
+#endif /* INCLUDED_MVE_AUDIO_H */
