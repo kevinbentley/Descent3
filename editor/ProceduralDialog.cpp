@@ -189,7 +189,7 @@ void CProceduralDialog::UpdateDialog() {
 
   uint16_t *data = bm_data(m_palette_bitmap, 0);
 
-  for (i = 0; i < h; i++) {
+  for (int i = 0; i < h; i++) {
     float cur_color = 0;
     float color_delta = 256.0 / (float)w;
     for (int t = 0; t < w; t++, cur_color += color_delta) {
@@ -208,7 +208,7 @@ void CProceduralDialog::UpdateDialog() {
   CComboBox *combo;
   combo = (CComboBox *)GetDlgItem(IDC_PROC_COPY_LIST);
   combo->ResetContent();
-  for (i = 0; i < MAX_TEXTURES; i++) {
+  for (int i = 0; i < MAX_TEXTURES; i++) {
     if (!GameTextures[i].used)
       continue;
     if (i == D3EditState.texdlg_texture)

@@ -669,7 +669,8 @@ bool BEAllocEffect(int *ret_screen, int *ret_effect) {
   int curr_effect = -1;
   int node = Briefing_screens[curr_screen].root_effect;
   tBriefScreen *bscr = &Briefing_screens[curr_screen];
-  for (int i = 0; i < MAX_EFFECTS_PER_SCREEN; i++) {
+  int i;
+  for (i = 0; i < MAX_EFFECTS_PER_SCREEN; i++) {
     if (!bscr->effects[i].used) {
       curr_effect = i;
       break;
@@ -1119,7 +1120,8 @@ bool CBriefEdit::BriefEditAllocateEffect(int *ret_screen, int *ret_effect) {
   int curr_effect = -1;
   int node = Briefing_screens[curr_screen].root_effect;
   tBriefScreen *bscr = &Briefing_screens[curr_screen];
-  for (int i = 0; i < MAX_EFFECTS_PER_SCREEN; i++) {
+  int i;
+  for (i = 0; i < MAX_EFFECTS_PER_SCREEN; i++) {
     if (!bscr->effects[i].used) {
       curr_effect = i;
       break;
@@ -1989,7 +1991,7 @@ void CBriefEdit::ParseLayoutScreenFile(char *filename) {
     }
 
     // read bmp defs
-    for (j = 0; j < layouts[i].num_bmps; j++) {
+    for (int j = 0; j < layouts[i].num_bmps; j++) {
       cf_ReadString(buffer, 512, file);
 
       // now parse to pull out the individual values

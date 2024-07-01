@@ -113,7 +113,7 @@ void SelectRangeDialog::OnOK() {
     for (int i = 0; i < TERRAIN_WIDTH * TERRAIN_DEPTH; i++)
       TerrainSelected[i] = 0;
     Num_terrain_selected = 0;
-    for (i = 0; i < TERRAIN_WIDTH * TERRAIN_DEPTH; i++) {
+    for (int i = 0; i < TERRAIN_WIDTH * TERRAIN_DEPTH; i++) {
       int selected = 1;
 
       if (!(Terrain_seg[i].ypos >= LowerBound && Terrain_seg[i].ypos <= UpperBound))

@@ -407,9 +407,9 @@ void CWorldObjectsDoorDialog::UpdateDialog() {
   // Update sounds lists
   SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
-  for (i = 0; i < MAX_SOUNDS; i++) {
-    if (Sounds[i].used)
-      SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sounds[i].name);
+  for (auto & Sound : Sounds) {
+    if (Sound.used)
+      SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sound.name);
   }
   if (Doors[n].open_sound == -1)
     SendDlgItemMessage(IDC_DOOR_OPEN_SOUND, CB_SELECTSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
@@ -418,9 +418,9 @@ void CWorldObjectsDoorDialog::UpdateDialog() {
 
   SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
-  for (i = 0; i < MAX_SOUNDS; i++) {
-    if (Sounds[i].used)
-      SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sounds[i].name);
+  for (auto & Sound : Sounds) {
+    if (Sound.used)
+      SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)Sound.name);
   }
   if (Doors[n].close_sound == -1)
     SendDlgItemMessage(IDC_DOOR_CLOSE_SOUND, CB_SELECTSTRING, 0, (LPARAM)(LPCTSTR)NULL_NAME);
