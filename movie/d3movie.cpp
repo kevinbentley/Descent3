@@ -53,183 +53,6 @@ uint16_t CurrentPalette[256];
 int Movie_bm_handle = -1;
 uint32_t Movie_current_framenum = 0;
 bool Movie_looping = false;
-
-#ifndef NO_MOVIES
-
-class MovieSoundBuffer : public ISysSoundBuffer {
-private:
-  LnxSoundBuffer *m_pBuffer;
-
-public:
-  LnxSoundBuffer *GetLnxBuffer() { return m_pBuffer; }
-  MovieSoundBuffer(LnxSoundBuffer *buffer) : m_pBuffer(buffer) {}
-
-  ////////////////////////////
-  // Release
-  ////////////////////////////
-  // Releases the memory associated with a sound buffer.  This pointer is
-  // no longer valid after return.
-  //
-  // Returns:
-  //       -1 : Invalid Parameter
-  //        0 : Ok!
-  int Release() {
-    return LnxSoundBuffer_Release(m_pBuffer);
-    // m_pBuffer->Release();
-    delete this;
-    return 0;
-  }
-
-  //////////////////////////////
-  // SetVolume
-  //////////////////////////////
-  // Sets the volume of a buffer.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : Cannot set volume
-  //       -2 : Invalid parameters
-  int SetVolume(int32_t vol) { return LnxSoundBuffer_SetVolume(m_pBuffer, vol); }
-
-  ///////////////////////////
-  // SetPan
-  ///////////////////////////
-  // Sets the pan of a buffer.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : Cannot set pan
-  //       -2 : Invalid parameters
-  int SetPan(int32_t pan) { return LnxSoundBuffer_SetPan(m_pBuffer, pan); }
-
-  /////////////////////////
-  // Stop
-  /////////////////////////
-  // Stops a buffer from playing
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Stop() { return LnxSoundBuffer_Stop(m_pBuffer); }
-
-  /////////////////////////
-  // Play
-  /////////////////////////
-  // Starts a buffer playing (or changes the flags for a buffer currently
-  // playing).
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Play(uint32_t flags) {
-    uint32_t dsFlags = (flags & LNXSND_LOOPING) ? LNXSND_LOOPING : 0;
-    return LnxSoundBuffer_Play(m_pBuffer, dsFlags);
-  }
-
-  ////////////////////////////
-  // GetCaps
-  ////////////////////////////
-  // Get the capabilities of a sound buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int GetCaps(SysSoundCaps *caps) { return LnxSoundBuffer_GetCaps(m_pBuffer, (LinuxSoundCaps *)caps); }
-
-  //////////////////////////////
-  // GetStatus
-  //////////////////////////////
-  // Returns the status of a buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int GetStatus(uint32_t *status) { return LnxSoundBuffer_GetStatus(m_pBuffer, status); }
-
-  ///////////////////////////////////////
-  // GetCurrentPosition
-  ///////////////////////////////////////
-  // Returns the current play and write positions of the buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int GetCurrentPosition(uint32_t *ppos, uint32_t *wpos) {
-
-    return LnxSoundBuffer_GetCurrentPosition(m_pBuffer, ppos, wpos);
-  }
-
-  ///////////////////////////////////////
-  // SetCurrentPosition
-  ///////////////////////////////////////
-  // Sets the current play position of the buffer
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int SetCurrentPosition(uint32_t pos) { return LnxSoundBuffer_SetCurrentPosition(m_pBuffer, pos); }
-
-  /////////////////////////
-  // Lock
-  /////////////////////////
-  // Locks the given buffer, returning pointer(s) to the buffer(s) along with
-  // available the size of the buffer(s) for writing.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Lock(uint32_t pos, uint32_t numbytes, void **ptr1, uint32_t *numbytes1, void **ptr2,
-           uint32_t *numbytes2, uint32_t flags) {
-    return LnxSoundBuffer_Lock(m_pBuffer, pos, numbytes, ptr1, numbytes1, ptr2, numbytes2, flags);
-  }
-
-  ///////////////////////////
-  // Unlock
-  ///////////////////////////
-  // Unlocks a buffer.
-  //
-  // Returns:
-  //        0 : no error
-  //       -1 : invalid parameters
-  int Unlock(void *ptr1, uint32_t num1, void *ptr2, uint32_t num2) {
-    return LnxSoundBuffer_Unlock(m_pBuffer, ptr1, num1, ptr2, num2);
-  }
-};
-class MovieSoundDevice : public ISoundDevice {
-private:
-  LnxSoundDevice m_ds;
-
-public:
-  MovieSoundDevice() {}
-
-  void SetDirectSound(LnxSoundDevice ds) { m_ds = ds; }
-
-  LnxSoundDevice GetDirectSound() { return m_ds; }
-
-  ///////////////////////////////
-  // CreateSoundBuffer
-  ///////////////////////////////
-  // Creates a sound buffer to be used with mixing and output.
-  //
-  // Returns:
-  //       -1 : Invalid Parameter
-  //       -2 : Out of memory
-  //        0 : Ok!
-  int CreateSoundBuffer(SysSoundBufferDesc *lbdesc, ISysSoundBuffer **lsndb) {
-    LnxSoundBuffer *sb = NULL;
-    int ret = LnxSound_CreateSoundBuffer(&m_ds, (LnxBufferDesc *)lbdesc, (LnxSoundBuffer **)&sb);
-    if (ret == 0) {
-      ISysSoundBuffer *p = (ISysSoundBuffer *)new MovieSoundBuffer(sb);
-      *lsndb = p;
-    } else {
-      lsndb = nullptr;
-    }
-    return ret;
-  }
-};
-
-
-#endif
 } // namespace
 
 static void *CallbackAlloc(uint32_t size);
@@ -242,8 +65,8 @@ static void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32
                               uint32_t hicolor);
 
 #ifndef NO_MOVIES
-static bool mve_InitSound(oeApplication *app, MovieSoundDevice &device);
-static void mve_CloseSound(MovieSoundDevice &device);
+static bool mve_InitSound();
+static void mve_CloseSound();
 #endif
 
 // sets the directory where movies are stored
@@ -330,8 +153,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   InitializePalette();
   Movie_bm_handle = -1;
 
-  MovieSoundDevice soundDevice;
-  if (!mve_InitSound(pApp, soundDevice)) {
+  if (!mve_InitSound()) {
     mprintf(0, "Failed to initialize sound\n");
     fclose(hFile);
     return MVELIB_INIT_ERROR;
@@ -341,7 +163,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   if (mve == nullptr) {
     mprintf(0, "Failed to prepMovie %s\n", pMovieName);
     fclose(hFile);
-    mve_CloseSound(soundDevice);
+    mve_CloseSound();
     return MVELIB_INIT_ERROR;
   }
 
@@ -381,7 +203,7 @@ int mve_PlayMovie(const char *pMovieName, oeApplication *pApp) {
   MVE_rmEndMovie(mve);
 
   // reset sound
-  mve_CloseSound(soundDevice);
+  mve_CloseSound();
 
   // return out
   return err;
@@ -681,24 +503,13 @@ void mve_ClearRect(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
 }
 
 #ifndef NO_MOVIES
-bool mve_InitSound(oeApplication *app, MovieSoundDevice &device) {
-
-  LnxSoundDevice snddev;
-  bool use_22k_sound = false;
-  snddev.freq = use_22k_sound ? 22050 : 44100;
-  snddev.bit_depth = 16;
-  snddev.channels = 2;
-  snddev.bps = snddev.freq * snddev.channels * snddev.bit_depth / 8;
-
-  device.SetDirectSound(snddev);
-
-  MVE_sndInit(&device);
+bool mve_InitSound() {
   MVE_sndInit(1);
 
   return true;
 }
 
-void mve_CloseSound(MovieSoundDevice &device) {
+void mve_CloseSound() {
   // TODO: close the driver out
 }
 

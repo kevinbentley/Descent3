@@ -2,21 +2,16 @@ set(CPPS
 #  mveasm.cpp
 #  mvelibl.cpp
 #  platform.cpp
-  lnxdsound.cpp
+#  lnxdsound.cpp
 
   # d2x implementation
   decoder8.cpp
   decoder16.cpp
+  lnx_sound.cpp
   mve_audio.cpp
   mvelib.cpp
   mveplay.cpp
 
-  $<$<PLATFORM_ID:Darwin,Linux>:
-    lnx_sound.cpp
-  >
-  $<$<PLATFORM_ID:Windows>:
-    win_sound.cpp
-  >
 )
 
 add_library(libmve STATIC ${CPPS})

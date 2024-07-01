@@ -34,15 +34,15 @@ void MovieSoundDevice::SDLAudioCallback(void *userdata, unsigned char *stream, i
 MovieSoundDevice::MovieSoundDevice(int sample_rate, uint16_t sample_size, uint8_t channels, uint32_t buf_size,
                                    bool is_compressed) {
   SDL_AudioFormat format = (sample_size == 2) ? AUDIO_S16LSB : AUDIO_U8;
-  SDL_AudioSpec spec{
-      .freq = sample_rate,
-      .format = format,
-      .channels = channels,
-      .size = 4096,
-      .callback = &MovieSoundDevice::SDLAudioCallback,
-      .userdata = this,
-  };
-  m_device_id = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE);
+  SDL_AudioSpec spec;
+  spec.freq = sample_rate;
+  spec.format = format;
+  spec.channels = channels;
+  spec.size = 4096;
+  spec.callback = &MovieSoundDevice::SDLAudioCallback;
+  spec.userdata = this;
+
+  m_device_id = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, 0);
   m_is_compressed = is_compressed;
 };
 
